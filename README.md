@@ -106,5 +106,5 @@ Invoke a phase by intent or its slash command. Start with either entry point —
 
 ## Notes
 
-- `do-slicing` and `do-uploading` reference user-level skills (`~/.claude/skills/create-appendix-task-list`, `upload-task-to-jira`) for the Appendix-v3 / Jira contract — amarbank-specific, so the plugin isn't fully portable as-is.
+- The **slicing** and **uploading** phases assume an "Appendix (v3)" task-weighting workflow and organization-specific Jira custom fields (weight points, an appendix multiselect, an epic-link field). These are org-configured — point the skills at your own Jira fields/weighting scheme, or skip these two phases and go grooming → planning → development → testing directly. Everything else works without any Jira setup.
 - Multi-repo (separate platform repos) was designed but not built: the intended shape is a checked-in manifest + a shared hub each repo reads, one repo per session for writes.
