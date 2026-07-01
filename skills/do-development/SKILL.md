@@ -36,6 +36,7 @@ For the next unfinished stage in the plan:
    - **Plan summary** — what this stage set out to do (goal + the AC/tasks it covers), so they review against intent.
    - **Test cases** — each test written, what behavior/AC it asserts, and its result (pass). Call out anything *not* covered by a test and why (e.g. UI fell back to a manual check).
    - **Changes summary** — what actually changed, per file/module (and any drift from the plan), then the diff itself.
+   - **Profile updates** — any `docs/basics/` doc this stage changed a recorded fact in (new endpoint → api-reference, migration → database, new env var → environment, new asset → asset-registry, etc.), updated + re-stamped in the same change. "None" if the stage touched nothing the profile tracks.
    - **Verification** — the green test + build result.
    Then ask: approve / request changes / stop here. Do not touch the next stage until they respond.
 6. **On approval** — mark the stage done in `plan-<platform>.md` (resumable), offer to commit, and either continue to the next stage or stop if the user wants (honoring safe-stop).
