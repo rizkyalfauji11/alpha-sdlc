@@ -18,6 +18,8 @@ You are generating the **project profile** — the baseline reference every othe
 
 ## The docs (`./docs/basics/`)
 
+Each doc has a starter template in this skill's `templates/` directory (`templates/<file>`) — read the relevant one and fill it from the real project. Keep the header commit-stamp; drop template sections that don't apply.
+
 | File | Contents | Cache vs point |
 |------|----------|----------------|
 | `overview.md` | Project summary, the profile index (links), per-doc freshness/commit stamps | cache |
