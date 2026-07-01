@@ -10,7 +10,7 @@
 > The QA locator contract for this screen. Every **interactive or asserted** element gets a
 > stable **Test ID** and a **content description**. Decorative-only elements are skipped.
 > The Test ID is **one value reused across platforms**, applied via the native attribute:
-> Android `testTag` (or `resource-id`), iOS `accessibilityIdentifier`, Web `data-testid`.
+> Android `resource-id` (`android:id`, or Compose `testTag` exposed via `testTagsAsResourceId`), iOS `accessibilityIdentifier`, Web `data-testid`.
 > The **content description doubles as the accessibility label** (serves screen readers + QA).
 > **ID convention:** `<feature>_<screen>_<element>`, snake_case, stable — never renamed once shipped.
 
@@ -24,7 +24,7 @@
 
 ## Per-platform attribute notes
 
-- **Android:** apply Test ID as `Modifier.testTag("<id>")` (Compose) or `android:id`/`resource-id` (XML); content description as `contentDescription`.
+- **Android:** the QA locator is **`resource-id`**. Views/XML → `android:id="@+id/<id>"`. Compose → `Modifier.testTag("<id>")` **plus** `Modifier.semantics { testTagsAsResourceId = true }` (usually set once at the app/root) so the tag is exposed as `resource-id` to cross-app tools (Appium/UiAutomator); without it, in-process Espresso can find `testTag` via `onNodeWithTag` but black-box QA tools cannot. Content description → `contentDescription`.
 - **iOS:** apply Test ID as `.accessibilityIdentifier("<id>")`; content description as `.accessibilityLabel(...)`.
 - **Web:** apply Test ID as `data-testid="<id>"`; content description as `aria-label`.
 - <Any element whose ID must differ on a platform — note it here; default is one shared ID.>

@@ -11,7 +11,7 @@ You are writing the **feature-level tests** for an implemented feature. This is 
 
 - **Backend → API testing.** Assert the hub's **API contract**: happy path, request/response schema conformance, status codes, auth/authorization, validation/error responses, idempotency for money flows, and boundary/edge inputs.
 - **Web / Android / iOS → UI testing + integration testing.**
-  - *UI*: key screens and user flows render and behave per the AC (states: loading / error / empty / offline). **Locate elements by their widget-spec Test IDs** (`docs/development/<feature-name>/widget-spec/<screen-name>.md`) — `testTag` / `accessibilityIdentifier` / `data-testid` — not by brittle text or xpath. If an element you need isn't in the widget spec, flag it (dev should have specced it) rather than locating by text.
+  - *UI*: key screens and user flows render and behave per the AC (states: loading / error / empty / offline). **Locate elements by their widget-spec Test IDs** (`docs/development/<feature-name>/widget-spec/<screen-name>.md`) — Android `resource-id` (`android:id` / Compose `testTag` exposed via `testTagsAsResourceId`), iOS `accessibilityIdentifier`, Web `data-testid` — not by brittle text or xpath. If an element you need isn't in the widget spec, flag it (dev should have specced it) rather than locating by text.
   - *Integration*: modules wired together + real API integration (against the contract), navigation, and persistence/offline behavior.
 - Use each platform's existing framework — e.g. backend HTTP/contract tests; Web Playwright/Cypress + component tests; Android Espresso/Compose-UI + integration; iOS XCUITest + integration. **Detect what the repo already uses and reuse it.**
 
