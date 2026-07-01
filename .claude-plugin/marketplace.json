@@ -1,0 +1,17 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "alpha",
+  "description": "SDLC lifecycle support — grooming to monitoring, ticket-centered and human-approved at every gate.",
+  "owner": {
+    "name": "Amar Bank Engineering"
+  },
+  "plugins": [
+    {
+      "name": "alpha-sdlc",
+      "description": "SDLC support: grooming (product & tech-debt) → slicing → planning → development (TDD) → testing. Draft + human-approve, reuse-first (the ladder), AC as the contract.",
+      "version": "0.1.0",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}
