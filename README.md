@@ -100,6 +100,30 @@ skills/
   do-testing/    SKILL.md + test-plan-template
 ```
 
+## Install
+
+From GitHub:
+
+```
+/plugin marketplace add rizkyalfauji11/alpha-sdlc
+/plugin install alpha-sdlc@alpha
+```
+
+Local (development / testing):
+
+```
+/plugin marketplace add /path/to/alpha-sdlc      # this repo's root
+/plugin install alpha-sdlc@alpha
+```
+
+Or run a session with the plugin loaded directly, skipping the marketplace step:
+
+```
+claude --plugin-dir /path/to/alpha-sdlc
+```
+
+Manage it with `/plugin marketplace list`, `/plugin marketplace update alpha`, `/plugin`. Hooks load at session start — use `/reload-plugins` to pick up changes without restarting. Validate the manifests any time with `claude plugin validate .`.
+
 ## Usage
 
 Invoke a phase by intent or its slash command. Start with either entry point — `/do-grooming <prd-url>` for a product feature, or `/do-tech-debt-grooming` for an engineer-initiated improvement — then `/do-slicing`, `/do-uploading`, `/do-planning`, `/do-development`, `/do-testing`. Each skill reads the prior phase's artifact and gates with you before writing or acting.
