@@ -16,6 +16,7 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 
 | # | Skill | Does | Output |
 |---|-------|------|--------|
+| 0 | **do-project-setup** | Generates the project profile (architecture, tech-stack, database, API map, security, CI/CD, assets…) one doc at a time; refresh/reconcile mode keeps it current | `docs/basics/*.md` (12-doc set) |
 | 1a | **do-grooming** | PRD/BRD → Technical Requirements Doc, section-by-section with one gate per section | `TRD.md` (hub) + `TRD-<platform>.md` (spokes), `widget-spec/<screen>.md` |
 | 1b | **do-tech-debt-grooming** | Engineer's improvement statement → behavior-preserving TRD (justify → target → regression safety), one gate per section | `TRD.md` + spokes (tech-debt template) |
 | 2 | **do-slicing** | TRD work slices → task-list document scored against Jira *Choose Appendix (v3)* | `task-list.md` |
@@ -41,6 +42,9 @@ Every logic/code decision climbs: **1** needs to exist? (YAGNI) → **2** reuse 
 
 ### TDD throughout
 Implementation is red → green → refactor. Upstream artifacts are kept TDD-ready: grooming/slicing produce testable AC, planning names the test per stage, development writes it first.
+
+### Project profile (`docs/basics/`)
+`do-project-setup` generates a per-repo baseline the other skills ground in instead of re-scanning: architecture, ui-architecture, tech-stack, database, data-cache, environment, conventions, security-compliance, cicd-deployment, api-reference (base-URL matrix), asset-registry. Each doc is commit-stamped; volatile detail points to authoritative files; a refresh/reconcile mode keeps it current (and catches unregistered assets).
 
 ### Widget spec (QA locator contract)
 For client platforms, each screen gets `widget-spec/<screen>.md` listing interactive/asserted elements with a stable **Test ID** (`<feature>_<screen>_<element>`) and a **content description that doubles as the accessibility label**. Development implements the exact IDs; testing locates by them (not brittle text/xpath). One ID, applied per platform via `testTag` / `accessibilityIdentifier` / `data-testid`.
@@ -91,6 +95,7 @@ docs/development/<feature-name>/
 principles.md                 # shared discipline, referenced by every skill
 hooks/                        # ladder validator
 skills/
+  do-project-setup/       SKILL.md                         # generates docs/basics/ profile
   do-grooming/            SKILL.md + TRD-hub-template + TRD-spoke-template + widget-spec-template
   do-tech-debt-grooming/  SKILL.md + tech-debt-TRD-template
   do-slicing/    SKILL.md
