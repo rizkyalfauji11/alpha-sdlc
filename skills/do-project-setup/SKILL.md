@@ -9,6 +9,7 @@ You are generating the **project profile** — the baseline reference every othe
 
 ## Rules
 
+- **Full-project scan — no sampling.** Learn the **whole** project, not a representative subset. Walk every module/package/directory, every manifest and config, all migrations, the entire asset tree — don't infer the architecture from a few modules or stop at the first pattern you recognize. This is the one skill where completeness outranks laziness: the profile is grounding truth for every later phase, so a partial scan quietly corrupts everything downstream. If the repo is too large for one pass, scan it **systematically in parts until fully covered** (module by module, optionally fanning out with parallel/Explore sub-agents) — never mark a doc complete from a partial view. If a section is unavoidably based on incomplete coverage, **say so explicitly** rather than guessing.
 - **One doc at a time, with approval.** Draft a doc → present it → user **approves / edits / skips** → only then write it to `./docs/basics/<file>.md` → move to the next. Never batch-write all docs.
 - **Tier — generate only what applies.** Skip docs that don't fit this repo (e.g. `ui-architecture` / `asset-registry` on a backend repo) and *say so*; never emit empty filler files. Confirm the applicable list with the user first.
 - **Point, don't copy volatile detail.** Dependency versions, full DB DDL, pipeline YAML, env values → summarize + link the authoritative file. Cache the slow-changing orientation (architecture, conventions, base-URL matrix).
@@ -38,7 +39,7 @@ Each doc has a starter template in this skill's `templates/` directory (`templat
 
 ## Flow
 
-1. **Detect & confirm.** Identify the repo type/platform and which docs apply (tier). Present the applicable doc list and get the user to confirm before drafting.
+1. **Full scan & confirm.** Scan the **entire** project (per the full-scan rule — every module, not a sample) to identify the repo type/platform and which docs apply (tier). Present the applicable doc list and get the user to confirm before drafting.
 2. **Per doc, in order:** scan the relevant real sources → draft the doc (mark `UNKNOWN` where undetermined; point to authoritative files for volatile detail) → **present for approval** (approve / edit / skip) → write to `./docs/basics/<file>.md` with the commit stamp → next doc. `security-compliance.md` needs explicit human sign-off. Seed `asset-registry.md` by scanning the actual asset directories.
 3. **Finish.** Write/refresh `overview.md` as the index with each doc's stamp. Report what was generated and what was skipped (and why).
 
