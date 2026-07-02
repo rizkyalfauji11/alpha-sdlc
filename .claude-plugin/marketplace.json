@@ -9,7 +9,7 @@
     {
       "name": "alpha-sdlc",
       "description": "SDLC support: grooming (product & tech-debt) → slicing → planning → development (TDD) → testing. Draft + human-approve, reuse-first (the ladder), AC as the contract.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "source": "./",
       "category": "productivity"
     }
