@@ -129,6 +129,32 @@ claude --plugin-dir /path/to/alpha-sdlc
 
 Manage it with `/plugin marketplace list`, `/plugin marketplace update alpha`, `/plugin`. Hooks load at session start — use `/reload-plugins` to pick up changes without restarting. Validate the manifests any time with `claude plugin validate .`.
 
+### Staying up to date
+
+New versions aren't pulled automatically for third-party marketplaces by default. To update manually:
+
+```
+/plugin marketplace update alpha    # refresh the catalog + detect the new version
+/reload-plugins                     # load it into the session
+```
+
+To **auto-update** instead: `/plugin` → *Marketplaces* → select `alpha` → **Enable auto-update** (Claude then checks and updates on session start).
+
+For a **team/org**, ship this in project `./.claude/settings.json` (or managed settings) — it adds the marketplace *and* keeps it auto-updating for everyone:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "alpha": {
+      "source": { "source": "github", "repo": "rizkyalfauji11/alpha-sdlc" },
+      "autoUpdate": true
+    }
+  }
+}
+```
+
+Updates are detected by the `version` in `plugin.json` — it's bumped on each release, so keep installs current by refreshing after a new tag.
+
 ## Usage
 
 Invoke a phase by intent or its slash command. Start with either entry point — `/do-grooming <prd-url>` for a product feature, or `/do-tech-debt-grooming` for an engineer-initiated improvement — then `/do-slicing`, `/do-uploading`, `/do-planning`, `/do-development`, `/do-testing`. Each skill reads the prior phase's artifact and gates with you before writing or acting.
