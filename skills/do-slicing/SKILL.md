@@ -11,28 +11,45 @@ The weighting/Appendix mechanics are **organization-specific** — point this sk
 
 **Apply the shared principles in `../../principles.md`** (lazy-senior mindset, never over-simplify, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary). Creating the doc is internal — the no-external-write gate matters most for the *upload* skill, not this one.
 
-## Source & Appendix
+## Source of tasks
 
-- **Source of tasks = the TRD work slices.** Read the feature's TRD under `docs/development/<feature-name>/`: the hub's **Change manifest → work-slice summary** and every spoke's **Work slices** (with their AC). The TRD is the plan; do not invent tasks that aren't traceable to a slice (ask the user to amend the TRD instead).
-- **Appendix (v3) format + scoring rules:** follow the contract in `~/.claude/skills/create-appendix-task-list/SKILL.md` — the live-Jira fetch of `Choose Appendix (v3)` (`customfield_11543`), weight tiers (MOB-V/L/M/H = 1/2/4/8 or weight-ref PDF), the output template (§1–§7), and the iron rules (**≤ 8 pt per task**, one appendix category per task → split duplicates across tasks, 16-pt lines split into 8/8 halves, stable `T<group>.<n>` IDs, no git/build/test-verification line items). Do not restate those rules here — read that skill and apply them so the doc matches what the upload skill will parse.
-- **OVERRIDE on category picking:** the referenced skill auto-picks the closest category and marks `*` without asking. **This plugin does the opposite** (per `principles.md` ask-don't-assume): when a line item has **no exact match** in the live Choose Appendix (v3) field, **present the 2–3 closest options in the right weight tier and ask the user to pick.** Only options that exist in the live field — never invent one. Record the user's pick, still mark it `*`, and note it in §6.2. The ask happens at the part's review step, so it doesn't stall drafting.
+- **Source = the TRD work slices.** Read the feature's TRD under `docs/development/<feature-name>/`: the hub's **Change manifest → work-slice summary** and every spoke's **Work slices** (with their AC). The TRD is the plan; do not invent tasks that aren't traceable to a slice (ask the user to amend the TRD instead).
+
+## Weighting mode — ALWAYS ask first
+
+**Every run, ask the user which weighting to use — Appendix (v3) or Story Points. Never assume.** The choice determines how tasks are scored and, later, which Jira field `do-uploading` writes.
+
+### Mode A — Appendix (v3)  *(org-specific)*
+
+Follow the contract in `~/.claude/skills/create-appendix-task-list/SKILL.md` — the live-Jira fetch of `Choose Appendix (v3)` (`customfield_11543`), weight tiers (MOB-V/L/M/H = 1/2/4/8 or weight-ref PDF), the output template (§1–§7), and the iron rules (**≤ 8 pt per task**, one appendix category per task → split duplicates across tasks, 16-pt lines split into 8/8 halves, stable `T<group>.<n>` IDs, no git/build/test-verification line items). Don't restate those rules — read that skill and apply them.
+- **OVERRIDE on category picking:** the referenced skill auto-picks the closest category and marks `*` without asking. **This plugin asks instead** (per `principles.md`): when a line has **no exact match** in the live field, present the **2–3 closest options in the right weight tier and let the user pick** — only options that exist in the field, never invent one. Mark it `*`, note in §6.2. Happens at the review step.
+
+### Mode B — Story Points  *(Jira default, no org setup)*
+
+Standard relative estimation — works for any team, no Appendix field needed. Estimate each task on the **modified Fibonacci scale: 1, 2, 3, 5, 8, 13**, weighing **complexity + effort/volume + uncertainty** (relative sizing, **never hours**):
+- **1** trivial (config/one-liner) · **2** small · **3** straightforward slice · **5** moderate, some unknowns · **8** complex / multi-part · **13** very complex → **must be split** (nothing larger than 13; break it into smaller tasks).
+- Give a **one-line rationale** per estimate (what drove the number). One task = one story-point value.
+- Same part → review → write loop; the task-list records **task + story points + rationale** per task instead of appendix line-items.
 
 ## Required inputs — ask first
 
 1. **Feature** — which `docs/development/<feature-name>/` TRD to slice. Confirm it's approved/complete; if not, offer to run `do-grooming` first.
-2. **Jira board key** (`FFE` / `FEG` / URL) — to fetch the live Choose Appendix (v3) options.
-3. **Weight-ref PDF/md** — only if the board's options don't encode weight in their label (per the Appendix skill's decision tree).
+2. **Weighting mode** — Appendix (v3) or Story Points. **Always ask.**
+3. *(Appendix mode only)* **Jira board key** (`FFE` / `FEG` / URL) to fetch the live Choose Appendix (v3) options, and a **weight-ref PDF/md** if the board's options don't encode weight in their label.
+4. *(Story Points mode)* confirm the scale — default is modified Fibonacci (1, 2, 3, 5, 8, 13); no Jira board or weight-ref needed to write the doc.
 
 ## Flow — part → review → write
 
 A **part** = one phase group (or one platform spoke's slices). Build the document incrementally, one part at a time:
 
-1. **Setup (once):** fetch the live Choose Appendix (v3) options + weights, summarize the TRD's full slice set grouped into parts, and confirm the part list with the user.
+1. **Setup (once):** confirm the **weighting mode** (always ask). Appendix → fetch the live Choose Appendix (v3) options + weights; Story Points → confirm the scale. Summarize the TRD's full slice set grouped into parts, and confirm the part list with the user.
 2. **For each part, loop:**
    - **Part** — take the part's TRD slices.
-   - **Review** — draft that part's tasks (task ID, title, description traced to the TRD slice/section, appendix line items + categories + per-line weights, task total, ≤8pt flags/splits per the iron rules) and **show it to the user for review** — approve / edit / re-split. Apply edits.
+   - **Review** — draft that part's tasks and **show them for review** (approve / edit / re-split):
+     - *Appendix mode:* task ID, title, description traced to the TRD slice, appendix line items + categories + per-line weights, task total, ≤8pt flags/splits.
+     - *Story Points mode:* task ID, title, description traced to the TRD slice, **story points + one-line rationale** (split anything > 13).
    - **Write** — append the approved part to the task-list document. Move to the next part.
-3. After all parts: write the summary sections (grand total, weight distribution, open items per the Appendix template) and present the finished document.
+3. After all parts: write the summary (grand total / point distribution, open items) and present the finished document. Note the mode used at the top so `do-uploading` knows which Jira field to write.
 
 ## Output
 

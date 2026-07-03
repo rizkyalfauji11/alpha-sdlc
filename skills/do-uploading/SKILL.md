@@ -15,12 +15,17 @@ You are uploading an already-written **task-list document to Jira**. This is the
 
 ## Jira mechanics — follow the existing contract
 
-The Jira-creation rules are defined in `~/.claude/skills/upload-task-to-jira/SKILL.md` — **read it and follow it** rather than restating. In particular:
-- **Required per task:** Choose Appendix (v3) `customfield_11543` (multiselect array), Weight Points `customfield_10751`, Story Point Type (v2) `customfield_11312` (`Technical` = id `10949`), assignee, and **Epic parent link** (`parent: {"key": "FFE-xxxx"}`, legacy fallback `customfield_10014`).
+**First, read the mode noted at the top of `task-list.md` (set by `do-slicing`): Appendix (v3) or Story Points.** It decides which weighting field to write.
+
+- **Story Points mode** *(any Jira, no org setup):* set the standard **Story Points** field — **discover its id** via `getJiraIssueTypeMetaWithFields` (commonly "Story point estimate" / "Story Points", e.g. `customfield_10016`, but it varies per instance — never hardcode; ask if ambiguous). Write the task's story-point value there. **Skip** the Appendix (v3) and Weight Points fields entirely. Still set assignee + Epic parent. This is the portable path.
+- **Appendix (v3) mode** *(org-specific):* follow the amarbank contract below.
+
+The amarbank Appendix-mode Jira-creation rules are defined in `~/.claude/skills/upload-task-to-jira/SKILL.md` — **read it and follow it** rather than restating. In particular:
+- **Required per task (Appendix mode):** Choose Appendix (v3) `customfield_11543` (multiselect array), Weight Points `customfield_10751`, Story Point Type (v2) `customfield_11312` (`Technical` = id `10949`), assignee, and **Epic parent link** (`parent: {"key": "FFE-xxxx"}`, legacy fallback `customfield_10014`).
 - **Epic is a hard precondition** — ask the user for the FFE Epic key up front, verify it's an Epic in the right project before creating anything.
 - **MOB category map** + field IDs + the `parent`-shape gotchas: use that skill's Quick Reference.
 - **Sample-first, then batches of ≤ 5 with a review checkpoint after each** — never create the whole backlog unattended. This is the external-write gate; honor it strictly.
-- Parsing: tasks are `#### T<id> — <title>` with an `Appendix line | Category | Weight` table and a `**Task total**` row.
+- Parsing: tasks are `#### T<id> — <title>`. Appendix mode has an `Appendix line | Category | Weight` table + `**Task total**` row; Story Points mode has a **story-point value + rationale** per task.
 
 ## Plugin additions
 

@@ -163,5 +163,5 @@ Invoke a phase by intent or its slash command. Start with either entry point —
 
 ## Notes
 
-- The **slicing** and **uploading** phases assume an "Appendix (v3)" task-weighting workflow and organization-specific Jira custom fields (weight points, an appendix multiselect, an epic-link field). These are org-configured — point the skills at your own Jira fields/weighting scheme, or skip these two phases and go grooming → planning → development → testing directly. Everything else works without any Jira setup.
+- The **slicing** and **uploading** phases are optional (Jira only) and **always ask which weighting to use**: **Story Points** (Jira's default modified-Fibonacci estimation — portable, no org setup, writes the standard Story Points field) or **Appendix (v3)** (an org-specific weighting workflow with custom fields — the amarbank flow is the reference; adapt to your Jira). Skip both phases entirely and go grooming → planning → development → testing if you don't use Jira.
 - Multi-repo (separate platform repos) was designed but not built: the intended shape is a checked-in manifest + a shared hub each repo reads, one repo per session for writes.
