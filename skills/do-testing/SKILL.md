@@ -17,7 +17,7 @@ You are writing the **feature-level tests** for an implemented feature. This is 
 
 ## Source & output
 
-- **Inputs:** the implemented feature, the TRD (hub API contract + spoke AC), the plan, and the tasks (Jira keys).
+- **Inputs:** the implemented feature, the TRD (hub API contract + spoke AC — the primary source), the plan, and the tasks / Jira keys if the Jira phases were run.
 - **Per platform.** Track coverage in `docs/development/<feature-name>/test-plan-<platform>.md` using `test-plan-template.md` — an **AC → test case → type → status** table so every AC is provably covered. This doc is the reviewable artifact; the test files are the deliverable.
 
 ## Flow

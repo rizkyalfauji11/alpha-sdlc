@@ -43,4 +43,4 @@ For the next unfinished stage in the plan:
 
 ## After the last stage
 
-Confirm every task/AC the plan covered is implemented and verified, report what's done and anything deferred, and hand off to testing (`do-testing`, when it exists) — the AC are its input.
+Confirm every task/AC the plan covered is implemented and verified, report what's done and anything deferred, and hand off to `do-testing` — the AC are its input.

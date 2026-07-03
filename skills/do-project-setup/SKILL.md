@@ -14,7 +14,7 @@ You are generating the **project profile** — the baseline reference every othe
 - **Tier — generate only what applies.** Skip docs that don't fit this repo (e.g. `ui-architecture` / `asset-registry` on a backend repo) and *say so*; never emit empty filler files. Confirm the applicable list with the user first.
 - **Point, don't copy volatile detail.** Dependency versions, full DB DDL, pipeline YAML, env values → summarize + link the authoritative file. Cache the slow-changing orientation (architecture, conventions, base-URL matrix).
 - **Never write secrets.** Record where/what-name (config file, env-var name), never values, tokens, or keys.
-- **Stamp each doc** with the git commit it was generated at (in the doc header) — so refresh can tell which docs are stale without regenerating all 12.
+- **Stamp each doc** with the git commit it was generated at (in the doc header) — so refresh can tell which docs are stale without regenerating all 13.
 - **security-compliance.md is stricter:** document only *observed* controls; never assert a compliance status you can't verify; flag every unconfirmed item as a gap for a human/security to fill; require an explicit human sign-off before writing it.
 
 ## The docs (`./docs/basics/`)

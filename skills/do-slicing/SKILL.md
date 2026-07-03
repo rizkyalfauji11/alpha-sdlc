@@ -1,6 +1,6 @@
 ---
 name: do-slicing
-description: Turn an approved TRD into a task-list DOCUMENT — a list of tasks with descriptions, scored against the live Jira "Choose Appendix (v3)" field — built part-by-part (part → review → write). This skill ONLY writes the document; uploading the tasks to Jira is a separate downstream skill. Use when the user wants to slice a TRD into tasks, create a task list / appendix task list from a TRD, weight a TRD's work, or prep tasks for Jira. Triggers on "slice the TRD", "create task list", "appendix task list", "/do-slicing", "weight the tasks".
+description: Optional Jira phase. Turn an approved TRD into a task-list DOCUMENT, scored by Story Points (Jira default) OR an Appendix-style weighting — always asks which — built part-by-part (part → review → write). Writes the document only; uploading to Jira is a separate downstream skill; skip both if you don't use Jira. Use when the user wants to slice a TRD into tasks, create a task list from a TRD, story-point or weight a TRD's work, or prep tasks for Jira. Triggers on "slice the TRD", "create task list", "story point the tasks", "appendix task list", "/do-slicing", "weight the tasks".
 ---
 
 > **Optional phase — Jira only.** Skip `do-slicing` and `do-uploading` entirely if your team doesn't track work in Jira: `do-planning` → `do-development` → `do-testing` run directly off the TRD's work slices + AC. Only use this phase if you want the TRD's slices turned into weighted Jira tickets.

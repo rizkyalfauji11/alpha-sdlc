@@ -1,6 +1,6 @@
 ---
 name: do-uploading
-description: Upload a task-list document (produced by do-slicing) to Jira — bulk-create the tasks with Choose Appendix (v3), Weight Points, Story Point Type, assignee, and Epic parent — then write the created keys back into the TRD. Use when the user wants to upload/create the Jira tasks from the task list, push the sliced tasks to Jira, or import the appendix task list. Triggers on "upload the task list", "create the jira tasks", "push tasks to jira", "/do-uploading", "import to jira".
+description: Optional Jira phase. Upload a task-list document (produced by do-slicing) to Jira — bulk-create the tasks with the weighting field for the doc's mode (standard Story Points, or Appendix v3 + Weight Points), plus assignee and Epic parent — then write the created keys back into the TRD. Use when the user wants to upload/create the Jira tasks from the task list, push the sliced tasks to Jira, or import the task list. Triggers on "upload the task list", "create the jira tasks", "push tasks to jira", "/do-uploading", "import to jira".
 ---
 
 > **Optional phase — Jira only.** Only run this if you used `do-slicing` and want the tasks created in Jira. Teams not using Jira skip it — development works straight from the TRD/plan. The Jira fields/epic conventions here are **organization-specific** (this plugin uses the amarbank FFE/FEG setup as the reference); adapt them to your project.

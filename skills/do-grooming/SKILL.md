@@ -58,7 +58,7 @@ docs/development/<feature-name>/
 6. Read the relevant template and propose a **section outline** based on it. Drop sections that don't apply; add ones that do.
 7. **Stop and ask the user to approve or edit the outline.** Do not draft any content yet.
 
-If the PRD describes a tiny change, say so and offer to skip the TRD and go straight to tickets instead.
+If the PRD describes a tiny change, say so and offer to skip the TRD and go straight to planning (or tickets, if you use Jira) instead.
 
 ### Step 1 — Per-section loop
 
