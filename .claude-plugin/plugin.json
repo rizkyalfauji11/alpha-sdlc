@@ -1,9 +1,9 @@
 {
   "name": "alpha-sdlc",
-  "version": "0.2.2",
-  "description": "SDLC support: grooming → development → testing → deployment → monitoring. Ticket-centered, draft + human-approve.",
+  "version": "0.3.0",
+  "description": "SDLC support: grooming → development → testing → deployment → monitoring. TRD-centered, draft + human-approve. Jira integration optional.",
   "author": {
-    "name": "Amar Bank Engineering"
+    "name": "rizkyalfauji11"
   },
   "homepage": "https://github.com/rizkyalfauji11/alpha-sdlc",
   "repository": "https://github.com/rizkyalfauji11/alpha-sdlc"

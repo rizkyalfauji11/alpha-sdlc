@@ -1,14 +1,14 @@
 {
   "$schema": "https://code.claude.com/schemas/marketplace.json",
   "name": "alpha",
-  "description": "SDLC lifecycle support — grooming to monitoring, ticket-centered and human-approved at every gate.",
+  "description": "SDLC lifecycle support — grooming to monitoring, TRD-centered and human-approved at every gate. Jira integration optional.",
   "owner": {
-    "name": "Amar Bank Engineering"
+    "name": "rizkyalfauji11"
   },
   "plugins": [
     {
       "name": "alpha-sdlc",
-      "description": "SDLC support: grooming (product & tech-debt) → slicing → planning → development (TDD) → testing. Draft + human-approve, reuse-first (the ladder), AC as the contract.",
+      "description": "SDLC support: grooming (product & tech-debt) → planning → development (TDD) → testing, with optional Jira slicing/uploading. Draft + human-approve, reuse-first (the ladder), AC as the contract.",
       "source": "./",
       "category": "productivity"
     }

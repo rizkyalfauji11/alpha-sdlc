@@ -9,7 +9,7 @@ You are writing a **development plan document**: the ordered, staged plan an eng
 
 ## Source & output
 
-- **Inputs:** the feature's approved TRD (`docs/development/<feature-name>/` hub + the relevant spoke) and its tasks (`task-list.md` / Jira keys). The plan implements what the TRD/tasks already decided — it does **not** re-open design decisions (send those back to `do-grooming`).
+- **Inputs:** the feature's approved TRD (`docs/development/<feature-name>/` hub + the relevant spoke) — its **work slices + AC are the source of work**. If you ran the optional Jira phases (`do-slicing`/`do-uploading`), also use `task-list.md` / Jira keys; if you skipped them, plan straight off the TRD. Either way the plan implements what the TRD already decided — it does **not** re-open design (send those back to `do-grooming`).
 - **Development is per-platform** → write one plan per platform: `docs/development/<feature-name>/plan-<platform>.md`. Use `plan-template.md` in this skill's directory.
 
 ## What makes a good stage (the core rule)
@@ -18,7 +18,7 @@ You are writing a **development plan document**: the ordered, staged plan an eng
 - **Ordered by dependency** — contract/data first, then logic, then UI; match the hub's release ordering.
 - **Ends in a checkpoint**: how to verify it works, and an explicit **⏸ STOP — review** marker.
 - **Marks whether it's safe to stop after** — ideally the codebase is in a working (compiles, tests pass, shippable-behind-flag) state at as many checkpoints as possible, so pausing leaves nothing half-broken. Call out the stages where stopping would leave things incomplete.
-- **Traces to tasks/AC** — each stage lists the task IDs / Jira keys / acceptance criteria it satisfies. Every task should be covered by some stage; flag any that aren't.
+- **Traces to AC / work slices** — each stage lists the acceptance criteria / TRD work slices it satisfies (plus task IDs / Jira keys if the Jira phases were run). Every slice should be covered by some stage; flag any that aren't.
 - **Detail the *shape* of the change, not the code.** A stage must be reviewable before it's built: give per-file change intent, new/changed signatures · data shapes · endpoints · props, and pseudocode/notes for genuinely tricky logic (races, money caps, retries, edge cases). **Calibrate by risk** — a trivial change stays one line, a risky one gets the interface + edge cases. Never paste full method bodies or boilerplate — that turns the plan into a stale second copy of the diff (over-engineering). The plan describes the shape; the diff fills in the bodies.
 
 ## Flow — stage → review → write

@@ -3,7 +3,11 @@ name: do-slicing
 description: Turn an approved TRD into a task-list DOCUMENT — a list of tasks with descriptions, scored against the live Jira "Choose Appendix (v3)" field — built part-by-part (part → review → write). This skill ONLY writes the document; uploading the tasks to Jira is a separate downstream skill. Use when the user wants to slice a TRD into tasks, create a task list / appendix task list from a TRD, weight a TRD's work, or prep tasks for Jira. Triggers on "slice the TRD", "create task list", "appendix task list", "/do-slicing", "weight the tasks".
 ---
 
-You are converting an **approved TRD into a task-list document**, scored with the **Choose Appendix (v3)** weight field. This is grooming → development hand-off. **This skill writes the document only — it does NOT create or upload anything to Jira. The upload is a separate skill, added later.**
+> **Optional phase — Jira only.** Skip `do-slicing` and `do-uploading` entirely if your team doesn't track work in Jira: `do-planning` → `do-development` → `do-testing` run directly off the TRD's work slices + AC. Only use this phase if you want the TRD's slices turned into weighted Jira tickets.
+
+You are converting an **approved TRD into a task-list document**, scored with a task-**weighting scheme** (e.g. a Jira "Appendix"-style field). This is the grooming → development hand-off for Jira teams. **This skill writes the document only — it does NOT create or upload anything to Jira; `do-uploading` does that.**
+
+The weighting/Appendix mechanics are **organization-specific** — point this skill at your own Jira weighting scheme. This plugin ships against the amarbank "Choose Appendix (v3)" flow as the reference implementation; adapt the field names/weights to your setup, or skip the phase.
 
 **Apply the shared principles in `../../principles.md`** (lazy-senior mindset, never over-simplify, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary). Creating the doc is internal — the no-external-write gate matters most for the *upload* skill, not this one.
 

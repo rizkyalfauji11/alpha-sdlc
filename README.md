@@ -19,11 +19,13 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 | 0 | **do-project-setup** | Generates the project profile (architecture, tech-stack, database, API map, security, CI/CD, assets…) one doc at a time; refresh/reconcile mode keeps it current | `docs/basics/*.md` (13-doc set) |
 | 1a | **do-grooming** | PRD/BRD → Technical Requirements Doc, section-by-section with one gate per section | `TRD.md` (hub) + `TRD-<platform>.md` (spokes), `widget-spec/<screen>.md` |
 | 1b | **do-tech-debt-grooming** | Engineer's improvement statement → behavior-preserving TRD (justify → target → regression safety), one gate per section | `TRD.md` + spokes (tech-debt template) |
-| 2 | **do-slicing** | TRD work slices → task-list document scored against Jira *Choose Appendix (v3)* | `task-list.md` |
-| 3 | **do-uploading** | task-list → Jira tasks (epic-linked, weighted), keys written back | Jira issues + updated docs |
+| 2 | **do-slicing** *(optional — Jira)* | TRD work slices → task-list document scored by your Jira weighting scheme | `task-list.md` |
+| 3 | **do-uploading** *(optional — Jira)* | task-list → Jira tasks (epic-linked, weighted), keys written back | Jira issues + updated docs |
 | 4 | **do-planning** | TRD + tasks → staged dev plan: arch/package layout + small reviewable stages | `plan-<platform>.md` |
 | 5 | **do-development** | Executes the plan stage-by-stage, TDD, stop at each checkpoint | code + passing tests |
 | 6 | **do-testing** | Feature-level tests per platform, located by widget-spec IDs | tests + `test-plan-<platform>.md` |
+
+**Steps 2–3 are optional (Jira only).** Without Jira, the pipeline is: setup → grooming → **planning → development → testing**, working straight from the TRD's work slices + AC. The Jira phases are org-specific (adapt to your Jira, or skip).
 
 **Roadmap (not yet built):** deployment, monitoring (Datadog + Mixpanel), multi-repo awareness.
 
@@ -157,7 +159,7 @@ Updates are detected by the `version` in `plugin.json` — it's bumped on each r
 
 ## Usage
 
-Invoke a phase by intent or its slash command. Start with either entry point — `/do-grooming <prd-url>` for a product feature, or `/do-tech-debt-grooming` for an engineer-initiated improvement — then `/do-slicing`, `/do-uploading`, `/do-planning`, `/do-development`, `/do-testing`. Each skill reads the prior phase's artifact and gates with you before writing or acting.
+Invoke a phase by intent or its slash command. Start with either entry point — `/do-grooming <prd-url>` for a product feature, or `/do-tech-debt-grooming` for an engineer-initiated improvement — then `/do-planning`, `/do-development`, `/do-testing`. If you use Jira, insert `/do-slicing` and `/do-uploading` between grooming and planning; otherwise skip them. Each skill reads the prior phase's artifact and gates with you before writing or acting.
 
 ## Notes
 
