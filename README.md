@@ -46,7 +46,23 @@ Every logic/code decision climbs: **1** needs to exist? (YAGNI) → **2** reuse 
 Implementation is red → green → refactor. Upstream artifacts are kept TDD-ready: grooming/slicing produce testable AC, planning names the test per stage, development writes it first.
 
 ### Project profile (`docs/basics/`)
-`do-project-setup` generates a per-repo baseline the other skills ground in instead of re-scanning: architecture, ui-architecture, tech-stack, database, data-cache, environment, conventions, git-management, security-compliance, cicd-deployment, api-reference (base-URL matrix), asset-registry. Each doc is commit-stamped; volatile detail points to authoritative files; a refresh/reconcile mode keeps it current (and catches unregistered assets).
+`do-project-setup` generates a per-repo baseline the other skills ground in instead of re-scanning. Each doc is commit-stamped, volatile detail points to authoritative files, and a refresh/reconcile mode keeps it current (and catches unregistered assets). The skill tiers the set — it generates only what applies to the repo and skips the rest (no empty files).
+
+| Doc | Covers | Notes |
+|-----|--------|-------|
+| `overview.md` | Project summary + profile index with per-doc freshness stamps | core |
+| `architecture.md` | Architecture style, layering + dependency rule, module/package map (Mermaid) | core |
+| `ui-architecture.md` | Navigation, state management, design system, theming, screen inventory | client only |
+| `tech-stack.md` | Languages, frameworks, key libs, build/run/test commands (versions → manifest) | core |
+| `database.md` | Engine(s), schema shape (Mermaid ER), migration approach (DDL → migrations) | if it owns data |
+| `data-cache.md` | Local persistence, caching strategy, offline behavior, what's stored where | if applicable |
+| `environment.md` | Environments, config & secrets *approach* (names/locations, no values), flags, variants | core |
+| `conventions.md` | Coding conventions, naming, folder rules, testing conventions | core |
+| `git-management.md` | Branching, commit/PR/merge conventions, protected branches, tags/releases, hooks | core |
+| `security-compliance.md` | Auth/authz, PII, encryption, compliance regimes, secret mgmt, audit logging | observed-only + human sign-off |
+| `cicd-deployment.md` | CI/CD tool, pipeline stages, promotion, release, versioning, rollback | if deployed |
+| `api-reference.md` | **Base-URL matrix (service × env)**, API catalog, auth, gotchas (no secrets) | if it calls/serves APIs |
+| `asset-registry.md` | Searchable asset inventory (name · path · tags), naming, icon set, design tokens (→ Figma) | client only |
 
 ### Widget spec (QA locator contract)
 For client platforms, each screen gets `widget-spec/<screen>.md` listing interactive/asserted elements with a stable **Test ID** (`<feature>_<screen>_<element>`) and a **content description that doubles as the accessibility label**. Development implements the exact IDs; testing locates by them (not brittle text/xpath). One ID, applied per platform via `testTag` / `accessibilityIdentifier` / `data-testid`.
