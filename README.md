@@ -75,9 +75,11 @@ If the project uses layered/clean architecture, changes are placed in the right 
 ## Shared principles ([`principles.md`](./principles.md))
 
 - **Lazy senior engineer** — efficient not careless; deletion over addition; no speculative scaffolding; **never over-simplify** (simplicity = fewer moving parts for the *same* correctness).
-- **The ladder** — reuse before build, named rung.
-- **Ground in real code · ask don't assume · offer 2–3 best-practice options · keep a living understanding summary (re-summarize on change) · draft + human-approve before any external write.**
-- **Test-first across the pipeline · respect the project's architecture.**
+- **The ladder** — reuse before build, named rung (hook-enforced).
+- **Ground in real code · validate every choice** (valid, relevant, compatible with existing code — no hallucinated libs/APIs) **· ask don't assume · offer 2–3 best-practice options · keep a living understanding summary** (re-summarize on change).
+- **Draft + human-approve before any external write · asking ends the turn** — every gate is a hard STOP; wait for the user, no timeout, no auto-continue.
+- **Keep the project profile current** (`docs/basics/` updated as work changes it) **· comments minimal and project-relevant** (not task/ticket provenance).
+- **Test-first across the pipeline · respect the project's architecture** (clean/layered when the project uses it).
 
 ---
 
