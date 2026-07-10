@@ -13,12 +13,36 @@
 
 ## AC → test coverage
 
-| AC / behavior | Test type | Test case (what it asserts) | File | Status |
-|---------------|-----------|-----------------------------|------|--------|
-| <e.g. payment ≤ Rp1M succeeds> | API / integration | <asserts 200 + balance debited> | <path> | pass / fail / pending |
-| <e.g. payment > Rp1M rejected> | API | <asserts 4xx + error code, no debit> | <path> | |
-| <e.g. scan flow happy path> | UI | <widget tap → scanner → success screen> | <path> | |
-| <e.g. offline state> | UI / integration | <shows offline banner, no crash> | <path> | |
+| ID | AC / behavior | Test type | Test case (what it asserts) | File | Status |
+|----|---------------|-----------|-----------------------------|------|--------|
+| TC1 | <e.g. payment ≤ Rp1M succeeds> | API / integration | <asserts 200 + balance debited> | <path> | pass / fail / pending |
+| TC2 | <e.g. payment > Rp1M rejected> | API | <asserts 4xx + error code, no debit> | <path> | |
+| TC3 | <e.g. scan flow happy path> | UI | <widget tap → scanner → success screen> | <path> | |
+| TC4 | <e.g. offline state> | UI / integration | <shows offline banner, no crash> | <path> | |
+
+## Test procedures (step-by-step)
+
+> One block per test point above (by ID) — how to execute it. Written so a human QA can
+> run it by hand, and so the automated test's intent is unambiguous. Locate UI elements by
+> their widget-spec Test IDs, not text.
+
+### TC1 — <what it verifies>
+- **AC:** <ref to the acceptance criterion>
+- **Preconditions:** <state / data / auth / environment needed before starting>
+- **Steps:**
+  1. <action — e.g. tap `qris_widget_scan_button`>
+  2. <action>
+  3. <action>
+- **Expected:** <the observable result that makes this pass>
+
+### TC2 — <what it verifies>
+- **AC:** <ref>
+- **Preconditions:** <…>
+- **Steps:**
+  1. <…>
+- **Expected:** <…>
+
+<!-- one block per test ID; include the negative / edge / error / offline cases too -->
 
 ## Coverage summary
 
