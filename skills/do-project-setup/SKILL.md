@@ -24,7 +24,7 @@ Each doc has a starter template in this skill's `templates/` directory (`templat
 | File | Contents | Cache vs point |
 |------|----------|----------------|
 | `overview.md` | Project summary, the profile index (links), per-doc freshness/commit stamps | cache |
-| `architecture.md` | Architecture style + layering + dependency rule, module/package map, key components (Mermaid) | cache |
+| `architecture.md` | Architecture style + layering + dependency rule, **code structure (directory tree)**, module/package map, key components (Mermaid) | cache |
 | `ui-architecture.md` *(clients)* | Navigation, state management, design system, theming, screen inventory | cache |
 | `tech-stack.md` | Languages, frameworks, key libs, build tooling + build/run/test commands | stack cached; **versions → manifest** |
 | `database.md` | Engine(s), schema shape (Mermaid ER), migration approach | overview cached; **DDL → migrations** |

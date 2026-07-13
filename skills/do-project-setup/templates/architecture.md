@@ -16,6 +16,18 @@ graph TD
   Data --> Domain
 ```
 
+## Code structure
+
+<The actual directory layout — where each kind of code physically lives. Annotate the tree so a newcomer (and `do-planning`) knows where new work lands. Keep it to the meaningful dirs, not every file.>
+
+```
+<repo-root>/
+  <dir>/            # <what lives here>
+  <dir>/
+    <subdir>/       # <…>
+  <dir>/            # <…>
+```
+
 ## Module / package map
 
 | Module / package | Responsibility | Depends on |
