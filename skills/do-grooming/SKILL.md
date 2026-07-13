@@ -8,7 +8,9 @@ Identify the PRD/BRD source from the user's request (a URL, a file path). If non
 
 **Apply the shared principles in `../../principles.md`** (lazy-senior-engineer mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). The rules below are grooming-specific additions.
 
-**Read the project profile first** (`docs/basics/` from `do-project-setup`, if present) — architecture, tech-stack, database, api-reference, conventions, etc. — as your grounding reference before scanning code from scratch. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh. If there's no profile, suggest running `do-project-setup`, then proceed by scanning the repo.
+**Read the project profile first** (`docs/basics/` from `do-project-setup`) — architecture, code structure, tech-stack, database, api-reference, conventions, etc. — as your grounding reference before scanning code from scratch. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
+
+**If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run `do-project-setup` first** — grooming grounds in that profile, and skipping it means grooming on an ungrounded view. Wait for their answer: recommend setting up first; proceed to groom without it only if the user explicitly chooses to (then fall back to scanning the repo, and note that decisions are ungrounded).
 
 ## Hub + spokes model
 
