@@ -31,7 +31,7 @@ Same engine (gated section-by-section TRD, hub/spokes, ladder, Mermaid, flows in
 
 ### Per-section loop
 
-Same as grooming — **one section at a time, one approval gate per section, never all sections in one batch.** For each section: read → ask open questions → propose decisions (name the ladder rung; **Approach field is required** — the validator hook enforces it) → get the user's approval → write prose/Mermaid, stamped `_Approved: YYYY-MM-DD_` → move to the next section. (Offer "approve all remaining" only once the user is clearly satisfied, for small TRDs.)
+Same as grooming — **one section at a time, one approval gate per section, never all sections in one batch.** For each section: read → ask open questions → propose decisions (name the ladder rung; **Approach field is required** — the validator hook enforces it) → get the user's approval → write prose/Mermaid, stamped `_Approved: YYYY-MM-DD_` → move to the next section. One section at a time; never offer to approve the rest in a batch.
 
 ### Final section — Change manifest
 
