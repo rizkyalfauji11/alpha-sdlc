@@ -22,7 +22,7 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 | 2 | **do-slicing** *(optional — Jira)* | TRD work slices → task-list document scored by your Jira weighting scheme | `task-list.md` |
 | 3 | **do-uploading** *(optional — Jira)* | task-list → Jira tasks (epic-linked, weighted), keys written back | Jira issues + updated docs |
 | 4 | **do-planning** | TRD + tasks → staged dev plan: arch/package layout + small reviewable stages | `plan-<platform>.md` |
-| 5 | **do-development** | Executes the plan stage-by-stage, TDD, stop at each checkpoint | code + passing tests |
+| 5 | **do-development** | Executes the plan stage-by-stage, TDD, visual parity for UI, stop at each checkpoint | code + passing tests |
 | 6 | **do-testing** | Feature-level tests per platform, located by widget-spec IDs | tests + `test-plan-<platform>.md` |
 
 **Steps 2–3 are optional (Jira only).** Without Jira, the pipeline is: setup → grooming → **planning → development → testing**, working straight from the TRD's work slices + AC. The Jira phases are org-specific (adapt to your Jira, or skip).
