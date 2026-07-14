@@ -64,6 +64,9 @@ Implementation is red → green → refactor. Upstream artifacts are kept TDD-re
 | `api-reference.md` | **Base-URL matrix (service × env)**, API catalog, auth, gotchas (no secrets) | if it calls/serves APIs |
 | `asset-registry.md` | Searchable asset inventory (name · path · tags), naming, icon set, design tokens (→ Figma) | client only |
 
+### Visual parity (design ↔ built UI)
+For UI stages with a design reference (a Figma link or `design/<screen>.png`, recorded in the plan), `do-development` doesn't code-from-image blind: after a stage is green it **renders + screenshots** the screen and compares to the design **two ways — an AI visual checklist + a pixel-diff** — then fixes and re-renders until parity, within **platform-best-practice tolerance** (intentional platform deviations flagged, not forced pixel-identical). The screenshot + parity result appear in the stage review. Rendering uses the platform's own tooling (Playwright / emulator+adb / simulator+simctl); the skill asks before installing anything.
+
 ### Widget spec (QA locator contract)
 For client platforms, each screen gets `widget-spec/<screen>.md` listing interactive/asserted elements with a stable **Test ID** (`<feature>_<screen>_<element>`) and a **content description that doubles as the accessibility label**. Development implements the exact IDs; testing locates by them (not brittle text/xpath). One ID, applied per platform via `testTag` / `accessibilityIdentifier` / `data-testid`.
 
@@ -101,7 +104,8 @@ docs/development/<feature-name>/
   TRD-<platform>.md           # spoke per platform
   widget-spec/<screen>.md     # QA locator contract per screen (clients)
   task-list.md                # Appendix-v3-scored tasks
-  plan-<platform>.md          # staged dev plan (arch layout + stages)
+  plan-<platform>.md          # staged dev plan (arch layout + stages + design refs)
+  design/<screen>.png         # design images to build 1:1 against (or Figma links in the plan)
   test-plan-<platform>.md     # AC → test → status coverage
 ```
 
