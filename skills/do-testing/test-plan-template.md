@@ -3,22 +3,25 @@
 | | |
 |---|---|
 | **Platform** | <Backend / Android / iOS / Web> |
-| **Test types** | <Backend: API · Web/Android/iOS: UI + integration> |
+| **Levels** | API · UI (visual + composition) · Integration (UI↔API) · System/E2E (risk-calibrated) |
 | **Framework** | <existing framework reused — e.g. Playwright / Espresso / XCUITest / HTTP contract> |
 | **TRD** | [hub](./TRD.md) · [spoke](./TRD-<platform>.md) |
 | **Date** | <YYYY-MM-DD> |
 
-> Every acceptance criterion maps to at least one test case. Cover the negative / error /
-> edge / auth / offline cases the AC implies — not just the happy path. Mark uncovered AC.
+> Every acceptance criterion maps to at least one test case, at the **right level** — placed once
+> where it's cheapest and most stable (don't re-test the same thing across levels). Cover the
+> negative / error / edge / auth / offline cases the AC implies — not just the happy path. Mark uncovered AC.
+> **Level** = API · UI · Integration · E2E. Visual parity is a UI-level check (within platform tolerance).
 
 ## AC → test coverage
 
-| ID | AC / behavior | Test type | Test case (what it asserts) | File | Status |
-|----|---------------|-----------|-----------------------------|------|--------|
-| TC1 | <e.g. payment ≤ Rp1M succeeds> | API / integration | <asserts 200 + balance debited> | <path> | pass / fail / pending |
-| TC2 | <e.g. payment > Rp1M rejected> | API | <asserts 4xx + error code, no debit> | <path> | |
-| TC3 | <e.g. scan flow happy path> | UI | <widget tap → scanner → success screen> | <path> | |
-| TC4 | <e.g. offline state> | UI / integration | <shows offline banner, no crash> | <path> | |
+| ID | AC / behavior | Level | Test case (what it asserts) | File | Status |
+|----|---------------|-------|-----------------------------|------|--------|
+| TC1 | <e.g. payment > Rp1M rejected> | API | <asserts 4xx + error code, no debit> | <path> | pass / fail / pending |
+| TC2 | <e.g. scan screen matches design> | UI (visual) | <icons/spacing/type parity within tolerance; diff saved> | <path> | |
+| TC3 | <e.g. scan screen composition> | UI (composition) | <elements present, hierarchy, states> | <path> | |
+| TC4 | <e.g. balance loads from API> | Integration | <real call renders; loading/error driven by response> | <path> | |
+| TC5 | <e.g. end-to-end pay-at-merchant> | E2E | <full journey UI→API→DB, prod-like, auth + flag> | <path> | |
 
 ## Test procedures (step-by-step)
 
@@ -47,6 +50,8 @@
 ## Coverage summary
 
 - **AC covered:** <n of m>
+- **By level:** API <n> · UI <n> · Integration <n> · E2E <n>
+- **E2E scope (risk-calibrated):** <which critical journeys got E2E, and why others didn't>
 - **Uncovered AC (gaps):** <list, or "none">
-- **Manual-only (no automation possible):** <list + why, or "none">
-- **Failing tests:** <list, or "none">
+- **Manual-only (env unavailable / no automation possible):** <list + why, or "none">
+- **Failing tests (→ back to do-development):** <list, or "none">
