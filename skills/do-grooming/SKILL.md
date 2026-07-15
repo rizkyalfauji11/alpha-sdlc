@@ -6,7 +6,7 @@ description: Groom a PRD/BRD into a Technical Requirements Document (TRD.md) sec
 You are grooming a product requirement into a **Technical Requirements Document**.
 Identify the PRD/BRD source from the user's request (a URL, a file path). If none is given, ask for it.
 
-**Apply the shared principles in `../../principles.md`** (lazy-senior-engineer mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). The rules below are grooming-specific additions.
+**First, read `../../principles.md` in full now, then apply it** (lazy-senior-engineer mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). The rules below are grooming-specific additions.
 
 **Read the project profile first** (`docs/basics/` from `do-project-setup`) — architecture, code structure, tech-stack, database, api-reference, conventions, etc. — as your grounding reference before scanning code from scratch. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
 

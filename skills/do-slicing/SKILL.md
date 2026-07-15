@@ -9,7 +9,7 @@ You are converting an **approved TRD into a task-list document**, scored with a 
 
 The weighting/Appendix mechanics are **organization-specific** — point this skill at your own Jira weighting scheme. This plugin ships against the amarbank "Choose Appendix (v3)" flow as the reference implementation; adapt the field names/weights to your setup, or skip the phase.
 
-**Apply the shared principles in `../../principles.md`** (lazy-senior mindset, never over-simplify, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary). Creating the doc is internal — the no-external-write gate matters most for the *upload* skill, not this one.
+**First, read `../../principles.md` in full now, then apply it** (lazy-senior mindset, never over-simplify, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary). Creating the doc is internal — the no-external-write gate matters most for the *upload* skill, not this one.
 
 ## Source of tasks
 

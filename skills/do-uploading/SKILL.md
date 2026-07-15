@@ -7,7 +7,7 @@ description: Optional Jira phase. Upload a task-list document (produced by do-sl
 
 You are uploading an already-written **task-list document to Jira**. This is the step `do-slicing` deliberately stops short of. Creating Jira issues is an **external write** — the draft + human-approve discipline in `../../principles.md` is at its strongest here.
 
-**Apply the shared principles in `../../principles.md`** — especially **draft + human-approve before any external write**, and ask-don't-assume for the Epic and assignee.
+**First, read `../../principles.md` in full now, then apply it** — especially **draft + human-approve before any external write**, and ask-don't-assume for the Epic and assignee.
 
 ## Source
 

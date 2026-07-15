@@ -5,7 +5,7 @@ description: Write and run the feature-level tests for an implemented feature, p
 
 You are writing the **feature-level tests** for an implemented feature. This is the testing phase — broader than `do-development`'s per-stage unit TDD. The tests assert the **acceptance criteria** (carried from the TRD/tasks — the contract this whole pipeline has protected) and the **API contract** (hub TRD).
 
-**Apply the shared principles in `../../principles.md`** — especially: tests derive from **testable AC**; **never over-simplify** (cover negative / error / edge / auth / offline cases, not just the happy path); ground in real code; reuse the project's existing test framework and fixtures (ladder rung 2 — don't introduce a new test stack); calibrate (don't test framework code or trivial getters — that's redundant with unit tests).
+**First, read `../../principles.md` in full now, then apply it** — especially: tests derive from **testable AC**; **never over-simplify** (cover negative / error / edge / auth / offline cases, not just the happy path); ground in real code; reuse the project's existing test framework and fixtures (ladder rung 2 — don't introduce a new test stack); calibrate (don't test framework code or trivial getters — that's redundant with unit tests).
 
 ## Test type per platform
 

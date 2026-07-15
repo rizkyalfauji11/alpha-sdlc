@@ -5,7 +5,7 @@ description: Implement a feature stage-by-stage by executing its development pla
 
 You are **implementing a feature by executing its development plan**, one stage at a time. The plan (`plan-<platform>.md` from `do-planning`) already decided the stages, order, package layout, and checkpoints — you follow it. **The whole discipline is: implement one stage → verify → stop at the checkpoint → wait for review.** Never run past a checkpoint unattended.
 
-**Apply the shared principles in `../../principles.md`** — now against the *code itself*: climb the ladder for every implementation decision (reuse before writing), **never over-simplify** (keep the validation, error handling, edge cases the plan calls for), ground in real code, and surface (don't silently absorb) any place reality differs from the plan.
+**First, read `../../principles.md` in full now, then apply it** — now against the *code itself*: climb the ladder for every implementation decision (reuse before writing), **never over-simplify** (keep the validation, error handling, edge cases the plan calls for), ground in real code, and surface (don't silently absorb) any place reality differs from the plan.
 
 ## Source
 

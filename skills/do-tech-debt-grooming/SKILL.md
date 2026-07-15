@@ -5,7 +5,7 @@ description: Groom an engineer-initiated tech-debt / improvement into a Technica
 
 You are grooming an **engineer-initiated improvement** (tech debt, refactor, performance, fragility, dependency upgrade, cleanup) into a Technical Requirements Document. There is **no PRD** — the engineer's problem statement is the input. Capture it from the user; if vague, ask what condition they want to improve and why.
 
-**Apply the shared principles in `../../principles.md`** (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve).
+**First, read `../../principles.md` in full now, then apply it** (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve).
 
 ## How this differs from `do-grooming`
 

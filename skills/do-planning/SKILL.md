@@ -5,7 +5,7 @@ description: Create a staged development plan document from an approved TRD and 
 
 You are writing a **development plan document**: the ordered, staged plan an engineer follows to implement a feature. **The whole point is reviewability** — the work is split into small stages, each a self-contained reviewable change with an explicit checkpoint, so the user can review stage-by-stage and **stop after any stage** instead of facing one enormous diff at the end.
 
-**Apply the shared principles in `../../principles.md`** (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary).
+**First, read `../../principles.md` in full now, then apply it** (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary).
 
 ## Source & output
 

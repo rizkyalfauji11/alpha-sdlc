@@ -5,7 +5,7 @@ description: Generate the project profile — the baseline "basics" docs (archit
 
 You are generating the **project profile** — the baseline reference every other skill grounds in, so grooming/planning/testing don't re-derive the same orientation each run. Output goes to **`./docs/basics/`**. Run once per repo to bootstrap; re-run in **refresh mode** to keep it current.
 
-**Apply the shared principles in `../../principles.md`** — especially: **ground in real code (never fabricate — mark anything you can't determine as `UNKNOWN — needs human input`, don't guess)**, draft + human-approve, and never over-simplify.
+**First, read `../../principles.md` in full now, then apply it** — especially: **ground in real code (never fabricate — mark anything you can't determine as `UNKNOWN — needs human input`, don't guess)**, draft + human-approve, and never over-simplify.
 
 ## Rules
 

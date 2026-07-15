@@ -86,13 +86,17 @@ If the project uses layered/clean architecture, changes are placed in the right 
 
 ---
 
-## Enforcement: the ladder validator hook
+## Enforcement: keeping the AI consistent with the principles
 
-The one hook in an otherwise skill-only plugin (added deliberately for the ladder).
+Principles are applied through three stacked layers (strongest = hooks):
 
-- `hooks/hooks.json` registers a **PreToolUse** hook on `Write|Edit`.
-- `hooks/validate-rung.js` blocks (exit 2) any write to a TRD/plan artifact where an `Approach (ladder rung)` field is empty/placeholder, or a plan Stage has no Approach line. Skill templates and unrelated files are excluded.
-- Reload the plugin after install — hooks load at session start.
+1. **In context** — every skill opens with an imperative *"read `principles.md` in full now, then apply it,"* and a **SessionStart hook** (`hooks/inject-principles.js`) injects `principles.md` into every session so it's always present.
+2. **Hard-enforced (hooks)** — mechanizable principles are validated on `Write|Edit` and block (exit 2) on violation:
+   - `validate-rung.js` — every TRD/plan decision must name its ladder rung (no empty/placeholder Approach field; every plan Stage has an Approach).
+   - `validate-no-secrets.js` — no secret *values* in `docs/` artifacts (high-confidence patterns: private keys, AWS/GitHub/Google/Slack tokens, JWTs); names/locations are fine.
+3. **Self-check** — skills verify their own output against the principles before presenting (e.g. the rung self-check).
+
+Judgment principles (never-over-simplify, ask-don't-assume, step-by-step, wait-for-answer) can't be script-checked — they rely on layers 1 and 3. Reload the plugin after install — hooks load at session start.
 
 ---
 
