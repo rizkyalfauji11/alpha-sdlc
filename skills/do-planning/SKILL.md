@@ -23,9 +23,9 @@ You are writing a **development plan document**: the ordered, staged plan an eng
 
 ## Flow — stage → review → write
 
-1. Read the TRD spoke + tasks, scan the real code paths the work touches, and **summarize the implementation scope** for the user to confirm. **For UI platforms, also capture the Design references** into the plan's *Design references* section — ask the user for them if missing:
-   - **Image(s) provided** → **save each into `docs/development/<feature-name>/design/<screen>.png`** (create the `design/` folder), and record that path in the plan.
-   - **Figma** → record the frame link in the plan (no file saved).
+1. Read the TRD spoke + tasks, scan the real code paths the work touches, and **summarize the implementation scope** for the user to confirm. **For UI platforms, carry the Design references into the plan's *Design references* section.** First read what **grooming already captured** — the **`Design` field in each screen's widget-spec** and any images in `docs/development/<feature-name>/design/`; reuse those, don't re-ask. Only for anything still missing:
+   - **Image(s) provided now** → **save each into `docs/development/<feature-name>/design/<screen>.png`** (create the `design/` folder), record the path.
+   - **Figma** → record the frame link.
    - Plus any specific needs (states, breakpoints, motion, dark mode).
    `do-development` reads these to run the visual-parity loop, so they must be in place before UI stages. **Present the summary, then STOP and wait for confirmation** before the architecture layout (don't plan on a stale or unconfirmed understanding).
 2. **Write the Architecture & package layout first.** Map where each piece of the work lands in the real repo (which package/directory/file), grounded in the existing structure — reuse it (ladder rung 2), propose new packages only where needed and name the rung. **If the project uses clean/layered architecture, place each piece in the right layer (presentation / domain / data) and respect the dependency rule** (per `principles.md`) — don't impose layering if the project doesn't use it. This is *not* a re-statement of the TRD design; link to the TRD and keep this concrete (file-system level). It's the map the stages slot into; keep it short for small features. **Present the layout, then STOP — end your turn and wait for approval. Do not start the stage breakdown in the same turn.**

@@ -5,6 +5,7 @@
 | **Screen** | <screen / page name> |
 | **Platforms** | <Android / iOS / Web — those in scope> |
 | **TRD** | [spoke](../TRD-<platform>.md) |
+| **Design** | <Figma frame link *or* `../design/<screen>.png` — the design this screen must match> |
 | **Date** | <YYYY-MM-DD> |
 
 > The QA locator contract for this screen. Every **interactive or asserted** element gets a
