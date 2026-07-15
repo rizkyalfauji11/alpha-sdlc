@@ -121,7 +121,7 @@ docs/development/<feature-name>/
 .claude-plugin/plugin.json    # manifest (name: alpha-sdlc)
 .claude-plugin/marketplace.json # repo acts as its own marketplace (alpha)
 principles.md                 # shared discipline, referenced by every skill
-hooks/                        # ladder validator
+hooks/                        # SessionStart principles injector + rung & no-secrets validators
 skills/
   do-project-setup/       SKILL.md                         # generates docs/basics/ profile
   do-grooming/            SKILL.md + TRD-hub-template + TRD-spoke-template + widget-spec-template
