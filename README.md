@@ -23,7 +23,8 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 | 3 | **do-uploading** *(optional — Jira)* | task-list → Jira tasks (epic-linked, weighted), keys written back | Jira issues + updated docs |
 | 4 | **do-planning** | TRD + tasks → staged dev plan: arch/package layout + small reviewable stages | `plan-<platform>.md` |
 | 5 | **do-development** | Executes the plan stage-by-stage, TDD, visual parity for UI, stop at each checkpoint | code + passing tests |
-| 6 | **do-testing** | Test pyramid — API · UI (visual parity + composition) · Integration (UI↔API) · System/E2E (risk-calibrated); verify-only | tests + `test-plan-<platform>.md` |
+| 6 | **do-testing** | Test pyramid — API · UI (visual parity + composition) · Integration (UI↔API) · System/E2E (risk-calibrated); verify-only, collects all bugs and reports before any fix | tests + `test-plan-<platform>.md` (incl. Bugs found) |
+| 7 | **do-fixing** | Fix the triaged bugs one at a time — reproduce-first regression test, root-cause not symptom — then hand back to testing to re-verify | fixes + updated bug status |
 
 **Steps 2–3 are optional (Jira only).** Without Jira, the pipeline is: setup → grooming → **planning → development → testing**, working straight from the TRD's work slices + AC. The Jira phases are org-specific (adapt to your Jira, or skip).
 
@@ -63,6 +64,12 @@ Implementation is red → green → refactor. Upstream artifacts are kept TDD-re
 | `cicd-deployment.md` | CI/CD tool, pipeline stages, promotion, release, versioning, rollback | if deployed |
 | `api-reference.md` | **Base-URL matrix (service × env)**, API catalog, auth, gotchas (no secrets) | if it calls/serves APIs |
 | `asset-registry.md` | Searchable asset inventory (name · path · tags), naming, icon set, design tokens (→ Figma) | client only |
+
+### Open Decisions (no over-delivery)
+The design/AC is the contract — the plugin builds *exactly* it. When the design is silent or ambiguous, the gap is **surfaced, not filled**: recorded in the spoke TRD's **Open Decisions** section with 2–3 recommended options, for the user to decide → update the design → re-groom. Undecided gaps block the affected slice; `do-development` that hits an unspecified gap stops and routes it back to grooming rather than inventing scope.
+
+### Test → fix → re-test loop
+`do-testing` is verify-only: it collects **all** bugs into the *Bugs found* report and presents them **before any fixing**. The user triages; confirmed fixes go to **`do-fixing`**, which fixes one at a time (reproduce-first regression test, root-cause not symptom), then hands back to `do-testing` to confirm the fixes hold and nothing regressed.
 
 ### Visual parity (design ↔ built UI)
 For UI stages with a design reference (a Figma link or `design/<screen>.png`, recorded in the plan), `do-development` doesn't code-from-image blind: after a stage is green it **renders + screenshots** the screen and compares to the design **two ways — an AI visual checklist + a pixel-diff** — then fixes and re-renders until parity, within **platform-best-practice tolerance** (intentional platform deviations flagged, not forced pixel-identical). The screenshot + parity result appear in the stage review, and every iteration's actual screenshot + diff overlay is saved to `design/compared-ui/` (gitignored — local review trail). Rendering uses the platform's own tooling (Playwright / emulator+adb / simulator+simctl); the skill asks before installing anything.
@@ -132,6 +139,7 @@ skills/
   do-planning/   SKILL.md + plan-template
   do-development/ SKILL.md
   do-testing/    SKILL.md + test-plan-template
+  do-fixing/     SKILL.md
 ```
 
 ## Install

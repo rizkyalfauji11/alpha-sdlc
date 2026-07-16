@@ -47,6 +47,15 @@
 
 <!-- one block per test ID; include the negative / edge / error / offline cases too -->
 
+## Bugs found
+
+> Every failure logged here first — **presented to the user before any fixing**. `do-testing`
+> does not fix; confirmed fixes go to `do-fixing`. Severity: blocker / major / minor / trivial.
+
+| # | Bug | Severity | Level | AC | Repro steps | Fix? (user) | Status |
+|---|-----|----------|-------|----|-----------  |-------------|--------|
+| B1 | <what's wrong> | major | UI (visual) | <AC ref> | <1. … 2. …> | yes / no / defer | open → (do-fixing) |
+
 ## Coverage summary
 
 - **AC covered:** <n of m>

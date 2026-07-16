@@ -44,6 +44,8 @@ docs/development/<feature-name>/
   - At each level: **exact match → reuse** (cite its path); **similar (not exact) → adapt + flag for user re-validation** (state why it fits; "similar enough" is a judgment call — wrong size/state/brand variant slips through), confirm before treating as resolved; **create-new** only after step 3.
   - Record the outcome in the spoke's **Assets** section. Only create-new assets become work slices.
 
+- **Surface gaps as Open Decisions (don't over-deliver).** Whenever the design/PRD is silent or ambiguous about something an implementation would need (a missing state, unspecified behavior, an edge case, an interaction the mockup doesn't show), **record it in the spoke's `Open Decisions` section** with 2–3 recommended options (mark one) — and **ask the user to decide, then update the design.** Never resolve a gap by adding scope yourself. Decided items get **re-groomed**: fold the decision into the relevant section, flip its status to *decided*. **Only *decided* scope flows downstream** — unresolved decisions block the affected slice.
+
 ## Flow
 
 ### Step 0 — Read inputs and propose the outline (GATE 0)
