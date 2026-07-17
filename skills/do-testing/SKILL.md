@@ -16,6 +16,7 @@ Unit-level is already done by `do-development`'s per-stage TDD. `do-testing` own
    - **Visual parity** vs the design (`design/<screen>.png` / Figma) — icons, colors, spacing, typography — AI checklist + pixel-diff, **within platform-best-practice tolerance** (not literal pixel-identical; flag intentional platform deviations). Save actual + diff to `design/compared-ui/`.
    - **View composition** — element presence, hierarchy, arrangement, layout.
    - **States** — loading / error / empty / offline; theming; a11y labels.
+   - **Content-fit** — variable-content containers (dialog / sheet / list / form / multi-line text) must **fit content or scroll, never clip**. Test at extremes: longest content, largest dynamic-type/font, smallest supported screen. (This is the "dialog doesn't cover its content" class of bug.)
 3. **Integration** *(UI ↔ API alignment)* — real API calls: data renders, actions hit the right endpoints, loading/error states driven by real responses, **contract fields consumed correctly** (no field-name/type drift), navigation, persistence/offline.
 4. **System / E2E** *(production-readiness)* — full user journeys across UI→API→DB in a prod-like env: auth, permissions, feature flags, cross-service, perf/security basics, offline/recovery. **Calibrate to risk** — the *critical* journeys + key failure modes (a payment flow earns full E2E; a tooltip doesn't), not every permutation.
 

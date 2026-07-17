@@ -23,6 +23,15 @@
 | <Balance text> | `qris_widget_balance_text` | "Active balance" | masked / revealed | masked by default |
 | <Offline banner> | `qris_widget_offline_banner` | "You are offline" | shown / hidden | |
 
+## Container sizing & overflow
+
+> For **variable-content containers** on this screen (dialog, bottom sheet, list, form, multi-line text) —
+> how they size and what happens when content grows. They must **fit content or scroll, never clip.**
+
+| Container | Sizing | Overflow behavior | Extremes to verify |
+|-----------|--------|-------------------|--------------------|
+| <e.g. QRIS confirm dialog> | wrap-to-content, capped at <max-height> | scrolls past the cap | longest content · largest dynamic-type · smallest screen |
+
 ## Per-platform attribute notes
 
 - **Android:** the QA locator is **`resource-id`**. Views/XML → `android:id="@+id/<id>"`. Compose → `Modifier.testTag("<id>")` **plus** `Modifier.semantics { testTagsAsResourceId = true }` (usually set once at the app/root) so the tag is exposed as `resource-id` to cross-app tools (Appium/UiAutomator); without it, in-process Espresso can find `testTag` via `onNodeWithTag` but black-box QA tools cannot. Content description → `contentDescription`.

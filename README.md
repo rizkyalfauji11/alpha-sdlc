@@ -71,6 +71,9 @@ The design/AC is the contract — the plugin builds *exactly* it. When the desig
 ### Test → fix → re-test loop
 `do-testing` is verify-only: it collects **all** bugs into the *Bugs found* report and presents them **before any fixing**. The user triages; confirmed fixes go to **`do-fixing`**, which fixes one at a time (reproduce-first regression test, root-cause not symptom), then hands back to `do-testing` to confirm the fixes hold and nothing regressed.
 
+### Content-fit (no clipped dialogs)
+Variable-content containers (dialogs, sheets, lists, forms, multi-line text) must **fit their content or scroll — never clip**. The plugin verifies them at content + viewport **extremes** (longest content, largest dynamic-type, smallest screen), not just the design's ideal content — because a mockup shows ideal-length content and the clip only appears with real content. Specced in the widget-spec's *Container sizing & overflow*, rendered at extremes in `do-development`, and asserted as a UI-level *Content-fit* dimension in `do-testing`.
+
 ### Visual parity (design ↔ built UI)
 For UI stages with a design reference (a Figma link or `design/<screen>.png`, recorded in the plan), `do-development` doesn't code-from-image blind: after a stage is green it **renders + screenshots** the screen and compares to the design **two ways — an AI visual checklist + a pixel-diff** — then fixes and re-renders until parity, within **platform-best-practice tolerance** (intentional platform deviations flagged, not forced pixel-identical). The screenshot + parity result appear in the stage review, and every iteration's actual screenshot + diff overlay is saved to `design/compared-ui/` (gitignored — local review trail). Rendering uses the platform's own tooling (Playwright / emulator+adb / simulator+simctl); the skill asks before installing anything.
 
