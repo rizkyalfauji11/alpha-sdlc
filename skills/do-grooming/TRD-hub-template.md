@@ -41,9 +41,16 @@ _Approved: <YYYY-MM-DD>_
 
 <The backend↔client contract — the shared truth every spoke references. Method, path, request, response, errors.>
 
-| Method | Path | Request | Response | Notes |
-|--------|------|---------|----------|-------|
-| | | | | |
+**Machine-checkable spec:** <required — path/link to the authoritative OpenAPI/Swagger (or shared schema/types) file, and which repo owns it. Clients derive their typed client + test fixtures from this, not from the table below. If none exists yet, that's a work slice.>
+
+> The table is a human-readable summary of the spec above — not a second source of truth.
+> Specify fields **precisely**: exact type, nullability, enum values, and **localized fields as
+> objects** (e.g. `name: { en, id }`, never `string`). Loose types are what let a client send the
+> wrong method (→ 405) or render an object as a string (→ React "objects are not valid as a child").
+
+| Method | Path | Request (typed) | Response (typed) | Errors | Notes |
+|--------|------|-----------------|------------------|--------|-------|
+| | | | | | |
 
 ## 4. Cross-cutting concerns
 _Approved: <YYYY-MM-DD>_

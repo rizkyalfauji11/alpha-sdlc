@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Platform** | <Backend / Android / iOS / Web> |
-| **Levels** | API · UI (visual + composition) · Integration (UI↔API) · System/E2E (risk-calibrated) |
+| **Levels** | API · UI (visual + composition) · Integration (UI↔API) · System/E2E (risk-calibrated) · **Boot & Smoke (integrated — mandatory, non-skippable)** |
 | **Framework** | <existing framework reused — e.g. Playwright / Espresso / XCUITest / HTTP contract> |
 | **TRD** | [hub](./TRD.md) · [spoke](./TRD-<platform>.md) |
 | **Date** | <YYYY-MM-DD> |
@@ -47,6 +47,21 @@
 
 <!-- one block per test ID; include the negative / edge / error / offline cases too -->
 
+## Boot & Smoke (integrated) — mandatory
+
+> The real frontend + real backend booted together (per `docs/basics/environment.md` → *Full-stack
+> run recipe*), the feature's **critical journeys** driven through the real HTTP stack with
+> **relevant, domain-realistic data (never randomized/placeholder)**. **Not markable manual** — if it
+> didn't run, the feature is blocked, not done. A pass = every cell below is clean.
+
+**Stack booted:** <BE cmd + ready-check · FE cmd + ready-check · FE→BE base URL used> — or the blocker if it couldn't boot.
+
+| Critical journey | 4xx/5xx (unexpected) | Console errors | Error-boundary / crash | Requests match contract/routes | Result |
+|------------------|----------------------|----------------|------------------------|--------------------------------|--------|
+| <e.g. open Menu Categories, load list, edit one> | none | none | none | yes | pass / fail |
+
+<Any failure here is logged as a bug below (level = Boot & Smoke).>
+
 ## Bugs found
 
 > Every failure logged here first — **presented to the user before any fixing**. `do-testing`
@@ -60,6 +75,7 @@
 
 - **AC covered:** <n of m>
 - **By level:** API <n> · UI <n> · Integration <n> · E2E <n>
+- **Boot & Smoke (integrated):** <pass / FAILED / blocked — with blocker>  — *mandatory; feature is not done until this passes*
 - **E2E scope (risk-calibrated):** <which critical journeys got E2E, and why others didn't>
 - **Uncovered AC (gaps):** <list, or "none">
 - **Manual-only (env unavailable / no automation possible):** <list + why, or "none">

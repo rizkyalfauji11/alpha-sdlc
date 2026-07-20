@@ -29,12 +29,12 @@ Each doc has a starter template in this skill's `templates/` directory (`templat
 | `tech-stack.md` | Languages, frameworks, key libs, build tooling + build/run/test commands | stack cached; **versions → manifest** |
 | `database.md` | Engine(s), schema shape (Mermaid ER), migration approach | overview cached; **DDL → migrations** |
 | `data-cache.md` | Local persistence, caching strategy, offline behavior, what's stored where | cache |
-| `environment.md` | Environments, config & secrets *approach* (names/locations), feature flags, build variants | approach cached; **values → config files** |
+| `environment.md` | Environments, config & secrets *approach* (names/locations), **full-stack run recipe** (per-service start command, ready-check, FE→BE wiring, CORS — feeds the integrated Boot & Smoke gate), feature flags, build variants | approach cached; **values → config files** |
 | `conventions.md` | Coding conventions, naming, folder rules, testing conventions | cache |
 | `git-management.md` | Branching, commit/PR/merge conventions, protected branches, tags/releases, hooks | cache; **release/version → cicd-deployment** |
 | `security-compliance.md` | Auth/authz, PII/data classification, encryption, compliance regimes, secret mgmt, security testing, audit logging | controls cached; **policy → policy docs**; strict sign-off |
 | `cicd-deployment.md` | CI/CD tool + pipeline stages, environment promotion, release process, versioning, rollback | shape cached; **config → pipeline files** |
-| `api-reference.md` | **Base-URL matrix (service × environment)**, API catalog (consumed/exposed, auth, owner, version), gotchas, error/retry conventions | matrix cached (no secrets); **defined-in → config** |
+| `api-reference.md` | **Base-URL matrix (service × environment)**, **machine-checkable contract** (OpenAPI/schema location + owner + whether clients derive typed client/fixtures from it), API catalog (consumed/exposed, auth, owner, version), gotchas, error/retry conventions | matrix cached (no secrets); **defined-in → config** |
 | `asset-registry.md` *(clients)* | Searchable inventory of registered assets (name · description · path per platform · tags), naming conventions, icon set, design tokens (→ Figma) | inventory cached; **tokens/pixels → Figma** |
 
 ## Flow
