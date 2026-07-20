@@ -23,7 +23,7 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 | 3 | **do-uploading** *(optional — Jira)* | task-list → Jira tasks (epic-linked, weighted), keys written back | Jira issues + updated docs |
 | 4 | **do-planning** | TRD + tasks → staged dev plan: arch/package layout + small reviewable stages | `plan-<platform>.md` |
 | 5 | **do-development** | Executes the plan stage-by-stage, TDD, visual parity for UI, stop at each checkpoint | code + passing tests |
-| 6 | **do-testing** | Test pyramid — API · UI (visual parity + composition) · Integration (UI↔API) · System/E2E (risk-calibrated); verify-only, collects all bugs and reports before any fix | tests + `test-plan-<platform>.md` (incl. Bugs found) |
+| 6 | **do-testing** | Test pyramid — API · UI (visual parity + composition) · Integration (UI↔API) · System/E2E (risk-calibrated) · **Boot & Smoke (integrated — mandatory, non-skippable)**; verify-only, collects all bugs and reports before any fix | tests + `test-plan-<platform>.md` (incl. Boot & Smoke + Bugs found) |
 | 7 | **do-fixing** | Fix the triaged bugs one at a time — reproduce-first regression test, root-cause not symptom — then hand back to testing to re-verify | fixes + updated bug status |
 
 **Steps 2–3 are optional (Jira only).** Without Jira, the pipeline is: setup → grooming → **planning → development → testing**, working straight from the TRD's work slices + AC. The Jira phases are org-specific (adapt to your Jira, or skip).
@@ -35,7 +35,13 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 ## Core concepts
 
 ### Hub + spokes
-A feature's TRD splits into a **hub** (`TRD.md` — the shared single source of truth: context, system design, API contract, cross-cutting, change manifest) and one **spoke per platform** (`TRD-backend.md` / `-android.md` / `-ios.md` / `-web.md`). Spokes link to the hub — they never copy the contract, so it can't drift. The hub is groomed first; separate platform teams groom their own spokes.
+A feature's TRD splits into a **hub** (`TRD.md` — the shared single source of truth: context, system design, API contract, cross-cutting, change manifest) and one **spoke per platform** (`TRD-backend.md` / `-android.md` / `-ios.md` / `-web.md`). Spokes link to the hub — they never copy the contract, so it can't drift. **The hub is groomed first — a hard gate: no spoke can be groomed until the hub exists *and its API-contract section is approved*** (spokes derive their typed client + fixtures from that contract). Separate platform teams groom their own spokes.
+
+### Machine-checkable API contract
+The hub's API contract must be, or point to, a **machine-checkable spec** (OpenAPI/Swagger preferred; shared schema/types otherwise) living authoritatively in one repo — not just a prose table. Every field is typed precisely: **nullability, enum values, and localized fields as objects** (`name: { en, id }`, never `string`). Clients **derive a typed client + test fixtures from it** rather than hand-authoring shapes that drift. Loose types are the root of the classic seam bugs — a wrong HTTP method (→ 405) or a localized object rendered as a string (→ React "objects are not valid as a child").
+
+### Integrated boot & smoke (real FE + real BE)
+Isolated levels each validate one side against its own mocks, so a frontend↔backend mismatch stays invisible until the app is assembled. The plugin closes this with a rule in `principles.md` and a **non-skippable gate**: before a feature is "done", the **real frontend + real backend are booted together the way the user runs them** (per `docs/basics/environment.md`'s *Full-stack run recipe*) and the feature's critical journeys are driven through the real HTTP stack with **relevant, domain-realistic data — never randomized/placeholder**. It fails on any unexpected **4xx/5xx**, **console error**, **failed request**, or **error-boundary/crash activation** (an error boundary hiding a crash behind a fallback still fails) — *even when every isolated test is green*. Enforced per full-stack stage in `do-development` and as `do-testing`'s mandatory **Boot & Smoke** level (which, unlike levels 1–4, can't be marked manual — the feature stays blocked until it actually runs). It closes the FE↔BE integration + real-data-render class completely; silent logic bugs and journeys never walked still need AC tests.
 
 ### Acceptance criteria = the contract
 AC are written as **testable** specs in grooming, carried into tasks, turned into the per-stage tests in planning, written test-first in development, and verified in testing. Everything downstream depends on AC being concrete.
@@ -57,19 +63,19 @@ Implementation is red → green → refactor. Upstream artifacts are kept TDD-re
 | `tech-stack.md` | Languages, frameworks, key libs, build/run/test commands (versions → manifest) | core |
 | `database.md` | Engine(s), schema shape (Mermaid ER), migration approach (DDL → migrations) | if it owns data |
 | `data-cache.md` | Local persistence, caching strategy, offline behavior, what's stored where | if applicable |
-| `environment.md` | Environments, config & secrets *approach* (names/locations, no values), flags, variants | core |
+| `environment.md` | Environments, config & secrets *approach* (names/locations, no values), **full-stack run recipe** (per-service start command, ready-check, FE→BE wiring, CORS — feeds the Boot & Smoke gate), flags, variants | core |
 | `conventions.md` | Coding conventions, naming, folder rules, testing conventions | core |
 | `git-management.md` | Branching, commit/PR/merge conventions, protected branches, tags/releases, hooks | core |
 | `security-compliance.md` | Auth/authz, PII, encryption, compliance regimes, secret mgmt, audit logging | observed-only + human sign-off |
 | `cicd-deployment.md` | CI/CD tool, pipeline stages, promotion, release, versioning, rollback | if deployed |
-| `api-reference.md` | **Base-URL matrix (service × env)**, API catalog, auth, gotchas (no secrets) | if it calls/serves APIs |
+| `api-reference.md` | **Base-URL matrix (service × env)**, **machine-checkable contract** (OpenAPI/schema location + owner + whether clients derive typed client/fixtures), API catalog, auth, gotchas (no secrets) | if it calls/serves APIs |
 | `asset-registry.md` | Searchable asset inventory (name · path · tags), naming, icon set, design tokens (→ Figma) | client only |
 
 ### Open Decisions (no over-delivery)
 The design/AC is the contract — the plugin builds *exactly* it. When the design is silent or ambiguous, the gap is **surfaced, not filled**: recorded in the spoke TRD's **Open Decisions** section with 2–3 recommended options, for the user to decide → update the design → re-groom. Undecided gaps block the affected slice; `do-development` that hits an unspecified gap stops and routes it back to grooming rather than inventing scope.
 
 ### Test → fix → re-test loop
-`do-testing` is verify-only: it collects **all** bugs into the *Bugs found* report and presents them **before any fixing**. The user triages; confirmed fixes go to **`do-fixing`**, which fixes one at a time (reproduce-first regression test, root-cause not symptom), then hands back to `do-testing` to confirm the fixes hold and nothing regressed.
+`do-testing` is verify-only: it collects **all** bugs into the *Bugs found* report and presents them **before any fixing**. The user triages; confirmed fixes go to **`do-fixing`**, which fixes one at a time (reproduce-first regression test, root-cause not symptom, `docs/basics/` kept current), then hands back to `do-testing` to confirm the fixes hold and nothing regressed. Integration/Boot-&-Smoke bugs are re-verified by **re-booting the real stack**, not an isolated test.
 
 ### Content-fit (no clipped dialogs)
 Variable-content containers (dialogs, sheets, lists, forms, multi-line text) must **fit their content or scroll — never clip**. The plugin verifies them at content + viewport **extremes** (longest content, largest dynamic-type, smallest screen), not just the design's ideal content — because a mockup shows ideal-length content and the clip only appears with real content. Specced in the widget-spec's *Container sizing & overflow*, rendered at extremes in `do-development`, and asserted as a UI-level *Content-fit* dimension in `do-testing`.
@@ -91,8 +97,9 @@ If the project uses layered/clean architecture, changes are placed in the right 
 - **The ladder** — reuse before build, named rung (hook-enforced).
 - **Ground in real code · validate every choice** (valid, relevant, compatible with existing code — no hallucinated libs/APIs) **· ask don't assume · offer 2–3 best-practice options · keep a living understanding summary** (re-summarize on change).
 - **Draft + human-approve before any external write · asking ends the turn** — every gate is a hard STOP; wait for the user, no timeout, no auto-continue.
-- **Keep the project profile current** (`docs/basics/` updated as work changes it) **· comments minimal and project-relevant** (not task/ticket provenance).
+- **Keep the project profile current** (`docs/basics/` updated as work changes it, including after development *and* fixing) **· comments minimal and project-relevant** (not task/ticket provenance).
 - **Test-first across the pipeline · respect the project's architecture** (clean/layered when the project uses it).
+- **Integrated real-data gate** — never "done" on mock/assumed data; boot the real FE+BE and drive critical journeys through the real HTTP stack with domain-realistic data (zero 4xx/5xx · console errors · error-boundary trips). Mocks/fixtures derive from the machine-checkable contract, never hand-authored shapes that drift.
 
 ---
 
@@ -121,7 +128,7 @@ docs/development/<feature-name>/
   plan-<platform>.md          # staged dev plan (arch layout + stages + design refs)
   design/<screen>.png         # design images to build 1:1 against (or Figma links in the plan)
   design/compared-ui/         # actual-UI screenshots + diff overlays per parity iteration (gitignored)
-  test-plan-<platform>.md     # AC → test → status coverage
+  test-plan-<platform>.md     # AC → test → status coverage (incl. Boot & Smoke)
 ```
 
 ---
