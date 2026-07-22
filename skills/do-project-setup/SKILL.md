@@ -33,6 +33,7 @@ Each doc has a starter template in this skill's `templates/` directory (`templat
 | `conventions.md` | Coding conventions, naming, folder rules, testing conventions | cache |
 | `git-management.md` | Branching, commit/PR/merge conventions, protected branches, tags/releases, hooks | cache; **release/version → cicd-deployment** |
 | `security-compliance.md` | Auth/authz, PII/data classification, encryption, compliance regimes, secret mgmt, security testing, audit logging | controls cached; **policy → policy docs**; strict sign-off |
+| `auth.md` *(if it authenticates)* | **Runtime token handling** — scheme, tokens (type/lifetime/storage/attach), **refresh flow** (rotation, single-flight), **401/expiry** (refresh-and-retry, no loop), logout/revocation, multi-tab/device | mechanics cached (no secrets); cross-links security-compliance/api-reference/environment |
 | `cicd-deployment.md` | CI/CD tool + pipeline stages, environment promotion, release process, versioning, rollback | shape cached; **config → pipeline files** |
 | `api-reference.md` | **Base-URL matrix (service × environment)**, **machine-checkable contract** (OpenAPI/schema location + owner + whether clients derive typed client/fixtures from it), API catalog (consumed/exposed, auth, owner, version), gotchas, error/retry conventions | matrix cached (no secrets); **defined-in → config** |
 | `feature-map.md` | Catalog of the app's **features** — purpose, entry points, owned endpoints/tables, **depends-on**, status, dependency graph | inventory cached; **detail → each feature's TRD** |

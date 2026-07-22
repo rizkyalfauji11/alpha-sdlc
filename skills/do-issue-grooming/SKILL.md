@@ -7,7 +7,7 @@ You are grooming a **user-reported issue** into a Technical Requirements Documen
 
 **First, read `../../principles.md` in full now, then apply it** (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). Root-cause, not symptom, is the whole point here.
 
-**Read the project profile first** (`docs/basics/` from `do-project-setup`) — architecture, code structure, api-reference, database, conventions, and especially **`feature-map.md`** — as your grounding reference before scanning code from scratch. You need it to know *where the issue class could live* and *which features it touches*. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
+**Read the project profile first** (`docs/basics/` from `do-project-setup`) — architecture, code structure, api-reference, database, conventions, `auth.md` (for 401/token-class issues), and especially **`feature-map.md`** — as your grounding reference before scanning code from scratch. You need it to know *where the issue class could live* and *which features it touches*. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
 
 **If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run `do-project-setup` first** — a whole-project audit on an ungrounded view misses sites. Wait for their answer: recommend setting up first; proceed only if the user explicitly chooses to (then fall back to scanning the repo, and note the audit is ungrounded and may be incomplete).
 

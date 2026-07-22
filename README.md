@@ -17,7 +17,7 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 
 | # | Skill | Does | Output |
 |---|-------|------|--------|
-| 0 | **do-project-setup** | Generates the project profile (architecture, tech-stack, database, API map, security, CI/CD, assets…) one doc at a time; refresh/reconcile mode keeps it current | `docs/basics/*.md` (14-doc set) |
+| 0 | **do-project-setup** | Generates the project profile (architecture, tech-stack, database, API map, security, CI/CD, assets…) one doc at a time; refresh/reconcile mode keeps it current | `docs/basics/*.md` (15-doc set) |
 | 1a | **do-grooming** | PRD/BRD → Technical Requirements Doc, section-by-section with one gate per section | `TRD.md` (hub) + `TRD-<platform>.md` (spokes), `widget-spec/<screen>.md` |
 | 1b | **do-tech-debt-grooming** | Engineer's improvement statement → behavior-preserving TRD (justify → target → regression safety), one gate per section | `TRD.md` + spokes (tech-debt template) |
 | 1c | **do-issue-grooming** | User-reported issue → **whole-project audit** of the issue class (every affected site, root cause, blast radius) → scoped issue-TRD, one gate per section; grooms only, hands to do-fixing | `TRD.md` + spokes (issue template) |
@@ -69,6 +69,7 @@ Implementation is red → green → refactor. Upstream artifacts are kept TDD-re
 | `conventions.md` | Coding conventions, naming, folder rules, testing conventions | core |
 | `git-management.md` | Branching, commit/PR/merge conventions, protected branches, tags/releases, hooks | core |
 | `security-compliance.md` | Auth/authz, PII, encryption, compliance regimes, secret mgmt, audit logging | observed-only + human sign-off |
+| `auth.md` | **Runtime token handling** — scheme, tokens, refresh flow (rotation, single-flight), 401/expiry (refresh-and-retry, no loop), logout/revocation | if it authenticates |
 | `cicd-deployment.md` | CI/CD tool, pipeline stages, promotion, release, versioning, rollback | if deployed |
 | `api-reference.md` | **Base-URL matrix (service × env)**, **machine-checkable contract** (OpenAPI/schema location + owner + whether clients derive typed client/fixtures), API catalog, auth, gotchas (no secrets) | if it calls/serves APIs |
 | `asset-registry.md` | Searchable asset inventory (name · path · tags), naming, icon set, design tokens (→ Figma) | client only |
