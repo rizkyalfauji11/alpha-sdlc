@@ -10,15 +10,17 @@ A Claude Code plugin that supports the engineering lifecycle — **grooming → 
 
 Each phase produces an artifact the next phase consumes. The **acceptance criteria (AC)** thread the whole way through — written in grooming, tested in development and testing.
 
-**Two entry points**, both producing a TRD that flows into the same pipeline:
+**Three entry points**, each producing a TRD that flows into the same pipeline:
 - **do-grooming** — product features, driven by a PRD/BRD.
 - **do-tech-debt-grooming** — engineer-initiated improvements (refactor, performance, fragility, dependency upgrade, cleanup), no PRD.
+- **do-issue-grooming** — a user-reported issue (production/ad-hoc); audits the **whole project for the issue class** (not just the reported symptom), root-causes it, maps blast radius, and grooms the scoped fix. Groom-and-hand-off — the fixing stays in do-fixing.
 
 | # | Skill | Does | Output |
 |---|-------|------|--------|
-| 0 | **do-project-setup** | Generates the project profile (architecture, tech-stack, database, API map, security, CI/CD, assets…) one doc at a time; refresh/reconcile mode keeps it current | `docs/basics/*.md` (13-doc set) |
+| 0 | **do-project-setup** | Generates the project profile (architecture, tech-stack, database, API map, security, CI/CD, assets…) one doc at a time; refresh/reconcile mode keeps it current | `docs/basics/*.md` (14-doc set) |
 | 1a | **do-grooming** | PRD/BRD → Technical Requirements Doc, section-by-section with one gate per section | `TRD.md` (hub) + `TRD-<platform>.md` (spokes), `widget-spec/<screen>.md` |
 | 1b | **do-tech-debt-grooming** | Engineer's improvement statement → behavior-preserving TRD (justify → target → regression safety), one gate per section | `TRD.md` + spokes (tech-debt template) |
+| 1c | **do-issue-grooming** | User-reported issue → **whole-project audit** of the issue class (every affected site, root cause, blast radius) → scoped issue-TRD, one gate per section; grooms only, hands to do-fixing | `TRD.md` + spokes (issue template) |
 | 2 | **do-slicing** *(optional — Jira)* | TRD work slices → task-list document scored by your Jira weighting scheme | `task-list.md` |
 | 3 | **do-uploading** *(optional — Jira)* | task-list → Jira tasks (epic-linked, weighted), keys written back | Jira issues + updated docs |
 | 4 | **do-planning** | TRD + tasks → staged dev plan: arch/package layout + small reviewable stages | `plan-<platform>.md` |
@@ -152,6 +154,7 @@ skills/
   do-project-setup/       SKILL.md                         # generates docs/basics/ profile
   do-grooming/            SKILL.md + TRD-hub-template + TRD-spoke-template + widget-spec-template
   do-tech-debt-grooming/  SKILL.md + tech-debt-TRD-template
+  do-issue-grooming/      SKILL.md + issue-TRD-template
   do-slicing/    SKILL.md
   do-uploading/  SKILL.md
   do-planning/   SKILL.md + plan-template
@@ -216,7 +219,7 @@ Updates are detected by the `version` in `plugin.json` — it's bumped on each r
 
 ## Usage
 
-Invoke a phase by intent or its slash command. Start with either entry point — `/do-grooming <prd-url>` for a product feature, or `/do-tech-debt-grooming` for an engineer-initiated improvement — then `/do-planning`, `/do-development`, `/do-testing`. If you use Jira, insert `/do-slicing` and `/do-uploading` between grooming and planning; otherwise skip them. Each skill reads the prior phase's artifact and gates with you before writing or acting.
+Invoke a phase by intent or its slash command. Start with an entry point — `/do-grooming <prd-url>` for a product feature, `/do-tech-debt-grooming` for an engineer-initiated improvement, or `/do-issue-grooming` for a user-reported issue (it audits the whole project first) — then `/do-planning`, `/do-development`, `/do-testing`. If you use Jira, insert `/do-slicing` and `/do-uploading` between grooming and planning; otherwise skip them. Each skill reads the prior phase's artifact and gates with you before writing or acting.
 
 ## Notes
 
