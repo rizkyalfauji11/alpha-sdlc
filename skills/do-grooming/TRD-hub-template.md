@@ -34,6 +34,16 @@ _Approved: <YYYY-MM-DD>_
 - **Kinds:** depends-on (reuse an existing feature's contract/data/UI — don't break it) · prerequisite (must be built first) · shared-contract (extends a model another feature owns).
 - **Hard rule:** a **prerequisite that isn't built yet blocks the affected slice** → raise it as an **Open Decision** in the spoke; it's built/decided before the dependent slice proceeds. Never design around a phantom.
 
+**Flow dependencies (field / section grain)** — specific inputs/sections whose data flows from another feature:
+
+| Consuming element (field / section) | Direction | Source feature · flow / endpoint | Data contract | Data-flow test |
+|-------------------------------------|-----------|----------------------------------|---------------|----------------|
+| <item-create → options dropdown> | consumes-options-from | <templates · `GET /templates/:id/options`> | <`{id,label}[]`> | <create template w/ options → dropdown shows them> |
+| <category page → items list> | displays-created-by | <menu-items · `POST /items` → `GET /items?cat=`> | <item shape> | <create item → it appears in the list> |
+
+- **Direction:** consumes-options-from (an input's options/values come from the source) · displays-created-by (a list/section shows entities the source creates) · writes-to (this feature feeds the source).
+- Each binding gets a **mandatory cross-feature data-flow test** in `do-testing` (seed/create in the source → assert it flows into this feature's field/section, real data). A broken binding is a bug; an untested one is a coverage gap.
+
 ## 3. System design
 _Approved: <YYYY-MM-DD>_
 
