@@ -158,6 +158,10 @@ skills/
 
 ## Install
 
+### Prerequisite: Node.js
+
+The plugin's hooks (principles injector + the `validate-*` blockers) run as `node` scripts, so **`node` must be on your PATH**. They use only Node built-ins — there is **no `package.json`, no `npm install`, and no third-party dependencies** — so nothing is fetched at install time; the only requirement is the Node runtime itself. If you installed Claude Code via npm you already have it; on a native-binary install with no system Node, the hooks **fail open** (they simply don't run — no enforcement, never a broken session), while the skills, templates, and principles still install normally.
+
 From GitHub:
 
 ```
