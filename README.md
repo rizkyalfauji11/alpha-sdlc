@@ -70,6 +70,10 @@ Implementation is red → green → refactor. Upstream artifacts are kept TDD-re
 | `cicd-deployment.md` | CI/CD tool, pipeline stages, promotion, release, versioning, rollback | if deployed |
 | `api-reference.md` | **Base-URL matrix (service × env)**, **machine-checkable contract** (OpenAPI/schema location + owner + whether clients derive typed client/fixtures), API catalog, auth, gotchas (no secrets) | if it calls/serves APIs |
 | `asset-registry.md` | Searchable asset inventory (name · path · tags), naming, icon set, design tokens (→ Figma) | client only |
+| `feature-map.md` | Catalog of features — purpose, entry points, owned endpoints/tables, **depends-on**, status, dependency graph | if it has features |
+
+### Feature dependencies (notice what a feature relies on)
+A new feature usually depends on existing ones (reuse their data/API/UI, don't break them), sometimes on a feature not built yet (a sequencing prerequisite), or shares a contract another feature owns. The pipeline catches this instead of designing in isolation: `do-grooming` runs a required **dependency-discovery step** (scanning `docs/basics/feature-map.md` + sibling feature TRDs + the profile + code, and asking the user) and records a **Feature dependencies** section in the hub TRD; `do-project-setup` seeds and grooming maintains the **feature-map** registry (register-on-create). If a feature depends on a **prerequisite that isn't built yet, it's a hard block** — an Open Decision, built/decided first — `do-planning` won't stage on a phantom, and `do-testing` adds a cross-feature journey verifying the new feature works with the depended-on one and doesn't break it.
 
 ### Open Decisions (no over-delivery)
 The design/AC is the contract — the plugin builds *exactly* it. When the design is silent or ambiguous, the gap is **surfaced, not filled**: recorded in the spoke TRD's **Open Decisions** section with 2–3 recommended options, for the user to decide → update the design → re-groom. Undecided gaps block the affected slice; `do-development` that hits an unspecified gap stops and routes it back to grooming rather than inventing scope.

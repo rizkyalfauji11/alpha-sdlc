@@ -20,7 +20,21 @@ _Approved: <YYYY-MM-DD>_
 
 <Why this exists, what problem it solves, what's explicitly out of scope.>
 
-## 2. System design
+## 2. Feature dependencies
+_Approved: <YYYY-MM-DD>_
+
+> How this feature relates to **other features** — so a dependency is reused/sequenced, not missed.
+> Grounded in `docs/basics/feature-map.md` + sibling feature TRDs; register this feature in the map.
+
+| Depends on / relates to | Kind | Integration points | Status | Blocking? |
+|-------------------------|------|---------------------|--------|-----------|
+| <menu-categories> | depends-on (reuse) | <needs category id + list from `GET /categories`> | shipped | no |
+| <payments-v2> | prerequisite (not built) | <needs its charge API> | planned | **YES → Open Decision** |
+
+- **Kinds:** depends-on (reuse an existing feature's contract/data/UI — don't break it) · prerequisite (must be built first) · shared-contract (extends a model another feature owns).
+- **Hard rule:** a **prerequisite that isn't built yet blocks the affected slice** → raise it as an **Open Decision** in the spoke; it's built/decided before the dependent slice proceeds. Never design around a phantom.
+
+## 3. System design
 _Approved: <YYYY-MM-DD>_
 
 <End-to-end picture: which clients and services are involved and how they interact.>
@@ -36,7 +50,7 @@ graph TD
   API --> DB[(Database)]
 ```
 
-## 3. API contracts
+## 4. API contracts
 _Approved: <YYYY-MM-DD>_
 
 <The backend↔client contract — the shared truth every spoke references. Method, path, request, response, errors.>
@@ -52,12 +66,12 @@ _Approved: <YYYY-MM-DD>_
 |--------|------|-----------------|------------------|--------|-------|
 | | | | | | |
 
-## 4. Cross-cutting concerns
+## 5. Cross-cutting concerns
 _Approved: <YYYY-MM-DD>_
 
 <Things every platform must agree on: auth, error model, API versioning & backward compatibility, feature flags, i18n/localization, analytics events.>
 
-## 5. Change manifest
+## 6. Change manifest
 _Approved: <YYYY-MM-DD>_
 
 > Structured handoff. Feeds ticket-slicing and monitoring.

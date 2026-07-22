@@ -19,7 +19,7 @@ You are writing a **development plan document**: the ordered, staged plan an eng
 ## What makes a good stage (the core rule)
 
 - **Small enough to review in one sitting** — roughly one concern / one coherent diff. If a stage would be a huge change, split it. Prefer many small stages over few big ones.
-- **Ordered by dependency** — contract/data first, then logic, then UI; match the hub's release ordering.
+- **Ordered by dependency** — contract/data first, then logic, then UI; match the hub's release ordering **and the hub's Feature dependencies** — a stage that relies on another feature comes only after that feature exists. If a depended-on feature is **missing or incomplete**, STOP and surface it (Open Decision) — never plan stages on a phantom prerequisite.
 - **Ends in a checkpoint**: how to verify it works, and an explicit **⏸ STOP — review** marker.
 - **Marks whether it's safe to stop after** — ideally the codebase is in a working (compiles, tests pass, shippable-behind-flag) state at as many checkpoints as possible, so pausing leaves nothing half-broken. Call out the stages where stopping would leave things incomplete.
 - **Traces to AC / work slices** — each stage lists the acceptance criteria / TRD work slices it satisfies (plus task IDs / Jira keys if the Jira phases were run). Every slice should be covered by some stage; flag any that aren't.
@@ -27,7 +27,7 @@ You are writing a **development plan document**: the ordered, staged plan an eng
 
 ## Flow — stage → review → write
 
-1. Read the TRD spoke + tasks, scan the real code paths the work touches, and **summarize the implementation scope** for the user to confirm. **For UI platforms, carry the Design references into the plan's *Design references* section.** First read what **grooming already captured** — the **`Design` field in each screen's widget-spec** and any images in `docs/development/<feature-name>/design/`; reuse those, don't re-ask. Only for anything still missing:
+1. Read the TRD spoke + tasks, scan the real code paths the work touches, and **summarize the implementation scope** for the user to confirm. **Read the hub's *Feature dependencies* and confirm each depended-on feature is actually built** (check `docs/basics/feature-map.md`); **if a prerequisite isn't built, STOP** and route it back (Open Decision) before planning the dependent slice — don't plan around a phantom. **For UI platforms, carry the Design references into the plan's *Design references* section.** First read what **grooming already captured** — the **`Design` field in each screen's widget-spec** and any images in `docs/development/<feature-name>/design/`; reuse those, don't re-ask. Only for anything still missing:
    - **Image(s) provided now** → **save each into `docs/development/<feature-name>/design/<screen>.png`** (create the `design/` folder), record the path.
    - **Figma** → record the frame link.
    - Plus any specific needs (states, breakpoints, motion, dark mode).
