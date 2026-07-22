@@ -7,6 +7,10 @@ You are writing a **development plan document**: the ordered, staged plan an eng
 
 **First, read `../../principles.md` in full now, then apply it** (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary).
 
+**Read the project profile first** (`docs/basics/` from `do-project-setup`) — especially `architecture.md`, `conventions.md`, `tech-stack.md`, and (for UI) `ui-architecture.md` — before scanning code from scratch. The plan's **Architecture & package layout** and stage breakdown must ground in the profile's real structure, conventions, and stack — not a guessed one — so stages land in the right place and follow existing patterns. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
+
+**If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run `do-project-setup` first** — planning the package/architecture layout on an ungrounded view is how stages land in the wrong place or fight existing conventions. Wait for their answer: recommend setting up first; proceed without it only if the user explicitly chooses to (then fall back to scanning the repo, and note the layout is ungrounded).
+
 ## Source & output
 
 - **Inputs:** the feature's approved TRD (`docs/development/<feature-name>/` hub + the relevant spoke) — its **work slices + AC are the source of work**. If you ran the optional Jira phases (`do-slicing`/`do-uploading`), also use `task-list.md` / Jira keys; if you skipped them, plan straight off the TRD. Either way the plan implements what the TRD already decided — it does **not** re-open design (send those back to `do-grooming`).

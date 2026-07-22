@@ -32,8 +32,8 @@ For each bug the user approved, in the report's order (severity first):
 2. **Red** — write/confirm the failing test that reproduces it; run, confirm it fails for the right reason.
 3. **Fix** — root-cause fix, minimal, climbing the ladder; run tests + build until green. Report honestly (no "fixed" on red).
 4. **Re-verify** — re-run the bug's original failing check *and* the surrounding suite (no regressions). Visual bugs → re-run parity. **Boot & Smoke / integration bugs → re-boot the real stack and re-drive the journey** (not just an isolated test).
-5. **Present + ⏸ STOP** — the root cause, the fix (diff), the now-passing regression test, the re-verify result, and **Profile updates** (any `docs/basics/` doc this fix changed a recorded fact in, updated + re-stamped — or "None"). Ask: approve / change / stop. Do not touch the next bug until they respond.
-6. **On approval** — mark the bug **fixed** in the test-plan *Bugs found* table, offer to commit, continue or stop.
+5. **Present + ⏸ STOP** — the root cause, the fix (diff), the now-passing regression test, the re-verify result, **Profile updates** (any `docs/basics/` doc this fix changed a recorded fact in, updated + re-stamped — or "None"), and a **comment-hygiene self-check** (no comment a clearer name/structure would remove; no task/ticket/plan/PRD/BRD provenance in code). Ask: approve / change / stop. Do not touch the next bug until they respond.
+6. **On approval** — mark the bug **fixed** in the test-plan *Bugs found* table, **commit the fix automatically** (conventional message; no push unless asked), continue or stop.
 
 ## After the last bug
 

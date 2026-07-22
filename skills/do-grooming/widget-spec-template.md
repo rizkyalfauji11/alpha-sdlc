@@ -9,19 +9,20 @@
 | **Date** | <YYYY-MM-DD> |
 
 > The QA locator contract for this screen. Every **interactive or asserted** element gets a
-> stable **Test ID** and a **content description**. Decorative-only elements are skipped.
+> stable **Test ID**, its **type**, and a **content description**. Decorative-only elements are skipped.
 > The Test ID is **one value reused across platforms**, applied via the native attribute:
 > Android `resource-id` (`android:id`, or Compose `testTag` exposed via `testTagsAsResourceId`), iOS `accessibilityIdentifier`, Web `data-testid`.
 > The **content description doubles as the accessibility label** (serves screen readers + QA).
 > **ID convention:** `<feature>_<screen>_<element>`, snake_case, stable — never renamed once shipped.
+> **Type** = what the element actually is (button · toggle/switch · radio · checkbox · dropdown · text field · …). Build it as specified — the type is intent, not decoration, and a look-alike (e.g. a toggle built as a checkbox) breaks the behavior. Put any behavior the type implies (e.g. "exactly one selected") in *Notes* so it becomes testable AC; `do-testing` asserts the rendered a11y role matches the type.
 
 ## Elements
 
-| Element | Test ID | Content description (a11y label) | State(s) | Notes |
-|---------|---------|----------------------------------|----------|-------|
-| <Scan button> | `qris_widget_scan_button` | "Scan QRIS to pay" | default / pressed / disabled | deep-links to scanner |
-| <Balance text> | `qris_widget_balance_text` | "Active balance" | masked / revealed | masked by default |
-| <Offline banner> | `qris_widget_offline_banner` | "You are offline" | shown / hidden | |
+| Element | Type | Test ID | Content description (a11y label) | State(s) | Notes |
+|---------|------|---------|----------------------------------|----------|-------|
+| <Scan button> | Button | `qris_widget_scan_button` | "Scan QRIS to pay" | default / pressed / disabled | deep-links to scanner |
+| <Status toggle> | Switch | `qris_widget_status_toggle` | "Notifications on" | on / off / disabled | flips immediately, no submit |
+| <Balance text> | Text | `qris_widget_balance_text` | "Active balance" | masked / revealed | masked by default |
 
 ## Container sizing & overflow
 

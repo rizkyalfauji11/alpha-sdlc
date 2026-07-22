@@ -84,7 +84,10 @@ Variable-content containers (dialogs, sheets, lists, forms, multi-line text) mus
 For UI stages with a design reference (a Figma link or `design/<screen>.png`, recorded in the plan), `do-development` doesn't code-from-image blind: after a stage is green it **renders + screenshots** the screen and compares to the design **two ways — an AI visual checklist + a pixel-diff** — then fixes and re-renders until parity, within **platform-best-practice tolerance** (intentional platform deviations flagged, not forced pixel-identical). The screenshot + parity result appear in the stage review, and every iteration's actual screenshot + diff overlay is saved to `design/compared-ui/` (gitignored — local review trail). Rendering uses the platform's own tooling (Playwright / emulator+adb / simulator+simctl); the skill asks before installing anything.
 
 ### Widget spec (QA locator contract)
-For client platforms, each screen gets `widget-spec/<screen>.md` listing interactive/asserted elements with a stable **Test ID** (`<feature>_<screen>_<element>`) and a **content description that doubles as the accessibility label**. Development implements the exact IDs; testing locates by them (not brittle text/xpath). One ID, applied per platform via `testTag` / `accessibilityIdentifier` / `data-testid`.
+For client platforms, each screen gets `widget-spec/<screen>.md` listing interactive/asserted elements with a stable **Test ID** (`<feature>_<screen>_<element>`), its **type**, and a **content description that doubles as the accessibility label**. Development implements the exact IDs; testing locates by them (not brittle text/xpath). One ID, applied per platform via `testTag` / `accessibilityIdentifier` / `data-testid`.
+
+### Component fidelity (every element, any size)
+The design's choice of element is intent, not decoration: the plugin builds **exactly the component specified** — every element, however small — and never substitutes a look-alike (a toggle built as a checkbox looks close but breaks the behavior). The element's **type** is recorded in the widget spec, built in `do-development`, and `do-testing` **asserts the rendered a11y role matches** it; behavior the type implies is written as testable AC. **If the AI wants a different component, it asks first** — it never swaps silently.
 
 ### Clean architecture (conditional)
 If the project uses layered/clean architecture, changes are placed in the right layer (presentation / domain / data) and honor the dependency rule — but layering is never imposed on a project that doesn't use it.
@@ -111,9 +114,10 @@ Principles are applied through three stacked layers (strongest = hooks):
 2. **Hard-enforced (hooks)** — mechanizable principles are validated on `Write|Edit` and block (exit 2) on violation:
    - `validate-rung.js` — every TRD/plan decision must name its ladder rung (no empty/placeholder Approach field; every plan Stage has an Approach).
    - `validate-no-secrets.js` — no secret *values* in `docs/` artifacts (high-confidence patterns: private keys, AWS/GitHub/Google/Slack tokens, JWTs); names/locations are fine.
-3. **Self-check** — skills verify their own output against the principles before presenting (e.g. the rung self-check).
+   - `validate-comments.js` — no task/tracker **provenance** in source-code comments (issue keys, Jira/Confluence, PRD/BRD/TRD, "added for the ticket", "per the requirement"…); scans comment lines in code files only (skips docs/generated), high-confidence patterns only.
+3. **Self-check** — skills verify their own output against the principles before presenting (e.g. the rung self-check, and the comment-hygiene self-check in `do-development`/`do-fixing`).
 
-Judgment principles (never-over-simplify, ask-don't-assume, step-by-step, wait-for-answer) can't be script-checked — they rely on layers 1 and 3. Reload the plugin after install — hooks load at session start.
+Judgment principles (never-over-simplify, ask-don't-assume, step-by-step, wait-for-answer, and *prefer-no-comments / self-documenting code*) can't be fully script-checked — they rely on layers 1 and 3 (the `validate-comments` hook enforces only the provenance subset). Reload the plugin after install — hooks load at session start.
 
 ---
 
