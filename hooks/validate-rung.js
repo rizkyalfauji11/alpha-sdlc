@@ -29,6 +29,18 @@ const content = tool === 'Write' ? (ti.content || '')
               : '';
 if (!content.trim()) process.exit(0);
 
+// Unfilled template scaffolding left in a written artifact (conservative,
+// unmistakable tokens only — these never appear in real content).
+const leftover = content.match(/<(?:YYYY-MM-DD|hash|feature name|engineer|placeholder)>/i);
+if (leftover) {
+  process.stderr.write(
+    `Unfilled template placeholder in the artifact ("${leftover[0]}") — this doc still carries ` +
+    `template scaffolding. Fill every placeholder (dates, names, hashes) before writing; a TRD/plan ` +
+    `with leftover <...> tokens is an incomplete section, not a finished one.\n`
+  );
+  process.exit(2);
+}
+
 const problems = [];
 
 // 1. Any "Approach" / "(ladder rung)" field present must be filled (not empty, not a <placeholder>).

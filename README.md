@@ -123,12 +123,22 @@ Principles are applied through three stacked layers (strongest = hooks):
 
 1. **In context** — every skill opens with an imperative *"read `principles.md` in full now, then apply it,"* and a **SessionStart hook** (`hooks/inject-principles.js`) injects `principles.md` into every session so it's always present.
 2. **Hard-enforced (hooks)** — mechanizable principles are validated on `Write|Edit` and block (exit 2) on violation:
-   - `validate-rung.js` — every TRD/plan decision must name its ladder rung (no empty/placeholder Approach field; every plan Stage has an Approach).
+   - `validate-rung.js` — every TRD/plan decision must name its ladder rung (no empty/placeholder Approach field; every plan Stage has an Approach) **and no leftover template placeholders** (`<YYYY-MM-DD>`, `<hash>`, `<feature name>`…) in a written artifact.
    - `validate-no-secrets.js` — no secret *values* in `docs/` artifacts (high-confidence patterns: private keys, AWS/GitHub/Google/Slack tokens, JWTs); names/locations are fine.
-   - `validate-comments.js` — no task/tracker **provenance** in source-code comments (issue keys, Jira/Confluence, PRD/BRD/TRD, "added for the ticket", "per the requirement"…); scans comment lines in code files only (skips docs/generated), high-confidence patterns only.
+   - `validate-comments.js` — no task/tracker **provenance** in source-code comments (issue keys, Jira/Confluence, PRD/BRD/TRD, "added for the ticket"…) **and no banner / ASCII-divider comments**; scans comment lines in code files only (skips docs/generated), high-confidence patterns only.
 3. **Self-check** — skills verify their own output against the principles before presenting (e.g. the rung self-check, and the comment-hygiene self-check in `do-development`/`do-fixing`).
 
-Judgment principles (never-over-simplify, ask-don't-assume, step-by-step, wait-for-answer, and *prefer-no-comments / self-documenting code*) can't be fully script-checked — they rely on layers 1 and 3 (the `validate-comments` hook enforces only the provenance subset). Reload the plugin after install — hooks load at session start.
+**Why not "all principles as hooks"?** Enforcement is inherently **layered** — a hook is a deterministic text/path check with no semantics and no runtime, so it can only block *mechanizable* violations. Each principle lands in the layer that can actually enforce it:
+
+| Principle(s) | Enforced by |
+|--------------|-------------|
+| Ladder rung named · no leftover placeholders · no secrets in docs · no comment provenance · no banner dividers | **Blocking hook** (rung / no-secrets / comments) |
+| All principles present every session | **Injector hook** (`inject-principles`, non-blocking) |
+| Visual parity · content-fit · integrated real-data gate · control fidelity (a11y role) · full-scroll coverage · cross-feature data-flow · UX-convention assertions | **Runtime** — asserted in `do-development` / `do-testing` (needs a running app; a Write-time hook can't see these) |
+| Step-by-step approval · wait-for-answer · draft+approve before external write · test-first · keep-profile-current | **Skill flow + human gates** (cross-turn / procedural) |
+| Never over-simplify · ground-in-real-code · validate-choices · ask-don't-assume · Open-Decisions · 2–3 options · living summary · self-documenting code | **Judgment — self-check** (layers 1 & 3; a blocking regex here would false-positive on legit work) |
+
+Reload the plugin after install — hooks load at session start.
 
 ---
 

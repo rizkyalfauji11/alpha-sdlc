@@ -77,6 +77,23 @@ for (const chunk of chunks) {
     fail('an issue key with tracker context', chunk);
   }
 }
+
+// Banner / ASCII-divider comments (principles.md: "no banner dividers").
+const BANNERS = [
+  /^\s*(?:\/\/|#|\*)\s*[=\-*_~#+/]{8,}\s*$/,   // // =====  ·  # -----  ·  * ~~~~~
+  /^\s*\/\*+[=*\-~#_+]{6,}\*+\/\s*$/,           // /*========*/
+  /^\s*\/{10,}\s*$/,                            // //////////
+];
+for (const line of content.split(/\r?\n/)) {
+  if (BANNERS.some((re) => re.test(line))) {
+    process.stderr.write(
+      `Banner / ASCII-divider comment: "${line.trim().slice(0, 60)}". ` +
+      `Per principles.md, no banner dividers — delete it; structure and clear names ` +
+      `separate code, not decorative rules.\n`
+    );
+    process.exit(2);
+  }
+}
 process.exit(0);
 
 function fail(label, chunk) {
