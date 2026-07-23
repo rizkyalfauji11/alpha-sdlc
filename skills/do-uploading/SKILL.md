@@ -34,4 +34,4 @@ The amarbank Appendix-mode Jira-creation rules are defined in `~/.claude/skills/
 
 ## After upload
 
-Report (per the referenced skill): the Epic the tasks were linked under, the created keys + links, total count, anything skipped or flagged. Then confirm the TRD and task-list doc were updated with the new keys.
+Report in the shared **step-summary format** (`principles.md`) — *Where we are* + status, *In plain terms*, *What this step did*, *What I need from you*, engineer detail last — covering (per the referenced skill): the Epic the tasks were linked under, the created keys + links, total count, anything skipped or flagged. Then confirm the TRD and task-list doc were updated with the new keys.

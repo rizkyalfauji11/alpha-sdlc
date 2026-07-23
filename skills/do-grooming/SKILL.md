@@ -50,6 +50,8 @@ docs/development/<feature-name>/
 
 ## Flow
 
+> Present every gate below in the shared **step-summary format** (`principles.md`): *Where we are* + status · *In plain terms* · *What this step did* · *What I need from you* · engineer detail last — so a product owner and an engineer both follow each section.
+
 ### Step 0 — Read inputs and propose the outline (GATE 0)
 
 1. Confirm the **feature name** (slugify to kebab-case) and **what is being groomed**: the **hub**, or a **platform spoke** (which one)? Check `docs/development/<feature-name>/` for an existing hub.

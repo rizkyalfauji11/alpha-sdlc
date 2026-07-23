@@ -42,6 +42,8 @@ Each doc has a starter template in this skill's `templates/` directory (`templat
 
 ## Flow
 
+> Present every gate below in the shared **step-summary format** (`principles.md`): *Where we are* + status · *In plain terms* · *What this step did* · *What I need from you* · engineer detail last.
+
 1. **Full scan & confirm.** Scan the **entire** project (per the full-scan rule — every module, not a sample) to identify the repo type/platform and which docs apply (tier). Present the applicable doc list and get the user to confirm before drafting.
 2. **Per doc, in order:** scan the relevant real sources → draft the doc (mark `UNKNOWN` where undetermined; point to authoritative files for volatile detail) → **present for approval** (approve / edit / skip) → write to `./docs/basics/<file>.md` with the commit stamp → next doc. `security-compliance.md` needs explicit human sign-off. Seed `asset-registry.md` by scanning the actual asset directories. Seed `feature-map.md` from any existing `docs/development/*/TRD.md` (each is a feature) plus the code's feature modules/routes — capture their depends-on edges; if the app has no discernible features yet, start it minimal and note it.
 3. **Finish.** Write/refresh `overview.md` as the index with each doc's stamp. Report what was generated and what was skipped (and why).

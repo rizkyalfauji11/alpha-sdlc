@@ -26,6 +26,8 @@ Same engine (gated section-by-section TRD, hub/spokes, ladder, Mermaid, flows in
 
 ## Flow
 
+> Present every gate below in the shared **step-summary format** (`principles.md`): *Where we are* + status · *In plain terms* · *What this step did* · *What I need from you* · engineer detail last.
+
 ### GATE 0 — Understand and justify (before any design)
 
 1. **Capture the condition** — what's wrong today, where, and how the engineer knows (a metric, an incident, a painful change, a scan). Read the real code involved.

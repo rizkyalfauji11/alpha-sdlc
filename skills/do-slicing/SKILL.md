@@ -40,6 +40,8 @@ Standard relative estimation — works for any team, no Appendix field needed. E
 
 ## Flow — part → review → write
 
+> Present every review gate below in the shared **step-summary format** (`principles.md`): *Where we are* + status · *In plain terms* · *What this step did* · *What I need from you* · engineer detail last.
+
 A **part** = one phase group (or one platform spoke's slices). Build the document incrementally, one part at a time:
 
 1. **Setup (once):** confirm the **weighting mode** (always ask). Appendix → fetch the live Choose Appendix (v3) options + weights; Story Points → confirm the scale. Summarize the TRD's full slice set grouped into parts, and confirm the part list with the user.

@@ -88,6 +88,9 @@ The design/AC is the contract — the plugin builds *exactly* it. When the desig
 ### Test → fix → re-test loop
 `do-testing` is verify-only: it collects **all** bugs into the *Bugs found* report and presents them **before any fixing**. The user triages; confirmed fixes go to **`do-fixing`**, which fixes one at a time (reproduce-first regression test, root-cause not symptom, `docs/basics/` kept current), then hands back to `do-testing` to confirm the fixes hold and nothing regressed. Integration/Boot-&-Smoke bugs are re-verified by **re-booting the real stack**, not an isolated test.
 
+### Step summaries (plain-first, for everyone)
+Every gate — every grooming section, planning stage, dev checkpoint, test result, fix — is presented in one shared **step-summary format** so a product owner and an engineer both follow it: *Where we are* (phase · step · progress + a ✅/⏸/⚠️ status), *In plain terms* (a one-sentence, jargon-free gist), *What this step did*, and *What I need from you* (approve / change / stop) — with the technical evidence (diffs, test output, coverage) demoted to a **Details (for engineers)** section at the end. It's layering, not dumbing down: plain on top for everyone, precise below for engineers. Acronyms are expanded on first use.
+
 ### Content-fit (no clipped dialogs)
 Variable-content containers (dialogs, sheets, lists, forms, multi-line text) must **fit their content or scroll — never clip**. The plugin verifies them at content + viewport **extremes** (longest content, largest dynamic-type, smallest screen), not just the design's ideal content — because a mockup shows ideal-length content and the clip only appears with real content. Specced in the widget-spec's *Container sizing & overflow*, rendered at extremes in `do-development`, and asserted as a UI-level *Content-fit* dimension in `do-testing`.
 
@@ -136,7 +139,7 @@ Principles are applied through three stacked layers (strongest = hooks):
 | All principles present every session | **Injector hook** (`inject-principles`, non-blocking) |
 | Visual parity · content-fit · integrated real-data gate · control fidelity (a11y role) · full-scroll coverage · cross-feature data-flow · UX-convention assertions | **Runtime** — asserted in `do-development` / `do-testing` (needs a running app; a Write-time hook can't see these) |
 | Step-by-step approval · wait-for-answer · draft+approve before external write · test-first · keep-profile-current | **Skill flow + human gates** (cross-turn / procedural) |
-| Never over-simplify · ground-in-real-code · validate-choices · ask-don't-assume · Open-Decisions · 2–3 options · living summary · self-documenting code | **Judgment — self-check** (layers 1 & 3; a blocking regex here would false-positive on legit work) |
+| Never over-simplify · ground-in-real-code · validate-choices · ask-don't-assume · Open-Decisions · 2–3 options · living summary · self-documenting code · plain-first step summaries | **Judgment — self-check** (layers 1 & 3; a blocking regex here would false-positive on legit work) |
 
 Reload the plugin after install — hooks load at session start.
 

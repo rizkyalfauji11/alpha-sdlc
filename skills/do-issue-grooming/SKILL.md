@@ -33,6 +33,8 @@ The reported instance is one symptom of an underlying **class**. Generalize it, 
 
 ## Flow
 
+> Present every gate below in the shared **step-summary format** (`principles.md`): *Where we are* + status · *In plain terms* · *What this step did* · *What I need from you* · engineer detail (audit table, root cause) last.
+
 ### GATE 0 — Capture, audit, and confirm (before any design)
 
 1. **Capture the issue** — symptom, exact error/logs, repro steps, where seen (screen/endpoint, environment, build). Read the real code at the reported site.
