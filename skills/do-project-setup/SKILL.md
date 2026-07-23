@@ -26,6 +26,7 @@ Each doc has a starter template in this skill's `templates/` directory (`templat
 | `overview.md` | Project summary, the profile index (links), per-doc freshness/commit stamps | cache |
 | `architecture.md` | Architecture style + layering + dependency rule, **code structure (directory tree)**, module/package map, key components (Mermaid) | cache |
 | `ui-architecture.md` *(clients)* | Navigation, state management, design system, theming, screen inventory | cache |
+| `ux-conventions.md` *(clients)* | App-wide **interaction behavior** — form validation & submit enable/disable, mandatory marking, empty/loading/error states, snackbars, confirmations, disabled affordance, a11y | cache; cross-links `ui-architecture` |
 | `tech-stack.md` | Languages, frameworks, key libs, build tooling + build/run/test commands | stack cached; **versions → manifest** |
 | `database.md` | Engine(s), schema shape (Mermaid ER), migration approach | overview cached; **DDL → migrations** |
 | `data-cache.md` | Local persistence, caching strategy, offline behavior, what's stored where | cache |

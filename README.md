@@ -17,7 +17,7 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 
 | # | Skill | Does | Output |
 |---|-------|------|--------|
-| 0 | **do-project-setup** | Generates the project profile (architecture, tech-stack, database, API map, security, CI/CD, assets…) one doc at a time; refresh/reconcile mode keeps it current | `docs/basics/*.md` (15-doc set) |
+| 0 | **do-project-setup** | Generates the project profile (architecture, tech-stack, database, API map, security, CI/CD, assets…) one doc at a time; refresh/reconcile mode keeps it current | `docs/basics/*.md` (16-doc set) |
 | 1a | **do-grooming** | PRD/BRD → Technical Requirements Doc, section-by-section with one gate per section | `TRD.md` (hub) + `TRD-<platform>.md` (spokes), `widget-spec/<screen>.md` |
 | 1b | **do-tech-debt-grooming** | Engineer's improvement statement → behavior-preserving TRD (justify → target → regression safety), one gate per section | `TRD.md` + spokes (tech-debt template) |
 | 1c | **do-issue-grooming** | User-reported issue → **whole-project audit** of the issue class (every affected site, root cause, blast radius) → scoped issue-TRD, one gate per section; grooms only, hands to do-fixing | `TRD.md` + spokes (issue template) |
@@ -62,6 +62,7 @@ Implementation is red → green → refactor. Upstream artifacts are kept TDD-re
 | `overview.md` | Project summary + profile index with per-doc freshness stamps | core |
 | `architecture.md` | Architecture style, layering + dependency rule, module/package map (Mermaid) | core |
 | `ui-architecture.md` | Navigation, state management, design system, theming, screen inventory | client only |
+| `ux-conventions.md` | App-wide **interaction behavior** — form validation & submit enable/disable, mandatory marking, empty/loading/error states, snackbars, confirmations, a11y | client only |
 | `tech-stack.md` | Languages, frameworks, key libs, build/run/test commands (versions → manifest) | core |
 | `database.md` | Engine(s), schema shape (Mermaid ER), migration approach (DDL → migrations) | if it owns data |
 | `data-cache.md` | Local persistence, caching strategy, offline behavior, what's stored where | if applicable |
@@ -77,6 +78,9 @@ Implementation is red → green → refactor. Upstream artifacts are kept TDD-re
 
 ### Feature dependencies (notice what a feature relies on)
 A new feature usually depends on existing ones (reuse their data/API/UI, don't break them), sometimes on a feature not built yet (a sequencing prerequisite), or shares a contract another feature owns. The pipeline catches this instead of designing in isolation: `do-grooming` runs a required **dependency-discovery step** (scanning `docs/basics/feature-map.md` + sibling feature TRDs + the profile + code, and asking the user) and records a **Feature dependencies** section in the hub TRD; `do-project-setup` seeds and grooming maintains the **feature-map** registry (register-on-create). If a feature depends on a **prerequisite that isn't built yet, it's a hard block** — an Open Decision, built/decided first — `do-planning` won't stage on a phantom, and `do-testing` adds a cross-feature journey verifying the new feature works with the depended-on one and doesn't break it. Beyond feature-level deps, the hub also captures **flow dependencies at the field/section grain** — a specific input whose options come from another feature, or a list populated by another feature's creations — and `do-testing` requires a **mandatory data-flow test per binding** (seed in the source → assert it appears in the consumer, real data — never mocked).
+
+### UX conventions (consistent interaction behavior)
+`docs/basics/ux-conventions.md` is the app-wide standard for how common interactions behave — submit enable/disable when mandatory fields are valid, how mandatory fields are marked, empty/loading/error states, snackbars, destructive-action confirmation, disabled affordance, a11y. Grooming references it instead of re-deciding per screen; **when a feature needs a UX pattern the doc doesn't cover, the AI asks the user — add a new convention or reuse an existing one — never invents a one-off** (new ones are registered back, like assets). `do-development` builds to it and `do-testing` asserts it (submit-disable logic, mandatory marking, snackbar-on-event, empty/error states).
 
 ### Open Decisions (no over-delivery)
 The design/AC is the contract — the plugin builds *exactly* it. When the design is silent or ambiguous, the gap is **surfaced, not filled**: recorded in the spoke TRD's **Open Decisions** section with 2–3 recommended options, for the user to decide → update the design → re-groom. Undecided gaps block the affected slice; `do-development` that hits an unspecified gap stops and routes it back to grooming rather than inventing scope.
