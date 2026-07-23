@@ -50,4 +50,6 @@ Each doc has a starter template in this skill's `templates/` directory (`templat
 
 ## Refresh / reconcile mode
 
+This is also the **end-of-feature reconcile** the pipeline calls after a feature's SDLC completes (`do-testing` green): run it whenever a feature ships so `docs/basics/` reflects what was built before the next feature grooms against it. Pay special attention to `feature-map` (register the new feature + its dependencies), `api-reference`, `ui-architecture`/`ux-conventions`, and `auth`.
+
 Re-running on an existing profile: per-doc, compare the repo against the doc's commit stamp; refresh only the **stale** docs (with approval). For `asset-registry.md`, **reconcile** — diff the registry against the actual asset directories and flag **unregistered assets** (added without registering). Fast-rot docs (tech-stack, database, cicd, api-reference) warrant aggressive checks; slow-rot docs (architecture, conventions, security) rarely change.

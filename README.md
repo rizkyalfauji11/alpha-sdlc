@@ -30,6 +30,8 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 
 **Steps 2–3 are optional (Jira only).** Without Jira, the pipeline is: setup → grooming → **planning → development → testing**, working straight from the TRD's work slices + AC. The Jira phases are org-specific (adapt to your Jira, or skip).
 
+**At feature completion the pipeline loops back to setup** — after `do-testing` is green (and any `do-fixing` lands), run `do-project-setup` in **refresh mode** to reconcile `docs/basics/` with what was built (register the feature + deps in `feature-map`, new endpoints/screens/conventions), so the next feature grooms against an accurate profile.
+
 **Roadmap (not yet built):** deployment, monitoring (Datadog + Mixpanel), multi-repo awareness.
 
 ---
