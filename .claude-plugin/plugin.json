@@ -1,6 +1,6 @@
 {
   "name": "alpha-sdlc",
-  "version": "0.6.13",
+  "version": "0.6.14",
   "description": "SDLC support: grooming → development → testing → deployment → monitoring. TRD-centered, draft + human-approve. Jira integration optional.",
   "author": {
     "name": "rizkyalfauji11"

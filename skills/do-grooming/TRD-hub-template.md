@@ -34,15 +34,25 @@ _Approved: <YYYY-MM-DD>_
 - **Kinds:** depends-on (reuse an existing feature's contract/data/UI — don't break it) · prerequisite (must be built first) · shared-contract (extends a model another feature owns).
 - **Hard rule:** a **prerequisite that isn't built yet blocks the affected slice** → raise it as an **Open Decision** in the spoke; it's built/decided before the dependent slice proceeds. Never design around a phantom.
 
+**Entities touched** — every entity this feature owns or consumes, resolved against `docs/basics/06-domain-model.md` (new/changed entities are registered back into it):
+
+| Entity | Owns / consumes | Source of truth (owner · endpoint) | States visible here | On-delete impact on this feature | New/changed? → registered |
+|--------|-----------------|-------------------------------------|---------------------|----------------------------------|---------------------------|
+| <EntityA> | consumes (read) | <feature-1 · `GET /entity-a`> | <active only> | <A archived → row shows "unavailable", never dangles> | <no> |
+| <EntityD> | owns | <this feature> | <draft / published> | <deleting D cascades its join rows> | <yes → domain model updated> |
+
+- A consumer binds to the **owner's endpoint**, never a private copy; each *States visible* and *On-delete* cell becomes **testable AC**. A conflict with the domain model → Open Decision + a Contradictions entry there — never model around it.
+
 **Flow dependencies (field / section grain)** — specific inputs/sections whose data flows from another feature:
 
-| Consuming element (field / section) | Direction | Source feature · flow / endpoint | Data contract | Data-flow test |
-|-------------------------------------|-----------|----------------------------------|---------------|----------------|
-| <item-create → options dropdown> | consumes-options-from | <templates · `GET /templates/:id/options`> | <`{id,label}[]`> | <create template w/ options → dropdown shows them> |
-| <category page → items list> | displays-created-by | <menu-items · `POST /items` → `GET /items?cat=`> | <item shape> | <create item → it appears in the list> |
+| Consuming element (field / section) | Direction | Source feature · flow / endpoint | Data contract | Freshness (decided) | Data-flow test |
+|-------------------------------------|-----------|----------------------------------|---------------|---------------------|----------------|
+| <create-form → options dropdown> | consumes-options-from | <feature-1 · `GET /entity-a/:id/options`> | <`{id,label}[]`> | <on-mutation invalidation — a new option appears without app restart> | <create option in source → dropdown shows it> |
+| <detail page → related list> | displays-created-by | <feature-2 · `POST /entity-c` → `GET /entity-c?parent=`> | <entity shape> | <real-time event / refetch-on-focus> | <create item → it appears in the list> |
 
 - **Direction:** consumes-options-from (an input's options/values come from the source) · displays-created-by (a list/section shows entities the source creates) · writes-to (this feature feeds the source).
-- Each binding gets a **mandatory cross-feature data-flow test** in `do-testing` (seed/create in the source → assert it flows into this feature's field/section, real data). A broken binding is a bug; an untested one is a coverage gap.
+- **Freshness is decided at grooming** — when the source changes, when must this consumer see it, via which mechanism per `docs/basics/08-data-cache.md` → *Shared server-state sync* (mutation → invalidation · real-time event · refetch-on-focus). Undecided freshness = the "consumer's list not synchronized" bug; each cell becomes testable AC.
+- Each binding gets a **mandatory cross-feature data-flow test** in `do-testing` (seed/create in the source → assert it flows into this feature's field/section, real data, **within the decided freshness**). A broken binding is a bug; an untested one is a coverage gap.
 
 ## 3. System design
 _Approved: <YYYY-MM-DD>_

@@ -28,7 +28,7 @@ _Approved: <YYYY-MM-DD>_
 ## 2. Design
 _Approved: <YYYY-MM-DD>_
 
-<Clients (Android/iOS/Web): screens, navigation, state management, components.
+<Clients (Android/iOS/Web): screens, navigation, state management, components — each screen's elements bound to the **canonical components** in `docs/basics/03-ui-architecture.md` → component inventory (name them; no match → ask, register-on-create).
 Backend: services, modules, internal design.>
 
 **Approach (ladder rung):** <required — e.g. "rung 2: reuse existing `ScannerActivity`" / "rung 7: new component, ruled out rungs 2–5 because …">
@@ -38,6 +38,17 @@ Backend: services, modules, internal design.>
 graph TD
   A --> B
 ```
+
+**Multi-step flows** *(only if the feature has a stepped flow / wizard — grounded in `docs/basics/04-ux-conventions.md` → Multi-step / wizard flows; deviation → Open Decision)*
+
+| Flow: <name> | Decision |
+|--------------|----------|
+| Steps (ordered) | <step 1 → step 2 → step 3, each with its screen + design ref> |
+| Flow state lives in | <one flow-level store — per convention> |
+| Per-step validation + AC | <what each step must validate before Next; assertable> |
+| Cross-step dependencies | <e.g. step 3's options depend on step 1's choice → refetch on change> |
+| Partial save / resume | <draft persisted? where (→ `08-data-cache.md` flow drafts)> |
+| Final commit | <atomic — all-or-nothing at the end; mid-flow error recovery> |
 
 ## 3. Assets
 _Approved: <YYYY-MM-DD>_
@@ -53,8 +64,8 @@ _Approved: <YYYY-MM-DD>_
 ## 4. Data / persistence
 _Approved: <YYYY-MM-DD>_
 
-<Clients: local models, caching, offline storage (Room / CoreData / IndexedDB).
-Backend: DB schema and migrations.>
+<Clients: local models, caching, offline storage (Room / CoreData / IndexedDB) — shared server data follows `docs/basics/08-data-cache.md` → *Shared server-state sync* (canonical query keys, mutation→invalidation, real-time events); never a private copy of an entity another feature owns.
+Backend: DB schema and migrations — every FK's on-delete action implements the **decided edge** in the hub's Entities-touched / `06-domain-model.md` (mismatch = contradiction, per `07-database.md`).>
 
 ```mermaid
 erDiagram
@@ -104,6 +115,10 @@ _Approved: <YYYY-MM-DD>_
 _Approved: <YYYY-MM-DD>_
 
 > This platform's candidate tickets. Mirror the summary up into the hub.
+> AC must include the **integrity rules** the hub decided, not just the happy path: entity
+> **visibility** ("the picker lists active parents only"), **on-delete behavior** ("a row whose
+> parent was archived shows 'unavailable', never dangles/crashes"), **freshness** ("a new source
+> item appears in this list per the decided freshness"), and per-step AC for any multi-step flow.
 
 - [ ] <slice> — acceptance criteria: <AC>
 - [ ] <slice> — acceptance criteria: <AC>
