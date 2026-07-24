@@ -76,7 +76,10 @@
 - **AC covered:** <n of m>
 - **By level:** API <n> · UI <n> · Integration <n> · E2E <n>
 - **Boot & Smoke (integrated):** <pass / FAILED / blocked — with blocker>  — *mandatory; feature is not done until this passes*
-- **Flow dependencies:** <each binding from the hub's Flow-dependencies sub-table → its data-flow test (seed in source → appears in consumer) · status, or "none">  — *each binding must have a test*
+- **Flow dependencies:** <each binding from the hub's Flow-dependencies sub-table → its data-flow test in **both directions** (create: appears per decided freshness · destructive: on-delete edge honored) · status, or "none">  — *each binding must have both*
+- **Integrity coverage (per consumed entity):** <entity → visibility ✓ (allowed states only) · on-delete ✓ (no dangling ref/crash) · freshness ✓ (decided mechanism) — or "none consumed">
+- **Stepped flows:** <each Multi-step flow → its wizard test set (per-step validation · back/resume · cross-step refetch · abort-clean · atomic commit) · status, or "none">
+
 - **E2E scope (risk-calibrated):** <which critical journeys got E2E, and why others didn't>
 - **Uncovered AC (gaps):** <list, or "none">
 - **Manual-only (env unavailable / no automation possible):** <list + why, or "none">

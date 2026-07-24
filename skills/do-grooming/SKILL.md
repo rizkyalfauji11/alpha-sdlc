@@ -18,7 +18,7 @@ A feature's TRD is split into a **hub** (shared, single source of truth) and one
 
 ```
 docs/development/<feature-name>/
-  TRD.md            ← hub: context, system design, API contract, cross-cutting, change manifest
+  TRD.md            ← hub: context, feature dependencies (+ entities/flows), system design, API contract, cross-cutting, change manifest
   TRD-backend.md    ← spoke (only for platforms in scope)
   TRD-android.md
   TRD-ios.md

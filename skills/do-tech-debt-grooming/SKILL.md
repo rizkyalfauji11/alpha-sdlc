@@ -7,7 +7,7 @@ You are grooming an **engineer-initiated improvement** (tech debt, refactor, per
 
 **First, read `../../principles.md` in full now, then apply it** (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve).
 
-**Read the project profile first** (`docs/basics/` from `do-project-setup`) — architecture, code structure, tech-stack, database, conventions, etc. — as your grounding reference before scanning code from scratch. Tech-debt work especially depends on knowing the real structure and conventions you're preserving. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
+**Read the project profile first** (`docs/basics/` from `do-project-setup`) — **start with `06-domain-model.md` + `16-feature-map.md`** (what the refactor's blast radius touches), then architecture, code structure, tech-stack, database, conventions as needed — as your grounding reference before scanning code from scratch. Tech-debt work especially depends on knowing the real structure and conventions you're preserving. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
 
 **If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run `do-project-setup` first** — grooming grounds in that profile, and skipping it means grooming on an ungrounded view. Wait for their answer: recommend setting up first; proceed without it only if the user explicitly chooses to (then fall back to scanning the repo, and note that decisions are ungrounded).
 
