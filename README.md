@@ -17,7 +17,7 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 
 | # | Skill | Does | Output |
 |---|-------|------|--------|
-| 0 | **do-project-setup** | Generates the project profile (architecture, tech-stack, database, API map, security, CI/CD, assets…) one doc at a time; refresh/reconcile mode keeps it current | `docs/basics/*.md` (16-doc set) |
+| 0 | **do-project-setup** | Generates the project profile (architecture, tech-stack, database, API map, security, CI/CD, assets…) one doc at a time; refresh/reconcile mode keeps it current | `docs/basics/*.md` (17-doc set) |
 | 1a | **do-grooming** | PRD/BRD → Technical Requirements Doc, section-by-section with one gate per section | `TRD.md` (hub) + `TRD-<platform>.md` (spokes), `widget-spec/<screen>.md` |
 | 1b | **do-tech-debt-grooming** | Engineer's improvement statement → behavior-preserving TRD (justify → target → regression safety), one gate per section | `TRD.md` + spokes (tech-debt template) |
 | 1c | **do-issue-grooming** | User-reported issue → **whole-project audit** of the issue class (every affected site, root cause, blast radius) → scoped issue-TRD, one gate per section; grooms only, hands to do-fixing | `TRD.md` + spokes (issue template) |
@@ -66,6 +66,7 @@ Implementation is red → green → refactor. Upstream artifacts are kept TDD-re
 | `ui-architecture.md` | Navigation, state management, design system, theming, screen inventory | client only |
 | `ux-conventions.md` | App-wide **interaction behavior** — form validation & submit enable/disable, mandatory marking, empty/loading/error states, snackbars, confirmations, a11y | client only |
 | `tech-stack.md` | Languages, frameworks, key libs, build/run/test commands (versions → manifest) | core |
+| `domain-model.md` | **Logical entities + relationships + cross-feature ownership** (owner = source of truth; consumers read via owner); flags cross-feature contradictions | if features share entities |
 | `database.md` | Engine(s), schema shape (Mermaid ER), migration approach (DDL → migrations) | if it owns data |
 | `data-cache.md` | Local persistence, caching strategy, offline behavior, what's stored where | if applicable |
 | `environment.md` | Environments, config & secrets *approach* (names/locations, no values), **full-stack run recipe** (per-service start command, ready-check, FE→BE wiring, CORS — feeds the Boot & Smoke gate), flags, variants | core |
@@ -77,6 +78,9 @@ Implementation is red → green → refactor. Upstream artifacts are kept TDD-re
 | `api-reference.md` | **Base-URL matrix (service × env)**, **machine-checkable contract** (OpenAPI/schema location + owner + whether clients derive typed client/fixtures), API catalog, auth, gotchas (no secrets) | if it calls/serves APIs |
 | `asset-registry.md` | Searchable asset inventory (name · path · tags), naming, icon set, design tokens (→ Figma) | client only |
 | `feature-map.md` | Catalog of features — purpose, entry points, owned endpoints/tables, **depends-on**, status, dependency graph | if it has features |
+
+### Domain model (shared entity truth)
+`docs/basics/domain-model.md` is the single **logical model** — the core entities (Menu, Variant, Ingredient, Recipe…), their relationships, and **which feature owns each** (owner = source of truth; consumers read via the owner, never a private copy). It's what stops interdependent features from each inventing their own version of a shared entity — the root of "menu list not syncing" / "didn't get the ingredients list" bugs. It's **codebase-state-agnostic**: it describes what exists, establishes what's missing with you, and **flags contradictions** (the same entity modelled two ways) instead of building on them. Physical storage stays in `database.md`, transport in `api-reference.md`, the feature graph in `feature-map.md`; the domain model ties them together, and cross-feature data-sync (query keys + invalidation) is pinned in `data-cache.md`.
 
 ### Feature dependencies (notice what a feature relies on)
 A new feature usually depends on existing ones (reuse their data/API/UI, don't break them), sometimes on a feature not built yet (a sequencing prerequisite), or shares a contract another feature owns. The pipeline catches this instead of designing in isolation: `do-grooming` runs a required **dependency-discovery step** (scanning `docs/basics/feature-map.md` + sibling feature TRDs + the profile + code, and asking the user) and records a **Feature dependencies** section in the hub TRD; `do-project-setup` seeds and grooming maintains the **feature-map** registry (register-on-create). If a feature depends on a **prerequisite that isn't built yet, it's a hard block** — an Open Decision, built/decided first — `do-planning` won't stage on a phantom, and `do-testing` adds a cross-feature journey verifying the new feature works with the depended-on one and doesn't break it. Beyond feature-level deps, the hub also captures **flow dependencies at the field/section grain** — a specific input whose options come from another feature, or a list populated by another feature's creations — and `do-testing` requires a **mandatory data-flow test per binding** (seed in the source → assert it appears in the consumer, real data — never mocked).
