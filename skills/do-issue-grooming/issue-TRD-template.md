@@ -50,7 +50,7 @@ _Approved: <YYYY-MM-DD>_
 ## 5. Blast radius & feature dependencies
 _Approved: <YYYY-MM-DD>_
 
-<Which features the fix touches or risks (grounded in `feature-map.md`), what must **not** break, and any cross-feature coordination/ordering. A systemic fix can ripple — name the ripple.>
+<Which features the fix touches or risks (grounded in `16-feature-map.md`), what must **not** break, and any cross-feature coordination/ordering. A systemic fix can ripple — name the ripple.>
 
 ## 6. Change manifest
 _Approved: <YYYY-MM-DD>_

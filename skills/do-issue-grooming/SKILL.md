@@ -7,7 +7,7 @@ You are grooming a **user-reported issue** into a Technical Requirements Documen
 
 **First, read `../../principles.md` in full now, then apply it** (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). Root-cause, not symptom, is the whole point here.
 
-**Read the project profile first** (`docs/basics/` from `do-project-setup`) — architecture, code structure, api-reference, database, conventions, `auth.md` (for 401/token-class issues), and especially **`feature-map.md`** — as your grounding reference before scanning code from scratch. You need it to know *where the issue class could live* and *which features it touches*. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
+**Read the project profile first** (`docs/basics/` from `do-project-setup`) — architecture, code structure, api-reference, database, conventions, `13-auth.md` (for 401/token-class issues), and especially **`16-feature-map.md`** — as your grounding reference before scanning code from scratch. You need it to know *where the issue class could live* and *which features it touches*. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
 
 **If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run `do-project-setup` first** — a whole-project audit on an ungrounded view misses sites. Wait for their answer: recommend setting up first; proceed only if the user explicitly chooses to (then fall back to scanning the repo, and note the audit is ungrounded and may be incomplete).
 
@@ -29,7 +29,7 @@ The reported instance is one symptom of an underlying **class**. Generalize it, 
 2. **Search the whole project for that class.** Use the profile to know where to look (all clients for a render bug, all FE↔BE call sites for a contract bug), then scan the real code — list **every affected site**, not just the reported one. Say what you searched and any area you couldn't cover.
 3. **Root cause.** Why does the class exist? Usually a missing guard, convention, or contract (no typed client, no locale helper, no a11y-role assertion). Fix the *cause*, not the N symptoms.
 4. **Prefer a systemic fix over N patches.** A root fix that eliminates the class (a shared helper, a generated typed client, a lint rule, a contract) beats patching each site — climb the ladder and name the rung. Per-site patching is the last resort; if you must, list every site so none is missed.
-5. **Blast radius.** Which features does the fix touch or risk? Ground in `feature-map.md` — a systemic fix can ripple into other features; list what must not break, and coordinate ordering.
+5. **Blast radius.** Which features does the fix touch or risk? Ground in `16-feature-map.md` — a systemic fix can ripple into other features; list what must not break, and coordinate ordering.
 
 ## Flow
 
@@ -38,7 +38,7 @@ The reported instance is one symptom of an underlying **class**. Generalize it, 
 ### GATE 0 — Capture, audit, and confirm (before any design)
 
 1. **Capture the issue** — symptom, exact error/logs, repro steps, where seen (screen/endpoint, environment, build). Read the real code at the reported site.
-2. **Audit the whole project (core rule above)** — name the class, scan for every occurrence, root-cause it, and map blast radius via `feature-map.md`. This is the heart of the skill; don't shortcut to the single reported site.
+2. **Audit the whole project (core rule above)** — name the class, scan for every occurrence, root-cause it, and map blast radius via `16-feature-map.md`. This is the heart of the skill; don't shortcut to the single reported site.
 3. **Assess severity & confirm understanding** (per principles) — severity (blocker/major/minor), the class, all affected sites, root cause, blast radius, and whether the fix is systemic or per-site. Re-summarize on any correction. Present this audit summary and **get the user to confirm the scope** before designing the fix.
 4. Propose the **section outline** from the template; get approval before drafting.
 

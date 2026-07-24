@@ -24,7 +24,7 @@ _Approved: <YYYY-MM-DD>_
 _Approved: <YYYY-MM-DD>_
 
 > How this feature relates to **other features** — so a dependency is reused/sequenced, not missed.
-> Grounded in `docs/basics/feature-map.md` + sibling feature TRDs; register this feature in the map.
+> Grounded in `docs/basics/16-feature-map.md` + sibling feature TRDs; register this feature in the map.
 
 | Depends on / relates to | Kind | Integration points | Status | Blocking? |
 |-------------------------|------|---------------------|--------|-----------|
