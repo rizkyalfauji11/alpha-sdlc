@@ -15,10 +15,14 @@
 
 > The design each screen must match 1:1 (within platform-best-practice tolerance).
 > Figma → paste the frame link; image → commit it to `docs/development/<feature-name>/design/<screen>.png`.
+> **One row per screen, per flow step, and per specced state** — carry everything grooming captured;
+> a state with no ref carries its explicit marker (Open Decision / platform default per `04-ux-conventions`).
 
-| Screen | Design (Figma link / image path) | Specific needs |
-|--------|----------------------------------|----------------|
-| <screen> | `docs/development/<feature-name>/design/<screen>.png` *or* `<figma-frame-url>` | <breakpoints, states to match, exact spacing, motion, dark mode, etc.> |
+| Screen / step / state | Design (Figma link / image path) | Specific needs |
+|-----------------------|----------------------------------|----------------|
+| <screen> | `docs/development/<feature-name>/design/<screen>.png` *or* `<figma-frame-url>` | <breakpoints, exact spacing, motion, dark mode> |
+| <flow step 2 of 3> | <ref> | |
+| <screen · empty state> | <ref — or "flagged: platform default"> | |
 
 ## Architecture & package layout
 
@@ -41,7 +45,7 @@
 - **Covers:** <task IDs / Jira keys / AC>
 - **Files / modules:** <paths>
 - **Approach:** <what / ladder rung — reuse X, native Y, etc.>
-- **Changes (shape, not full code):** per file, what changes; new/changed **signatures, data shapes, endpoints, or props**; **pseudocode or notes only for tricky logic** (races, money caps, retries, edge cases). Detail scales with risk — trivial changes stay a line, risky ones get the interface + edge cases. Do *not* paste full method bodies/boilerplate.
+- **Changes (shape, not full code):** per file, what changes; new/changed **signatures, data shapes, endpoints, or props**; **pseudocode or notes only for tricky logic** (races, money caps, retries, edge cases). For stages touching the contract: the spec update + **typed-client regeneration** come first (per `05-tech-stack.md` → Code generation). For stages touching shared entities: name the **query keys read + invalidations/events fired** (per `08-data-cache.md`). Detail scales with risk — trivial changes stay a line, risky ones get the interface + edge cases. Do *not* paste full method bodies/boilerplate.
 - **Design ref (UI stages):** which screen + design (from *Design references* above) and the states to match — the parity target for this stage. `n/a` for non-UI stages.
 - **Test first (TDD red):** the failing test(s) that prove this stage, derived from the AC — what they assert. If the stage can't be unit-tested (native widget render, pure UI), say so and give the manual/observed check instead.
 - **Verify:** <how to confirm green — run the test(s) + build/observe>
@@ -61,4 +65,5 @@
 
 - **Order / dependencies:** <which stage must precede which, and why>
 - **Safe stop points:** <list the checkpoints where the codebase is in a working/shippable state>
-- **Uncovered tasks:** <any task/AC not yet mapped to a stage — or "none">
+- **Uncovered tasks / AC:** <any task, **integrity AC** (visibility · on-delete · freshness), or **flow binding** not yet mapped to a stage — or "none">
+
