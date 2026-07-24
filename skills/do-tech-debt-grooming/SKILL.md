@@ -18,7 +18,7 @@ Same engine (gated section-by-section TRD, hub/spokes, ladder, Mermaid, flows in
 - **Behavior-preserving by default.** The success criterion is usually "behaves identically, measurably better." Any *intended* behavior change must be called out explicitly.
 - **Justify before designing.** Tech debt is where over-engineering sneaks back in. The first gate is whether this is worth doing *now*.
 - **Measurable target.** "Better" must be a number (p95 latency, crash rate, build time, complexity, coverage, duplicated lines), not a vibe.
-- **Regression safety is the AC.** TDD flavor here is **characterization tests first** — pin the current behavior, then refactor while green.
+- **Regression safety is the AC.** TDD flavor here is **characterization tests first** — pin the current behavior, then refactor while green. **When the refactor touches shared entities, contracts, or cache wiring, regression safety extends to the seam:** the consuming features' **flow-binding tests (create + destructive)** and their Boot & Smoke journeys must stay green too — unit-level characterization alone can pass while a consumer's flow breaks.
 
 ## Output
 
@@ -30,7 +30,7 @@ Same engine (gated section-by-section TRD, hub/spokes, ladder, Mermaid, flows in
 
 ### GATE 0 — Understand and justify (before any design)
 
-1. **Capture the condition** — what's wrong today, where, and how the engineer knows (a metric, an incident, a painful change, a scan). Read the real code involved.
+1. **Capture the condition** — what's wrong today, where, and how the engineer knows (a metric, an incident, a painful change, a scan). Read the real code involved. **Map the cross-feature blast radius:** run the impact analysis in `docs/basics/16-feature-map.md` (reverse dependency edges) + `06-domain-model.md`'s *Consumed by* — which features consume the modules/entities/contracts being refactored. Those consumers' flows are what "behavior-preserving" must preserve.
 2. **Justify it — cost of delay vs cost to fix.** State what the debt costs if left (incidents, slow delivery, risk) and roughly what fixing costs. **If it's speculative polishing with no real cost, say so and recommend deferring** (YAGNI applies to refactors). Get the user to confirm it's worth doing now before designing anything.
 3. **Summarize & confirm understanding** (per principles) — condition, blast radius, whether any behavior change is intended, the measurable target. Re-summarize on any correction.
 4. Propose the **section outline** from the template; get approval before drafting.

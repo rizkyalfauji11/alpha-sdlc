@@ -31,7 +31,7 @@ _Approved: <YYYY-MM-DD>_
 | 1 | <src/menu/CategoryRow.tsx:107> | menu-categories | reported crash | blocker |
 | 2 | <src/menu/ItemRow.tsx:88> | menu-items | same class, latent | major |
 
-**Root cause:** <why the class exists — the missing guard / convention / contract (no typed client, no locale helper, no a11y-role assertion, …).>
+**Root cause:** <why the class exists — the missing guard / convention / contract (no typed client, no locale helper, no a11y-role assertion, no canonical cache key / invalidation, an undecided on-delete edge, no flow-level state store, …).>
 
 **Search coverage:** <what was scanned and how; any area not covered (say so — don't imply completeness you didn't verify).>
 

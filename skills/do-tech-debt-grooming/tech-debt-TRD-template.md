@@ -51,7 +51,7 @@ _Approved: <YYYY-MM-DD>_
 ## 6. Regression safety
 _Approved: <YYYY-MM-DD>_
 
-<Behavior-preserving proof: characterization tests to add **first** (pin current behavior), existing tests that must stay green, risky areas to guard. Any intended behavior change stated explicitly.>
+<Behavior-preserving proof: characterization tests to add **first** (pin current behavior), existing tests that must stay green, risky areas to guard. Any intended behavior change stated explicitly. **If shared entities/contracts/cache wiring are touched:** the consuming features (blast radius, from `16-feature-map.md` impact analysis) and their **flow-binding tests (create + destructive)** that must stay green.>
 
 ## 7. Rollback
 _Approved: <YYYY-MM-DD>_
@@ -65,6 +65,10 @@ _Approved: <YYYY-MM-DD>_
 
 **Modules / files touched**
 - <path>
+
+**Cross-feature blast radius** (features consuming what's refactored — from `16-feature-map.md`)
+- <feature → the binding/flow that must stay green — or "none">
+
 
 **Regression-safety plan (tests first)**
 - <characterization test to add>
