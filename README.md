@@ -63,7 +63,7 @@ Implementation is red → green → refactor. Upstream artifacts are kept TDD-re
 |-----|--------|-------|
 | `01-overview.md` | Project summary + profile index with per-doc freshness stamps | core |
 | `02-architecture.md` | Architecture style, layering + dependency rule, module/package map (Mermaid) | core |
-| `03-ui-architecture.md` | Navigation, state management, design system, theming, screen inventory | client only |
+| `03-ui-architecture.md` | Navigation, state management, design system + **component inventory**, **screen scaffolds & layout patterns** (header anatomy · body slicing · dividers), theming, screen inventory | client only |
 | `04-ux-conventions.md` | App-wide **interaction behavior** — forms/validation, states, snackbars, confirmations, **lists/search/filters**, **multi-step/wizard flows**, a11y | client only |
 | `05-tech-stack.md` | Languages, frameworks, key libs, build/run/test commands (versions → manifest) | core |
 | `06-domain-model.md` | **Logical entities + relationships + cross-feature ownership** (owner = source of truth; consumers read via owner); flags cross-feature contradictions | if features share entities |
