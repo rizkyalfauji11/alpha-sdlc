@@ -40,7 +40,9 @@ A parallel, **fully stand-alone** skill set for the dedicated regression/QA proj
 |---|-------|------|--------|
 | R0 | **do-regression-setup** | Input-inventory gate (everything askable, everything skippable → loud GAPs) → explores the built app (screens, flows, discovered locators, conditions) → generates the **QA profile**: the learned app model, a **derived condition-user catalog** (roles × states × edges × extremes — enumerated so no case is missed), and the **regression coverage map** (feature/flow → tests, gaps loud) | `<test-project>/docs/qa-basics/*.md` (10-doc set) |
 
-*Next steps (not yet built): regression planning/authoring (turn coverage-map gaps into specs), suite runs & triage.*
+| R1 | **do-regression-authoring** | Turns coverage-map **GAP rows** into approved, passing black-box tests — one at a time (spec → approve → implement → run against the built app → register); condition users only, reuse-before-create, stability policy enforced; a failing new test may be a **real bug found** (filed with the test as repro) | tests + updated coverage map |
+
+*Next step (not yet built): suite runs & triage at scale.*
 
 **Roadmap (not yet built):** deployment, monitoring (Datadog + Mixpanel), multi-repo awareness.
 
