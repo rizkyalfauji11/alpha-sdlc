@@ -32,6 +32,16 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 
 **At feature completion the pipeline loops back to setup** — after `do-testing` is green (and any `do-fixing` lands), run `do-project-setup` in **refresh mode** to reconcile `docs/basics/` with what was built (register the feature + deps in `feature-map`, new endpoints/screens/conventions), so the next feature grooms against an accurate profile.
 
+### Regression track (in progress)
+
+A parallel skill set for the **dedicated regression/QA project** — a separate directory/repo from the app that protects shipped features across releases.
+
+| # | Skill | Does | Output |
+|---|-------|------|--------|
+| R0 | **do-regression-setup** | Sets up the regression project (describe existing / establish new — framework reuse, scaffold) and generates its **QA profile**: the QA counterpart of `docs/basics/`, bridging to the app profile (contract, Test IDs, seed, auth) — incl. the **regression coverage map** (feature → flows → tests, gaps loud) | `<test-project>/docs/qa-basics/*.md` (10-doc set) |
+
+*Next steps (not yet built): regression planning/authoring (turn coverage-map gaps into specs), suite runs & triage.*
+
 **Roadmap (not yet built):** deployment, monitoring (Datadog + Mixpanel), multi-repo awareness.
 
 ---
