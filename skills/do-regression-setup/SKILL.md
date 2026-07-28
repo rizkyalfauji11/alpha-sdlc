@@ -9,10 +9,30 @@ You are setting up the **regression test project** — a **separate directory/re
 
 **Read the application's profile first** (`<app-repo>/docs/basics/` from `do-project-setup`) — the QA profile **bridges to it, never re-declares it**: the app's `06-domain-model.md`, `16-feature-map.md`, `15-api-reference.md` (machine-checkable contract), `13-auth.md` (test/dev authentication), `09-environment.md` (run recipe), `07-database.md` (seed data), and the per-feature **widget-spec Test IDs** are the *inputs* these QA docs point at. **If the app has no `docs/basics/`, STOP and ask the user to run `do-project-setup` on the app first** — a regression suite grounded on an unprofiled app re-derives (and drifts from) every truth. Proceed without it only if the user explicitly chooses to (then note the QA profile is ungrounded).
 
+## Black-box boundary — the suite tests the BUILT app, never the code
+
+Regression tests the **built application** (the deployed web URL, the installed APK/IPA) exactly as a user drives it — whole-app flows through real UI and real HTTP. **It never imports application code, never mocks the app, and requires no test hooks inside it.** Its only contracts with the app are the **public surfaces** (UI + API) plus two sanctioned bridges: the **widget-spec Test IDs** (readable on a built artifact) and the **seed/reset command**. If a test can only be written by reaching into app code, that's a missing Test ID / seed guarantee to route back to the app — not a reason to break the boundary.
+
+## Derive the condition-user catalog from the app profile — enumerated, not brainstormed
+
+"No missed test cases" is a **derivation, not a hope**: the test users and their condition states (`05-environments-and-data.md` → Test user catalog) are **enumerated from the app truths already recorded** — one user (or documented state) per condition, each row tracing to the truth that generated it:
+
+| Condition source | App doc |
+|------------------|---------|
+| One user per **role** (incl. permission boundaries) | `12-security-compliance.md` → roles × capabilities |
+| Users holding entities in **every lifecycle state** (draft/active/archived · visibility rules) | `06-domain-model.md` → Entities |
+| A user per **on-delete/dangling edge** (owns rows whose parent was archived/deleted) | `06-domain-model.md` → Relationships |
+| Users positioned for each **cross-feature flow binding** (source seeded, consumer empty, …) | `16-feature-map.md` + TRD §2 flow deps |
+| **Flow/wizard states** (mid-draft, abandoned, resumed) | TRD multi-step specs · `04-ux-conventions.md` |
+| **Auth states** (fresh, expired token, revoked/locked) | `13-auth.md` |
+| **Data extremes** (zero data / realistic max / longest content) | `04-ux-conventions.md` content-fit · seed data |
+
+**Completeness check (run at setup and every refresh):** every role, every entity state, every decided edge, and every auth state appears in ≥ 1 catalog row — a condition with no user is a **loud gap**, and an app-profile change (new state, new edge, new role) flags the missing condition users on reconcile. Every user is a **seed guarantee** (recreated on reset), never a hand-maintained account that drifts.
+
 ## Two modes — same gates either way
 
 - **Existing test project → describe.** Full scan (no sampling — every spec dir, helper, fixture, config, pipeline file), then draft each doc from reality. Flag contradictions (two locator styles, mixed wait strategies) instead of smoothing them over.
-- **No test project yet → establish.** Ask where the split directory/repo should live, **choose the stack with the user** (rung 2 first: reuse the frameworks the app's `do-testing` already uses — same Playwright/Espresso/XCUITest — before proposing anything new), scaffold the minimal structure (per the approved `02-test-architecture`), then generate the profile. Scaffold only what the approved docs define — no speculative folders.
+- **No test project yet → establish.** Ask where the split directory/repo should live, **choose the stack with the user** — constrained by the black-box boundary: only drivers that operate on the **built artifact** (web → browser against the deployed URL, e.g. Playwright — reuse it if the app's `do-testing` already uses it, rung 2; mobile → installed APK/IPA via Appium/UiAutomator/Maestro — **not** Espresso/Compose-UI, which run in-process with app source) — then scaffold the minimal structure (per the approved `02-test-architecture`) and generate the profile. Scaffold only what the approved docs define — no speculative folders.
 
 ## Rules
 
