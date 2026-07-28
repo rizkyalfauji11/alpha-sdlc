@@ -1,74 +1,101 @@
 ---
 name: do-regression-setup
-description: Step 0 of the regression track — set up the dedicated regression/QA test project (a separate directory/repo from the application) and generate its QA profile (docs/qa-basics/, the QA counterpart of docs/basics/) that every later regression skill grounds in. Describes an existing test project or establishes a new one (framework choice, scaffold) with the user. Use to set up the regression project, bootstrap the QA/testing profile, onboard a test repo, or before the first regression planning. Triggers on "regression setup", "set up the regression project", "QA project setup", "testing project setup", "/do-regression-setup".
+description: Step 0 of the regression track — set up the stand-alone regression/QA test project and generate its QA profile (docs/qa-basics/). Fully independent of the application's repo and code: QA provides the inputs (PRD, condition docs, web link, APK/IPA, API docs, test accounts — each skippable now, addable later) and the AI learns the rest by exploring the built application itself. Use to set up the regression project, bootstrap the QA/testing profile, onboard a test repo, or before the first regression planning. Triggers on "regression setup", "set up the regression project", "QA project setup", "testing project setup", "/do-regression-setup".
 ---
 
-You are setting up the **regression test project** — a **separate directory/repo from the application** — and generating its **QA profile**: the baseline reference every later regression skill (planning, authoring, running, triage) grounds in, exactly as `docs/basics/` grounds the SDLC skills. Output goes to **`<test-project>/docs/qa-basics/`** (the profile lives with the suite it describes). Run once to bootstrap; re-run in **refresh/reconcile mode** to keep it current.
+You are setting up the **stand-alone regression test project** and generating its **QA profile**: the baseline reference every later regression skill (planning, authoring, running, triage) grounds in. Output goes to **`<test-project>/docs/qa-basics/`**. Run once to bootstrap; re-run in **refresh mode** to keep it current and to fold in inputs the user skipped earlier.
 
-**First, read `../../principles.md` in full now, then apply it** — especially: ground in real code (mark `UNKNOWN — needs human input`, never guess), draft + human-approve, never over-simplify, and the codebase-state-agnostic rule (describe what exists · establish what's missing · surface contradictions).
+**First, read `../../principles.md` in full now, then apply it** — especially: ground in what's real (mark `UNKNOWN — needs input`, never guess), draft + human-approve, never over-simplify, describe-what-exists / establish-what's-missing / surface-contradictions.
 
-**Read the application's profile first** (`<app-repo>/docs/basics/` from `do-project-setup`) — the QA profile **bridges to it, never re-declares it**: the app's `06-domain-model.md`, `16-feature-map.md`, `15-api-reference.md` (machine-checkable contract), `13-auth.md` (test/dev authentication), `09-environment.md` (run recipe), `07-database.md` (seed data), and the per-feature **widget-spec Test IDs** are the *inputs* these QA docs point at. **If the app has no `docs/basics/`, STOP and ask the user to run `do-project-setup` on the app first** — a regression suite grounded on an unprofiled app re-derives (and drifts from) every truth. Proceed without it only if the user explicitly chooses to (then note the QA profile is ungrounded).
+## Stand-alone — no application repo, no application code
 
-## Black-box boundary — the suite tests the BUILT app, never the code
+This project needs **zero access to the application's repository or source code**. Its subject is the **built application** — the deployed web URL, the installed APK/IPA — driven exactly as a user drives it. Everything the profile needs comes from two places:
 
-Regression tests the **built application** (the deployed web URL, the installed APK/IPA) exactly as a user drives it — whole-app flows through real UI and real HTTP. **It never imports application code, never mocks the app, and requires no test hooks inside it.** Its only contracts with the app are the **public surfaces** (UI + API) plus two sanctioned bridges: the **widget-spec Test IDs** (readable on a built artifact) and the **seed/reset command**. If a test can only be written by reaching into app code, that's a missing Test ID / seed guarantee to route back to the app — not a reason to break the boundary.
+1. **What the user provides** (the input inventory below — each item skippable), and
+2. **What the AI learns by exploring the built app itself** — walking it screen by screen, reading its real locator attributes, observing its real flows.
 
-## Derive the condition-user catalog from the app profile — enumerated, not brainstormed
+Every recorded truth is tagged with its source — `provided: <input>` · `learned: exploration` · `confirmed by user` · `UNKNOWN — needs input`. Learned-not-confirmed truths are **flagged, never silently trusted**.
 
-"No missed test cases" is a **derivation, not a hope**: the test users and their condition states (`05-environments-and-data.md` → Test user catalog) are **enumerated from the app truths already recorded** — one user (or documented state) per condition, each row tracing to the truth that generated it:
+## Input inventory — ask for everything, everything skippable
 
-| Condition source | App doc |
-|------------------|---------|
-| One user per **role** (incl. permission boundaries) | `12-security-compliance.md` → roles × capabilities |
-| Users holding entities in **every lifecycle state** (draft/active/archived · visibility rules) | `06-domain-model.md` → Entities |
-| A user per **on-delete/dangling edge** (owns rows whose parent was archived/deleted) | `06-domain-model.md` → Relationships |
-| Users positioned for each **cross-feature flow binding** (source seeded, consumer empty, …) | `16-feature-map.md` + TRD §2 flow deps |
-| **Flow/wizard states** (mid-draft, abandoned, resumed) | TRD multi-step specs · `04-ux-conventions.md` |
-| **Auth states** (fresh, expired token, revoked/locked) | `13-auth.md` |
-| **Data extremes** (zero data / realistic max / longest content) | `04-ux-conventions.md` content-fit · seed data |
+At GATE 0, ask the user for each input. **Any item can be skipped now and added later** — a skip is recorded as a loud **GAP** in `01-overview.md` (with what it blocks), and refresh mode folds late inputs in. Never stall on a skip; never fake what a skip leaves unknown.
 
-**Completeness check (run at setup and every refresh):** every role, every entity state, every decided edge, and every auth state appears in ≥ 1 catalog row — a condition with no user is a **loud gap**, and an app-profile change (new state, new edge, new role) flags the missing condition users on reconcile. Every user is a **seed guarantee** (recreated on reset), never a hand-maintained account that drifts.
+| Input | Feeds | If skipped |
+|-------|-------|-----------|
+| PRD/BRD or any product docs | intended behavior, features, conditions (04, 05, 10) | behavior learned from exploration only — marked unconfirmed |
+| Existing test docs / test cases / known-issue lists | conditions, coverage seed (05, 10) | conditions derived from PRD + exploration only |
+| Web URL(s) per environment | the artifact + envs (04, 05) | that platform untestable until provided |
+| APK / IPA (or download location) | mobile artifact (04) | mobile untestable until provided |
+| API docs (Swagger/OpenAPI URL or file) | API tests, typed client/fixtures (03, 04) | API layer tested via observed traffic only — weaker, flagged |
+| Designs / Figma | visual assertions (10) | no visual-parity rows; functional only |
+| Test accounts (roles + credential names/locations) | auth + condition users (05) | flows behind login blocked — usually the first gap to close |
+| Seed / reset access (scripts, DB, admin API) | data isolation (05) | seeding falls back to driving the app's own UI/API — slower, flagged |
+| Deploy/build notification (webhook, channel, or "ask each time") | run triggers (07) | runs are manual/scheduled only |
 
-## Two modes — same gates either way
+## Learn by exploration
 
-- **Existing test project → describe.** Full scan (no sampling — every spec dir, helper, fixture, config, pipeline file), then draft each doc from reality. Flag contradictions (two locator styles, mixed wait strategies) instead of smoothing them over.
-- **No test project yet → establish.** Ask where the split directory/repo should live, **choose the stack with the user** — constrained by the black-box boundary: only drivers that operate on the **built artifact** (web → browser against the deployed URL, e.g. Playwright — reuse it if the app's `do-testing` already uses it, rung 2; mobile → installed APK/IPA via Appium/UiAutomator/Maestro — **not** Espresso/Compose-UI, which run in-process with app source) — then scaffold the minimal structure (per the approved `02-test-architecture`) and generate the profile. Scaffold only what the approved docs define — no speculative folders.
+With whatever inputs exist, **explore the built application systematically — every screen reachable, not a sample** (the QA counterpart of the full-project scan): map screens and navigation, record each screen's real **locator attributes** (`data-testid` in the DOM, `resource-id` via UiAutomator dump, `accessibilityIdentifier`), trace the user flows end to end, and note observed states (empty/error/loading), roles, and lifecycle behavior. Where exploration and a provided doc **contradict**, surface it — that's a finding, not a nuisance. Screens/areas that can't be reached (missing account, feature flag) are recorded as unexplored — loud, in the gaps list.
+
+## Black-box boundary
+
+The suite **never imports application code, never mocks the app, and requires no hooks inside it**. Its only contracts are the app's **public surfaces** (UI + API), the **locator attributes discovered on the built artifact**, and whatever **seed/reset access** the user provided. If a test seems to need app internals, that's a missing input to request (an ID, an account, seed access) — never a reason to break the boundary.
+
+## Derive the condition-user catalog — enumerated, not brainstormed
+
+"No missed test cases" is a **derivation**: the test users and condition states (`05-environments-and-data.md` → Test user catalog) are enumerated from the learned + provided truths — one row per condition, each tracing to its source:
+
+| Condition source | Comes from |
+|------------------|-----------|
+| One user per **role** (incl. permission boundaries) | provided accounts + PRD + observed role behavior |
+| Entities in **every observed lifecycle state** (draft/active/archived…) | PRD + exploration |
+| **Dangling/on-delete cases** (rows whose parent was deleted/archived) | PRD rules + exploration of delete/archive flows |
+| **Cross-feature positions** (source has data, consumer empty, …) | learned flow map (04) |
+| **Flow/wizard states** (mid-draft, abandoned, resumed) | exploration of stepped flows |
+| **Auth states** (fresh, expired, locked) | provided accounts + observed auth behavior |
+| **Data extremes** (zero data / realistic max / longest content) | exploration + condition docs |
+
+**Completeness check (setup + every refresh):** every known role, observed entity state, delete/archive rule, and auth state appears in ≥ 1 catalog row — a known condition with no user is a loud gap. Every user is a **seed guarantee** (recreated on reset via the provided seed access, or via scripted app flows if none) — never improvised state mid-test.
+
+## Two modes of the *project* — same gates
+
+- **Existing test project → describe.** Full scan, draft each doc from reality, flag contradictions.
+- **No test project yet → establish.** Ask where the project lives, choose the stack with the user — **built-artifact drivers only** (web → browser against the URL, e.g. Playwright; mobile → installed APK/IPA via Appium/UiAutomator/Maestro — never in-process frameworks that need app source) — scaffold the minimal structure per the approved `02-test-architecture`.
 
 ## Rules
 
-- **One doc at a time, with approval.** Draft → present → user approves / edits / skips → write to `<test-project>/docs/qa-basics/<file>.md` → next. Never batch-write.
-- **Tier — generate only what applies** (e.g. no mobile suite docs for a web-only app); say what was skipped and why.
-- **Bridge, don't copy.** App truths (contract, Test IDs, seed commands, env URLs, auth) are **linked by path**, never duplicated — a copied truth drifts. Volatile detail points to the authoritative file.
-- **Never write secrets** — test-account credential *names/locations* only (per the app's `13-auth.md` → Test / dev authentication).
-- **Stamp each doc** with the commit it was generated at (test-project commit; note the app-profile commit it bridged to — so refresh can detect drift on *either* side).
-- **Full-project scan — no sampling** when describing an existing suite; completeness outranks laziness here, same as `do-project-setup`.
+- **One doc at a time, with approval** — draft → present → approve/edit/skip → write → next. Never batch-write.
+- **Tier** — generate only what applies; say what was skipped and why.
+- **Never write secrets** — credential names/locations only.
+- **Stamp each doc** with the test-project commit + the **app build/version explored** (so refresh knows when the app moved).
+- **Full exploration — no sampling** when learning the app; unexplored areas are named, never implied covered.
 
 ## The docs (`<test-project>/docs/qa-basics/`)
 
-Each has a starter template in this skill's `templates/` directory — read it, fill from reality.
+Templates in this skill's `templates/` directory — read each, fill from the inputs + exploration.
 
 | File | Contents |
 |------|----------|
-| `01-overview.md` | QA project summary, profile index + freshness stamps (test-project commit **and** app-profile commit bridged to) |
-| `02-test-architecture.md` | Layering (specs / flows / screen-objects / fixtures / helpers), **full directory tree (no elision)**, **screen-object inventory** (search-before-create, register-on-create), naming conventions |
-| `03-test-stack.md` | Framework per platform, runner, **approved library per concern**, codegen (fixtures/typed client from the app contract), run commands |
-| `04-app-under-test.md` | **The bridge**: app repos/platforms, links to the app's basics docs, the contract + typed client, widget-spec Test-ID locations, version/build under test |
-| `05-environments-and-data.md` | Which env the suite targets (sandbox/live per the app's `09`), **test accounts** (roles, cred names/locations), **seed/reset strategy**, data isolation between runs |
-| `06-selector-conventions.md` | Locator contract: **widget-spec Test IDs only**; per-platform attribute mapping; missing ID → route back to the app's widget spec, never invent a brittle locator |
-| `07-suites-and-runs.md` | Suite taxonomy (smoke / critical-path / full regression), tags, **run matrix** (trigger × suite × env), CI wiring |
-| `08-stability-policy.md` | Waiting rules (no fixed sleeps), retry policy, **flaky-test quarantine flow**, determinism (order-independence, isolated data), runtime budget |
-| `09-reporting-and-triage.md` | Artifacts (screenshot/video/trace), where results live, **the triage loop**: failure → app bug (`do-fixing` / `do-issue-grooming`) vs test defect (fixed here) |
-| `10-regression-coverage-map.md` | **The QA feature-map**: app feature → flows/bindings (incl. destructive + freshness) → regression test · suite · status; register-on-create as features ship; gaps visible |
+| `01-overview.md` | Summary, profile index + stamps, **input inventory state (provided / skipped-GAP)** |
+| `02-test-architecture.md` | Layering, **full directory tree**, screen-object inventory (register-on-create), conventions |
+| `03-test-stack.md` | Built-artifact drivers per platform, approved lib per concern, codegen (from provided API docs), run commands |
+| `04-app-under-test.md` | **The learned model of the app**: platforms + artifact acquisition, screen/flow map, features, observed rules — each truth tagged with its source |
+| `05-environments-and-data.md` | Target envs, provided accounts, **condition-user catalog (derived)**, seed/reset strategy, isolation |
+| `06-selector-conventions.md` | Locator contract from **discovered attributes**; missing IDs → request from the dev team or flagged a11y fallback |
+| `07-suites-and-runs.md` | Suite taxonomy, tags, run matrix (manual/scheduled/deploy-hook per what was provided) |
+| `08-stability-policy.md` | No-sleep waits, retries, quarantine, determinism, runtime budget |
+| `09-reporting-and-triage.md` | Artifacts, results, **triage loop → the app team** (their tracker; or `do-fixing`/`do-issue-grooming` if they use this plugin) |
+| `10-regression-coverage-map.md` | Feature/flow (from the learned model) → test · suite · status; GAPs loud; register-on-create |
 
 ## Flow
 
-> Present every gate in the shared **step-summary format** (`principles.md`): *Where we are* + status · *In plain terms* · *What this step did* · *What I need from you* · engineer detail last.
+> Present every gate in the shared **step-summary format** (`principles.md`).
 
-1. **Locate & confirm.** Identify the app repo(s) + their `docs/basics/`, and the test project's location (existing path, or where to create it). Detect mode (describe vs establish). Confirm platforms in scope and the applicable doc list (tier) with the user before drafting.
-2. **(Establish mode only)** propose the stack (rung-2 reuse of the app's test frameworks first) and the minimal scaffold; get approval; create the split directory.
-3. **Per doc, in order:** scan the relevant real sources (test project + the app docs it bridges to) → draft (mark `UNKNOWN`; link volatile detail) → **present for approval** (approve / edit / skip) → write with both commit stamps → next doc. Seed `10-regression-coverage-map.md` from the app's `16-feature-map.md`: one row per shipped feature — **a shipped feature with no regression coverage is a visible gap row, not an omission**.
-4. **Finish.** Write `01-overview.md` as the index; report what was generated, skipped, and every coverage gap found.
+1. **GATE 0 — input inventory.** Ask for every input in the table above (skip = recorded GAP). Confirm the test project's location + platforms in scope + applicable docs (tier).
+2. **(Establish mode)** propose stack + minimal scaffold (built-artifact drivers only); approve; create.
+3. **Explore & learn.** Systematically walk the built app with the provided access; build the screen/flow/locator/condition picture; surface contradictions with provided docs.
+4. **Per doc, in order:** draft from inputs + exploration (tag every truth's source; `UNKNOWN` where nothing covers it) → present for approval → write with stamps → next. Seed `10-regression-coverage-map.md` from the learned feature/flow map — every feature/flow gets a row (covered · planned · **GAP**).
+5. **Finish.** `01-overview.md` as index with the input-inventory state; report what was generated, skipped, unexplored, and every gap.
 
-## Refresh / reconcile mode
+## Refresh mode
 
-Re-run per-doc against **both** stamps: the test project's commit *and* the app profile's commit. The critical reconcile is **`10-regression-coverage-map.md` vs the app's `16-feature-map.md`** — every feature added/changed in the app since the last stamp must have a coverage row (test exists · planned · **gap**); flag features shipped without regression coverage. Also reconcile the screen-object inventory against the actual test code (unregistered screen-objects flagged, same as assets).
+Re-run when: the user provides a **previously-skipped input** (fold it in — e.g. Swagger arrives → typed client + API rows), the **app build moved** past the explored stamp (re-explore changed areas), or on a cadence. Reconcile `10-regression-coverage-map.md` against the current learned model (new screens/flows since last exploration = new rows), the condition catalog against newly-observed states/roles, and the screen-object inventory against the actual test code.

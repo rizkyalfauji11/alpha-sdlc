@@ -34,11 +34,11 @@ Each phase produces an artifact the next phase consumes. The **acceptance criter
 
 ### Regression track (in progress)
 
-A parallel skill set for the **dedicated regression/QA project** — a separate directory/repo from the app that protects shipped features across releases.
+A parallel, **fully stand-alone** skill set for the dedicated regression/QA project — black-box testing of the **built application** (deployed URL, installed APK/IPA), with **no access to the app's repo or code**. QA provides the inputs (PRD, condition docs, links, artifacts, API docs, accounts — each skippable now, addable later); the AI **learns the rest by exploring the built app**.
 
 | # | Skill | Does | Output |
 |---|-------|------|--------|
-| R0 | **do-regression-setup** | Sets up the regression project (describe existing / establish new — framework reuse, scaffold) and generates its **QA profile**: the QA counterpart of `docs/basics/`, bridging to the app profile (contract, Test IDs, seed, auth) — incl. the **regression coverage map** (feature → flows → tests, gaps loud) | `<test-project>/docs/qa-basics/*.md` (10-doc set) |
+| R0 | **do-regression-setup** | Input-inventory gate (everything askable, everything skippable → loud GAPs) → explores the built app (screens, flows, discovered locators, conditions) → generates the **QA profile**: the learned app model, a **derived condition-user catalog** (roles × states × edges × extremes — enumerated so no case is missed), and the **regression coverage map** (feature/flow → tests, gaps loud) | `<test-project>/docs/qa-basics/*.md` (10-doc set) |
 
 *Next steps (not yet built): regression planning/authoring (turn coverage-map gaps into specs), suite runs & triage.*
 
