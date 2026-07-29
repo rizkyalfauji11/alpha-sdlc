@@ -93,7 +93,7 @@ Templates in this skill's `templates/` directory — read each, fill from the in
 1. **GATE 0 — input inventory.** Ask for every input in the table above (skip = recorded GAP). Confirm the test project's location + platforms in scope + applicable docs (tier).
 2. **(Establish mode)** propose stack + minimal scaffold (built-artifact drivers only); approve; create.
 3. **Explore & learn.** Systematically walk the built app with the provided access; build the screen/flow/locator/condition picture; surface contradictions with provided docs.
-4. **Per doc, in order:** draft from inputs + exploration (tag every truth's source; `UNKNOWN` where nothing covers it) → present for approval → write with stamps → next. Seed `10-regression-coverage-map.md` from the learned feature/flow map — every feature/flow gets a row (covered · planned · **GAP**).
+4. **Per doc, in order:** draft from inputs + exploration (tag every truth's source; `UNKNOWN` where nothing covers it) → present for approval → write with stamps → next. Seed `10-regression-coverage-map.md` from the learned feature/flow map — this is the **test-case enumeration**: every feature/flow × condition gets a row (covered · planned · **GAP**), which `do-regression-authoring` later drafts into case docs and generates into code.
 5. **Finish.** `01-overview.md` as index with the input-inventory state; report what was generated, skipped, unexplored, and every gap.
 
 ## Refresh mode
