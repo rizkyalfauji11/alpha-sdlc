@@ -11,7 +11,8 @@
 > Every acceptance criterion maps to at least one test case, at the **right level** — placed once
 > where it's cheapest and most stable (don't re-test the same thing across levels). Cover the
 > negative / error / edge / auth / offline cases the AC implies — not just the happy path. Mark uncovered AC.
-> **Level** = API · UI · Integration · E2E. Visual parity is a UI-level check (within platform tolerance).
+> **Level** = API · UI · Integration · E2E. Visual parity is a UI-level check (within platform tolerance);
+> **token/style conformance is a separate UI check** — a wrong token is a bug even inside pixel tolerance.
 
 ## AC → test coverage
 
@@ -20,6 +21,7 @@
 | TC1 | <e.g. payment > Rp1M rejected> | API | <asserts 4xx + error code, no debit> | <path> | pass / fail / pending |
 | TC2 | <e.g. scan screen matches design> | UI (visual) | <icons/spacing/type parity within tolerance; diff saved> | <path> | |
 | TC3 | <e.g. scan screen composition> | UI (composition) | <elements present, hierarchy, states> | <path> | |
+| TC3b | <e.g. scan screen style conformance> | UI (tokens) | <no raw literals; computed font role/size/weight, divider thickness + inset, frame + card padding match `18-design-tokens.md` ↔ widget-spec *Style bindings*; agrees with sibling screens of the same scaffold> | <path> | |
 | TC4 | <e.g. balance loads from API> | Integration | <real call renders; loading/error driven by response> | <path> | |
 | TC5 | <e.g. end-to-end pay-at-merchant> | E2E | <full journey UI→API→DB, prod-like, auth + flag> | <path> | |
 
@@ -79,6 +81,7 @@
 - **Flow dependencies:** <each binding from the hub's Flow-dependencies sub-table → its data-flow test in **both directions** (create: appears per decided freshness · destructive: on-delete edge honored) · status, or "none">  — *each binding must have both*
 - **Integrity coverage (per consumed entity):** <entity → visibility ✓ (allowed states only) · on-delete ✓ (no dangling ref/crash) · freshness ✓ (decided mechanism) — or "none consumed">
 - **Stepped flows:** <each Multi-step flow → its wizard test set (per-step validation · back/resume · cross-step refetch · abort-clean · atomic commit) · status, or "none">
+- **Style conformance (client UI):** <static no-raw-literals: pass/fail (+ literals found) · computed-style assertions: which ran per platform (web strongest; note weaker Android/iOS coverage honestly) · screenshot baseline: tool or "none in repo" · cross-screen consistency vs sibling screens · unregistered deviations found → bugs>
 
 - **E2E scope (risk-calibrated):** <which critical journeys got E2E, and why others didn't>
 - **Uncovered AC (gaps):** <list, or "none">
