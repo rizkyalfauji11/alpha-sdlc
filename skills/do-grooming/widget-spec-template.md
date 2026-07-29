@@ -25,6 +25,25 @@
 | <Status toggle> | Switch | `qris_widget_status_toggle` | "Notifications on" | on / off / disabled | flips immediately, no submit |
 | <Balance text> | Text | `qris_widget_balance_text` | "Active balance" | masked / revealed | masked by default |
 
+## Style bindings
+
+> **What each region/element is styled *with*** — resolved by **name** against
+> `docs/basics/18-design-tokens.md`, so the builder looks values up instead of eyeballing the mockup
+> (that eyeballing is what makes padding / text size / font / hairlines differ screen to screen).
+> Bind the **regions** plus any element that deviates from its component's default — not every element.
+> Rules: a value **not on the scale** → snap to nearest **and say so here**; if the design uses it
+> systematically → **Open Decision** (new scale step vs approved deviation), never a raw literal. A role
+> the ramp doesn't have → **ask the user**, then register it in `18-design-tokens.md`.
+
+| Region / element | Typography role | Spacing tokens | Divider / border | Component + variant | Deviation? |
+|------------------|-----------------|----------------|------------------|---------------------|------------|
+| <Screen (page frame)> | — | <edge `space.lg` · section gap `space.xl`> | — | <`PageScaffold` (feature-page)> | no |
+| <Header> | <title `title.screen` · desc `body.sm`> | <header→body `space.lg`> | <`divider.hairline`, full-bleed> | — | no |
+| <Balance card> | <amount `amount.lg` · label `caption`> | <inner `space.lg`> | <`radius.md` · `elevation.card`> | <`AppCard` (elevated)> | no |
+| <Scan button> | <`button.md`> | <`space.md`/`space.lg`> | <`radius.md`> | <`AppButton` (primary)> | no |
+
+**Screen frame:** <edge padding · scaffold + slicing (mirrors the `Scaffold · slicing` field above) · grid/breakpoint behavior if the screen is responsive.>
+
 ## Container sizing & overflow
 
 > For **variable-content containers** on this screen (dialog, bottom sheet, list, form, multi-line text) —
