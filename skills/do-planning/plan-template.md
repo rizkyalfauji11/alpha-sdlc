@@ -17,10 +17,13 @@
 > Figma → paste the frame link; image → commit it to `docs/development/<feature-name>/design/<screen>.png`.
 > **One row per screen, per flow step, and per specced state** — carry everything grooming captured;
 > a state with no ref carries its explicit marker (Open Decision / platform default per `04-ux-conventions`).
+> **The reference is what to build, not where the numbers come from:** spacing, type, color and border
+> **values come from the screen's widget-spec *Style bindings* → `docs/basics/18-design-tokens.md`** —
+> never measured off the image.
 
 | Screen / step / state | Design (Figma link / image path) | Specific needs |
 |-----------------------|----------------------------------|----------------|
-| <screen> | `docs/development/<feature-name>/design/<screen>.png` *or* `<figma-frame-url>` | <breakpoints, exact spacing, motion, dark mode> |
+| <screen> | `docs/development/<feature-name>/design/<screen>.png` *or* `<figma-frame-url>` | <breakpoints, motion, dark mode — spacing/type by **token name**, e.g. edge `space.lg`> |
 | <flow step 2 of 3> | <ref> | |
 | <screen · empty state> | <ref — or "flagged: platform default"> | |
 
