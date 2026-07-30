@@ -14,6 +14,12 @@ The weighting/Appendix mechanics are **organization-specific** — point this sk
 ## Source of tasks
 
 - **Source = the TRD work slices.** Read the feature's TRD under `docs/development/<feature-name>/`: the hub's **Change manifest → work-slice summary** and every spoke's **Work slices** (with their AC). The TRD is the plan; do not invent tasks that aren't traceable to a slice (ask the user to amend the TRD instead).
+- **Split tasks by architecture layer, so one task ≈ one development stage.** Read the repo's real layers from `docs/basics/02-architecture.md` and split each slice the same way `do-planning` stages it: `[contract]` (only when the API contract changes) → `[domain]` → `[data]` → `[presentation]`; on an **unlayered** project, minimum `[UI]` vs `[data-integration]` (API calls, DB, 3rd-party SDKs) — and never invent a layer the project doesn't have. Rules that keep this honest:
+  - **Tag the layer in the task title** so the board shows which layer is in flight.
+  - **Only the layers the slice touches** — a screen reusing an existing endpoint with no new business rule is one `[presentation]` task, not three. No ceremonial layer tasks.
+  - **Shared lower-layer work is one task** — 3 screens over 1 repository = one `[domain]` + one `[data]` + one `[presentation]` task per screen.
+  - **Weight each layer task on its own** (Appendix line items, or its own story-point value + rationale) — layer tasks are independently sized, and the existing split rules still bind on top (**≤ 8 pt** per Appendix task · **> 13 SP must be split**).
+  - **Tell the user the ticket count grows** before writing the part — a 3-screen feature goes from ~3 tickets to ~5–6. That's the cost of per-layer status on the board; if they'd rather have coarse tickets, they can say so and the tasks stay slice-level (the plan still splits by layer internally).
 
 ## Weighting mode — ALWAYS ask first
 

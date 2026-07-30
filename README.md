@@ -23,10 +23,10 @@ It's opinionated on purpose: it proposes, you approve. It reuses before it build
 | # | Skill | Does | Output |
 |---|-------|------|--------|
 | 2–3 | `/do-slicing` → `/do-uploading` | *Jira only, optional* — TRD → weighted task list → Jira issues | `task-list.md` + Jira keys |
-| 4 | `/do-planning` | TRD → staged dev plan: where code lands + small reviewable stages | `plan-<platform>.md` |
-| 5 | `/do-development` | Builds stage by stage, TDD, visual parity for UI, **⏸ stops at every checkpoint** | code + tests |
+| 4 | `/do-planning` | TRD → staged dev plan: where code lands + small reviewable stages, **split by layer** (domain → data → presentation) | `plan-<platform>.md` |
+| 5 | `/do-development` | Builds stage by stage, TDD, **reviews each diff against your docs + principles**, visual parity for UI, **⏸ stops at every checkpoint** | code + tests |
 | 6 | `/do-testing` | API · UI · Integration · E2E · **Boot & Smoke** (real FE+BE, non-skippable); verify-only — reports every bug before any fix | tests + `test-plan-<platform>.md` |
-| 7 | `/do-fixing` | Fixes triaged bugs one at a time — reproduce-first, root cause not symptom | fixes, back to testing |
+| 7 | `/do-fixing` | Fixes triaged bugs one at a time — reproduce-first, root cause not symptom, **same fresh-eyes review per fix** | fixes, back to testing |
 
 No Jira? Skip 2–3 and go setup → grooming → planning → development → testing.
 
@@ -48,6 +48,7 @@ docs/development/<feature>/
 - **It stops.** Every section, stage, and result is a hard gate — proposed in plain language first, engineer detail second, then it waits. No auto-continue.
 - **It asks instead of inventing.** A gap in the design becomes an *Open Decision* with 2–3 options for you to pick, never a guess it ships.
 - **It won't fake a pass.** UI parity is rendered and compared (not code-from-image); "done" requires the real frontend + backend booted together with realistic data.
+- **Every stage gets code-reviewed before you see it.** A fresh-eyes reviewer (no build context) audits the diff against your `docs/basics/` and the principles — layer placement, error handling, tokens, cache keys, contract types, scope. Objective violations get fixed in the stage; anything about scope or a convention comes to you as an Open Decision.
 - **Hooks block the mechanizable stuff** — unnamed reuse decisions, leftover template placeholders, secrets in docs, ticket provenance in comments.
 
 Shared discipline lives in [`principles.md`](./principles.md); the mechanics of each phase live in its `skills/*/SKILL.md`.
