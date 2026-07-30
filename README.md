@@ -10,13 +10,16 @@ It's opinionated on purpose: it proposes, you approve. It reuses before it build
 
 **Step 0 — teach it your repo.** `/do-project-setup` scans the whole project and writes `docs/basics/` (18 tiered docs: architecture, tech stack, DB, API map, env + run recipe, conventions, UX conventions, design tokens, feature map…). Every later skill grounds in these instead of re-scanning and re-guessing. Re-run it in refresh mode after a feature ships.
 
-**Then pick an entry point** — all three produce a TRD that flows into the same pipeline:
+**Starting from zero?** Same command, different mode: on an empty repo it stops describing and starts **deciding** — framework, architecture, structure, tooling, one gate per decision — and writes the profile as intended design (stamped `prescriptive (pre-code)`, never as if it had read code that doesn't exist). Then `/do-foundation-grooming` grooms the base: scaffold, folder structure, architecture skeleton. Once that's built, refresh mode re-stamps the docs against the real commit and you're on the normal path.
+
+**Then pick an entry point** — each produces a TRD that flows into the same pipeline:
 
 | | Skill | For |
 |---|---|---|
 | 1a | `/do-grooming` | a product feature, from a PRD/BRD |
 | 1b | `/do-tech-debt-grooming` | refactor, perf, fragility, upgrades — behavior-preserving, no PRD |
 | 1c | `/do-issue-grooming` | a reported bug — audits the **whole project for the issue class**, not just the symptom |
+| 1d | `/do-foundation-grooming` | the **base of a new project** — scaffold + structure + architecture skeleton, no features |
 
 **And run the pipeline:**
 
