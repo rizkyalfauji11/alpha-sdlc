@@ -52,7 +52,7 @@ docs/development/<feature>/
 - **It asks instead of inventing.** A gap in the design becomes an *Open Decision* with 2–3 options for you to pick, never a guess it ships.
 - **It won't fake a pass.** UI parity is rendered and compared (not code-from-image); "done" requires the real frontend + backend booted together with realistic data.
 - **Every stage gets code-reviewed before you see it.** A fresh-eyes reviewer (no build context) audits the diff against your `docs/basics/` and the principles — layer placement, error handling, tokens, cache keys, contract types, scope. Objective violations get fixed in the stage; anything about scope or a convention comes to you as an Open Decision.
-- **Hooks block the mechanizable stuff** — unnamed reuse decisions, leftover template placeholders, secrets in docs, ticket provenance in comments.
+- **Hooks block the mechanizable stuff** — unnamed reuse decisions, leftover template placeholders, secrets in docs, and **any comment in source code**: code carries zero comments (no prose, no docstrings, no banners), so names and structure have to say it. Only machine directives survive — `eslint-disable`, `@ts-expect-error`, `# noqa`, `//go:build`, shebangs. A *why* that can't fit in a name belongs in the commit message.
 
 Shared discipline lives in [`principles.md`](./principles.md); the mechanics of each phase live in its `skills/*/SKILL.md`.
 
