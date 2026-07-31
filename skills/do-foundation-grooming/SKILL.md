@@ -1,0 +1,63 @@
+---
+name: do-foundation-grooming
+description: Groom the FOUNDATION of a brand-new application or service — the project scaffold, folder structure, and architecture skeleton — into a foundation TRD, section-by-section with one gate per section. For greenfield repos (nothing built yet), after do-project-setup has decided the stack. Scaffolding only — no product features (those are do-grooming). Triggers on "start a new app", "new project from zero", "greenfield", "bootstrap the project", "set up the base of the application", "scaffold the project", "/do-foundation-grooming".
+---
+
+You are grooming the **foundation of a greenfield project** — the base an application or service stands on before any feature exists: the framework scaffold, the folder structure, and the architecture skeleton the user wants. Output is a **foundation TRD** that flows into the normal pipeline (`do-planning` → `do-development` → `do-testing`).
+
+**First, read `../../principles.md` in full now, then apply it** — especially the **lazy-senior mindset** (the base is the smallest thing that stands, not a framework of your own), **no speculative scaffolding**, **ask don't assume**, **2–3 options with one recommended**, and **step-by-step approval**.
+
+## Precondition — the stack is decided in `do-project-setup`, not here
+
+**Read `docs/basics/` first.** A greenfield profile is written by `do-project-setup` in **greenfield mode** (prescriptive/pre-code): it is where the framework, architecture style, structure convention, and tooling get **decided with the user, one gate per decision**.
+
+- **No `docs/basics/` → STOP** and send the user to `do-project-setup` first. Do not decide the stack here; two skills deciding the same thing is how the profile and the TRD disagree on day one.
+- **`docs/basics/` exists but describes a different (non-empty) project** → this isn't greenfield. A product feature is `do-grooming`; a refactor is `do-tech-debt-grooming`.
+- This TRD **binds to** the profile's decisions (`02-architecture.md`, `05-tech-stack.md`, `09-environment.md`, `10-conventions.md`, `11-git-management.md`) by reference. **Link, never re-decide.** If grooming exposes a decision the profile got wrong or left open, **stop and fix it in the profile** (re-run setup on that doc), then continue — the profile stays the single source of truth.
+
+## Scope — scaffolding only, and it is a hard boundary
+
+The foundation delivers exactly four things:
+
+1. **Project scaffold** — the real project initialized with the decided framework (its official init/scaffold tool, at a pinned version).
+2. **Folder structure** — the directory tree the user wants, expressing the decided architecture.
+3. **Architecture skeleton** — the module/package boundaries, the entry point, config loading, and (if the project is layered) how the dependency rule is enforced. Empty-but-real: no placeholder classes "for later".
+4. **Build / run / test harness** — the commands that must work: build, run, test, lint.
+
+**Everything user-facing is a feature, not the base.** No auth flow, no screens beyond what the framework's own init emits, no database schema, no business logic, no API endpoints beyond a trivial entry/health route if the framework's scaffold includes one. When the user asks for one of those during foundation grooming, say plainly that it's the **first feature** — finish the base, then run `do-grooming` for it. "While we're here, add login" is the over-delivery failure wearing a helpful face.
+
+**Name what the base deliberately leaves out.** Every foundation TRD ends with a **Deliberate omissions & deferrals** section: what is *not* in the base (CI/CD, auth, persistence, observability, error taxonomy, design system…), and **when each gets decided** (usually "at the first feature that needs it"). This is what keeps a greenfield profile honest — the docs are prescriptive, so the base must state what's decided-and-built versus written-but-not-yet-real.
+
+## Rules
+
+- **One approval gate per section — every single one, no exceptions.** Draft a section → present its **decisions** → the user **approves as-is / approves with edits / regenerates with feedback / skips** → only then write it into the TRD → next section. Their edits are what gets written and fed forward. **Never write a section before it's approved, never present two sections in one turn, and never offer to "approve the rest" / "generate the remaining sections"** — not even when the user seems satisfied, not even for sections that look trivial (a `.gitignore` section still gets its own gate). Asking **ends the turn**: present, stop, wait. These are the gate units, in order:
+  - **Hub:** ① Intent & constraints · ② Repo strategy (monorepo vs separate repos) · ③ Architecture style + whether layering is used · ④ Cross-service contract approach · ⑤ Shared conventions · ⑥ Environments at base.
+  - **Each spoke:** ① Framework & scaffold (tool + pinned command + deviations from its default) · ② **Folder structure — the full tree, its own gate** (it's the deliverable; never bundled with anything else) · ③ Architecture skeleton (entry point, config, module boundaries, dependency-rule enforcement) · ④ Build/run/test harness commands · ⑤ Repo hygiene · ⑥ Acceptance criteria · ⑦ Deliberate omissions & deferrals · ⑧ Open Decisions.
+  A section the project genuinely doesn't need is **still presented** — as "not applicable, here's why" — so skipping is the user's call, not a silent omission.
+- **Hub + spoke, same as every other TRD.** One **hub** (`docs/development/foundation/TRD.md`) for what's shared — repo layout, conventions, the contract approach between services, the omissions register — and **one spoke per platform** (`TRD-backend.md` / `-web.md` / `-android.md` / `-ios.md`) for that platform's init command, structure tree, and skeleton. A single-platform project still uses a hub plus one spoke, so the shape matches the rest of the pipeline. **The hub is groomed and approved first.**
+- **The structure tree is the deliverable — write it out concretely.** Not "standard clean architecture layout" but the actual tree, directory by directory, with one line on what belongs in each. `do-development` creates exactly this, `do-development`'s conformance review checks the built tree against it, and it must match `02-architecture.md`. A vague tree here is a base that drifts in week one.
+- **Reuse the framework's own scaffold — climb the ladder.** The official generator (`create-next-app`, Spring Initializr, `django-admin startproject`, Android Studio template, `npm create vite`, …) is rung 2/4; hand-rolling a project layout the framework already emits is rung 7 for no reason. **Then adapt** it to the decided structure, and record what you changed and why. Pin the generator's version — an unpinned scaffold isn't reproducible.
+- **Acceptance criteria must be mechanically checkable.** "The base is set up" is not an AC. Write: `<build cmd>` exits 0 · `<run cmd>` starts and the entry point responds/launches · `<test cmd>` runs the (possibly empty) suite · `<lint cmd>` passes · **the created tree matches the structure section** · if layered, the dependency rule is enforced (and *how* — module graph, lint rule, ArchUnit/Konsist, or "not enforced yet — deferred"). These are what `do-testing` verifies for the base.
+- **Be honest about what the base can't prove.** With no vertical slice, the **integrated Boot & Smoke gate reduces to "the app boots and its entry point answers"** — that is *not* the full FE↔BE real-data gate, and it must not be reported as if it were. Say so in the TRD: the first feature is where that gate becomes real.
+- **The base is not a feature — don't register it in `16-feature-map.md`.** The feature map starts empty; the first product feature registers itself when `do-grooming` runs. Record the base in the profile as the state of the repo (via setup's refresh), not as a feature.
+- **After the base is built, the profile flips from prescriptive to descriptive.** Note in the TRD's hand-off that once `do-development` lands the base and `do-testing` is green, `do-project-setup` runs in **refresh mode** to re-stamp the prescriptive docs against the real commit and flag anywhere the built code diverged from what was decided. Then `do-grooming` grooms the first feature against a profile that finally describes reality.
+- **Multi-platform: one hub, parallel spokes.** A mobile+backend greenfield gets a spoke each; they may be groomed by different people. The hub carries anything they must agree on (repo strategy — monorepo vs separate repos, the API contract format, shared conventions), and that agreement is a **hub gate** before either spoke is groomed.
+- **Hub-alignment review closes every spoke** (see `do-grooming` → *Hub-alignment review*, same checklist and same stamp). For a foundation the highest-value points are: the spoke's structure tree matches the hub's decided **architecture style** and repo strategy · the harness commands match the hub's environment decisions · the **omissions registers agree** across spokes (one platform quietly including auth while the other defers it is exactly the divergence this catches) · both spokes' AC bind to the same conventions. Stamp both sides, and re-review every spoke when a hub decision changes.
+- **Open Decisions, same discipline.** Anything you'd have to guess (the user hasn't chosen a structure convention, or wants two incompatible things) is recorded in the spoke's **Open Decisions** with 2–3 options, one marked — never resolved by inventing.
+
+## Flow — section → review → write
+
+> Present every gate in the shared **step-summary format** (`principles.md`): *Where we are* + status · *In plain terms* · *What this step did* · *What I need from you* · engineer detail last.
+
+1. **Confirm the mode and the profile.** State plainly: this is greenfield foundation grooming, scaffolding only, and the stack decisions come from `docs/basics/` (name the docs and the decisions you read — framework, architecture style, structure convention, tooling). List anything the profile leaves open that the base needs. **Present, then STOP** for confirmation.
+2. **Summarize the intent and the platform set.** What the app/service is, which platforms are in scope, and whether it's a monorepo or separate repos (a hub-level decision with real consequences — ask, recommend, don't assume). **Present, then STOP.**
+3. **Propose the section outline** for the hub and each spoke (per `foundation-TRD-template.md`). **Present, then STOP** for approval before drafting any section.
+4. **Groom the hub — one gate per section**, in the order listed in the rules (intent → repo strategy → architecture style → contract approach → shared conventions → environments). Draft one, present it, **STOP**, apply their verdict, write it, next. The hub's shared decisions are **all approved before any spoke is groomed**.
+5. **Groom each spoke — one gate per section**, in the order listed in the rules (framework & scaffold → **folder structure, alone** → architecture skeleton → harness → repo hygiene → AC → omissions → Open Decisions). Same discipline: one section per turn, approved before it's written. Don't collapse sections because the project is small; a tiny project just has short sections.
+6. **Close out.** Confirm every AC is mechanically checkable, the omissions register is filled, and the profile docs the TRD binds to are named. Then hand off to **`do-planning`** — the base's stages are scaffolding stages (see below).
+
+## Hand-off notes for the downstream skills
+
+- **`do-planning`** — foundation work has **no domain/data/presentation split**; the layer rule doesn't apply to scaffolding. Stages run: **init the project** → **create the structure** → **wire the skeleton (entry point, config, dependency-rule enforcement)** → **harness (build/run/test/lint)** → **repo hygiene (.gitignore, README stub)**. Each stage marks `Layer: n/a (scaffolding)`.
+- **`do-development`** — scaffolding stages mostly **cannot be TDD'd** (there's nothing to assert until the harness exists). That's the documented fallback: say so, and verify by the stage's real check — the command runs, the tree matches, the dependency rule holds. The **conformance review still applies** and is unusually valuable here: "the created tree matches the decided structure" is an objective check, which makes structure drift catchable on day one.
+- **`do-testing`** — for the base, the levels collapse to: the harness commands pass, the structure/dependency-rule assertions pass, and the app boots and answers at its entry point. **Report that reduced Boot & Smoke honestly** — it is not the full real-data gate.

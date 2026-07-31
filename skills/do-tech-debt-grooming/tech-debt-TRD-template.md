@@ -6,6 +6,7 @@
 | **Author** | <engineer> |
 | **Platforms** | <Backend / Android / iOS / Web — those affected> |
 | **Behavior change?** | <No — behavior-preserving / Yes — describe> |
+| **Spokes** | <only if the work spans platforms: links to per-platform spokes, each with its **hub alignment** stamp (`✅ reviewed YYYY-MM-DD · hub rev <hash/date>` / ⚠️ stale / ❌ not reviewed). Editing a hub section makes every ✅ stale.> |
 | **Date** | <YYYY-MM-DD> |
 
 ## 1. Condition (what's wrong today)

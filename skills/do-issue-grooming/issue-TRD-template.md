@@ -11,7 +11,7 @@
 | **Reported by** | <who / when> |
 | **Severity** | <blocker / major / minor> |
 | **Platforms affected** | <Backend / Android / iOS / Web> |
-| **Spokes** | <links to per-platform spokes, if any> |
+| **Spokes** | <links to per-platform spokes, if any — each with its **hub alignment** stamp: `✅ reviewed YYYY-MM-DD · hub rev <hash/date>` / ⚠️ stale / ❌ not reviewed. Editing a hub section makes every ✅ stale.> |
 | **Date** | <YYYY-MM-DD> |
 
 ## 1. Issue & reproduction

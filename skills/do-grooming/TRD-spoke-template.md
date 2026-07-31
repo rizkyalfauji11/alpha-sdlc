@@ -10,6 +10,7 @@
 | **Platform** | <Backend / Android / iOS / Web> |
 | **Author** | <engineer> |
 | **Hub** | [./TRD.md](./TRD.md) |
+| **Hub alignment** | <`reviewed YYYY-MM-DD · hub rev <commit / hub's last approval date>` — or `NOT REVIEWED`. Set by the hub-alignment review; **stale the moment a hub section changes**. `do-planning` won't plan a spoke whose stamp is missing or older than the hub's last change.> |
 | **Date** | <YYYY-MM-DD> |
 
 ## Open Decisions

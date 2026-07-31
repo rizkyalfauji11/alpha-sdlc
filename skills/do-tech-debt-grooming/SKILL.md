@@ -13,7 +13,7 @@ You are grooming an **engineer-initiated improvement** (tech debt, refactor, per
 
 ## How this differs from `do-grooming`
 
-Same engine (gated section-by-section TRD, hub/spokes, ladder, Mermaid, flows into `do-slicing`). Different framing: **no product evolution, new-feature possibilities, Figma, UI, widget spec, or business AC.** Instead:
+Same engine (gated section-by-section TRD, hub/spokes, ladder, Mermaid, flows into `do-slicing`) — **including the hub-alignment review**: every spoke passes it before it's complete, gets stamped, and is re-reviewed whenever a hub section changes (see `do-grooming` → *Hub-alignment review*). Different framing: **no product evolution, new-feature possibilities, Figma, UI, widget spec, or business AC.** Instead:
 
 - **Behavior-preserving by default.** The success criterion is usually "behaves identically, measurably better." Any *intended* behavior change must be called out explicitly.
 - **Justify before designing.** Tech debt is where over-engineering sneaks back in. The first gate is whether this is worth doing *now*.
