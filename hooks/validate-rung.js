@@ -1,40 +1,37 @@
 #!/usr/bin/env node
-// PreToolUse validator: block writes to this plugin's TRD/plan artifacts when a
-// ladder-rung decision is missing or left as a placeholder. Exit 2 = block (stderr
-// shown to Claude); exit 0 = allow. The forcing function for principles.md's ladder.
 
 const fs = require('fs');
 
-let data;
+let payload;
 try {
-  data = JSON.parse(fs.readFileSync(0, 'utf8'));
+  payload = JSON.parse(fs.readFileSync(0, 'utf8'));
 } catch {
-  process.exit(0); // no parseable input → don't block
+  process.exit(0);
 }
 
-const tool = data.tool_name || '';
-const ti = data.tool_input || {};
-const path = ti.file_path || '';
+const toolName = payload.tool_name || '';
+const toolInput = payload.tool_input || {};
+const filePath = toolInput.file_path || '';
 
-// Never validate the skill's own template files (they legitimately hold placeholders).
-if (/(^|\/)skills\//.test(path) || /-template\.md$/.test(path)) process.exit(0);
+const SKILL_OWNED_TEMPLATE = /(^|\/)skills\//;
+const TEMPLATE_FILENAME = /-template\.md$/;
+if (SKILL_OWNED_TEMPLATE.test(filePath) || TEMPLATE_FILENAME.test(filePath)) process.exit(0);
 
-// Only guard this plugin's artifacts.
-const isTRD = /docs\/development\/.*TRD[^/]*\.md$/.test(path);
-const isPlan = /(^|\/)plan-[^/]*\.md$/.test(path);
-if (!isTRD && !isPlan) process.exit(0);
+const isTrdArtifact = /docs\/development\/.*TRD[^/]*\.md$/.test(filePath);
+const isPlanArtifact = /(^|\/)plan-[^/]*\.md$/.test(filePath);
+if (!isTrdArtifact && !isPlanArtifact) process.exit(0);
 
-const content = tool === 'Write' ? (ti.content || '')
-              : tool === 'Edit' ? (ti.new_string || '')
-              : '';
-if (!content.trim()) process.exit(0);
+const writtenContent =
+  toolName === 'Write' ? (toolInput.content || '')
+  : toolName === 'Edit' ? (toolInput.new_string || '')
+  : '';
+if (!writtenContent.trim()) process.exit(0);
 
-// Unfilled template scaffolding left in a written artifact (conservative,
-// unmistakable tokens only — these never appear in real content).
-const leftover = content.match(/<(?:YYYY-MM-DD|hash|feature name|engineer|placeholder)>/i);
-if (leftover) {
+const UNMISTAKABLE_LEFTOVER_PLACEHOLDER = /<(?:YYYY-MM-DD|hash|feature name|engineer|placeholder)>/i;
+const leftoverPlaceholder = writtenContent.match(UNMISTAKABLE_LEFTOVER_PLACEHOLDER);
+if (leftoverPlaceholder) {
   process.stderr.write(
-    `Unfilled template placeholder in the artifact ("${leftover[0]}") — this doc still carries ` +
+    `Unfilled template placeholder in the artifact ("${leftoverPlaceholder[0]}") — this doc still carries ` +
     `template scaffolding. Fill every placeholder (dates, names, hashes) before writing; a TRD/plan ` +
     `with leftover <...> tokens is an incomplete section, not a finished one.\n`
   );
@@ -43,21 +40,22 @@ if (leftover) {
 
 const problems = [];
 
-// 1. Any "Approach" / "(ladder rung)" field present must be filled (not empty, not a <placeholder>).
-const approachRe = /^\s*[*_]*\s*Approach[^:\n]*:[*_]*\s*(.*)$/gim;
-let m;
-while ((m = approachRe.exec(content)) !== null) {
-  const val = (m[1] || '').replace(/[*_`]/g, '').trim();
-  if (val === '' || /^<.*>$/.test(val)) {
+const APPROACH_FIELD = /^\s*[*_]*\s*Approach[^:\n]*:[*_]*\s*(.*)$/gim;
+let approachMatch;
+while ((approachMatch = APPROACH_FIELD.exec(writtenContent)) !== null) {
+  const approachValue = (approachMatch[1] || '').replace(/[*_`]/g, '').trim();
+  if (approachValue === '' || /^<.*>$/.test(approachValue)) {
     problems.push('an "Approach (ladder rung)" field is empty or still a `<placeholder>`');
     break;
   }
 }
 
-// 2. Every plan Stage must carry an Approach line naming its rung.
-if (isPlan) {
-  const stages = content.split(/^###\s+Stage\b/im).slice(1);
-  if (stages.some(s => !/[*_]*\s*Approach[^:\n]*:/i.test(s))) {
+if (isPlanArtifact) {
+  const stageSections = writtenContent.split(/^###\s+Stage\b/im).slice(1);
+  const stageMissingApproach = stageSections.some(
+    (stageSection) => !/[*_]*\s*Approach[^:\n]*:/i.test(stageSection)
+  );
+  if (stageMissingApproach) {
     problems.push('a plan Stage has no **Approach** line naming its ladder rung');
   }
 }
