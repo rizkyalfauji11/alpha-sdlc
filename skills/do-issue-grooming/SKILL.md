@@ -19,7 +19,7 @@ You are grooming a **user-reported issue** into a Technical Requirements Documen
 
 ## Output
 
-- `docs/development/<issue-name>/TRD.md` (hub) + `TRD-<platform>.md` spokes if the issue spans platforms (e.g. a 405 spans backend + web). Slugify the issue to a short name (e.g. `localized-render-crash`). Use `issue-TRD-template.md` in this skill's directory. One approval gate per section.
+- `docs/development/<issue-name>/TRD.md` (hub) + `TRD-<platform>.md` spokes if the issue spans platforms (e.g. a 405 spans backend + web). Slugify the issue to a short name (e.g. `localized-render-crash`). Use `issue-TRD-template.md` in this skill's directory. One approval gate per section. **Spokes pass the hub-alignment review before they're complete** (and get re-reviewed whenever a hub section changes) — see `do-grooming` → *Hub-alignment review*; for a cross-platform issue that's what keeps the backend's and the web's account of the same root cause from diverging.
 
 ## Core rule — audit the class, not the symptom
 

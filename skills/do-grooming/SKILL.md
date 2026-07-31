@@ -34,6 +34,24 @@ docs/development/<feature-name>/
 ## Rules
 
 - **Output path**: hub → `docs/development/<feature-name>/TRD.md`; spoke → `docs/development/<feature-name>/TRD-<platform>.md` (slugify feature name to kebab-case; create the dir if needed; append if the file exists). The file being groomed IS the state — if interrupted, re-running resumes from what's written.
+- **Hub-alignment review — every spoke, before it's done, and again whenever the hub moves.** The hub is the single source of truth; a spoke that quietly disagrees with it is the drift the hub/spoke split exists to prevent, and it surfaces as a bug three phases later. So a spoke is **not complete** until it passes an alignment review against the hub. Run it with a **reviewer subagent** handed the **hub, the spoke, and the profile docs both reference** — not your grooming reasoning. The checklist:
+  1. **Contract fidelity** — every endpoint/field the spoke consumes or exposes exists in the hub's §4 contract with the **same method, path, shape, nullability, enum values, and localized-object typing**; the spoke **links** the contract and never copies it; typed client/fixtures derive from it.
+  2. **No divergent restatement** — anything the hub owns (context, system design, contract, cross-cutting) is *linked* from the spoke, not re-described. A restated fact is a fork waiting to drift.
+  3. **Manifest ↔ work slices, both directions** — every spoke work slice appears in the hub's §6 change manifest, and every manifest row for this platform has a spoke slice. A slice on one side only is a gap, not a detail.
+  4. **Entities & ownership** — entities the spoke touches match the hub's *Entities touched* + `06-domain-model.md` ownership; the **decided on-delete edge** is implemented (FK action for backend, consumer behavior for clients); no private copy of an entity another feature owns.
+  5. **Dependencies & flow bindings** — every hub §2 dependency and flow binding that concerns this platform is represented in the spoke **with its decided freshness**, and the spoke invents no dependency the hub doesn't list.
+  6. **Cross-cutting** — auth, error handling, logging, i18n, and the freshness mechanism follow hub §5; no local variant of a decision the hub already made.
+  7. **Integrity AC carried down** — the hub's decided **visibility · on-delete · freshness** rules appear as **AC** in this spoke's slices, not just as prose in the hub.
+  8. **Sequencing** — the spoke's release considerations don't contradict the hub's release ordering.
+  9. **Open Decisions placed correctly** — a **pending hub decision blocks** the spoke sections that depend on it (the spoke must never silently decide it), and a spoke Open Decision that's really hub-level is **escalated to the hub**.
+  10. **Cross-spoke consistency** (2+ spokes) — the spokes agree with **each other** on shared behavior (freshness, error semantics, enum handling, validation rules). Two spokes disagreeing is a **hub gap**, not a spoke preference.
+
+  **Findings resolve by direction, and the direction matters:**
+  - **Spoke is wrong** → fix the spoke, re-present the affected section for approval (it's a decision change, so it re-gates).
+  - **Hub is wrong** (the spoke exposed a real hub error) → **fix it in the hub**, with the user's approval — then **re-run alignment for every other existing spoke**, because a hub change invalidates their stamps. Never patch a spoke to match a hub you know is wrong.
+  - **Deliberate divergence** (this platform genuinely must differ) → it's an **Open Decision**, and once decided it's recorded **in the hub** as a platform exception, so the next spoke and `do-development` both see it. Silent divergence is never acceptable.
+
+  **Stamp the result.** The spoke header records `Hub alignment: reviewed <date> · hub rev <commit or hub's last approval date>`, and the hub's *Spokes* table records the same per spoke. **The hub moving makes every stamp stale** — when a hub section is edited after any spoke exists, re-run this review for each spoke and re-stamp. `do-planning` refuses to plan a spoke whose stamp is missing or older than the hub's last change.
 - **One approval gate per section.** Never write a section's prose to the TRD file until the user approves that section's *decisions*. Do not batch-write the whole doc.
 - The gate is on the **decisions**, not the wording. After approval, expanding to prose is mechanical — no second gate.
 - Technical design sections use **Mermaid** code blocks (```mermaid), never images. UI design is product-owned — carry a Figma/link reference only, do not generate UI.
@@ -91,5 +109,16 @@ The last section is **structured** (it feeds downstream ticket-slicing and monit
 - **Spoke** → Work slices: this platform's candidate tickets with acceptance criteria. Mirror the summary line up into the hub's manifest.
 
 When grooming a spoke, also update the hub's **Spokes** field to link the new spoke.
+
+### Step 3 — Hub-alignment review (spokes only) — the completion gate
+
+A spoke's last approved section does **not** finish it. Run the **hub-alignment review** (per the rule above) before calling it complete:
+
+1. Hand the **hub + this spoke + the profile docs they reference** to a reviewer subagent (fresh eyes — not your grooming context) and run the 10-point checklist: contract fidelity · no divergent restatement · manifest ↔ slices both ways · entities & ownership · dependencies + flow bindings with freshness · cross-cutting · integrity AC carried down · sequencing · Open Decisions placed correctly · cross-spoke consistency.
+2. **Resolve by direction** — spoke wrong → fix the spoke and **re-gate the affected section**; hub wrong → fix the **hub** with the user's approval, then **re-run alignment for every other spoke**; deliberate divergence → **Open Decision**, and once decided record it in the **hub** as a platform exception.
+3. **Present the verdict and STOP** — what was checked, findings by direction, what you fixed, what needs the user's decision. A spoke with unresolved objective misalignment is **not done**, and nothing downstream should plan against it.
+4. On a clean pass, **stamp both sides**: the spoke's `Hub alignment` row and the hub's *Spokes* table row (`reviewed <date> · hub rev <commit / hub's last approval date>`).
+
+**When the hub changes later, every spoke's stamp is stale.** Editing a hub section while spokes exist means re-running this review per spoke and re-stamping — announce that at the hub edit, don't leave it for someone to discover in development. If no subagent can run, run the identical checklist inline and say so; never skip the gate.
 
 Then tell the user the TRD is complete and should be reviewed as a PR.

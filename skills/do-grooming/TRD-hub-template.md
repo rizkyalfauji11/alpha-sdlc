@@ -10,10 +10,22 @@
 | **Status** | Draft |
 | **Author** | <engineer> |
 | **Platforms in scope** | <Backend / Android / iOS / Web> |
-| **Spokes** | <links to the per-platform TRDs that exist> |
+| **Spokes** | <see the *Spokes & alignment* table below> |
 | **PRD/BRD** | <link to source> |
 | **Figma** | <link, if any> |
 | **Date** | <YYYY-MM-DD> |
+
+## Spokes & alignment
+
+> Each spoke's **hub-alignment** state, visible from the hub so drift is obvious here rather than
+> discovered in development. **Editing any hub section below makes every ✅ stale** — re-run the
+> hub-alignment review per spoke and re-stamp. `do-planning` won't plan a spoke that isn't aligned
+> with the hub's current state.
+
+| Spoke | Link | Hub alignment | Platform exceptions (decided divergences) |
+|-------|------|---------------|-------------------------------------------|
+| <backend> | [TRD-backend.md](./TRD-backend.md) | <✅ reviewed YYYY-MM-DD · hub rev `<hash/date>` · or ⚠️ stale · or ❌ not reviewed> | <none — or the decided exception + why, recorded here so the next spoke and `do-development` see it> |
+| <android> | <…> | | |
 
 ## 1. Context / scope
 _Approved: <YYYY-MM-DD>_

@@ -13,7 +13,7 @@ You are writing a **development plan document**: the ordered, staged plan an eng
 
 ## Source & output
 
-- **Inputs:** the feature's approved TRD (`docs/development/<feature-name>/` hub + the relevant spoke) — its **work slices + AC are the source of work**. If you ran the optional Jira phases (`do-slicing`/`do-uploading`), also use `task-list.md` / Jira keys; if you skipped them, plan straight off the TRD. Either way the plan implements what the TRD already decided — it does **not** re-open design (send those back to `do-grooming`).
+- **Inputs:** the feature's approved TRD (`docs/development/<feature-name>/` hub + the relevant spoke) — its **work slices + AC are the source of work**. **Check the spoke's `Hub alignment` stamp first: missing, `NOT REVIEWED`, or older than the hub's last change → STOP** and send it back to `do-grooming` for the hub-alignment review. Planning a spoke that disagrees with the hub bakes the disagreement into stages, where it resurfaces as a contract/integration bug two phases later. If you ran the optional Jira phases (`do-slicing`/`do-uploading`), also use `task-list.md` / Jira keys; if you skipped them, plan straight off the TRD. Either way the plan implements what the TRD already decided — it does **not** re-open design (send those back to `do-grooming`).
 - **Development is per-platform** → write one plan per platform: `docs/development/<feature-name>/plan-<platform>.md`. Use `plan-template.md` in this skill's directory.
 
 ## What makes a good stage (the core rule)
