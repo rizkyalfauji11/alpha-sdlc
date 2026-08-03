@@ -19,11 +19,15 @@
 
 ## Elements
 
-| Element | Type | Test ID | Content description (a11y label) | State(s) | Notes |
-|---------|------|---------|----------------------------------|----------|-------|
-| <Scan button> | Button | `qris_widget_scan_button` | "Scan QRIS to pay" | default / pressed / disabled | deep-links to scanner |
-| <Status toggle> | Switch | `qris_widget_status_toggle` | "Notifications on" | on / off / disabled | flips immediately, no submit |
-| <Balance text> | Text | `qris_widget_balance_text` | "Active balance" | masked / revealed | masked by default |
+| Element | Section | Type | Test ID | Content description (a11y label) | State(s) | Notes |
+|---------|---------|------|---------|----------------------------------|----------|-------|
+| <Scan button> | `ftr.actions` | Button | `qris_widget_scan_button` | "Scan QRIS to pay" | default / pressed / disabled | deep-links to scanner |
+| <Status toggle> | `hdr` | Switch | `qris_widget_status_toggle` | "Notifications on" | on / off / disabled | flips immediately, no submit |
+| <Balance text> | `body.summary` | Text | `qris_widget_balance_text` | "Active balance" | masked / revealed | masked by default |
+
+> **Section** is the region ID from [`../section-slicing/<screen>.md`](../section-slicing/<screen>.md) — the
+> doc that owns *when* the region shows and how many views it renders. Every element names a section that
+> exists there; an element in no section is a gap.
 
 ## Style bindings
 

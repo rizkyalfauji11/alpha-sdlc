@@ -41,8 +41,10 @@ docs/development/<feature>/
   TRD.md                          # hub — shared contract, single source of truth
   TRD-<platform>.md               # one spoke per platform, links the hub (never copies it)
   widget-spec/<screen>.md         # per-screen contract: test IDs, element types, style bindings
+  section-slicing/<screen>.md     # header/body/footer → sub-sections; every case + its cropped design
   plan-<platform>.md              # staged plan + design refs
   design/                         # the designs to build against (+ gitignored parity screenshots)
+  design/sections/<screen>/       # close-up crop per section + per case — committed spec input
   test-plan-<platform>.md         # AC → test → status
 ```
 
