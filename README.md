@@ -26,7 +26,7 @@ It's opinionated on purpose: it proposes, you approve. It reuses before it build
 | # | Skill | Does | Output |
 |---|-------|------|--------|
 | 2–3 | `/do-slicing` → `/do-uploading` | *Jira only, optional* — TRD → weighted task list → Jira issues | `task-list.md` + Jira keys |
-| 4 | `/do-planning` | TRD → staged dev plan: where code lands + small reviewable stages, **split by layer** (domain → data → presentation) | `plan-<platform>.md` |
+| 4 | `/do-planning` | TRD → staged dev plan: where code lands + small reviewable stages, **split by layer** (domain → data → presentation) and **UI by section** (shell → sections → assembly) | `plan-<platform>.md` |
 | 5 | `/do-development` | Builds stage by stage, TDD, **reviews each diff against your docs + principles**, visual parity for UI, **⏸ stops at every checkpoint** | code + tests |
 | 6 | `/do-testing` | API · UI · Integration · E2E · **Boot & Smoke** (real FE+BE, non-skippable); verify-only — reports every bug before any fix | tests + `test-plan-<platform>.md` |
 | 7 | `/do-fixing` | Fixes triaged bugs one at a time — reproduce-first, root cause not symptom, **same fresh-eyes review per fix** | fixes, back to testing |

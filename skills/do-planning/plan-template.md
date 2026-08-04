@@ -42,6 +42,18 @@
 
 <Optional: a small module/dependency diagram if the layout isn't obvious.>
 
+## Screen stage map *(UI platforms)*
+
+> How each screen's presentation work splits: **shell → section stages → assembly**. A section earns its
+> own stage when it has more than one case, its own data source, or a repeating item template; trivial
+> siblings group. Every section and case is claimed by **exactly one** section stage; every interaction
+> (`X`) row is claimed by the assembly stage. This table is the coverage check — an unclaimed case is the
+> missed case.
+
+| Screen | Shell | Section stages (top-down) | Assembly | Cases claimed |
+|--------|-------|---------------------------|----------|---------------|
+| <qris-home> | <Stage 4> | <5: `hdr`+static · 6: `body.summary` (C1–C4) · 7: `body.list`+`.item` (C1–C4) · 8: `ftr.actions` (C1–C3)> | <Stage 9 — full screen + `X1`,`X2`> | <14 of 14> |
+
 ## Stages
 
 > **Stages split by architecture layer** — a screen is a sequence, not a stage: `[contract]` (only if the
@@ -58,15 +70,19 @@
 - **Approach:** <what / ladder rung — reuse X, native Y, etc.>
 - **Changes (shape, not full code):** per file, what changes; new/changed **signatures, data shapes, endpoints, or props**; **pseudocode or notes only for tricky logic** (races, money caps, retries, edge cases). For stages touching the contract: the spec update + **typed-client regeneration** come first (per `05-tech-stack.md` → Code generation). For stages touching shared entities: name the **query keys read + invalidations/events fired** (per `08-data-cache.md`). Detail scales with risk — trivial changes stay a line, risky ones get the interface + edge cases. Do *not* paste full method bodies/boilerplate.
 - **Design ref (UI stages):** which screen + design (from *Design references* above) and the states to match — the parity target for this stage. `n/a` for non-UI stages.
-- **Section cases (UI stages):** the case IDs from `section-slicing/<screen>.md` this stage implements (e.g. `body.summary/C1–C4` · `ftr.actions/C5` · interaction `X1`), each with its crop. Every case in the doc must be claimed by some stage — an unclaimed case is the missed case. `n/a` for non-UI stages.
+- **Stage kind (UI presentation):** <`shell` (scaffold + route + screen state + empty slots) · `section` · `assembly` (full screen + interactions) — from the *Screen stage map* above. `n/a` for non-UI stages.>
+- **Section(s) + element scope (UI section stages):** <the section ID(s) this stage builds (e.g. `body.list` + `body.list.item`) and the widget-spec rows whose `Section` column matches — that's this stage's element scope.>
+- **Section cases (UI stages):** the case IDs from `section-slicing/<screen>.md` this stage implements (e.g. `body.summary/C1–C4` · `ftr.actions/C5`), each with its crop. A **section** stage compares against its **crops only**; the **assembly** stage owns full-screen parity + the interaction (`X`) rows. Every case claimed by exactly one stage — unclaimed is the missed case, claimed twice means two stages fight over the same view. `n/a` for non-UI stages.
 - **Test first (TDD red):** the failing test(s) that prove this stage, derived from the AC — what they assert. If the stage can't be unit-tested (native widget render, pure UI), say so and give the manual/observed check instead.
 - **Verify:** <how to confirm green — run the test(s) + build/observe>
 - **Conformance review — docs this stage must be checked against:** <the `docs/basics/` docs the stage's changes touch, e.g. `02-architecture` (layer placement) · `10-conventions` (error handling/logging) · `08-data-cache` (query keys + invalidation) · `18-design-tokens` (zero raw literals) — so the reviewer audits the right ones instead of guessing. Principles + plan/AC conformance are always checked.>
-- **⏸ Checkpoint — review here.** **Safe to stop after?** <yes — compiles & tests pass / no — leaves X half-done until Stage N. **Safe ≠ complete** — note when the slice isn't user-visible yet (e.g. "safe: green; but nothing on screen until Stage 4 [presentation]").>
+- **⏸ Checkpoint — review here.** **Safe to stop after?** <yes — compiles & tests pass / no — leaves X half-done until Stage N. **Safe ≠ complete** — note when the slice isn't user-visible yet (e.g. "safe: green; but nothing on screen until Stage 4 [presentation]"). **A partially-sectioned screen is *not* safe** — green but visually broken (e.g. "no: 2 of 4 sections built; screen is broken until Stage 9 assembly").>
 
 ### Stage 2 — [<layer>] <goal>
 - **Covers:** <…>
 - **Layer:** <…>
+- **Stage kind (UI presentation):** <shell / section / assembly — or `n/a`>
+- **Section(s) + element scope (UI section stages):** <…>
 - **Files / modules:** <…>
 - **Approach:** <…>
 - **Changes:** <…>

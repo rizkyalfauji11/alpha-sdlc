@@ -119,7 +119,17 @@ The last section is **structured** (it feeds downstream ticket-slicing and monit
 
 When grooming a spoke, also update the hub's **Spokes** field to link the new spoke.
 
-### Step 3 — Hub-alignment review (spokes only) — the completion gate
+### Step 3 — Per-screen artifacts (client spokes only)
+
+The spoke's sections describe the platform's design; the **per-screen contracts** are separate artifacts and a spoke is not finished without them. For **each screen** in the spoke, in order:
+
+1. **Widget spec** → `widget-spec/<screen-name>.md` — elements (type · Test ID · content description · states), each row naming its **`Section`**, plus *Style bindings* and *Container sizing & overflow*. One gate per screen.
+2. **Section slicing** → `section-slicing/<screen-name>.md` — the section tree, then **one gate per section**: its cases (condition · view count *and* identity · data source), how the logic runs (source · trigger · transition · precedence · unknown-data), and its **approved crop**. Never batch sections.
+3. **Close the loop per screen** — run the doc's *Coverage checklist*: every case has a crop or an explicit marker, every widget-spec element names a section that exists, every section's elements exist in the widget spec. Unchecked lines block development, so resolve them here.
+
+A screen with no widget spec, or with sections but uncropped/unenumerated cases, is an **unfinished spoke** — not a detail for `do-development` to discover.
+
+### Step 4 — Hub-alignment review (spokes only) — the completion gate
 
 A spoke's last approved section does **not** finish it. Run the **hub-alignment review** (per the rule above) before calling it complete:
 
