@@ -1,7 +1,7 @@
 {
   "$schema": "https://code.claude.com/schemas/marketplace.json",
   "name": "alpha",
-  "description": "SDLC lifecycle support — grooming to monitoring, TRD-centered and human-approved at every gate. Jira integration optional.",
+  "description": "SDLC pipeline for Claude Code — groom → plan → build → test → fix, human-approved at every gate. Jira integration optional.",
   "owner": {
     "name": "rizkyalfauji11"
   },
