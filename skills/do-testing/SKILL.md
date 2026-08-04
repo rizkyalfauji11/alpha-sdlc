@@ -42,6 +42,7 @@ Use each platform's existing framework (detect + reuse — ladder rung 2): backe
 ## Source & output
 
 - **Inputs:** the implemented feature, the TRD (hub API contract + spoke AC — the primary source), the plan, and the tasks / Jira keys if the Jira phases were run.
+- **Test code is code — zero comments, names carry the case.** The same rules bind here as anywhere (`principles.md`): no comments in test files (hook-blocked), and the **test name states the case it proves** — `showsEmptyStateWhenListIsEmpty`, `hidesPrimaryActionWhenOffline`, ideally naming the section case ID it covers — so a failing test report reads as a list of broken behaviors, not `test_3`. Fixtures follow the same discipline: named, contract-derived, domain-realistic (never randomized/placeholder).
 - **Per platform.** Track coverage in `docs/development/<feature-name>/test-plan-<platform>.md` using `test-plan-template.md` — an **AC → test case → level → status** table (level = API / UI / Integration / E2E) so every AC is provably covered *and you can see at which level*. This doc is the reviewable artifact; the test files are the deliverable.
 
 ## Flow
