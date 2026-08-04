@@ -1,110 +1,81 @@
 # alpha-sdlc
 
-A Claude Code plugin that walks a feature through the engineering lifecycle — **groom → plan → build → test → fix** — as skills you drive from the terminal. Each phase writes a real artifact into your repo, and stops for your approval before moving on.
+An SDLC pipeline for Claude Code — **groom → plan → build → test → fix** — as skills you drive from the terminal.
 
-It's opinionated on purpose: it proposes, you approve. It reuses before it builds. It won't quietly simplify away the hard parts, and it won't invent scope the design never asked for. Uses your existing tools (Jira, Datadog, Mixpanel) instead of replacing them.
+Your agent's tests pass and the feature is still broken: the client calls a method the route doesn't have, the backend returns `{en,id}` where the component renders a string. Every isolated test was green, because both sides mocked the same wrong assumption. This plugin doesn't call a feature done until it has booted your real frontend against your real backend and driven the actual journeys through the real HTTP stack.
 
----
+## What it won't do
 
-## How it works
+**Continue without you.** Every document section, plan stage, and test result is a hard gate: plain-language summary first, engineering detail below, then it stops. No "generate the whole document", no batched approvals, no default it proceeds on if you go quiet.
 
-**Step 0 — teach it your repo.** `/do-project-setup` scans the whole project and writes `docs/basics/` (18 tiered docs: architecture, tech stack, DB, API map, env + run recipe, conventions, UX conventions, design tokens, feature map…). Every later skill grounds in these instead of re-scanning and re-guessing. Re-run it in refresh mode after a feature ships.
+**Claim a pass it didn't verify.** Done means the real stack booted with domain-realistic data and zero unexpected 4xx/5xx, console errors, or error-boundary trips. UI is rendered, screenshotted, and diffed against the design — never written from an image and called parity. If the screenshot tooling breaks, it stops and tells you instead of skipping the comparison.
 
-**Starting from zero?** Same command, different mode: on an empty repo it stops describing and starts **deciding** — framework, architecture, structure, tooling, one gate per decision — and writes the profile as intended design (stamped `prescriptive (pre-code)`, never as if it had read code that doesn't exist). Then `/do-foundation-grooming` grooms the base: scaffold, folder structure, architecture skeleton. Once that's built, refresh mode re-stamps the docs against the real commit and you're on the normal path.
+**Fill in what the design left out.** A gap or ambiguity becomes an *Open Decision* with two or three options and one recommended, recorded in the requirements doc, blocking that slice until you choose. Building beyond the spec is treated as the same defect as building below it.
 
-**Then pick an entry point** — each produces a TRD that flows into the same pipeline:
+**Build before looking for something to reuse.** Every change names which rung it stopped at on a seven-rung ladder — does this need to exist, is it already in the codebase, the stdlib, a platform feature, an installed dependency, one line — and only then, new code. A hook rejects a requirements doc or plan that doesn't name its rung.
 
-| | Skill | For |
+One thing it does *to* your code: source ships with **zero comments**. No prose, no docstrings, no banners — a rename, an extracted function, or a named constant does that job, and a hook blocks the write when a comment slips in. The *why* that can't fit in a name goes in the commit message, where it can't rot beside code that changed.
+
+## The pipeline
+
+Teach it your repo once. `/do-project-setup` reads the project and writes a profile into `docs/basics/` — architecture, stack, domain model, API map, environment and the full-stack run recipe, conventions, design tokens. Every later skill grounds in those files instead of re-scanning and re-guessing each session. On an empty repo it flips modes and decides the stack *with* you, one gate per decision.
+
+Then, per feature:
+
+| | | |
 |---|---|---|
-| 1a | `/do-grooming` | a product feature, from a PRD/BRD |
-| 1b | `/do-tech-debt-grooming` | refactor, perf, fragility, upgrades — behavior-preserving, no PRD |
-| 1c | `/do-issue-grooming` | a reported bug — audits the **whole project for the issue class**, not just the symptom |
-| 1d | `/do-foundation-grooming` | the **base of a new project** — scaffold + structure + architecture skeleton, no features |
+| **Groom** | `/do-grooming` | PRD/BRD → requirements doc, one approval per section. Variants: `/do-tech-debt-grooming` for behavior-preserving work, `/do-issue-grooming` which audits the whole issue *class* across the project rather than the symptom you hit, `/do-foundation-grooming` for a new project's scaffold |
+| **Plan** | `/do-planning` | Small independently reviewable stages, split by layer (domain → data → presentation); UI splits again by section |
+| **Build** | `/do-development` | One stage at a time, test-first. Each diff is audited by a fresh-eyes reviewer holding your profile docs but not the reasoning that produced the code — then it stops for you |
+| **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion. Verify-only: it reports every bug and fixes none |
+| **Fix** | `/do-fixing` | The bugs you triaged, one at a time, reproduce-first, root cause not symptom |
 
-**And run the pipeline:**
-
-| # | Skill | Does | Output |
-|---|-------|------|--------|
-| 2–3 | `/do-slicing` → `/do-uploading` | *Jira only, optional* — TRD → weighted task list → Jira issues | `task-list.md` + Jira keys |
-| 4 | `/do-planning` | TRD → staged dev plan: where code lands + small reviewable stages, **split by layer** (domain → data → presentation) and **UI by section** (shell → sections → assembly) | `plan-<platform>.md` |
-| 5 | `/do-development` | Builds stage by stage, TDD, **reviews each diff against your docs + principles**, visual parity for UI, **⏸ stops at every checkpoint** | code + tests |
-| 6 | `/do-testing` | API · UI · Integration · E2E · **Boot & Smoke** (real FE+BE, non-skippable); verify-only — reports every bug before any fix | tests + `test-plan-<platform>.md` |
-| 7 | `/do-fixing` | Fixes triaged bugs one at a time — reproduce-first, root cause not symptom, **same fresh-eyes review per fix** | fixes, back to testing |
-
-No Jira? Skip 2–3 and go setup → grooming → planning → development → testing.
-
-**Everything lands in your repo**, reviewable in a PR:
-
-```
-docs/basics/                      # the project profile (step 0)
-docs/development/<feature>/
-  TRD.md                          # hub — shared contract, single source of truth
-  TRD-<platform>.md               # one spoke per platform, links the hub (never copies it)
-  widget-spec/<screen>.md         # per-screen contract: test IDs, element types, style bindings
-  section-slicing/<screen>.md     # header/body/footer → sub-sections; every case + its cropped design
-  plan-<platform>.md              # staged plan + design refs
-  design/                         # the designs to build against (+ gitignored parity screenshots)
-  design/sections/<screen>/       # close-up crop per section + per case — committed spec input
-  test-plan-<platform>.md         # AC → test → status
-```
-
-**What you'll actually notice while using it:**
-
-- **It stops.** Every section, stage, and result is a hard gate — proposed in plain language first, engineer detail second, then it waits. No auto-continue.
-- **It asks instead of inventing.** A gap in the design becomes an *Open Decision* with 2–3 options for you to pick, never a guess it ships.
-- **It won't fake a pass.** UI parity is rendered and compared (not code-from-image); "done" requires the real frontend + backend booted together with realistic data.
-- **Every stage gets code-reviewed before you see it.** A fresh-eyes reviewer (no build context) audits the diff against your `docs/basics/` and the principles — layer placement, error handling, tokens, cache keys, contract types, scope. Objective violations get fixed in the stage; anything about scope or a convention comes to you as an Open Decision.
-- **Hooks block the mechanizable stuff** — unnamed reuse decisions, leftover template placeholders, secrets in docs, and **any comment in source code**: code carries zero comments (no prose, no docstrings, no banners), so names and structure have to say it. Only machine directives survive — `eslint-disable`, `@ts-expect-error`, `# noqa`, `//go:build`, shebangs. A *why* that can't fit in a name belongs in the commit message.
-
-Shared discipline lives in [`principles.md`](./principles.md); the mechanics of each phase live in its `skills/*/SKILL.md`.
-
-> **Roadmap** — a stand-alone regression/QA track (black-box testing the built app), then deployment and monitoring.
-
----
+Use Jira? `/do-slicing` and `/do-uploading` turn an approved requirements doc into a story-pointed task list and bulk-create it, sample-first in small batches. Skip both otherwise — nothing downstream depends on them.
 
 ## Install
 
-Needs **`node` on your PATH** (the hooks are Node scripts — built-ins only, no `npm install`, nothing fetched). No Node? Everything still installs; the hooks just fail open and don't enforce.
+Needs **`node` on your PATH** — the hooks are Node scripts using built-ins only, so there's no `npm install` and nothing is fetched. Without Node everything still installs; the hooks fail open and simply don't enforce.
 
 ```
 /plugin marketplace add rizkyalfauji11/alpha-sdlc
 /plugin install alpha-sdlc@alpha
 ```
 
-Working on the plugin itself:
+## First run
 
 ```
-/plugin marketplace add /path/to/alpha-sdlc     # this repo's root
-/plugin install alpha-sdlc@alpha
-
-claude --plugin-dir /path/to/alpha-sdlc         # or just load it, no marketplace
-claude plugin validate .                        # check the manifests
+/do-project-setup     # once per repo — writes docs/basics/, one doc at a time
+/do-grooming          # point it at a PRD, a ticket, or a paragraph you typed
 ```
 
-Hooks load at session start — `/reload-plugins` picks up changes without restarting.
+Expect the first one to take a while and to ask you things: it's writing the files every other skill reads, and a wrong fact in there propagates. You can stop after any gate and pick it up days later — the state is markdown in your repo, not in the session.
 
-## Update
+## What it writes into your repo
+
+```
+docs/basics/                  the project profile, commit-stamped
+docs/development/<feature>/
+  TRD.md                      requirements — the shared contract
+  plan-<platform>.md          staged plan, each stage with its checkpoint
+  design/                     the designs it builds and diffs against
+  test-plan-<platform>.md     acceptance criterion → test → status
+```
+
+Everything is reviewable in a pull request, and readable by whoever picks the feature up next.
+
+## Updating
 
 Third-party marketplaces don't auto-update by default:
 
 ```
-/plugin marketplace update alpha    # refresh catalog, detect the new version
-/reload-plugins                     # load it
+/plugin marketplace update alpha
+/reload-plugins
 ```
 
-Prefer automatic: `/plugin` → *Marketplaces* → `alpha` → **Enable auto-update**.
+Prefer automatic: `/plugin` → *Marketplaces* → `alpha` → **Enable auto-update**. Rolling it out to a team? Add the marketplace with `"autoUpdate": true` under `extraKnownMarketplaces` in your project's `.claude/settings.json`, and everyone stays current.
 
-For a team, ship it in `./.claude/settings.json` — adds the marketplace *and* keeps everyone current:
+## Roadmap
 
-```json
-{
-  "extraKnownMarketplaces": {
-    "alpha": {
-      "source": { "source": "github", "repo": "rizkyalfauji11/alpha-sdlc" },
-      "autoUpdate": true
-    }
-  }
-}
-```
+A stand-alone regression/QA track that black-box tests the built app, then deployment and monitoring.
 
-New versions are detected from `version` in `plugin.json`, bumped each release.
+Working on the plugin itself: `claude --plugin-dir /path/to/alpha-sdlc` to load it without the marketplace, `claude plugin validate .` to check the manifests. The shared discipline every skill applies is one file — [`principles.md`](./principles.md). It's the whole opinion; if you disagree with it, you'll disagree with the plugin.
