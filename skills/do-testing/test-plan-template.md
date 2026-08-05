@@ -52,7 +52,7 @@
 ## Boot & Smoke (integrated) — mandatory
 
 > The real frontend + real backend booted together (per `docs/basics/09-environment.md` → *Full-stack
-> run recipe*), the feature's **critical journeys** driven through the real HTTP stack with
+> run recipe*), the **critical journeys named in the hub's §3 *Feature flow*** — driven through the real HTTP stack with
 > **relevant, domain-realistic data (never randomized/placeholder)**. **Not markable manual** — if it
 > didn't run, the feature is blocked, not done. A pass = every cell below is clean.
 

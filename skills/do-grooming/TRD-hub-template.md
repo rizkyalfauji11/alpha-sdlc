@@ -66,7 +66,27 @@ _Approved: <YYYY-MM-DD>_
 - **Freshness is decided at grooming** — when the source changes, when must this consumer see it, via which mechanism per `docs/basics/08-data-cache.md` → *Shared server-state sync* (mutation → invalidation · real-time event · refetch-on-focus). Undecided freshness = the "consumer's list not synchronized" bug; each cell becomes testable AC.
 - Each binding gets a **mandatory cross-feature data-flow test** in `do-testing` (seed/create in the source → assert it flows into this feature's field/section, real data, **within the decided freshness**). A broken binding is a bug; an untested one is a coverage gap.
 
-## 3. System design
+## 3. Feature flow
+_Approved: <YYYY-MM-DD>_
+
+> **What the user does and what the system does back, end to end, platform-neutral.** Plain enough for
+> a product owner to check without a walkthrough. Per-platform screen mechanics stay in the spoke
+> (*Multi-step flows*), per-screen cases in `section-slicing/`, service topology in §4 below.
+
+| # | User does | System does | Result |
+|---|-----------|-------------|--------|
+| 1 | <opens the Pay tab> | <loads active balance> | <balance shown> |
+| 2 | <taps Scan> | <opens scanner, requests camera permission> | <scanner live> |
+| 3 | <scans the merchant QR> | <validates the code, fetches merchant + limits> | <amount form, merchant name shown> |
+| 4 | <confirms the amount> | <debits, writes the transaction> | <receipt + transaction id> |
+
+**Alternate paths:** <invalid QR → error, retry stays on the scanner · balance too low → blocked before any debit · permission denied → settings prompt. One line each; every branch a user can actually hit.>
+
+**Critical journeys:** <the paths that must work for the feature to be shippable — e.g. "1→4 happy path · 3 invalid QR". `do-testing` drives exactly these in its **Boot & Smoke** gate, so name them here rather than leaving them to be invented at test time.>
+
+<Each row is a natural acceptance criterion — the spoke's Work slices carry the assertable version.>
+
+## 4. System design
 _Approved: <YYYY-MM-DD>_
 
 <End-to-end picture: which clients and services are involved and how they interact.>
@@ -82,7 +102,7 @@ graph TD
   API --> DB[(Database)]
 ```
 
-## 4. API contracts
+## 5. API contracts
 _Approved: <YYYY-MM-DD>_
 
 <The backend↔client contract — the shared truth every spoke references. Method, path, request, response, errors.>
@@ -98,12 +118,12 @@ _Approved: <YYYY-MM-DD>_
 |--------|------|-----------------|------------------|--------|-------|
 | | | | | | |
 
-## 5. Cross-cutting concerns
+## 6. Cross-cutting concerns
 _Approved: <YYYY-MM-DD>_
 
 <Things every platform must agree on: auth, error model, API versioning & backward compatibility, feature flags, i18n/localization, analytics events.>
 
-## 6. Change manifest
+## 7. Change manifest
 _Approved: <YYYY-MM-DD>_
 
 > Structured handoff. Feeds ticket-slicing and monitoring.
