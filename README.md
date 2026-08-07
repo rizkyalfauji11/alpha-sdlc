@@ -34,6 +34,15 @@ Then, per feature:
 
 If you use Jira, `/do-slicing` and `/do-uploading` turn an approved requirements doc into a story-pointed task list and create it sample-first in small batches. Skip both otherwise — nothing downstream depends on them.
 
+## The regression track
+
+Two more skills test the **built app** — the deployed URL or the installed APK/IPA — with no access to its source code, ever. Made for a QA team that gets a link and a PRD, not a repo.
+
+| | | |
+|---|---|---|
+| **Set up** | `/do-regression-setup` | You hand over what you have — PRD, test docs, a web link, the app file, test accounts; **anything can be skipped and added later**. It then walks every screen of the real app like a new QA hire learning the product and writes the QA handbook: what the app does, a **test-user list** with one user per situation (new user, full data, expired login, archived parent…), and the **test checklist**, where everything not yet covered is marked loudly |
+| **Write tests** | `/do-regression-authoring` | Works the checklist one case at a time: drafts each case in plain steps for your approval, saves it as a document a human can run by hand, then generates the automation from it and runs it against the real app. A brand-new test that fails may be a **real bug found** — filed with the case as proof |
+
 ## Install
 
 Needs **`node` on your PATH** — the hooks are Node scripts using built-ins only, so there's no `npm install` and nothing is fetched. No Node? Everything still installs; the hooks fail open and simply don't enforce.
@@ -87,6 +96,6 @@ Prefer automatic: `/plugin` → *Marketplaces* → `alpha` → **Enable auto-upd
 
 ## Roadmap
 
-A stand-alone regression/QA track that black-box tests the built app, then deployment and monitoring.
+Regression run & triage (the third regression skill: suites on a schedule, failures sorted, release report), then deployment and monitoring.
 
 Working on the plugin itself: `claude --plugin-dir /path/to/alpha-sdlc` loads it without the marketplace, `claude plugin validate .` checks the manifests.
