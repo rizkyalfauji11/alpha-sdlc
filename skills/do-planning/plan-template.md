@@ -67,7 +67,7 @@
 - **Covers:** <task IDs / Jira keys / AC>
 - **Layer:** <contract / domain / data / presentation — or UI / data-integration if the project isn't layered. The diff **stays inside this layer**: business logic doesn't land in a ViewModel, a presentation stage doesn't reach into data. `do-development`'s conformance review checks the diff against this declaration.>
 - **Files / modules:** <paths>
-- **Approach:** <what / ladder rung — reuse X, native Y, etc.>
+- **Approach:** <what / ladder rung · world-wide standard (agrees, or the surfaced conflict) — reuse X, native Y, etc.>
 - **Changes (shape, not full code):** per file, what changes; new/changed **signatures, data shapes, endpoints, or props**; **pseudocode or notes only for tricky logic** (races, money caps, retries, edge cases). For stages touching the contract: the spec update + **typed-client regeneration** come first (per `05-tech-stack.md` → Code generation). For stages touching shared entities: name the **query keys read + invalidations/events fired** (per `08-data-cache.md`). Detail scales with risk — trivial changes stay a line, risky ones get the interface + edge cases. Do *not* paste full method bodies/boilerplate.
 - **Design ref (UI stages):** which screen + design (from *Design references* above) and the states to match — the parity target for this stage. `n/a` for non-UI stages.
 - **Stage kind (UI presentation):** <`shell` (scaffold + route + screen state + empty slots) · `section` · `assembly` (full screen + interactions) — from the *Screen stage map* above. `n/a` for non-UI stages.>

@@ -44,7 +44,7 @@ The reported instance is one symptom of an underlying **class**. Generalize it, 
 
 ### Per-section loop
 
-Same as grooming — **one section at a time, one approval gate per section, never batch.** For each section: read → ask open questions → propose decisions (**name the ladder rung; the Approach field is required — the validator hook enforces it**) → get the user's approval → write prose/Mermaid, stamped `_Approved: YYYY-MM-DD_` → next section. **Surface gaps as Open Decisions** (2–3 options, mark one) — never invent scope to fill them.
+Same as grooming — **one section at a time, one approval gate per section, never batch.** For each section: read → ask open questions → propose decisions (**name the ladder rung and the world-wide standard; the Approach field is required — the validator hook enforces it**) → get the user's approval → write prose/Mermaid, stamped `_Approved: YYYY-MM-DD_` → next section. **Surface gaps as Open Decisions** (2–3 options, mark one) — never invent scope to fill them.
 
 ### Final section — Change manifest
 

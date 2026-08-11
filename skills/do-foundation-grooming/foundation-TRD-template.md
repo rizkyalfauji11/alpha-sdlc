@@ -42,7 +42,7 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 | **Framework** | <+ pinned version> |
 | **Scaffold tool + exact command** | <e.g. `npx create-next-app@15.1.0 <name> --ts --app` — pinned, reproducible> |
 | **What the scaffold emits** | <the generator's own output, briefly — so the diff between "generated" and "ours" is visible> |
-| **What we change from the default** | <each deviation + why; ladder rung for anything hand-built> |
+| **What we change from the default** | <each deviation + why; ladder rung · world-wide standard for anything hand-built> |
 
 ### Folder structure (the deliverable — write the real tree)
 

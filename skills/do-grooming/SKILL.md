@@ -107,7 +107,7 @@ For each approved section, in order:
 
 1. **Read needs**: the PRD + all already-approved sections (read the current TRD file) + the relevant repo code for this section.
 2. **Ask first**: list the open questions for this section — anything the PRD and repo don't answer — and get the user's answers. Don't proceed on assumptions.
-3. **Propose** the section as terse **decisions** — bullets of *what / why / tradeoff*. For design sections, the proposal includes the Mermaid diagram.
+3. **Propose** the section as terse **decisions** — bullets of *what / why / tradeoff*, each naming its **ladder rung and the world-wide standard** (agreement, or the surfaced conflict per the tiered rule). For design sections, the proposal includes the Mermaid diagram.
 4. **Approve**: ask the user — approve as-is / approve with edits / regenerate with feedback. Apply their edits to the decisions — the edited version is what gets written and fed forward. One section at a time; never offer to approve the rest in a batch.
 5. **Write**: expand the approved decisions into prose (+ Mermaid) and append the section to the TRD file, following the template's structure. No second approval. **Stamp the section with its approval date** — add `_Approved: YYYY-MM-DD_` right under the section heading, using today's date.
 

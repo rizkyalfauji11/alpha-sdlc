@@ -65,6 +65,7 @@ if (problems.length) {
     'Ladder rung missing — ' + problems.join('; ') + '. ' +
     'Per principles.md the rung is mandatory: name the rung you stopped at ' +
     '(1=skip/YAGNI, 2=reuse, 3=stdlib, 4=native, 5=installed dep, 6=one line, 7=build new) ' +
+    'and name the world-wide standard beside it (agrees, or the surfaced conflict per the tiered rule) '+
     'before writing this artifact. A proposal without a named rung is incomplete.\n'
   );
   process.exit(2);
