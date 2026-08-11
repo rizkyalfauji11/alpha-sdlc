@@ -1,6 +1,6 @@
 ---
 name: do-foundation-grooming
-description: Groom the FOUNDATION of a brand-new application or service — the project scaffold, folder structure, and architecture skeleton — into a foundation TRD, section-by-section with one gate per section. For greenfield repos (nothing built yet), after do-project-setup has decided the stack. Scaffolding only — no product features (those are do-grooming). Triggers on "start a new app", "new project from zero", "greenfield", "bootstrap the project", "set up the base of the application", "scaffold the project", "/do-foundation-grooming".
+description: STEP 2 of the greenfield flow — run AFTER do-project-setup (greenfield mode) has decided the stack. Grooms the FOUNDATION of the brand-new application or service — the project scaffold, folder structure, and architecture skeleton — into a foundation TRD, section-by-section with one gate per section. Scaffolding only — no product features (those are do-grooming, per feature, once the base is built). Starting a new app from zero begins at do-project-setup, not here. Triggers on "scaffold the project", "set up the base of the application", "groom the foundation", "foundation TRD", "/do-foundation-grooming".
 ---
 
 You are grooming the **foundation of a greenfield project** — the base an application or service stands on before any feature exists: the framework scaffold, the folder structure, and the architecture skeleton the user wants. Output is a **foundation TRD** that flows into the normal pipeline (`do-planning` → `do-development` → `do-testing`).
@@ -11,7 +11,7 @@ You are grooming the **foundation of a greenfield project** — the base an appl
 
 **Read `docs/basics/` first.** A greenfield profile is written by `do-project-setup` in **greenfield mode** (prescriptive/pre-code): it is where the framework, architecture style, structure convention, and tooling get **decided with the user, one gate per decision**.
 
-- **No `docs/basics/` → STOP** and send the user to `do-project-setup` first. Do not decide the stack here; two skills deciding the same thing is how the profile and the TRD disagree on day one.
+- **No `docs/basics/` → don't bounce the user — offer the hand-off.** Say plainly that the stack must be decided first, and **ask one question: "Run `do-project-setup` (greenfield mode) right now, then continue foundation grooming when the profile is done?"** On yes, invoke it in this same session, complete it (its gates apply as normal), then **resume foundation grooming automatically from step 1** — the user never has to re-invoke anything. On no, stop and name what's missing. Never decide the stack here either way; two skills deciding the same thing is how the profile and the TRD disagree on day one.
 - **`docs/basics/` exists but describes a different (non-empty) project** → this isn't greenfield. A product feature is `do-grooming`; a refactor is `do-tech-debt-grooming`.
 - This TRD **binds to** the profile's decisions (`02-architecture.md`, `05-tech-stack.md`, `09-environment.md`, `10-conventions.md`, `11-git-management.md`) by reference. **Link, never re-decide.** If grooming exposes a decision the profile got wrong or left open, **stop and fix it in the profile** (re-run setup on that doc), then continue — the profile stays the single source of truth.
 
@@ -54,7 +54,7 @@ The foundation delivers exactly four things:
 3. **Propose the section outline** for the hub and each spoke (per `foundation-TRD-template.md`). **Present, then STOP** for approval before drafting any section.
 4. **Groom the hub — one gate per section**, in the order listed in the rules (intent → repo strategy → architecture style → contract approach → shared conventions → environments). Draft one, present it, **STOP**, apply their verdict, write it, next. The hub's shared decisions are **all approved before any spoke is groomed**.
 5. **Groom each spoke — one gate per section**, in the order listed in the rules (framework & scaffold → **folder structure, alone** → architecture skeleton → harness → repo hygiene → AC → omissions → Open Decisions). Same discipline: one section per turn, approved before it's written. Don't collapse sections because the project is small; a tiny project just has short sections.
-6. **Close out.** Confirm every AC is mechanically checkable, the omissions register is filled, and the profile docs the TRD binds to are named. Then hand off to **`do-planning`** — the base's stages are scaffolding stages (see below).
+6. **Close out.** Confirm every AC is mechanically checkable, the omissions register is filled, and the profile docs the TRD binds to are named. Then show the user **where they are in the greenfield chain** — `setup ✓ → foundation TRD ✓ → plan → build → test the base → then do-grooming per feature` — and **offer to start `do-planning` now** (the base's stages are scaffolding stages, see below). Feature grooming is deliberately later: once the base is built and its reduced Boot & Smoke is green, `do-grooming` grooms feature #1 — say that here so the second grooming never surprises anyone.
 
 ## Hand-off notes for the downstream skills
 
