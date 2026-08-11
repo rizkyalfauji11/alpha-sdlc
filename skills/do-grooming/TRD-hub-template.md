@@ -91,7 +91,7 @@ _Approved: <YYYY-MM-DD>_
 
 <End-to-end picture: which clients and services are involved and how they interact.>
 
-**Approach (ladder rung):** <required — name the rung the overall approach stops at, e.g. "rung 2: reuse existing balance + QRIS APIs, no new backend">
+**Approach (ladder rung · world-wide standard):** <required — name the rung the overall approach stops at AND the industry-standard way today, e.g. "rung 2: reuse existing APIs, no new backend · standard: agrees" — conflicts surfaced per the tiered rule>
 
 
 ```mermaid

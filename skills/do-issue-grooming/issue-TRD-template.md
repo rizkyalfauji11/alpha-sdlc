@@ -38,7 +38,7 @@ _Approved: <YYYY-MM-DD>_
 ## 3. Fix scope & approach
 _Approved: <YYYY-MM-DD>_
 
-**Approach (ladder rung):** <required — name the rung; prefer a **systemic** root fix that eliminates the class (e.g. "rung 2: reuse existing `localize()` helper at every site + add a lint rule") over N per-site patches. If per-site is unavoidable, say why and list every site.>
+**Approach (ladder rung · world-wide standard):** <required — name the rung AND the industry-standard way today (security-grade standards override local reuse outright); prefer a **systemic** root fix that eliminates the class (e.g. "rung 2: reuse existing `localize()` helper at every site + add a lint rule") over N per-site patches. If per-site is unavoidable, say why and list every site.>
 
 <What's in scope (the root fix + every site it covers) and explicitly out of scope. Mermaid if it helps.>
 

@@ -33,7 +33,7 @@
 > This is *not* a re-statement of the TRD design (link to it); it's the concrete placement.
 > Reuse the existing package structure; propose new packages only where needed.
 
-**Approach (ladder rung):** <required — e.g. "rung 2: reuse existing `app/qris/` package structure; no new modules">
+**Approach (ladder rung · world-wide standard):** <required — name the rung AND the industry-standard way today, e.g. "rung 2: reuse existing package structure; no new modules · standard: agrees" — conflicts surfaced per the tiered rule>
 
 | Concern | Package / directory | New or existing? | Notes |
 |---------|---------------------|------------------|-------|

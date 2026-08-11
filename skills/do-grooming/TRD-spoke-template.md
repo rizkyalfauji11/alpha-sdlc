@@ -32,7 +32,7 @@ _Approved: <YYYY-MM-DD>_
 <Clients (Android/iOS/Web): screens, navigation, state management, components — each screen's elements bound to the **canonical components** in `docs/basics/03-ui-architecture.md` → component inventory (name them; no match → ask, register-on-create).
 Backend: services, modules, internal design.>
 
-**Approach (ladder rung):** <required — e.g. "rung 2: reuse existing `ScannerActivity`" / "rung 7: new component, ruled out rungs 2–5 because …">
+**Approach (ladder rung · world-wide standard):** <required — name the rung AND the industry-standard way today, e.g. "rung 2: reuse existing `ScannerActivity` · standard: agrees" — a conflict is surfaced per the tiered rule (security-grade standard overrides; style conflicts become options)>
 
 
 ```mermaid
