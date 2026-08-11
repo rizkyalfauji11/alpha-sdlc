@@ -132,7 +132,7 @@ A screen with no widget spec, or with sections but uncropped/unenumerated cases,
 
 ### Step 4 — Hub-alignment review (spokes only) — the completion gate
 
-A spoke's last approved section does **not** finish it. Run the **hub-alignment review** (per the rule above) before calling it complete:
+A spoke's last approved section does **not** finish it. **First, the mechanical precondition — per-screen artifacts complete:** every screen in the spoke has BOTH `widget-spec/<screen>.md` AND `section-slicing/<screen>.md` with the slicing doc's *Coverage checklist* fully checked. Any screen missing either doc → **STOP, back to Step 3** — do not run the review, do not call the spoke complete (this is the hole where a run that drifts after the widget-spec gates used to sail through). Then run the **hub-alignment review** (per the rule above) before calling it complete:
 
 1. Hand the **hub + this spoke + the profile docs they reference** to a reviewer subagent (fresh eyes — not your grooming context) and run the 11-point checklist: contract fidelity · no divergent restatement · manifest ↔ slices both ways · entities & ownership · dependencies + flow bindings with freshness · cross-cutting · integrity AC carried down · sequencing · Open Decisions placed correctly · cross-spoke consistency.
 2. **Resolve by direction** — spoke wrong → fix the spoke and **re-gate the affected section**; hub wrong → fix the **hub** with the user's approval, then **re-run alignment for every other spoke**; deliberate divergence → **Open Decision**, and once decided record it in the **hub** as a platform exception.
