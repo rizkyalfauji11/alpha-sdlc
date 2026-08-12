@@ -17,7 +17,7 @@
 
 > Gaps where the design/PRD is silent or ambiguous. The AI records them here and **recommends — it does not decide or build them.** Resolve (or explicitly defer) each before the affected slice is built. Decide → update the design → re-groom the item (it folds into the section below, status → *decided*). **Build only *decided* scope** — never fill a gap by adding extra.
 
-| # | Gap / ambiguity | Why it's a gap (what would otherwise be guessed) | Options (★ = recommended) | Status |
+| # | Gap / ambiguity | Why it's a gap (what would otherwise be guessed) | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
 |---|-----------------|--------------------------------------------------|---------------------------|--------|
 | D1 | <what's unspecified> | <the scope that'd be invented if unanswered> | ★ <opt A> / <opt B> / <opt C> | pending / decided: <choice> |
 

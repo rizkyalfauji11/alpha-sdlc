@@ -75,4 +75,4 @@ _Approved: <YYYY-MM-DD>_
 ## Open Decisions
 _Status: <open / decided>_
 
-<Gaps the audit surfaced that need a human call (2–3 options, mark one). Undecided items block the affected slice.>
+<Gaps the audit surfaced that need a human call (2–3 options, mark one — the ★ always the quality/world-standard option, never the cheapest). Undecided items block the affected slice.>

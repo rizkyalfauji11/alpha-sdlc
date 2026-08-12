@@ -108,6 +108,6 @@ ftr                      <purpose>                        <n>
 
 ## Open Decisions
 
-| # | Gap / ambiguity | Options (★ = recommended) | Status |
+| # | Gap / ambiguity | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
 |---|-----------------|---------------------------|--------|
 | D1 | <e.g. no design for the offline footer> | ★ <platform default per `04-ux-conventions`> / <design it> | pending / decided: <choice> |

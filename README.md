@@ -10,7 +10,7 @@ Your agent's tests pass and the feature is still broken: the client calls a meth
 
 **Claim a pass it didn't verify.** Done means the real stack booted with domain-realistic data and zero unexpected 4xx/5xx, console errors, or error-boundary trips — and for UI, the render compared against the design. What you get is a "done" you don't have to re-check by hand.
 
-**Fill in what the design left out.** A gap or ambiguity becomes an *Open Decision* with two or three options and one recommended, recorded in the requirements doc, blocking that slice until you choose. Nobody ships a plausible guess in your product's name.
+**Fill in what the design left out.** A gap or ambiguity becomes an *Open Decision* with two or three options and one recommended — and the recommended one is **always the product-quality option per the world-wide standard, never the cheapest way out** (the cheap option is listed with its cost named; picking it is your explicit, recorded call). It lives in the requirements doc, blocking that slice until you choose. Nobody ships a plausible guess in your product's name.
 
 **Build before looking for something to reuse.** Every change names which rung it stopped at on a seven-rung ladder — does this need to exist, is it already in the codebase, the stdlib, a platform feature, an installed dependency, one line — and only then, new code. Each decision also names the **world-wide standard** next to the rung: security-grade best practice overrides local reuse outright (no propagating the hand-rolled JWT parser because it was nearby), while style conflicts become options you decide. You end up with less code to own — none of it quietly behind the industry.
 
