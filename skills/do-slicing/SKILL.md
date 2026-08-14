@@ -35,7 +35,7 @@ Standard relative estimation, no custom Jira field required. Estimate each task 
 
 ## Flow — part → review → write
 
-> Present every review gate below in the shared **step-summary format** (`principles.md`): *Where we are* + status · *In plain terms* · *What this step did* · *What I need from you* · engineer detail last.
+> Present every review gate below in the shared **step-summary format** (`principles.md`): header (phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need from you) · engineer detail last.
 
 A **part** = one phase group (or one platform spoke's slices). Build the document incrementally, one part at a time:
 
