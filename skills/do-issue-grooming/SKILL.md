@@ -33,7 +33,7 @@ The reported instance is one symptom of an underlying **class**. Generalize it, 
 
 ## Flow
 
-> Present every gate below in the shared **step-summary format** (`principles.md`): header (phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need from you) · engineer detail (audit table, root cause) last.
+> Present every gate below in the shared **step-summary format** (`principles.md`): header (development · phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need from you) · engineer detail (audit table, root cause) last.
 
 ### GATE 0 — Capture, audit, and confirm (before any design)
 

@@ -47,7 +47,7 @@ The foundation delivers exactly four things:
 
 ## Flow — section → review → write
 
-> Present every gate in the shared **step-summary format** (`principles.md`): header (phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need from you) · engineer detail last.
+> Present every gate in the shared **step-summary format** (`principles.md`): header (development · phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need from you) · engineer detail last.
 
 1. **Confirm the mode and the profile.** State plainly: this is greenfield foundation grooming, scaffolding only, and the stack decisions come from `docs/basics/` (name the docs and the decisions you read — framework, architecture style, structure convention, tooling). List anything the profile leaves open that the base needs. **Present, then STOP** for confirmation.
 2. **Summarize the intent and the platform set.** What the app/service is, which platforms are in scope, and whether it's a monorepo or separate repos (a hub-level decision with real consequences — ask, recommend, don't assume). **Present, then STOP.**

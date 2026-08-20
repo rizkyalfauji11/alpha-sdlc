@@ -82,7 +82,7 @@ docs/development/<feature-name>/
 
 ## Flow
 
-> Present every gate below in the shared **step-summary format** (`principles.md`): header (phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need from you) · engineer detail last — so a product owner and an engineer both follow each section.
+> Present every gate below in the shared **step-summary format** (`principles.md`): header (development · phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need from you) · engineer detail last — so a product owner and an engineer both follow each section.
 
 ### Step 0 — Read inputs and propose the outline (GATE 0)
 
