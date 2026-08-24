@@ -64,7 +64,7 @@
 > (3 screens over 1 repository = domain + data + one presentation stage per screen).
 
 ### Stage 1 — [<layer>] <goal>
-- **Covers:** <task IDs / Jira keys / AC>
+- **Covers:** <task IDs / Jira keys / the spoke's numbered AC IDs (e.g. `AC-3, AC-7`)>
 - **Layer:** <contract / domain / data / presentation — or UI / data-integration if the project isn't layered. The diff **stays inside this layer**: business logic doesn't land in a ViewModel, a presentation stage doesn't reach into data. `do-development`'s conformance review checks the diff against this declaration.>
 - **Files / modules:** <paths>
 - **Approach:** <what / ladder rung · world-wide standard (agrees, or the surfaced conflict) — reuse X, native Y, etc.>

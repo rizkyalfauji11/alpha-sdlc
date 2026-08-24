@@ -42,7 +42,7 @@ docs/development/<feature-name>/
   5. **Dependencies & flow bindings** — every hub §2 dependency and flow binding that concerns this platform is represented in the spoke **with its decided freshness**, and the spoke invents no dependency the hub doesn't list.
   6. **Cross-cutting** — auth, error handling, logging, i18n, and the freshness mechanism follow hub §6; no local variant of a decision the hub already made.
   7. **Feature flow covered** — every step and alternate path in the hub's §3 *Feature flow* that this platform participates in is present in the spoke (as a screen/step or a work slice), and the spoke adds no step the flow doesn't have. A hub journey step no spoke implements is the gap this catches.
-  8. **Integrity AC carried down** — the hub's decided **visibility · on-delete · freshness** rules appear as **AC** in this spoke's slices, not just as prose in the hub.
+  8. **Hub rules enumerated as numbered AC** — every hub decision touching this platform (each integrity cell — visibility · on-delete · freshness — each feature-flow step, each flow binding) appears as **its own numbered row in the spoke's §8 Acceptance criteria** with the hub decision named in its Source column — a mechanical lookup, not "the spirit was carried". And every AC is claimed by ≥ 1 slice (§9), every slice claims ≥ 1 AC.
   9. **Sequencing** — the spoke's release considerations don't contradict the hub's release ordering.
   10. **Open Decisions placed correctly** — a **pending hub decision blocks** the spoke sections that depend on it (the spoke must never silently decide it), and a spoke Open Decision that's really hub-level is **escalated to the hub**.
   11. **Cross-spoke consistency** (2+ spokes) — the spokes agree with **each other** on shared behavior (freshness, error semantics, enum handling, validation rules). Two spokes disagreeing is a **hub gap**, not a spoke preference.
@@ -116,7 +116,7 @@ For each approved section, in order:
 The last section is **structured** (it feeds downstream ticket-slicing and monitoring):
 
 - **Hub** → Change manifest: repos/modules per platform (with links to spokes), cross-platform release ordering, shared dependencies/risks, and a work-slice summary tagged by platform.
-- **Spoke** → Work slices: this platform's candidate tickets with acceptance criteria. Mirror the summary line up into the hub's manifest.
+- **Spoke** → two structured finals: **§8 Acceptance criteria** — the canonical numbered registry (stable `AC-<n>` IDs, one assertable sentence each, Source column enumerating every hub rule/flow step/binding that touches this platform) — then **§9 Work slices**, each claiming its AC by ID (never restating the prose). Mirror the summary line up into the hub's manifest.
 
 When grooming a spoke, also update the hub's **Spokes** field to link the new spoke.
 

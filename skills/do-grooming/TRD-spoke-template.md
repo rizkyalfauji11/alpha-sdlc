@@ -112,14 +112,35 @@ _Approved: <YYYY-MM-DD>_
 - **Risk:** <what could go wrong> — *Mitigation:* <how>
 - **Dependency:** <other team / hub item / ordering>
 
-## 8. Work slices
+## 8. Acceptance criteria
+_Approved: <YYYY-MM-DD>_
+
+> **The canonical, numbered AC registry for this platform** — the single list every later phase keys
+> on: `do-slicing` tasks carry these IDs, `do-planning` stages declare `Covers: AC-3, AC-7`,
+> `do-development` writes each stage's failing test from them, `do-testing`'s coverage table proves
+> each one at a level, and gate presentations cite them with their essence (`AC-3 — an archived parent
+> shows "unavailable"`). **IDs are stable — never renumbered once approved** (a retired AC keeps its
+> row, struck through with a note). One sentence per AC, **assertable** (an observable behavior, not a
+> vibe). **Source makes the hub's rules enumerated, not implied:** every hub decision that touches this
+> platform — each integrity cell (visibility · on-delete · freshness), each feature-flow step, each
+> flow-binding — lands here as its own numbered AC (that's what hub-alignment check #8 verifies
+> mechanically), alongside slice-specific and per-step (wizard) AC.
+
+| ID | Acceptance criterion (assertable, one sentence) | Source |
+|----|--------------------------------------------------|--------|
+| AC-1 | <e.g. the picker lists **active** parents only — archived/draft never appear> | hub §2 integrity: visibility of <EntityA> |
+| AC-2 | <a row whose parent was archived shows "unavailable" — never a dangling ref or crash> | hub §2 integrity: on-delete edge <A→B> |
+| AC-3 | <a new source item appears in this list <per the decided freshness — e.g. without app restart>> | hub §2 flow binding <element> |
+| AC-4 | <step 2's Next stays disabled until <fields> are valid> | multi-step flow <name>, step 2 |
+| AC-5 | <slice-specific behavior> | slice <n> |
+
+## 9. Work slices
 _Approved: <YYYY-MM-DD>_
 
 > This platform's candidate tickets. Mirror the summary up into the hub.
-> AC must include the **integrity rules** the hub decided, not just the happy path: entity
-> **visibility** ("the picker lists active parents only"), **on-delete behavior** ("a row whose
-> parent was archived shows 'unavailable', never dangles/crashes"), **freshness** ("a new source
-> item appears in this list per the decided freshness"), and per-step AC for any multi-step flow.
+> **Slices reference AC by ID — never restate the criterion's prose here** (one source of truth, §8;
+> a restated AC forks and drifts). Every AC in §8 is claimed by ≥ 1 slice, and every slice claims
+> ≥ 1 AC — an unclaimed AC is unbuilt scope, an AC-less slice is untestable work.
 
-- [ ] <slice> — acceptance criteria: <AC>
-- [ ] <slice> — acceptance criteria: <AC>
+- [ ] <slice> — AC: <AC-1, AC-3>
+- [ ] <slice> — AC: <AC-2, AC-4, AC-5>

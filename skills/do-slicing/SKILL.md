@@ -42,7 +42,7 @@ A **part** = one phase group (or one platform spoke's slices). Build the documen
 1. **Setup (once):** confirm the **scale**, then summarize the TRD's full slice set grouped into parts and confirm the part list with the user.
 2. **For each part, loop:**
    - **Part** — take the part's TRD slices.
-   - **Review** — draft that part's tasks and **show them for review** (approve / edit / re-split): task ID, title, description traced to the TRD slice, layer tag, **story points + one-line rationale** (split anything > 13).
+   - **Review** — draft that part's tasks and **show them for review** (approve / edit / re-split): task ID, title, description traced to the TRD slice **and its AC IDs from the spoke's §8** (e.g. `AC-3, AC-7` — the numbered registry, never restated prose), layer tag, **story points + one-line rationale** (split anything > 13).
    - **Write** — append the approved part to the task-list document. Move to the next part.
 3. After all parts: write the summary (grand total / point distribution, open items) and present the finished document.
 

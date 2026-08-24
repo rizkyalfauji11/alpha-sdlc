@@ -16,7 +16,7 @@
 
 ## AC → test coverage
 
-| ID | AC / behavior | Level | Test case (what it asserts) | File | Status |
+| ID | AC (spoke §8 ID + essence) | Level | Test case (what it asserts) | File | Status |
 |----|---------------|-------|-----------------------------|------|--------|
 | TC1 | <e.g. payment > Rp1M rejected> | API | <asserts 4xx + error code, no debit> | <path> | pass / fail / pending |
 | TC2 | <e.g. scan screen matches design> | UI (visual) | <icons/spacing/type parity within tolerance; diff saved> | <path> | |
@@ -32,7 +32,7 @@
 > their widget-spec Test IDs, not text.
 
 ### TC1 — <what it verifies>
-- **AC:** <ref to the acceptance criterion>
+- **AC:** <the spoke's numbered ID + its essence, e.g. `AC-2 — archived parent shows "unavailable"`>
 - **Preconditions:** <state / data / auth / environment needed before starting>
 - **Steps:**
   1. <action — e.g. tap `qris_widget_scan_button`>
