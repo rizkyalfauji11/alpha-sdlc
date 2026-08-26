@@ -13,7 +13,7 @@ You are grooming a **user-reported issue** into a Technical Requirements Documen
 
 ## How this differs from the other skills
 
-- **vs `do-fixing`** — `do-fixing` executes an already-triaged **do-testing Bugs-found list**, one bug at a time, inside a feature's test cycle. This skill is the **front door for an issue from outside the pipeline** (production/ad-hoc), and it **audits the whole project for the issue class** before anything is fixed. It **grooms and scopes; it does not fix** — the fix hands off to `do-fixing`.
+- **vs `do-fixing`** — `do-fixing` executes an already-triaged **do-testing Bugs-found list**, one bug at a time, inside a feature's test cycle. **A bug arriving from a running feature's test cycle does NOT start here — redirect it to `do-fixing`**; this skill accepts it only escalated from there **with evidence**: confirmed sites in ≥ 2 features AND no single shared source to fix once (N independent implementations — the only shape that needs an enumeration audit; a shared-source class is do-fixing's root-cause bread and butter, and even a confirmed class never blocks the reported bug's fix). This skill is the **front door for an issue from outside the pipeline** (production/ad-hoc), and it **audits the whole project for the issue class** before anything is fixed. It **grooms and scopes; it does not fix** — the fix hands off to `do-fixing`.
 - **vs `do-grooming`** — no PRD/BRD, no new product scope. The "requirement" is: eliminate this issue *and its whole class* without breaking behavior.
 - **vs `do-tech-debt-grooming`** — that's a proactive, behavior-preserving improvement; this is a reactive **defect** audit. Same gated engine, different framing (a real bug with a blast radius, not a chosen refactor).
 
