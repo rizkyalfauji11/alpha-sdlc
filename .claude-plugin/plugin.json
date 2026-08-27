@@ -1,6 +1,6 @@
 {
   "name": "alpha-sdlc",
-  "version": "0.9.13",
+  "version": "0.9.14",
   "description": "SDLC pipeline: grooming (product, tech-debt, issue, greenfield) → planning → development (TDD) → testing → fixing. Draft + human-approve at every gate, reuse-first, design parity for UI. Jira optional.",
   "author": {
     "name": "rizkyalfauji11"

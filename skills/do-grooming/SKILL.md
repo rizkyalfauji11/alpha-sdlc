@@ -126,7 +126,7 @@ The spoke's sections describe the platform's design; the **per-screen contracts*
 
 1. **Widget spec** → `widget-spec/<screen>.md` — elements (type · Test ID · content description · states), each row naming its **`Section`**, plus *Style bindings* and *Container sizing & overflow*. One gate per screen.
 2. **Section slicing** → `section-slicing/<screen>.md` — the section tree, then **one gate per section**: its cases (condition · view count *and* identity · data source), how the logic runs (source · trigger · transition · precedence · unknown-data), and its **approved crop**. Never batch sections.
-3. **Close the loop per screen** — run the doc's *Coverage checklist*: every case has a crop or an explicit marker, every widget-spec element names a section that exists, every section's elements exist in the widget spec. Unchecked lines block development, so resolve them here.
+3. **Close the loop per screen** — set both docs' **`Approved` fields** (widget-spec header · section-slicing screen + per-section stamps), then run the doc's *Coverage checklist*: every case has a crop or an explicit marker, every widget-spec element names a section that exists, every section's elements exist in the widget spec. Unchecked lines block development, so resolve them here.
 
 A screen with no widget spec, or with sections but uncropped/unenumerated cases, is an **unfinished spoke** — not a detail for `do-development` to discover.
 

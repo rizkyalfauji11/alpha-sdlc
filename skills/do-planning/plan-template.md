@@ -33,6 +33,8 @@
 > This is *not* a re-statement of the TRD design (link to it); it's the concrete placement.
 > Reuse the existing package structure; propose new packages only where needed.
 
+_Approved: <YYYY-MM-DD — the layout gate>_
+
 **Approach (ladder rung · world-wide standard):** <required — name the rung AND the industry-standard way today, e.g. "rung 2: reuse existing package structure; no new modules · standard: agrees" — conflicts surfaced per the tiered rule>
 
 | Concern | Package / directory | New or existing? | Notes |
@@ -76,6 +78,7 @@
 - **Test first (TDD red):** the failing test(s) that prove this stage, derived from the AC — what they assert. If the stage can't be unit-tested (native widget render, pure UI), say so and give the manual/observed check instead.
 - **Verify:** <how to confirm green — run the test(s) + build/observe>
 - **Conformance review — docs this stage must be checked against:** <the `docs/basics/` docs the stage's changes touch, e.g. `02-architecture` (layer placement) · `10-conventions` (error handling/logging) · `08-data-cache` (query keys + invalidation) · `18-design-tokens` (zero raw literals) — so the reviewer audits the right ones instead of guessing. Principles + plan/AC conformance are always checked.>
+- **Approved:** <YYYY-MM-DD — the checkpoint verdict; separate from *done* (a stage can be approved, then implemented, then done)>
 - **⏸ Checkpoint — review here.** **Safe to stop after?** <yes — compiles & tests pass / no — leaves X half-done until Stage N. **Safe ≠ complete** — note when the slice isn't user-visible yet (e.g. "safe: green; but nothing on screen until Stage 4 [presentation]"). **A partially-sectioned screen is *not* safe** — green but visually broken (e.g. "no: 2 of 4 sections built; screen is broken until Stage 9 assembly").>
 
 ### Stage 2 — [<layer>] <goal>
@@ -88,6 +91,7 @@
 - **Changes:** <…>
 - **Verify:** <…>
 - **Conformance review — docs:** <…>
+- **Approved:** <YYYY-MM-DD — the checkpoint verdict; separate from *done* (a stage can be approved, then implemented, then done)>
 - **⏸ Checkpoint — review here.** **Safe to stop after?** <…>
 
 <!-- repeat; prefer many small stages over few big ones -->

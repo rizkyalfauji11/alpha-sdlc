@@ -9,6 +9,7 @@
 | **Scaffold** | <the scaffold this screen instantiates, from `docs/basics/03-ui-architecture.md` → *Screen scaffolds*. The header/body/footer sections below **are** that scaffold's anatomy — bind to it, don't re-invent it.> |
 | **Design** | <Figma frame link *or* `../design/<screen>.png`> |
 | **Section crops** | `../design/sections/<screen>/` — committed (spec input, unlike the gitignored `design/compared-ui/`) |
+| **Approved (screen)** | <YYYY-MM-DD — all sections gated; an edit after this makes it stale → re-approve> |
 | **Date** | <YYYY-MM-DD> |
 
 > The screen's **region + case contract**. It answers three questions the element-level widget spec
@@ -45,6 +46,7 @@ ftr                      <purpose>                        <n>
 
 ## `<section-id>` — <name>
 
+**Approved:** <YYYY-MM-DD — this section's gate>
 **Purpose:** <what this region is for, in one line.>
 **Crop:** `../design/sections/<screen>/<section-id>.png` — box `<x,y,w,h>` on `<design file>` · approved <YYYY-MM-DD>
 <or `pending export` — Figma-only design, no local image to crop. **This is a gap, not a default**: record it and resolve before development.>

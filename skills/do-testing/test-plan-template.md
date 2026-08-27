@@ -6,6 +6,7 @@
 | **Levels** | API · UI (visual + composition) · Integration (UI↔API) · System/E2E (risk-calibrated) · **Boot & Smoke (integrated — mandatory, non-skippable)** |
 | **Framework** | <existing framework reused — e.g. Playwright / Espresso / XCUITest / HTTP contract> |
 | **TRD** | [hub](./TRD.md) · [spoke](./TRD-<platform>.md) |
+| **Plan approved** | <YYYY-MM-DD — the pyramid/plan gate> |
 | **Date** | <YYYY-MM-DD> |
 
 > Every acceptance criterion maps to at least one test case, at the **right level** — placed once
@@ -32,6 +33,7 @@
 > their widget-spec Test IDs, not text.
 
 ### TC1 — <what it verifies>
+- **Approved:** <YYYY-MM-DD — this test's write→approve gate, before it ran>
 - **AC:** <the spoke's numbered ID + its essence, e.g. `AC-2 — archived parent shows "unavailable"`>
 - **Preconditions:** <state / data / auth / environment needed before starting>
 - **Steps:**

@@ -17,10 +17,12 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 > document **binds to them by link and never re-decides them**.
 
 ## Intent & constraints
+_Approved: <YYYY-MM-DD>_
 
 <What the product/service is, at the thinnest useful level — enough to justify the stack, not a PRD. Known hard constraints: target platforms/versions, org standards, must-use infrastructure, compliance the base must not preclude.>
 
 ## Shared decisions (hub-level)
+_Approved: <YYYY-MM-DD>_
 
 > What every platform must agree on. **Approved before any spoke is groomed.**
 
@@ -35,6 +37,7 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 ## Per-platform sections *(one spoke each — the sections below live in `TRD-<platform>.md`)*
 
 ### Framework & scaffold
+_Approved: <YYYY-MM-DD>_
 
 | | |
 |---|---|
@@ -45,6 +48,7 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 | **What we change from the default** | <each deviation + why; ladder rung · world-wide standard for anything hand-built> |
 
 ### Folder structure (the deliverable — write the real tree)
+_Approved: <YYYY-MM-DD>_
 
 > Concrete, directory by directory. `do-development` creates exactly this; its conformance review
 > checks the built tree against it. Must match `02-architecture.md`.
@@ -63,6 +67,7 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 | <`presentation/`> | <UI, state> | <domain> | <data directly> |
 
 ### Architecture skeleton
+_Approved: <YYYY-MM-DD>_
 
 > Empty-but-real: what code actually exists when the base is done. **No placeholder classes "for later"** — if nothing needs it yet, it goes in *Deliberate omissions* instead.
 
@@ -75,6 +80,7 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 | **Dependency management** | <package manager + lockfile committed> | |
 
 ### Build / run / test harness
+_Approved: <YYYY-MM-DD>_
 
 | Command | Exact command | Must do |
 |---------|---------------|---------|
@@ -86,10 +92,12 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 <These are the commands that get recorded in `05-tech-stack.md` and `09-environment.md`'s run recipe.>
 
 ### Repo hygiene
+_Approved: <YYYY-MM-DD>_
 
 <`.gitignore` (framework defaults + `design/compared-ui/`), README stub, editor/format config, commit-convention setup, branch protection if applicable — per `11-git-management.md`.>
 
 ### Acceptance criteria (mechanically checkable)
+_Approved: <YYYY-MM-DD>_
 
 > "The base is set up" is not an AC. Each line below must be verifiable by running something or
 > asserting a fact about the tree. These are what `do-testing` checks for the base.
@@ -104,6 +112,7 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 | A6 | <the dependency rule holds: `<layer>` doesn't import `<layer>`> | <the enforcement mechanism above — or mark deferred> |
 
 ## Deliberate omissions & deferrals
+_Approved: <YYYY-MM-DD>_
 
 > What the base intentionally does **not** include, and when each gets decided. This is what keeps a
 > **prescriptive** profile honest: the docs may describe an intended design, but only what's listed as

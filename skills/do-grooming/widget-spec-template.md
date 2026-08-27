@@ -7,6 +7,7 @@
 | **TRD** | [spoke](../TRD-<platform>.md) |
 | **Design** | <Figma frame link *or* `../design/<screen>.png` — the design this screen must match> |
 | **Scaffold · slicing** | <which scaffold from `docs/basics/03-ui-architecture.md` → *Screen scaffolds* this screen instantiates, + its body slicing — e.g. `feature-page · 1:2:1`. Deviation from the scaffold → Open Decision; a new pattern → ask, then register it there.> |
+| **Approved** | <YYYY-MM-DD — set when this screen's gate passes; an edit after this date makes it stale → re-approve> |
 | **Date** | <YYYY-MM-DD> |
 
 > The QA locator contract for this screen. Every **interactive or asserted** element gets a
