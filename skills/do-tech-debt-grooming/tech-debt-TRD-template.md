@@ -32,7 +32,7 @@ graph TD
 ## 4. Target state
 _Approved: <YYYY-MM-DD>_
 
-**Approach (ladder rung · world-wide standard):** <required — name the rung AND the industry-standard way today, e.g. "rung 2: extract shared logic into existing util · standard: agrees" — conflicts surfaced per the tiered rule>
+**Approach (ladder rung · world-wide standard):** <required — name the rung AND the industry-standard way today, e.g. "rung 2 (reuse): extract shared logic into existing util · standard: agrees" — conflicts surfaced per the tiered rule>
 
 <How it works after. What changes, what stays. Keep the smallest change that fixes the condition.>
 
