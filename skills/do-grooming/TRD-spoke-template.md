@@ -19,7 +19,7 @@
 
 | # | Gap / ambiguity | Why it's a gap (what would otherwise be guessed) | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
 |---|-----------------|--------------------------------------------------|---------------------------|--------|
-| D1 | <what's unspecified> | <the scope that'd be invented if unanswered> | ★ <opt A> / <opt B> / <opt C> | pending / decided: <choice> |
+| D1 | <what's unspecified> | <the scope that'd be invented if unanswered> | ★ <opt A> / <opt B> / <opt C> | pending / decided: <choice> / decided: auto ★<choice> (ratify) |
 
 ## 1. Scope (this platform)
 _Approved: <YYYY-MM-DD>_

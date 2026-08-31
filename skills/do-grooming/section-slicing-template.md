@@ -112,4 +112,4 @@ ftr                      <purpose>                        <n>
 
 | # | Gap / ambiguity | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
 |---|-----------------|---------------------------|--------|
-| D1 | <e.g. no design for the offline footer> | ★ <platform default per `04-ux-conventions`> / <design it> | pending / decided: <choice> |
+| D1 | <e.g. no design for the offline footer> | ★ <platform default per `04-ux-conventions`> / <design it> | pending / decided: <choice> / decided: auto ★<choice> (ratify) |
