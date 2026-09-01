@@ -7,6 +7,9 @@ You are writing a **development plan document**: the ordered, staged plan an eng
 
 **First, read `../../principles.md` in full now, then apply it** (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary).
 
+
+**Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.
+
 **Read the project profile first** (`docs/basics/` from `do-project-setup`) — especially `06-domain-model.md` + `16-feature-map.md` (the shared truths the TRD bound to), `02-architecture.md`, `10-conventions.md`, `05-tech-stack.md`, and (for UI) `03-ui-architecture.md` + `18-design-tokens.md` + `08-data-cache.md` — before scanning code from scratch. **Per stage, also name the profile docs that stage must be reviewed against** (the plan template's *Conformance review* line) — `do-development` audits each stage's diff against them before presenting it, so naming them here is what makes that review targeted instead of a guess. The plan's **Architecture & package layout** and stage breakdown must ground in the profile's real structure, conventions, and stack — not a guessed one — so stages land in the right place and follow existing patterns. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
 
 **If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run `do-project-setup` first** — planning the package/architecture layout on an ungrounded view is how stages land in the wrong place or fight existing conventions. Wait for their answer: recommend setting up first; proceed without it only if the user explicitly chooses to (then fall back to scanning the repo, and note the layout is ungrounded).

@@ -7,6 +7,9 @@ You are generating the **project profile** — the baseline reference every othe
 
 **First, read `../../principles.md` in full now, then apply it** — especially: **ground in real code (never fabricate — mark anything you can't determine as `UNKNOWN — needs human input`, don't guess)**, draft + human-approve, and never over-simplify.
 
+
+**Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.
+
 ## Rules
 
 - **Empty repo? Switch to greenfield mode** (below) — describing gives you 19 docs of `UNKNOWN`; deciding gives the project a foundation to be built against. Everything else in this skill still applies.

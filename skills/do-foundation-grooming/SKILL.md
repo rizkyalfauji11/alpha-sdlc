@@ -7,6 +7,9 @@ You are grooming the **foundation of a greenfield project** — the base an appl
 
 **First, read `../../principles.md` in full now, then apply it** — especially the **lazy-senior mindset** (the base is the smallest thing that stands, not a framework of your own), **no speculative scaffolding**, **ask don't assume**, **2–3 options with one recommended**, and **step-by-step approval**.
 
+
+**Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.
+
 ## Precondition — the stack is decided in `do-project-setup`, not here
 
 **Read `docs/basics/` first.** A greenfield profile is written by `do-project-setup` in **greenfield mode** (prescriptive/pre-code): it is where the framework, architecture style, structure convention, and tooling get **decided with the user, one gate per decision**.
