@@ -34,6 +34,22 @@ Then, per feature:
 
 If you use Jira, `/do-slicing` and `/do-uploading` turn an approved requirements doc into a story-pointed task list and create it sample-first in small batches. Skip both otherwise — nothing downstream depends on them.
 
+## Auto-run: build → test → fix without stopping
+
+Once the requirements and plan are approved, every decision is already yours — what's left is execution. Opt in explicitly:
+
+```
+/do-development run in auto mode until re-test is green
+```
+
+and the **build → test → fix → re-test chain runs end-to-end**: each stage builds test-first, gets its fresh-eyes review and design-parity check, then its checkpoint lands as a **report** stamped `auto` instead of a question — straight into testing (environment boots and seeds itself; every test case recorded then run), the bug report flows into fixing (**all bugs, severity order, blockers first**), and back to re-test until green. Commits happen per stage and per fix, as always.
+
+**Questions answer themselves with the recommended option** — which is always the quality/world-standard one, never the cheapest — and every such decision is written where it lives (`decided: auto ★<option>`) **and** listed under **"Decisions taken for you"** at the top of the final report, for you to ratify after the run. Reject one and it re-gates as a named follow-up. Prefer questions to stop the run? Say `auto-run, ask on decisions`.
+
+Only three things halt the chain, because nothing can be decided: **verification tooling that fails** (a browser/emulator that won't boot is reported with its fix, never skipped), **an input that doesn't exist** (a design, test account, or seed access never provided), and **external writes** (git push, Jira — those always ask). Every verifier runs at full strength either way — what you trade is review-per-diff, not checks.
+
+Auto-run never applies to project setup, grooming, or planning — those phases *decide*, so their gates always block; asking for auto there gets a polite one-line refusal.
+
 ## Install
 
 Needs **`node` on your PATH** — the hooks are Node scripts using built-ins only, so there's no `npm install` and nothing is fetched. No Node? Everything still installs; the hooks fail open and simply don't enforce.
