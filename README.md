@@ -20,7 +20,7 @@ None of that is prompt-deep. Hooks block the write when a decision names no rung
 
 ## The pipeline
 
-Teach it your repo once. `/do-project-setup` reads the project and writes a profile into `docs/basics/` — architecture, stack, domain model, API map, environment and the full-stack run recipe, conventions, design tokens. Every later skill grounds in those files instead of re-scanning and re-guessing each session. On an empty repo it flips modes and decides the stack *with* you, one gate per decision.
+Teach it your repo once. `/do-project-setup` reads the project and writes a profile into `docs/basics/` — architecture, stack, domain model, API map, environment and the full-stack run recipe, conventions, design tokens, the tech-debt register. Every later skill grounds in those files instead of re-scanning and re-guessing each session. On an empty repo it flips modes and decides the stack *with* you, one gate per decision.
 
 Then, per feature:
 

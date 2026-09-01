@@ -33,6 +33,7 @@ Same engine (gated section-by-section TRD, hub/spokes, ladder, Mermaid, flows in
 
 ### GATE 0 — Understand and justify (before any design)
 
+0. **Start from the register.** Read `docs/basics/20-tech-debt-register.md` — the standing backlog: if the improvement is already a `TD-<n>` row, groom that row (flip it `groomed → <TRD link>` when this TRD lands; when the paid work ships — `do-testing` green — the row moves to Paid); if it is new, **add its row first** (register-on-create), then groom.
 1. **Capture the condition** — what's wrong today, where, and how the engineer knows (a metric, an incident, a painful change, a scan). Read the real code involved. **Map the cross-feature blast radius:** run the impact analysis in `docs/basics/16-feature-map.md` (reverse dependency edges) + `06-domain-model.md`'s *Consumed by* — which features consume the modules/entities/contracts being refactored. Those consumers' flows are what "behavior-preserving" must preserve.
 2. **Justify it — cost of delay vs cost to fix.** State what the debt costs if left (incidents, slow delivery, risk) and roughly what fixing costs. **If it's speculative polishing with no real cost, say so and recommend deferring** (YAGNI applies to refactors). Get the user to confirm it's worth doing now before designing anything.
 3. **Summarize & confirm understanding** (per principles) — condition, blast radius, whether any behavior change is intended, the measurable target. Re-summarize on any correction.
