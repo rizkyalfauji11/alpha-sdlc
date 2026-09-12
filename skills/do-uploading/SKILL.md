@@ -3,9 +3,9 @@ name: do-uploading
 description: Optional tracker phase. Upload a task-list document (produced by do-slicing) to the org's tracker — Jira or GitHub Issues, per the profile's Org settings — bulk-create the tasks with story points, assignee and Epic/milestone parent, then write the created keys back into the TRD. Use when the user wants to upload/create the Jira tasks from the task list, push the sliced tasks to Jira, or import the task list. Triggers on "upload the task list", "create the jira tasks", "push tasks to jira", "/do-uploading", "import to jira".
 ---
 
-> **Optional phase — Jira only.** Only run this if you used `do-slicing` and want the tasks created in Jira. Teams not using Jira skip it — development works straight from the TRD/plan.
+> **Optional phase — tracker teams only.** Only run this if you used `do-slicing` and want the tasks created in the org's tracker (Jira or GitHub Issues, per Org settings). Teams without one skip it — development works straight from the TRD/plan.
 
-You are uploading an already-written **task-list document to Jira**. This is the step `do-slicing` deliberately stops short of. Creating Jira issues is an **external write** — the draft + human-approve discipline in `../../principles.md` is at its strongest here.
+You are uploading an already-written **task-list document to the org's tracker** (Jira or GitHub Issues — see Tracker routing below). This is the step `do-slicing` deliberately stops short of. Creating tracker items is an **external write** — the draft + human-approve discipline in `../../principles.md` is at its strongest here.
 
 **First, read `../../principles.md` in full now, then apply it** — especially **draft + human-approve before any external write**, and ask-don't-assume for the Epic and assignee.
 

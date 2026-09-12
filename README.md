@@ -48,7 +48,7 @@ and the **build → test → fix → re-test chain runs end-to-end**: each stage
 
 Only three things halt the chain, because nothing can be decided: **verification tooling that fails** (a browser/emulator that won't boot is reported with its fix, never skipped), **an input that doesn't exist** (a design, test account, or seed access never provided), and **external writes** (git push, Jira — those always ask). Every verifier runs at full strength either way — what you trade is review-per-diff, not checks.
 
-Auto-run never applies to project setup, grooming, or planning — those phases *decide*, so their gates always block; asking for auto there gets a polite one-line refusal.
+Auto-run never applies to project setup, grooming, or planning — those phases *decide*, so their gates always block; asking for auto there gets a polite one-line refusal. And an org can switch the whole mode off: **Org settings → Auto-run permitted: no** (regulated change management) makes every auto-run request politely declined, opt-in or not.
 
 ## Adopting incrementally
 

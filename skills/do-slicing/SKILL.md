@@ -1,11 +1,11 @@
 ---
 name: do-slicing
-description: Optional Jira phase. Turn an approved TRD into a task-list DOCUMENT, story-pointed on the modified Fibonacci scale, built part-by-part (part → review → write). Writes the document only; uploading to Jira is a separate downstream skill; skip both if you don't use Jira. Use when the user wants to slice a TRD into tasks, create a task list from a TRD, story-point a TRD's work, or prep tasks for Jira. Triggers on "slice the TRD", "create task list", "story point the tasks", "/do-slicing", "size the tasks".
+description: Optional tracker phase. Turn an approved TRD into a task-list DOCUMENT, story-pointed on the modified Fibonacci scale, built part-by-part (part → review → write). Writes the document only; uploading to the tracker (Jira or GitHub Issues, per Org settings) is the separate downstream skill; skip both if you don't track work in one. Use when the user wants to slice a TRD into tasks, create a task list from a TRD, story-point a TRD's work, or prep tasks for Jira. Triggers on "slice the TRD", "create task list", "story point the tasks", "/do-slicing", "size the tasks".
 ---
 
-> **Optional phase — Jira only.** Skip `do-slicing` and `do-uploading` entirely if your team doesn't track work in Jira: `do-planning` → `do-development` → `do-testing` run directly off the TRD's work slices + AC. Only use this phase if you want the TRD's slices turned into weighted Jira tickets.
+> **Optional phase — tracker teams only.** Skip `do-slicing` and `do-uploading` entirely if your team doesn't track work in Jira or GitHub Issues: `do-planning` → `do-development` → `do-testing` run directly off the TRD's work slices + AC. Only use this phase if you want the TRD's slices turned into story-pointed tracker items.
 
-You are converting an **approved TRD into a task-list document**, story-pointed. This is the grooming → development hand-off for Jira teams. **This skill writes the document only — it does NOT create or upload anything to Jira; `do-uploading` does that.**
+You are converting an **approved TRD into a task-list document**, story-pointed. This is the grooming → development hand-off for tracker teams. **This skill writes the document only — it does NOT create or upload anything to the tracker; `do-uploading` does that.**
 
 **Story Points is the only built-in scheme, deliberately** — it works on any Jira with no custom-field setup. If your org sizes work with a custom weighting field instead, keep using whatever skill implements it and skip this phase; this plugin stays standalone rather than depending on an org-specific one.
 
