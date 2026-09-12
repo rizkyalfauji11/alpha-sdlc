@@ -82,7 +82,13 @@ Coding from a screenshot and declaring it done is how built UI drifts from the d
 ```
 docs/basics/                  the project profile, commit-stamped
 docs/development/<feature>/
-  TRD.md                      requirements — the shared contract
+  TRD.md                      requirements — the shared contract, numbered AC
+  contract/                   the approved OpenAPI delta — machine-checkable,
+                              merged into the project spec at build time
+  widget-spec/<screen>.md     per-screen element contract — Test IDs, types,
+                              style bindings
+  section-slicing/<screen>.md per-screen regions & cases — what shows when,
+                              with a design crop per case
   plan-<platform>.md          staged plan, each stage with its checkpoint
   design/                     the designs it builds and diffs against
   test-plan-<platform>.md     acceptance criterion → test → level → status
