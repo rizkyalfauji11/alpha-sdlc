@@ -107,7 +107,9 @@ _Approved: <YYYY-MM-DD>_
 
 <The backend↔client contract — the shared truth every spoke references. Method, path, request, response, errors.>
 
-**Machine-checkable spec:** <required — path/link to the authoritative OpenAPI/Swagger (or shared schema/types) file, and which repo owns it. Clients derive their typed client + test fixtures from this, not from the table below. If none exists yet, that's a work slice.>
+**Machine-checkable spec:** <required — path/link to the authoritative OpenAPI/Swagger (or shared schema/types) file, and which repo owns it. If none exists yet, that's a work slice.>
+
+**Contract delta (gated with this section):** <`../contract/openapi-delta.yaml` — the machine-checkable fragment for every endpoint this feature adds/changes. **This fragment is what gets approved and what spokes derive typed clients + fixtures from**; the table below is the human summary, never a second source of truth. Development's `[contract]` stage merges this approved fragment into the project spec and regenerates — no re-translation.>
 
 > The table is a human-readable summary of the spec above — not a second source of truth.
 > Specify fields **precisely**: exact type, nullability, enum values, and **localized fields as
