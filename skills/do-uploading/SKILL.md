@@ -1,6 +1,6 @@
 ---
 name: do-uploading
-description: Optional Jira phase. Upload a task-list document (produced by do-slicing) to Jira — bulk-create the tasks with story points, assignee and Epic parent — then write the created keys back into the TRD. Use when the user wants to upload/create the Jira tasks from the task list, push the sliced tasks to Jira, or import the task list. Triggers on "upload the task list", "create the jira tasks", "push tasks to jira", "/do-uploading", "import to jira".
+description: Optional tracker phase. Upload a task-list document (produced by do-slicing) to the org's tracker — Jira or GitHub Issues, per the profile's Org settings — bulk-create the tasks with story points, assignee and Epic/milestone parent, then write the created keys back into the TRD. Use when the user wants to upload/create the Jira tasks from the task list, push the sliced tasks to Jira, or import the task list. Triggers on "upload the task list", "create the jira tasks", "push tasks to jira", "/do-uploading", "import to jira".
 ---
 
 > **Optional phase — Jira only.** Only run this if you used `do-slicing` and want the tasks created in Jira. Teams not using Jira skip it — development works straight from the TRD/plan.
@@ -20,6 +20,10 @@ You are uploading an already-written **task-list document to Jira**. This is the
 2. **Epic key** — e.g. `<PROJ>-1234`. **Hard precondition:** ask for it up front and **verify it is actually an Epic in that project** before creating anything. Never guess it from the feature name.
 3. **Assignee** — who the tasks go to (or explicitly unassigned).
 
+## Tracker routing
+
+Read the profile's **Org settings → Tracker** (`01-overview.md`). `Jira` → the Jira mechanics below. `GitHub Issues` → the GitHub mechanics below. `none` → this skill doesn't apply; say so.
+
 ## Jira mechanics
 
 Use the Atlassian MCP tools. Nothing here is org-specific — **discover fields at runtime rather than hardcoding ids**, because they differ per Jira instance.
@@ -30,6 +34,14 @@ Use the Atlassian MCP tools. Nothing here is org-specific — **discover fields 
 - **Any additional required field** — if `getJiraIssueTypeMetaWithFields` reports a required field this skill doesn't know about (an org's own sizing, component, or category field), **stop and ask the user what value it takes** rather than skipping or inventing one. Record their answer in the run summary so the next upload doesn't re-ask blindly.
 - **Sample-first, then batches of ≤ 5 with a review checkpoint after each** — never create the whole backlog unattended. This is the external-write gate; honor it strictly.
 - **On any create failure, stop the batch** and report the exact Jira error — never keep creating past an error, and never retry silently in a way that risks duplicates.
+
+## GitHub Issues mechanics
+
+Use the `gh` CLI (available wherever the plugin runs) — same external-write discipline as Jira: **sample-first, then batches of ≤ 5 with a checkpoint after each; stop the batch on any create failure.**
+
+- **Create:** `gh issue create --title "T<id> — <title>" --body <traced description + AC IDs> --label "sp:<points>" --label "<layer>"` — story points as an `sp:<n>` label (GitHub has no native points field; if the org uses Projects fields for points, ask and use `gh project item-edit` instead — discover, don't assume).
+- **Epic parent:** a **milestone** (`--milestone <name>`) or a tracking issue the org designates — ask which convention the org uses; verify it exists before creating anything.
+- **Write-back:** the created issue numbers (`#123`) land next to each task in `task-list.md` and the TRD work slices, same as Jira keys; idempotent re-runs skip tasks that already carry a number.
 
 ## Plugin additions
 

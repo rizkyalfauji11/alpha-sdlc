@@ -23,6 +23,12 @@ const writtenContent =
   : '';
 if (!writtenContent.trim()) process.exit(0);
 
+let settings = {};
+try { settings = JSON.parse(fs.readFileSync("docs/basics/.alpha-sdlc.json", "utf8")); } catch {}
+const allowLicenseHeader = settings.allowLicenseHeader === true;
+const allowPublicApiDocstrings = settings.allowPublicApiDocstrings === true;
+const LICENSE_TEXT = /copyright|license|licence|spdx-license-identifier|all rights reserved/i;
+
 const lines = writtenContent.split(/\r?\n/);
 if (GENERATED_MARKER.test(lines.slice(0, 5).join('\n'))) process.exit(0);
 
@@ -92,7 +98,11 @@ function record(rawText, lineNumber) {
     .replace(/^\s*(?:\/\/+|\/\*+|#+|--|<!--|\*+)/, '')
     .replace(/(?:\*\/|-->)\s*$/, '');
   if (MACHINE_DIRECTIVE.test(body)) return;
-  findings.push({ line: lineNumber, text: rawText.trim().replace(/\s+/g, ' ').slice(0, 90) });
+  findings.push({
+    line: lineNumber,
+    text: rawText.trim().replace(/\s+/g, ' ').slice(0, 90),
+    isDocComment: /^\s*(?:\/\*\*|\/\/\/)/.test(rawText),
+  });
 }
 
 maskedLines.forEach((maskedLine, index) => {
@@ -127,9 +137,18 @@ if (extension === 'py') {
     findings.push({
       line: writtenContent.slice(0, match.index).split('\n').length,
       text: match[0].trim().replace(/\s+/g, ' ').slice(0, 90),
+      isDocComment: true,
     });
   }
 }
+
+const keptFindings = findings.filter((finding) => {
+  if (allowLicenseHeader && finding.line <= 15 && LICENSE_TEXT.test(finding.text)) return false;
+  if (allowPublicApiDocstrings && finding.isDocComment) return false;
+  return true;
+});
+findings.length = 0;
+findings.push(...keptFindings);
 
 if (!findings.length) process.exit(0);
 

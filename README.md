@@ -14,13 +14,13 @@ Your agent's tests pass and the feature is still broken: the client calls a meth
 
 **Build before looking for something to reuse.** Every change names which rung it stopped at on a seven-rung ladder — does this need to exist, is it already in the codebase, the stdlib, a platform feature, an installed dependency, one line — and only then, new code. Each decision also names the **world-wide standard** next to the rung: security-grade best practice overrides local reuse outright (no propagating the hand-rolled JWT parser because it was nearby), while style conflicts become options you decide. You end up with less code to own — none of it quietly behind the industry.
 
-One thing it does *to* your code: source ships with **zero comments**. A rename, an extracted function, or a named constant does that job instead, and the *why* that can't fit in a name goes in the commit message, where it can't rot beside code that changed.
+One thing it does *to* your code: source ships with **zero comments** — configurable where law or libraries demand it: setup can allow **license headers** and **public-API doc-comments** (an org setting the hook reads); everything else stays banned. A rename, an extracted function, or a named constant does that job instead, and the *why* that can't fit in a name goes in the commit message, where it can't rot beside code that changed.
 
 None of that is prompt-deep. Hooks block the write when a decision names no rung, a secret lands in a doc, or a comment lands in code — a prompt can be forgotten mid-session, an exit code can't. The whole opinion is one file: [`principles.md`](./principles.md). If you disagree with it, you'll disagree with the plugin.
 
 ## The pipeline
 
-Teach it your repo once. `/do-project-setup` reads the project and writes a profile into `docs/basics/` — architecture, stack, domain model, API map, environment and the full-stack run recipe, conventions, design tokens, the tech-debt register. Every later skill grounds in those files instead of re-scanning and re-guessing each session. On an empty repo it flips modes and decides the stack *with* you, one gate per decision.
+Teach it your repo once. `/do-project-setup` reads the project and writes a profile into `docs/basics/` — **lite tier** (8 core docs, the rest generated lazily when first needed) for teams that want to ship this week, **full** (all 20) when the org wants the whole contract up front — architecture, stack, domain model, API map, environment and the full-stack run recipe, conventions, design tokens, the tech-debt register. Every later skill grounds in those files instead of re-scanning and re-guessing each session. On an empty repo it flips modes and decides the stack *with* you, one gate per decision.
 
 Then, per feature:
 
@@ -32,7 +32,7 @@ Then, per feature:
 | **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion. Verify-only: it reports every bug and fixes none |
 | **Fix** | `/do-fixing` | The bugs you triaged, one at a time, reproduce-first, root cause not symptom |
 
-If you use Jira, `/do-slicing` and `/do-uploading` turn an approved requirements doc into a story-pointed task list and create it sample-first in small batches. Skip both otherwise — nothing downstream depends on them.
+If you track work in Jira or GitHub Issues, `/do-slicing` and `/do-uploading` turn an approved requirements doc into a story-pointed task list and create it sample-first in small batches (tracker chosen once, at setup). Skip both otherwise — nothing downstream depends on them.
 
 ## Auto-run: build → test → fix without stopping
 
@@ -49,6 +49,10 @@ and the **build → test → fix → re-test chain runs end-to-end**: each stage
 Only three things halt the chain, because nothing can be decided: **verification tooling that fails** (a browser/emulator that won't boot is reported with its fix, never skipped), **an input that doesn't exist** (a design, test account, or seed access never provided), and **external writes** (git push, Jira — those always ask). Every verifier runs at full strength either way — what you trade is review-per-diff, not checks.
 
 Auto-run never applies to project setup, grooming, or planning — those phases *decide*, so their gates always block; asking for auto there gets a polite one-line refusal.
+
+## Adopting incrementally
+
+You don't have to swallow the whole pipeline on day one. A working path: **setup (lite) + grooming** first — the profile and requirements docs pay for themselves immediately; add **planning + development** when you trust the gates; **testing + fixing** complete the loop; **auto-run** last, once the gated runs have earned it. Missing-prerequisite stops accept an explicit "proceed anyway" — the gap is named and recorded, so partial adoption never fakes safety — except verification gates (parity, boot-and-smoke, tests), which either ran or the work isn't done. Org-wide knobs (tier, tracker, auto-run permitted, comment allowlist, plain-layer language) live in one place: the profile's **Org settings**, decided at setup.
 
 ## Install
 
