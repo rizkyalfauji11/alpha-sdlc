@@ -17,7 +17,7 @@
 
 ## AC → test coverage
 
-| ID | AC (spoke §8 ID + essence) | Level | Test case (what it asserts) | File | Status |
+| ID | AC (the TRD's numbered AC ID + essence — the spoke's §8 registry on a hub/spoke feature; `A1`…`A6` on a foundation TRD) | Level | Test case (what it asserts) | File | Status |
 |----|---------------|-------|-----------------------------|------|--------|
 | TC1 | <e.g. payment > Rp1M rejected> | API | <asserts 4xx + error code, no debit> | <path> | pass / fail / pending |
 | TC2 | <e.g. scan screen matches design> | UI (visual) | <icons/spacing/type parity within tolerance; diff saved> | <path> | |
@@ -34,7 +34,7 @@
 
 ### TC1 — <what it verifies>
 - **Approved:** <YYYY-MM-DD — this test's write→approve gate, before it ran>
-- **AC:** <the spoke's numbered ID + its essence, e.g. `AC-2 — archived parent shows "unavailable"`>
+- **AC:** <the TRD's numbered AC ID + its essence, e.g. `AC-2 — archived parent shows "unavailable"`; `A1`…`A6` on a foundation TRD>
 - **Preconditions:** <state / data / auth / environment needed before starting>
 - **Steps:**
   1. <action — e.g. tap `qris_widget_scan_button`>
@@ -83,7 +83,7 @@
 - **Flow dependencies:** <each binding from the hub's Flow-dependencies sub-table → its data-flow test in **both directions** (create: appears per decided freshness · destructive: on-delete edge honored) · status, or "none">  — *each binding must have both*
 - **Integrity coverage (per consumed entity):** <entity → visibility ✓ (allowed states only) · on-delete ✓ (no dangling ref/crash) · freshness ✓ (decided mechanism) — or "none consumed">
 - **Stepped flows:** <each Multi-step flow → its wizard test set (per-step validation · back/resume · cross-step refetch · abort-clean · atomic commit) · status, or "none">
-- **Section cases (client UI):** <every case ID from each screen's `section-slicing/<screen>.md` → its test → status (e.g. `body.summary/C1–C4` ✓ · `ftr.actions/C5` ✓ · interaction `X1` ✓). Totals per screen ("14 of 14 cases asserted"); an unasserted case is a coverage gap, not a pass. "none — no section-slicing doc" if not applicable.>
+- **Section cases (client UI):** <every case ID from each screen's `section-slicing/<screen>.md` → its test → status (e.g. `body.summary/C1–C4` ✓ · `ftr.actions/C5` ✓ · interaction `X1` ✓). Per-screen case totals are the plan's *Screen stage map*; an unasserted case is a coverage gap, not a pass. "none — no section-slicing doc" if not applicable.>
 - **Style conformance (client UI):** <static no-raw-literals: pass/fail (+ literals found) · computed-style assertions: which ran per platform (web strongest; note weaker Android/iOS coverage honestly) · screenshot baseline: tool or "none in repo" · cross-screen consistency vs sibling screens · unregistered deviations found → bugs>
 
 - **E2E scope (risk-calibrated):** <which critical journeys got E2E, and why others didn't>

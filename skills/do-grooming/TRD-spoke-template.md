@@ -11,15 +11,16 @@
 | **Author** | <engineer> |
 | **Hub** | [./TRD.md](./TRD.md) |
 | **Hub alignment** | <`reviewed YYYY-MM-DD · hub rev <commit / hub's last approval date>` — or `NOT REVIEWED`. Set by the hub-alignment review; **stale the moment a hub section changes**. `do-planning` won't plan a spoke whose stamp is missing or older than the hub's last change.> |
+| **Alignment rounds** | <objective-violation count per round, oldest first — e.g. `7 · 4 · 4`; every round lands here, clean or not> |
 | **Date** | <YYYY-MM-DD> |
 
 ## Open Decisions
 
-> Gaps where the design/PRD is silent or ambiguous. The AI records them here and **recommends — it does not decide or build them.** Resolve (or explicitly defer) each before the affected slice is built. Decide → update the design → re-groom the item (it folds into the section below, status → *decided*). **Build only *decided* scope** — never fill a gap by adding extra.
+> Gaps where the design/PRD is silent or ambiguous. The AI records them here and **recommends — it does not decide or build them.** Resolve (or explicitly defer) each before the affected slice is built. Decide → update the design → re-groom the item (it folds into the section below, status → *decided*). Where a chosen option names a **mechanism**, the decided status also names **the test that will prove it** — the hub's flow-binding idiom (hub §2) — which lands as a numbered AC in §8 and is written downstream, never run here. **A mechanism amended twice stops being amended — escalate to the user.** **Build only *decided* scope** — never fill a gap by adding extra.
 
 | # | Gap / ambiguity | Why it's a gap (what would otherwise be guessed) | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
 |---|-----------------|--------------------------------------------------|---------------------------|--------|
-| D1 | <what's unspecified> | <the scope that'd be invented if unanswered> | ★ <opt A> / <opt B> / <opt C> | pending / decided: <choice> / decided: auto ★<choice> (ratify) |
+| D1 | <what's unspecified> | <the scope that'd be invented if unanswered> | ★ <opt A> / <opt B> / <opt C> | pending / decided: <choice> · proven by <act → assert> / decided: auto ★<choice> (ratify) |
 
 ## 1. Scope (this platform)
 _Approved: <YYYY-MM-DD>_

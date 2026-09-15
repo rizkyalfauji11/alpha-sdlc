@@ -9,7 +9,7 @@ You are converting an **approved TRD into a task-list document**, story-pointed.
 
 **Story Points is the only built-in scheme, deliberately** — it works on any Jira with no custom-field setup. If your org sizes work with a custom weighting field instead, keep using whatever skill implements it and skip this phase; this plugin stays standalone rather than depending on an org-specific one.
 
-**First, read `../../principles.md` in full now, then apply it** (lazy-senior mindset, never over-simplify, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary). Creating the doc is internal — the no-external-write gate matters most for the *upload* skill, not this one.
+**Apply `../../principles.md`** — the plugin's `SessionStart` hook already injected it, so **read the file in full now only if it isn't in context** (hooks off, or a compaction dropped it); apply it either way (lazy-senior mindset, never over-simplify, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary). Creating the doc is internal — the no-external-write gate matters most for the *upload* skill, not this one.
 
 ## Source of tasks
 
@@ -42,7 +42,7 @@ A **part** = one phase group (or one platform spoke's slices). Build the documen
 1. **Setup (once):** confirm the **scale**, then summarize the TRD's full slice set grouped into parts and confirm the part list with the user.
 2. **For each part, loop:**
    - **Part** — take the part's TRD slices.
-   - **Review** — draft that part's tasks and **show them for review** (approve / edit / re-split): task ID, title, description traced to the TRD slice **and its AC IDs from the spoke's §8** (e.g. `AC-3, AC-7` — the numbered registry, never restated prose), layer tag, **story points + one-line rationale** (split anything > 13).
+   - **Review** — draft that part's tasks and **show them for review** (approve / edit / re-split): task ID, title, description traced to the TRD slice **and its AC IDs from the TRD's numbered AC registry** (e.g. `AC-3, AC-7` — the spoke's §8 registry on a hub/spoke feature, never restated prose), layer tag, **story points + one-line rationale** (split anything > 13).
    - **Write** — append the approved part to the task-list document, **stamped `_Approved: <YYYY-MM-DD>_` under the part's heading** (the doc records its gates, same as a TRD). Move to the next part.
 3. After all parts: write the summary (grand total / point distribution, open items) and present the finished document.
 

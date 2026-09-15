@@ -7,12 +7,12 @@ description: Optional tracker phase. Upload a task-list document (produced by do
 
 You are uploading an already-written **task-list document to the org's tracker** (Jira or GitHub Issues — see Tracker routing below). This is the step `do-slicing` deliberately stops short of. Creating tracker items is an **external write** — the draft + human-approve discipline in `../../principles.md` is at its strongest here.
 
-**First, read `../../principles.md` in full now, then apply it** — especially **draft + human-approve before any external write**, and ask-don't-assume for the Epic and assignee.
+**Apply `../../principles.md`** — the plugin's `SessionStart` hook already injected it, so **read the file in full now only if it isn't in context** (hooks off, or a compaction dropped it); apply it either way — especially **draft + human-approve before any external write**, and ask-don't-assume for the Epic and assignee.
 
 ## Source
 
 - Input = the task-list document from `do-slicing`, normally `docs/development/<feature-name>/task-list.md`. Confirm the path; if it doesn't exist, point the user to `do-slicing` first.
-- Parsing: tasks are `#### T<id> — <title>`, each carrying a **story-point value + rationale** and a layer tag.
+- Parsing: tasks are `#### T<id> — <title>`, each carrying a **story-point value + rationale** and a layer tag. **Check each part's `_Approved: <YYYY-MM-DD>_` stamp before uploading its tasks — missing → STOP** and send that part back to `do-slicing`; creating tracker items for tasks that never passed their review gate creates tracker items for work that never passed its gate (an explicit *proceed anyway* still overrides, with the gap recorded).
 
 ## Required inputs — ask first
 

@@ -22,10 +22,10 @@
 > hub-alignment review per spoke and re-stamp. `do-planning` won't plan a spoke that isn't aligned
 > with the hub's current state.
 
-| Spoke | Link | Hub alignment | Platform exceptions (decided divergences) |
-|-------|------|---------------|-------------------------------------------|
-| <backend> | [TRD-backend.md](./TRD-backend.md) | <✅ reviewed YYYY-MM-DD · hub rev `<hash/date>` · or ⚠️ stale · or ❌ not reviewed> | <none — or the decided exception + why, recorded here so the next spoke and `do-development` see it> |
-| <android> | <…> | | |
+| Spoke | Repo | Link | Hub alignment | Platform exceptions (decided divergences) |
+|-------|------|------|---------------|-------------------------------------------|
+| <backend> | <— for this repo (the default) — or the `<org/repo>` that holds it, whose **Link** is then a full URL> | [TRD-backend.md](./TRD-backend.md) | <✅ reviewed YYYY-MM-DD · hub rev `<hash/date>` · or ⚠️ stale · or ❌ not reviewed> | <none — or the decided exception + why, recorded here so the next spoke and `do-development` see it> |
+| <android> | | <…> | | |
 
 ## 1. Context / scope
 _Approved: <YYYY-MM-DD>_
@@ -116,7 +116,7 @@ _Approved: <YYYY-MM-DD>_
 > objects** (e.g. `name: { en, id }`, never `string`). Loose types are what let a client send the
 > wrong method (→ 405) or render an object as a string (→ React "objects are not valid as a child").
 
-| Method | Path | Request (typed) | Response (typed) | Errors | Notes |
+| Method | Path | Request (typed) | Response (typed) | Errors | Notes (incl. change kind: ADDS / OPENS / DESCRIPTION / TIGHTENS / REMOVES) |
 |--------|------|-----------------|------------------|--------|-------|
 | | | | | | |
 
