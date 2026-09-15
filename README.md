@@ -16,7 +16,9 @@ Your agent's tests pass and the feature is still broken: the client calls a meth
 
 One thing it does *to* your code: source ships with **zero comments** — configurable where law or libraries demand it: setup can allow **license headers** and **public-API doc-comments** (an org setting the hook reads); everything else stays banned. A rename, an extracted function, or a named constant does that job instead, and the *why* that can't fit in a name goes in the commit message, where it can't rot beside code that changed.
 
-None of that is prompt-deep. Hooks block the write when a decision names no rung, a secret lands in a doc, or a comment lands in code — a prompt can be forgotten mid-session, an exit code can't. The whole opinion is one file: [`principles.md`](./principles.md). If you disagree with it, you'll disagree with the plugin.
+None of that is prompt-deep. Hooks block the write when a decision names no rung, a secret lands in a doc, a comment lands in code, or a markdown table the next phase has to read stops parsing — a prompt can be forgotten mid-session, an exit code can't. The whole opinion is one file: [`principles.md`](./principles.md). If you disagree with it, you'll disagree with the plugin.
+
+That last one, `hooks/validate-doc-tables.js`, checks every `.md` write — **the plugin's own templates included** — rebuilding the post-edit document from disk first, so a one-row `Edit` is still judged against the real header. It blocks on four shapes: a header whose cell count differs from its `---` row (GFM then renders the whole block as literal pipe text), a body row with more or fewer cells than its header (extra cells are DROPPED, missing ones render EMPTY — which is how a *decided* item shows as an open one), a `|`-leading row that belongs to no table — its `---` row missing, or a blank line or prose cutting it off from its header, and an unclosed code fence — the one finding that blocks wherever it sits, because nothing below an unclosed fence can be checked. **What it does not do:** it judges table *shape* only, never what a cell means; other findings outside the region your edit touched are printed but never blocked, so you don't inherit a block for debt you didn't write; a table indented four spaces (inside a list item) or one inside a blockquote is skipped in silence; and a file it can't read is left unchecked rather than guessed at.
 
 ## The pipeline
 
@@ -86,13 +88,17 @@ Coding from a screenshot and declaring it done is how built UI drifts from the d
 ```
 docs/basics/                  the project profile, commit-stamped
 docs/development/<feature>/
-  TRD.md                      requirements — the shared contract, numbered AC
+  TRD.md                      requirements — the shared contract
+  TRD-<platform>.md           the per-platform spoke — numbered AC, links
+                              the hub above and is reviewed against it
   contract/                   the approved OpenAPI delta — machine-checkable,
                               merged into the project spec at build time
   widget-spec/<screen>.md     per-screen element contract — Test IDs, types,
                               style bindings
   section-slicing/<screen>.md per-screen regions & cases — what shows when,
                               with a design crop per case
+  task-list.md                story-pointed tasks — written by /do-slicing,
+                              tracker keys written back by /do-uploading
   plan-<platform>.md          staged plan, each stage with its checkpoint
   design/                     the designs it builds and diffs against
   test-plan-<platform>.md     acceptance criterion → test → level → status

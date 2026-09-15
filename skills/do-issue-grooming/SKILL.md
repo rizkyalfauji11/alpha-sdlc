@@ -5,7 +5,7 @@ description: Audit a user-reported issue across the WHOLE project — find the w
 
 You are grooming a **user-reported issue** into a Technical Requirements Document — but the defining job is the **audit**: find the *whole class of the issue across the entire project*, not just the one place it was reported. Capture the issue from the user; if vague, ask for the symptom, repro, and where it was seen (error text, logs, screen, environment).
 
-**First, read `../../principles.md` in full now, then apply it** (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). Root-cause, not symptom, is the whole point here.
+**Apply `../../principles.md`** — the plugin's `SessionStart` hook already injected it, so **read the file in full now only if it isn't in context** (hooks off, or a compaction dropped it); apply it either way (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). Root-cause, not symptom, is the whole point here.
 
 
 **Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.
@@ -22,7 +22,7 @@ You are grooming a **user-reported issue** into a Technical Requirements Documen
 
 ## Output
 
-- `docs/development/<issue-name>/TRD.md` (hub) + `TRD-<platform>.md` spokes if the issue spans platforms (e.g. a 405 spans backend + web). Slugify the issue to a short name (e.g. `localized-render-crash`). Use `issue-TRD-template.md` in this skill's directory. One approval gate per section. **Spokes pass the hub-alignment review before they're complete** (and get re-reviewed whenever a hub section changes) — see `do-grooming` → *Hub-alignment review*; for a cross-platform issue that's what keeps the backend's and the web's account of the same root cause from diverging.
+- `docs/development/<issue-name>/TRD.md` (hub) + `TRD-<platform>.md` spokes if the issue spans platforms (e.g. a 405 spans backend + web). Slugify the issue to a short name (e.g. `localized-render-crash`). Use `issue-TRD-template.md` in this skill's directory. One approval gate per section. **Spokes pass the hub-alignment review before they're complete** (and get re-reviewed whenever a hub section changes) — see `do-grooming` → *Hub-alignment review*, **read by what it checks, not by its section numbers** (an issue TRD's AC registry is §4 and its slices sit in §6's change manifest); for a cross-platform issue that's what keeps the backend's and the web's account of the same root cause from diverging.
 
 ## Core rule — audit the class, not the symptom
 
@@ -51,7 +51,7 @@ Same as grooming — **one section at a time, one approval gate per section, nev
 
 ### Final section — Change manifest
 
-Structured, feeds `do-planning`/`do-slicing`: repos/modules touched, **regression-safety plan** (the reproduce-first / characterization tests to add for the class, so a fix that misses a site fails a test), fix ordering, blast-radius coordination (features that must not break), dependencies/risks, and work slices with technical AC.
+Structured, feeds `do-planning`/`do-slicing`: repos/modules touched, **regression-safety plan** (the reproduce-first / characterization tests to add for the class, so a fix that misses a site fails a test), fix ordering, blast-radius coordination (features that must not break), dependencies/risks, and work slices **claiming their AC by ID from §4** — never restating the criterion's prose.
 
 ## Handoff
 

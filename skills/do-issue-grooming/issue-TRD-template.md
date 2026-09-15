@@ -42,10 +42,19 @@ _Approved: <YYYY-MM-DD>_
 
 <What's in scope (the root fix + every site it covers) and explicitly out of scope. Mermaid if it helps.>
 
-## 4. Regression safety
+## 4. Regression safety & acceptance criteria
 _Approved: <YYYY-MM-DD>_
 
 <The **reproduce-first** tests to add so a fix that misses a site fails a test: a failing test that reproduces the reported bug, plus coverage for the other audited sites / the class. Characterization tests where behavior must be pinned before changing. These are written downstream (`do-fixing`/`do-development`) — here they're specified as testable AC.>
+
+> **The canonical, numbered AC registry for this issue** — the single list every later phase keys on: §6's slices and `do-slicing`'s tasks carry these IDs, `do-planning` stages declare `Covers: AC-2, AC-5`, `do-fixing`/`do-development` write each failing test from them, `do-testing`'s coverage table proves each one. **IDs are stable — never renumbered once approved** (a retired AC keeps its row, ~~struck through~~ with a note). One sentence per AC, **assertable** (an observable behavior, not a vibe). **Source makes §2's audit enumerated, not implied:** every affected-site row, the root cause, and every blast-radius feature that must not break lands here as its own numbered AC — an audited site with no AC is a site the fix can silently miss.
+
+| ID | Acceptance criterion (assertable, one sentence) | Source |
+|----|--------------------------------------------------|--------|
+| AC-1 | <the reported repro no longer reproduces — `<exact error>` is gone at <site>> | §2 site 1 (reported) |
+| AC-2 | <the same class at <site 2> renders localized text, never the raw object> | §2 site 2 |
+| AC-3 | <the class cannot come back — <the lint rule / typed client> fails the build on a new raw render> | §2 root cause |
+| AC-4 | <consuming feature <name> still <behavior> — unchanged by the fix> | §5 blast radius |
 
 ## 5. Blast radius & feature dependencies
 _Approved: <YYYY-MM-DD>_
@@ -69,10 +78,10 @@ _Approved: <YYYY-MM-DD>_
 **Dependencies & risks**
 - <item>
 
-**Work slices** (each with technical AC; every audited site covered or deferred as an Open Decision)
-- [ ] <slice> — AC: <assertable behavior>
+**Work slices** — **reference AC by ID from §4, never restate the criterion's prose here** (one source of truth; a restated AC forks and drifts). Every AC in §4 is claimed by ≥ 1 slice and every slice claims ≥ 1 AC — an unclaimed AC is an audited site the fix can miss, an AC-less slice is untestable work. Every audited site is covered or deferred as an Open Decision.
+- [ ] <slice> — AC: <AC-1, AC-3>
 
 ## Open Decisions
-_Status: <open / decided>_
+_Status: <open / decided: <choice> · proven by <act → assert>>_
 
-<Gaps the audit surfaced that need a human call (2–3 options, mark one — the ★ always the quality/world-standard option, never the cheapest). Undecided items block the affected slice.>
+<Gaps the audit surfaced that need a human call (2–3 options, mark one — the ★ always the quality/world-standard option, never the cheapest). **Where the chosen option names a mechanism, the decision also names the test that will prove it** — specified, not run; a mechanism amended twice stops being amended — escalate to the user. Undecided items block the affected slice.>

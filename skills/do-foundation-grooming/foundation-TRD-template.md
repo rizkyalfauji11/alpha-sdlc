@@ -8,7 +8,7 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 | **Platforms in scope** | <backend · web · android · ios — a spoke per platform> |
 | **Repo strategy** | <monorepo · separate repos per platform — and why> |
 | **Profile** | [architecture](../../basics/02-architecture.md) · [tech-stack](../../basics/05-tech-stack.md) · [environment](../../basics/09-environment.md) · [conventions](../../basics/10-conventions.md) · [git](../../basics/11-git-management.md) |
-| **Spokes** | <TRD-backend.md · TRD-web.md · …> |
+| **Spokes** | <TRD-backend.md · TRD-web.md · … — each with its **hub alignment** stamp: `✅ reviewed YYYY-MM-DD · hub rev <hash/date>` / ⚠️ stale / ❌ not reviewed. Editing a hub section makes every ✅ stale.> |
 
 > **Scaffolding only.** This TRD covers the project scaffold, folder structure, architecture skeleton,
 > and build/run/test harness. **No features** — no auth, no schema, no screens, no business logic.
@@ -101,6 +101,7 @@ _Approved: <YYYY-MM-DD>_
 
 > "The base is set up" is not an AC. Each line below must be verifiable by running something or
 > asserting a fact about the tree. These are what `do-testing` checks for the base.
+> **IDs are stable — never renumbered once approved**, because the plan's stages claim them by ID.
 
 | # | AC | How it's verified |
 |---|----|-------------------|
@@ -131,13 +132,16 @@ _Approved: <YYYY-MM-DD>_
 
 ## Open Decisions
 
+> Where a chosen option names a **mechanism**, the decided status also names **the test that will prove it**
+> (specified, not run). **A mechanism amended twice stops being amended — escalate to the user.**
+
 | # | Decision needed | Options (recommended marked) | Status |
 |---|-----------------|------------------------------|--------|
-| D1 | <…> | <a / **b (recommended)** / c> | open / decided |
+| D1 | <…> | <a / **b (recommended)** / c> | open / decided: <choice> · proven by <the `A<n>` above, or act → assert> |
 
 ## Hand-off
 
-- **`do-planning`** — scaffolding stages, `Layer: n/a (scaffolding)`: init → structure → skeleton → harness → hygiene.
+- **`do-planning`** — scaffolding stages, `Layer: n/a (scaffolding)`: init → structure → skeleton → harness → hygiene. **Each stage claims its AC by ID (`Covers: A1, A4`) — never restating the criterion's prose**; every AC above is claimed by ≥ 1 stage, and every stage claims ≥ 1 AC.
 - **`do-development`** — TDD mostly doesn't apply; verify per stage by the real check (command runs · tree matches · dependency rule holds). The conformance review checks the built tree against *Folder structure*.
 - **`do-testing`** — the AC table above, plus the reduced boot check, reported honestly.
 - **Then `do-project-setup` in refresh mode** — re-stamp the prescriptive `docs/basics/` docs against the real commit, flag anywhere the built base diverged from what was decided. **Only then** does `do-grooming` groom the first product feature.

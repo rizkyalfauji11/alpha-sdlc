@@ -66,11 +66,11 @@ _Approved: <YYYY-MM-DD — the layout gate>_
 > (3 screens over 1 repository = domain + data + one presentation stage per screen).
 
 ### Stage 1 — [<layer>] <goal>
-- **Covers:** <task IDs / Jira keys / the spoke's numbered AC IDs (e.g. `AC-3, AC-7`)>
+- **Covers:** <task IDs / Jira keys / the TRD's numbered AC IDs (e.g. `AC-3, AC-7` — the spoke's §8 registry on a hub/spoke feature; `A1`…`A6` on a foundation TRD) / the contract-delta entries this stage merges (the `TIGHTENS`/`REMOVES` ones held back from the `[contract]` stage)>
 - **Layer:** <contract / domain / data / presentation — or UI / data-integration if the project isn't layered. The diff **stays inside this layer**: business logic doesn't land in a ViewModel, a presentation stage doesn't reach into data. `do-development`'s conformance review checks the diff against this declaration.>
 - **Files / modules:** <paths>
 - **Approach:** <what / ladder rung · world-wide standard (agrees, or the surfaced conflict) — reuse X, native Y, etc.>
-- **Changes (shape, not full code):** per file, what changes; new/changed **signatures, data shapes, endpoints, or props**; **pseudocode or notes only for tricky logic** (races, money caps, retries, edge cases). For stages touching the contract: merging the **approved contract delta** (hub §5, `docs/development/<feature>/contract/`) + **typed-client regeneration** come first (per `05-tech-stack.md` → Code generation) — never a re-translation of the summary table. For stages touching shared entities: name the **query keys read + invalidations/events fired** (per `08-data-cache.md`). Detail scales with risk — trivial changes stay a line, risky ones get the interface + edge cases. Do *not* paste full method bodies/boilerplate.
+- **Changes (shape, not full code):** per file, what changes; new/changed **signatures, data shapes, endpoints, or props**; **pseudocode or notes only for tricky logic** (races, money caps, retries, edge cases). For stages touching the contract: merging the **approved contract delta** (hub §5, `docs/development/<feature>/contract/`) + **typed-client regeneration** come first (per `05-tech-stack.md` → Code generation) — never a re-translation of the summary table; merge only the entries §5's change-kind label marks safe ahead of the code — a `TIGHTENS`/`REMOVES` entry merges in the stage that carries the code satisfying or performing it, named on that stage's `Covers:`. For stages touching shared entities: name the **query keys read + invalidations/events fired** (per `08-data-cache.md`). Detail scales with risk — trivial changes stay a line, risky ones get the interface + edge cases. Do *not* paste full method bodies/boilerplate.
 - **Design ref (UI stages):** which screen + design (from *Design references* above) and the states to match — the parity target for this stage. `n/a` for non-UI stages.
 - **Stage kind (UI presentation):** <`shell` (scaffold + route + screen state + empty slots) · `section` · `assembly` (full screen + interactions) — from the *Screen stage map* above. `n/a` for non-UI stages.>
 - **Section(s) + element scope (UI section stages):** <the section ID(s) this stage builds (e.g. `body.list` + `body.list.item`) and the widget-spec rows whose `Section` column matches — that's this stage's element scope.>
@@ -78,7 +78,7 @@ _Approved: <YYYY-MM-DD — the layout gate>_
 - **Test first (TDD red):** the failing test(s) that prove this stage, derived from the AC — what they assert. If the stage can't be unit-tested (native widget render, pure UI), say so and give the manual/observed check instead.
 - **Verify:** <how to confirm green — run the test(s) + build/observe>
 - **Conformance review — docs this stage must be checked against:** <the `docs/basics/` docs the stage's changes touch, e.g. `02-architecture` (layer placement) · `10-conventions` (error handling/logging) · `08-data-cache` (query keys + invalidation) · `18-design-tokens` (zero raw literals) — so the reviewer audits the right ones instead of guessing. Principles + plan/AC conformance are always checked.>
-- **Approved (plan gate):** <YYYY-MM-DD — set by do-planning when this stage's draft passes its gate>
+- **Approved (plan gate):** <commit `<hash>` · approved <YYYY-MM-DD> — set by do-planning when this stage's draft passes its gate; `do-development` reads it before building the stage>
 - **Checkpoint verdict:** <pending — set by do-development when the built stage passes review: `approved <date>` or `auto <date>`; separate from *done*>
 - **⏸ Checkpoint — review here.** **Safe to stop after?** <yes — compiles & tests pass / no — leaves X half-done until Stage N. **Safe ≠ complete** — note when the slice isn't user-visible yet (e.g. "safe: green; but nothing on screen until Stage 4 [presentation]"). **A partially-sectioned screen is *not* safe** — green but visually broken (e.g. "no: 2 of 4 sections built; screen is broken until Stage 9 assembly").>
 
@@ -92,7 +92,7 @@ _Approved: <YYYY-MM-DD — the layout gate>_
 - **Changes:** <…>
 - **Verify:** <…>
 - **Conformance review — docs:** <…>
-- **Approved (plan gate):** <YYYY-MM-DD — set by do-planning when this stage's draft passes its gate>
+- **Approved (plan gate):** <commit `<hash>` · approved <YYYY-MM-DD> — set by do-planning when this stage's draft passes its gate; `do-development` reads it before building the stage>
 - **Checkpoint verdict:** <pending — set by do-development when the built stage passes review: `approved <date>` or `auto <date>`; separate from *done*>
 - **⏸ Checkpoint — review here.** **Safe to stop after?** <…>
 
@@ -102,5 +102,5 @@ _Approved: <YYYY-MM-DD — the layout gate>_
 
 - **Order / dependencies:** <which stage must precede which, and why>
 - **Safe stop points:** <list the checkpoints where the codebase is in a working/shippable state>
-- **Uncovered tasks / AC:** <any task, **integrity AC** (visibility · on-delete · freshness), or **flow binding** not yet mapped to a stage — or "none">
+- **Uncovered tasks / AC:** <any task, **integrity AC** (visibility · on-delete · freshness), **feature-flow step**, or **flow binding** not yet mapped to a stage — or "none">
 
