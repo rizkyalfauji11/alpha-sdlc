@@ -11,7 +11,7 @@ You are **implementing a feature by executing its development plan**, one stage 
 
 ## Source
 
-- **Input = the plan**, normally `docs/development/<feature-name>/plan-<platform>.md`, plus the TRD spoke + tasks it references. **Check a stage's `Approved (plan gate)` stamp before building it, starting at stage 1: missing, still the template placeholder, or recorded at a commit/date before the plan's last change → STOP** and send it back to `do-planning` — the plan was never approved, or was edited after approval (an explicit *proceed anyway* still overrides, with the gap recorded, per `principles.md`). If there's no plan, point the user to `do-planning` first — this skill executes a plan, it doesn't invent one.
+- **Input = the plan**, normally `docs/development/<feature-name>/plan-<platform>.md`, plus the TRD spoke + tasks it references. **Check a stage's `Approved (plan gate)` stamp before building it, starting at stage 1: missing, still the template placeholder, or recorded at a commit/date before the plan's last change → STOP** and send it back to `do-planning` — the plan was never approved, or was edited after approval (an explicit *proceed anyway* still overrides, with the gap recorded, per `principles.md`). **Before stage 1, also check the plan covers the TRD:** an AC in the TRD's numbered AC register that no stage's `Covers:` claims → **STOP** back to `do-planning` — that's decided scope nobody planned to build, and it otherwise surfaces as an uncovered AC at `do-testing`, three phases later. If there's no plan, point the user to `do-planning` first — this skill executes a plan, it doesn't invent one.
 - The plan **is the state**: stages get marked done as they pass review, so a re-run resumes at the next unfinished stage.
 
 ## Rules
