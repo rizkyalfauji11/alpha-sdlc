@@ -102,5 +102,5 @@ _Approved: <YYYY-MM-DD — the layout gate>_
 
 - **Order / dependencies:** <which stage must precede which, and why>
 - **Safe stop points:** <list the checkpoints where the codebase is in a working/shippable state>
-- **Uncovered tasks / AC:** <any task, **integrity AC** (visibility · on-delete · freshness), **feature-flow step**, or **flow binding** not yet mapped to a stage — or "none">
+- **Uncovered tasks / AC:** <derived from the TRD's numbered AC register against the stages' `Covers:` — any AC (incl. each **integrity AC**: visibility · on-delete · freshness), task, **feature-flow step**, or **flow binding** not yet mapped to a stage — or "none">
 
