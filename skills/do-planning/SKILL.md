@@ -3,60 +3,232 @@ name: do-planning
 description: Create a staged development plan document from an approved TRD and its tasks — work broken into small, independently reviewable stages with explicit STOP/review checkpoints, so implementation is reviewed incrementally instead of as one huge change. Use when the user wants a development plan, an implementation plan, to plan the build, or to stage the work for review. Triggers on "development plan", "plan the implementation", "stage the work", "/do-planning", "break the build into steps".
 ---
 
-You are writing a **development plan document**: the ordered, staged plan an engineer follows to implement a feature. **The whole point is reviewability** — the work is split into small stages, each a self-contained reviewable change with an explicit checkpoint, so the user can review stage-by-stage and **stop after any stage** instead of facing one enormous diff at the end.
+You are writing a **development plan document**: the ordered, staged plan an engineer follows to
+implement a feature. **The whole point is reviewability** — the work is split into small stages,
+each a self-contained reviewable change with an explicit checkpoint, so the user can review
+stage-by-stage and **stop after any stage** instead of facing one enormous diff at the end.
 
-**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary).
+**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the
+INDEX of these rules, never their text, so the file is the only place they actually bind
+(lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3
+best-practice options, living understanding summary).
 
 
-**Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.
+**Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks
+for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at
+`do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.
 
-**Read the project profile first** (`docs/basics/` from `do-project-setup`) — especially `06-domain-model.md` + `16-feature-map.md` (the shared truths the TRD bound to), `02-architecture.md`, `10-conventions.md`, `05-tech-stack.md`, and (for UI) `03-ui-architecture.md` + `18-design-tokens.md` + `08-data-cache.md` — before scanning code from scratch. **Per stage, also name the profile docs that stage must be reviewed against** (the plan template's *Conformance review* line) — `do-development` audits each stage's diff against them before presenting it, so naming them here is what makes that review targeted instead of a guess. The plan's **Architecture & package layout** and stage breakdown must ground in the profile's real structure, conventions, and stack — not a guessed one — so stages land in the right place and follow existing patterns. If a section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
+**Read the project profile first** (`docs/basics/` from `do-project-setup`) — especially
+`06-domain-model.md` + `16-feature-map.md` (the shared truths the TRD bound to),
+`02-architecture.md`, `10-conventions.md`, `05-tech-stack.md`, and (for UI) `03-ui-architecture.md` +
+`18-design-tokens.md` + `08-data-cache.md` — before scanning code from scratch. **Per stage, also
+name the profile docs that stage must be reviewed against** (the plan template's *Conformance
+review* line) — `do-development` audits each stage's diff against them before presenting it, so
+naming them here is what makes that review targeted instead of a guess. The plan's **Architecture &
+package layout** and stage breakdown must ground in the profile's real structure, conventions, and
+stack — not a guessed one — so stages land in the right place and follow existing patterns. If a
+section looks stale (repo moved past its commit stamp), note it and suggest a refresh.
 
-**If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run `do-project-setup` first** — planning the package/architecture layout on an ungrounded view is how stages land in the wrong place or fight existing conventions. Wait for their answer: recommend setting up first; proceed without it only if the user explicitly chooses to (then fall back to scanning the repo, and note the layout is ungrounded).
+**If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run `do-project-setup` first**
+— planning the package/architecture layout on an ungrounded view is how stages land in the wrong
+place or fight existing conventions. Wait for their answer: recommend setting up first; proceed
+without it only if the user explicitly chooses to (then fall back to scanning the repo, and note the
+layout is ungrounded).
 
 ## Source & output
 
-- **Inputs:** the feature's approved TRD (`docs/development/<feature-name>/` hub + the relevant spoke) — its **work slices + AC are the source of work**. **Check the spoke's `Hub alignment` stamp first (hub/spoke feature TRD) — missing, `NOT REVIEWED`, or older than the hub's last change → STOP** and send it back to `do-grooming` for the hub-alignment review; on an issue / tech-debt / foundation TRD the same check reads the hub's *Spokes* row instead (spelled `❌ not reviewed` there), since those spokes carry no header table. Planning a spoke that disagrees with the hub bakes the disagreement into stages, where it resurfaces as a contract/integration bug two phases later. **Check each per-screen artifact's own stamp the same way** (`widget-spec/<screen>.md` `Approved` · `section-slicing/<screen>.md` `Approved (screen)` + per-section) and **print the outstanding list — never stamped, or changed after the stamp's recorded rev/date — before you refuse or plan a slice**. Derive that list from the artifacts, never hand-write it: a hand-written list of what's outstanding is the one list guaranteed to go stale, and an author can't honor a gate they can't see. If you ran the optional Jira phases (`do-slicing`/`do-uploading`), also use `task-list.md` / Jira keys; if you skipped them, plan straight off the TRD. Either way the plan implements what the TRD already decided — it does **not** re-open design (send those back to `do-grooming`).
-- **Development is per-platform** → write one plan per platform: `docs/development/<feature-name>/plan-<platform>.md`. Use `plan-template.md` in this skill's directory.
+- **Inputs:** the feature's approved TRD (`docs/development/<feature-name>/` hub + the relevant
+  spoke) — its **work slices + AC are the source of work**. **Check the spoke's `Hub alignment`
+  stamp first (hub/spoke feature TRD) — missing, `NOT REVIEWED`, or older than the hub's last change
+  → STOP** and send it back to `do-grooming` for the hub-alignment review; on an issue / tech-debt /
+  foundation TRD the same check reads the hub's *Spokes* row instead (spelled `❌ not reviewed`
+  there), since those spokes carry no header table. Planning a spoke that disagrees with the hub
+  bakes the disagreement into stages, where it resurfaces as a contract/integration bug two phases
+  later. **Check each per-screen artifact's own stamp the same way** (`widget-spec/<screen>.md`
+  `Approved` · `section-slicing/<screen>.md` `Approved (screen)` + per-section) and **print the
+  outstanding list — never stamped, or changed after the stamp's recorded rev/date — before you
+  refuse or plan a slice**. Derive that list from the artifacts, never hand-write it: a hand-written
+  list of what's outstanding is the one list guaranteed to go stale, and an author can't honor a
+  gate they can't see. If you ran the optional Jira phases (`do-slicing`/`do-uploading`), also use
+  `task-list.md` / Jira keys; if you skipped them, plan straight off the TRD. Either way the plan
+  implements what the TRD already decided — it does **not** re-open design (send those back to
+  `do-grooming`).
+- **Development is per-platform** → write one plan per platform:
+  `docs/development/<feature-name>/plan-<platform>.md`. Use `plan-template.md` in this skill's
+  directory.
 
 ## What makes a good stage (the core rule)
 
-- **Small enough to review in one sitting** — roughly one concern / one coherent diff. If a stage would be a huge change, split it. Prefer many small stages over few big ones.
-- **One stage per architecture layer the slice touches — never one stage spanning layers.** A screen is not a stage; it's a **contract → domain → data → presentation** sequence. Read the repo's real layers from `docs/basics/02-architecture.md` and use *its* names:
-  - **Layered / clean architecture** → `domain` (entities + use-cases, tested against a fake repository), `data` (repository/API/DB/3rd-party implementation), `presentation` (screen/UI/state). A **`contract`** stage comes first *only* when the feature changes the API contract (merge the approved hub-§5 delta into the spec → regenerate the typed client — **minus the entries §5 labeled `TIGHTENS`/`REMOVES`**, which merge with the stage carrying their code).
-  - **Not layered** → still split, minimum two: **`UI`** and **`data-integration`** (API calls, DB access, 3rd-party SDKs). Split finer only when a stage's diff gets too big to review in one sitting — never to satisfy a template. Do **not** invent a domain layer the project doesn't have (`principles.md` forbids imposing layering).
-  - **Backend spokes use the analogue** — route/controller (the API surface, the "presentation" of a backend) → service/use-case → repository/migration. "Presentation" never means "UI only".
-  - **Only the layers the slice actually touches.** A screen that reuses an existing endpoint and adds no business rule is **one presentation stage** — not three. A ceremonial domain stage means an interface with one implementation: speculative scaffolding, which the ladder rejects.
-  - **Shared lower-layer work is staged once.** Three screens over one repository = one domain stage + one data stage + **one presentation stage per screen** — not the same repository re-staged three times.
-  - **Scaffolding is the exception.** A **foundation TRD** (`do-foundation-grooming`, greenfield base) has no domain/data/presentation split — its stages run **init the project → create the structure → wire the skeleton (entry point, config, dependency-rule enforcement) → harness (build/run/test/lint) → repo hygiene**, each marked `Layer: n/a (scaffolding)`. Don't force layer stages onto work that creates the layers.
-  - **Every stage declares its `Layer`, and its diff must stay inside it.** That declaration is what lets `do-development`'s conformance review check layer placement mechanically (business logic in a ViewModel, or a presentation stage reaching into data, is a violation) instead of guessing.
-- **Presentation splits again by section: shell → sections → assembly.** For a screen with a `section-slicing/<screen>.md`, one `[presentation]` stage per screen is still too big — a 14-case screen lands as one unreviewable diff and its cases get discovered missing at the end. So a screen's presentation work is:
-  1. **Shell stage** — instantiate the scaffold (`03-ui-architecture.md`), register the route, wire screen-level state, leave **empty section slots**. This exists so section stages don't each race to create the same screen file, and it gives an early checkpoint where the skeleton is checkable against the scaffold.
-  2. **Section stages — one per section that *earns* it**, using the same trigger the slicing itself uses: **more than one case · its own data source · a repeating item template**. **Trivial siblings group into one stage** (a 1-case header, a static row) — never a stage per leaf for symmetry, which is the ceremony the ladder rejects. Each section stage declares its **section ID(s)**, its **case IDs + crops**, and its **element scope — the widget-spec rows whose `Section` column matches** (that column is what makes "did this stage build its elements" a lookup rather than a judgment).
-  3. **Assembly stage** — compose the sections and verify the **screen**: full-screen parity, full-scroll coverage, content-fit extremes, and the section-slicing doc's **Interactions (`X`) rows**. Those interactions span sections by definition, so they are **not verifiable before assembly** — this stage is where "compare by full screen" happens, while section stages compare only against their own crops.
-  - **Order: top-down** — `hdr` → body sections in visual order → `ftr`, after whichever data/domain stages feed them. A planner may reorder to de-risk (an unknown third-party embed first) **as long as the plan states why**.
-  - **Coverage is checkable:** every section and every case is claimed by **exactly one** section stage, and every `X` row is claimed by the assembly stage. An unclaimed case is the missed case; a case claimed twice means two stages will fight over the same view.
-  - **Safe-to-stop has a third state here.** A screen with 2 of 4 sections built compiles and passes its tests but is **visually broken** — worse than "not user-visible yet". Mark those checkpoints explicitly as *not safe to stop*; the screen becomes safe again at assembly.
-- **Ordered by dependency** — contract, then domain, then data, then presentation/UI; match the hub's release ordering **and the hub's Feature dependencies** — a stage that relies on another feature comes only after that feature exists. If a depended-on feature is **missing or incomplete**, STOP and surface it (Open Decision) — never plan stages on a phantom prerequisite. **When the feature changes the API contract, "contract first" is a concrete early stage:** merge the **approved contract delta** (`docs/development/<feature>/contract/`, gated at hub §5) into the project's machine-checkable spec → **regenerate the typed client** (the command in `05-tech-stack.md` → Code generation) → every later stage builds against the regenerated types, never hand-rolled ones — and never re-translate the hub's summary table. **This stage merges only the entries §5's change-kind label marks safe ahead of the code**; a `TIGHTENS` or `REMOVES` entry merges in the stage that carries the code satisfying or performing it, named on that stage's `Covers:`.
-- **Stage a stepped flow from its flow spec.** If the spoke has a **Multi-step flows** spec, the stages follow it — the flow-level state store early, then per-step stages (each step's validation + cross-step refetch is that stage's AC), then the **atomic final commit** as its own verifiable stage — not one giant unreviewable "build the wizard" stage or arbitrary slices that ignore the flow's structure.
+- **Small enough to review in one sitting** — roughly one concern / one coherent diff. If a stage
+  would be a huge change, split it. Prefer many small stages over few big ones.
+- **One stage per architecture layer the slice touches — never one stage spanning layers.** A screen
+  is not a stage; it's a **contract → domain → data → presentation** sequence. Read the repo's real
+  layers from `docs/basics/02-architecture.md` and use *its* names:
+  - **Layered / clean architecture** → `domain` (entities + use-cases, tested against a fake
+    repository), `data` (repository/API/DB/3rd-party implementation), `presentation`
+    (screen/UI/state). A **`contract`** stage comes first *only* when the feature changes the API
+    contract (merge the approved hub-§5 delta into the spec → regenerate the typed client — **minus
+    the entries §5 labeled `TIGHTENS`/`REMOVES`**, which merge with the stage carrying their code).
+  - **Not layered** → still split, minimum two: **`UI`** and **`data-integration`** (API calls, DB
+    access, 3rd-party SDKs). Split finer only when a stage's diff gets too big to review in one
+    sitting — never to satisfy a template. Do **not** invent a domain layer the project doesn't have
+    (`principles.md` forbids imposing layering).
+  - **Backend spokes use the analogue** — route/controller (the API surface, the "presentation" of a
+    backend) → service/use-case → repository/migration. "Presentation" never means "UI only".
+  - **Only the layers the slice actually touches.** A screen that reuses an existing endpoint and
+    adds no business rule is **one presentation stage** — not three. A ceremonial domain stage means
+    an interface with one implementation: speculative scaffolding, which the ladder rejects.
+  - **Shared lower-layer work is staged once.** Three screens over one repository = one domain stage +
+    one data stage + **one presentation stage per screen** — not the same repository re-staged
+    three times.
+  - **Scaffolding is the exception.** A **foundation TRD** (`do-foundation-grooming`, greenfield
+    base) has no domain/data/presentation split — its stages run **init the project → create the
+    structure → wire the skeleton (entry point, config, dependency-rule enforcement) → harness
+    (build/run/test/lint) → repo hygiene**, each marked `Layer: n/a (scaffolding)`. Don't force
+    layer stages onto work that creates the layers.
+  - **Every stage declares its `Layer`, and its diff must stay inside it.** That declaration is what
+    lets `do-development`'s conformance review check layer placement mechanically (business logic in
+    a ViewModel, or a presentation stage reaching into data, is a violation) instead of guessing.
+- **Presentation splits again by section: shell → sections → assembly.** For a screen with a
+  `section-slicing/<screen>.md`, one `[presentation]` stage per screen is still too big — a 14-case
+  screen lands as one unreviewable diff and its cases get discovered missing at the end. So a
+  screen's presentation work is:
+  1. **Shell stage** — instantiate the scaffold (`03-ui-architecture.md`), register the route, wire
+     screen-level state, leave **empty section slots**. This exists so section stages don't each
+     race to create the same screen file, and it gives an early checkpoint where the skeleton is
+     checkable against the scaffold.
+  2. **Section stages — one per section that *earns* it**, using the same trigger the slicing itself
+     uses: **more than one case · its own data source · a repeating item template**. **Trivial
+     siblings group into one stage** (a 1-case header, a static row) — never a stage per leaf for
+     symmetry, which is the ceremony the ladder rejects. Each section stage declares its **section
+     ID(s)**, its **case IDs + crops**, and its **element scope — the widget-spec rows whose
+     `Section` column matches** (that column is what makes "did this stage build its elements" a
+     lookup rather than a judgment).
+  3. **Assembly stage** — compose the sections and verify the **screen**: full-screen parity,
+     full-scroll coverage, content-fit extremes, and the section-slicing doc's **Interactions (`X`)
+     rows**. Those interactions span sections by definition, so they are **not verifiable before
+     assembly** — this stage is where "compare by full screen" happens, while section stages compare
+     only against their own crops.
+  - **Order: top-down** — `hdr` → body sections in visual order → `ftr`, after whichever data/domain
+    stages feed them. A planner may reorder to de-risk (an unknown third-party embed first) **as
+    long as the plan states why**.
+  - **Coverage is checkable:** every section and every case is claimed by **exactly one** section
+    stage, and every `X` row is claimed by the assembly stage. An unclaimed case is the missed case;
+    a case claimed twice means two stages will fight over the same view.
+  - **Safe-to-stop has a third state here.** A screen with 2 of 4 sections built compiles and passes
+    its tests but is **visually broken** — worse than "not user-visible yet". Mark those checkpoints
+    explicitly as *not safe to stop*; the screen becomes safe again at assembly.
+- **Ordered by dependency** — contract, then domain, then data, then presentation/UI; match the
+  hub's release ordering **and the hub's Feature dependencies** — a stage that relies on another
+  feature comes only after that feature exists. If a depended-on feature is **missing or
+  incomplete**, STOP and surface it (Open Decision) — never plan stages on a phantom prerequisite.
+  **When the feature changes the API contract, "contract first" is a concrete early stage:** merge
+  the **approved contract delta** (`docs/development/<feature>/contract/`, gated at hub §5) into the
+  project's machine-checkable spec → **regenerate the typed client** (the command in
+  `05-tech-stack.md` → Code generation) → every later stage builds against the regenerated types,
+  never hand-rolled ones — and never re-translate the hub's summary table. **This stage merges only
+  the entries §5's change-kind label marks safe ahead of the code**; a `TIGHTENS` or `REMOVES` entry
+  merges in the stage that carries the code satisfying or performing it, named on that stage's
+  `Covers:`.
+- **Stage a stepped flow from its flow spec.** If the spoke has a **Multi-step flows** spec, the
+  stages follow it — the flow-level state store early, then per-step stages (each step's validation +
+  cross-step refetch is that stage's AC), then the **atomic final commit** as its own verifiable
+  stage — not one giant unreviewable "build the wizard" stage or arbitrary slices that ignore the
+  flow's structure.
 - **Ends in a checkpoint**: how to verify it works, and an explicit **⏸ STOP — review** marker.
-- **Marks whether it's safe to stop after** — ideally the codebase is in a working (compiles, tests pass, shippable-behind-flag) state at as many checkpoints as possible, so pausing leaves nothing half-broken. Call out the stages where stopping would leave things incomplete. **Safe ≠ complete:** after a `contract`/`domain`/`data` stage the build is green and safe to stop, but **nothing is user-visible until the presentation stage lands** — say both, so nobody stops after the data stage thinking the slice shipped.
-- **Traces to AC / work slices** — each stage lists the acceptance criteria / TRD work slices it satisfies (plus task IDs / Jira keys if the Jira phases were run). **Coverage is derived, not asserted:** read the TRD's numbered AC register (the spoke's §8, or its equivalent in an issue / tech-debt / foundation TRD) against the union of the stages' `Covers:` — every AC is claimed by **≥ 1** stage and every stage claims **≥ 1** AC, and every work slice lands in some stage. An unclaimed AC is unbuilt scope; an AC-less stage is untestable work.
-- **Detail the *shape* of the change, not the code.** A stage must be reviewable before it's built: give per-file change intent, new/changed signatures · data shapes · endpoints · props, and pseudocode/notes for genuinely tricky logic (races, money caps, retries, edge cases). **When a stage adds a mutation or consumes shared entities, name its cache wiring** — the canonical query keys it reads and the invalidations/events its mutations fire (per `08-data-cache.md`'s sync convention) — that's a reviewable design fact and what makes the freshness AC implementable. **Calibrate by risk** — a trivial change stays one line, a risky one gets the interface + edge cases. Never paste full method bodies or boilerplate — that turns the plan into a stale second copy of the diff (over-engineering). The plan describes the shape; the diff fills in the bodies.
+- **Marks whether it's safe to stop after** — ideally the codebase is in a working (compiles, tests
+  pass, shippable-behind-flag) state at as many checkpoints as possible, so pausing leaves nothing
+  half-broken. Call out the stages where stopping would leave things incomplete. **Safe ≠
+  complete:** after a `contract`/`domain`/`data` stage the build is green and safe to stop, but
+  **nothing is user-visible until the presentation stage lands** — say both, so nobody stops after
+  the data stage thinking the slice shipped.
+- **Traces to AC / work slices** — each stage lists the acceptance criteria / TRD work slices it
+  satisfies (plus task IDs / Jira keys if the Jira phases were run). **Coverage is derived, not
+  asserted:** read the TRD's numbered AC register (the spoke's §8, or its equivalent in an issue /
+  tech-debt / foundation TRD) against the union of the stages' `Covers:` — every AC is claimed by
+  **≥ 1** stage and every stage claims **≥ 1** AC, and every work slice lands in some stage. An
+  unclaimed AC is unbuilt scope; an AC-less stage is untestable work.
+- **Detail the *shape* of the change, not the code.** A stage must be reviewable before it's built:
+  give per-file change intent, new/changed signatures · data shapes · endpoints · props, and
+  pseudocode/notes for genuinely tricky logic (races, money caps, retries, edge cases). **When a
+  stage adds a mutation or consumes shared entities, name its cache wiring** — the canonical query
+  keys it reads and the invalidations/events its mutations fire (per `08-data-cache.md`'s sync
+  convention) — that's a reviewable design fact and what makes the freshness AC implementable.
+  **Calibrate by risk** — a trivial change stays one line, a risky one gets the interface + edge
+  cases. Never paste full method bodies or boilerplate — that turns the plan into a stale second
+  copy of the diff (over-engineering). The plan describes the shape; the diff fills in the bodies.
 
 ## Flow — stage → review → write
 
-> Present every gate below in the shared **step-summary format** (`principles.md`): header (development · phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need from you) · engineer detail last.
+> Present every gate below in the shared **step-summary format** (`principles.md`): header
+> (development · phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads
+> whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need
+> from you) · engineer detail last.
 
-1. Read the TRD spoke + tasks, scan the real code paths the work touches, and **summarize the implementation scope** for the user to confirm. **Read the hub's *Feature dependencies* and confirm each depended-on feature is actually built** (check `docs/basics/16-feature-map.md`); **if a prerequisite isn't built, STOP** and route it back (Open Decision) before planning the dependent slice — don't plan around a phantom. For each **flow dependency** (a field/section fed by another feature — the hub's Flow-dependencies sub-table), plan the stage so that binding is wired to the **real source flow, not a mock**, and note it as the stage's integration point. **Per-screen artifacts gate (UI platforms): a screen this feature grooms (it has a widget spec in this feature's directory) with no `section-slicing/<screen>.md` is an UNFINISHED SPOKE — STOP and send it back to `do-grooming` Step 3** (the no-slicing tolerance exists only for legacy screens this feature's grooming never touched). **For UI platforms, a `[presentation]` stage must name the section cases it implements** — the case IDs from the screen's `section-slicing/<screen>.md` (`body.summary/C1–C4`, `ftr.actions/C5`, plus the *Interactions* rows) — so the stage's scope is the case list, not "build the screen". A screen with many cases splits by section rather than becoming one giant stage, and no case may go unassigned to a stage. **Carry the Design references into the plan's *Design references* section.** First read what **grooming already captured** — the **`Design` field in each screen's widget-spec** and any images in `docs/development/<feature-name>/design/`; reuse those, don't re-ask. Only for anything still missing:
-   - **Image(s) provided now** → **save each into `docs/development/<feature-name>/design/<screen>.png`** (create the `design/` folder), record the path.
+1. Read the TRD spoke + tasks, scan the real code paths the work touches, and **summarize the
+   implementation scope** for the user to confirm. **Read the hub's *Feature dependencies* and
+   confirm each depended-on feature is actually built** (check `docs/basics/16-feature-map.md`);
+   **if a prerequisite isn't built, STOP** and route it back (Open Decision) before planning the
+   dependent slice — don't plan around a phantom. For each **flow dependency** (a field/section fed
+   by another feature — the hub's Flow-dependencies sub-table), plan the stage so that binding is
+   wired to the **real source flow, not a mock**, and note it as the stage's integration point.
+   **Per-screen artifacts gate (UI platforms): a screen this feature grooms (it has a widget spec in
+   this feature's directory) with no `section-slicing/<screen>.md` is an UNFINISHED SPOKE — STOP and
+   send it back to `do-grooming` Step 3** (the no-slicing tolerance exists only for legacy screens
+   this feature's grooming never touched). **For UI platforms, a `[presentation]` stage must name
+   the section cases it implements** — the case IDs from the screen's `section-slicing/<screen>.md`
+   (`body.summary/C1–C4`, `ftr.actions/C5`, plus the *Interactions* rows) — so the stage's scope is
+   the case list, not "build the screen". A screen with many cases splits by section rather than
+   becoming one giant stage, and no case may go unassigned to a stage. **Carry the Design references
+   into the plan's *Design references* section.** First read what **grooming already captured** —
+   the **`Design` field in each screen's widget-spec** and any images in
+   `docs/development/<feature-name>/design/`; reuse those, don't re-ask. Only for anything still
+   missing:
+   - **Image(s) provided now** → **save each into
+     `docs/development/<feature-name>/design/<screen>.png`** (create the `design/` folder), record
+     the path.
    - **Figma** → record the frame link.
    - Plus any specific needs (states, breakpoints, motion, dark mode).
-   Carry the refs **at the grain grooming captured them — per step and per state, not one row per screen**: a wizard gets a ref row per step, and each specced state (empty/loading/error/extremes) keeps its ref or its explicit "flagged / platform-default" marker — dropping state refs here is how dev's parity loop only ever compares the main screen.
-   `do-development` reads these to run the visual-parity loop, so they must be in place before UI stages. **Present the summary, then STOP and wait for confirmation** before the architecture layout (don't plan on a stale or unconfirmed understanding).
-2. **Write the Architecture & package layout first.** Map where each piece of the work lands in the real repo (which package/directory/file), grounded in the existing structure — reuse it (ladder rung 2 — reuse), propose new packages only where needed and name the rung **and the world-wide standard**. **If the project uses clean/layered architecture, place each piece in the right layer (presentation / domain / data) and respect the dependency rule** (per `principles.md`) — don't impose layering if the project doesn't use it. **This layer map is what the stage split follows** — the layers you place work into here become the stages in step 3, so name them explicitly (including the unlayered case's UI vs data-integration division). This is *not* a re-statement of the TRD design; link to the TRD and keep this concrete (file-system level). It's the map the stages slot into; keep it short for small features. **Present the layout, then STOP — end your turn and wait for approval. Do not start the stage breakdown in the same turn.**
-3. Propose the **stage breakdown** (titles + one-line goals + order only) — each stage references the package layout from step 2, and **each title carries its layer tag** (`[contract]` / `[domain]` / `[data]` / `[presentation]`, or `[UI]` / `[data-integration]` on unlayered projects). **Lead with the count and the shape** — e.g. "3 screens over one repository → 17 stages: domain, data, then per screen a shell + 3 section stages + assembly" — so the user sees how many checkpoints they're agreeing to before any stage is detailed. **Per-section splitting multiplies that count**, so show the per-screen shape (shell + N sections + assembly) and the section stages' names; if the user wants it coarser, they say so here, not after 17 stages are written. **Present it, then STOP and wait for approval. Do not detail any stage until the user approves the shape.**
-4. For each stage, in order: **draft** the stage detail (goal, files/modules, approach per the ladder, concrete changes, **the test(s) to write first from the AC** — TDD red, verify step, checkpoint, safe-to-stop flag, tasks covered) → **present it and STOP** (approve / edit / re-split — end your turn, wait for the verdict; do not draft the next stage or write the file yet) → on approval, **write** it into `plan-<platform>.md` **with its `Approved: <commit · date>` recorded** and move to the next stage. Every stage with real logic must name its test so `do-development` can write it first; flag stages that genuinely can't be unit-tested.
-5. After all stages: write the sequencing summary (dependency order, which checkpoints are safe stop points, any uncovered tasks). **The coverage check is not tasks-only:** confirm every hub-decided **integrity AC** (entity visibility · on-delete behavior · freshness), every **feature-flow step** (hub §3), and every **flow binding** also maps to a stage — flag any that fell between tasks.
+   Carry the refs **at the grain grooming captured them — per step and per state, not one row per
+   screen**: a wizard gets a ref row per step, and each specced state (empty/loading/error/extremes)
+   keeps its ref or its explicit "flagged / platform-default" marker — dropping state refs here is
+   how dev's parity loop only ever compares the main screen.
+   `do-development` reads these to run the visual-parity loop, so they must be in place before UI
+   stages. **Present the summary, then STOP and wait for confirmation** before the architecture
+   layout (don't plan on a stale or unconfirmed understanding).
+2. **Write the Architecture & package layout first.** Map where each piece of the work lands in the
+   real repo (which package/directory/file), grounded in the existing structure — reuse it (ladder
+   rung 2 — reuse), propose new packages only where needed and name the rung **and the world-wide
+   standard**. **If the project uses clean/layered architecture, place each piece in the right layer
+   (presentation / domain / data) and respect the dependency rule** (per `principles.md`) — don't
+   impose layering if the project doesn't use it. **This layer map is what the stage split follows**
+   — the layers you place work into here become the stages in step 3, so name them explicitly
+   (including the unlayered case's UI vs data-integration division). This is *not* a re-statement of
+   the TRD design; link to the TRD and keep this concrete (file-system level). It's the map the
+   stages slot into; keep it short for small features. **Present the layout, then STOP — end your
+   turn and wait for approval. Do not start the stage breakdown in the same turn.**
+3. Propose the **stage breakdown** (titles + one-line goals + order only) — each stage references
+   the package layout from step 2, and **each title carries its layer tag** (`[contract]` /
+   `[domain]` / `[data]` / `[presentation]`, or `[UI]` / `[data-integration]` on unlayered
+   projects). **Lead with the count and the shape** — e.g. "3 screens over one repository → 17
+   stages: domain, data, then per screen a shell + 3 section stages + assembly" — so the user sees
+   how many checkpoints they're agreeing to before any stage is detailed. **Per-section splitting
+   multiplies that count**, so show the per-screen shape (shell + N sections + assembly) and the
+   section stages' names; if the user wants it coarser, they say so here, not after 17 stages are
+   written. **Present it, then STOP and wait for approval. Do not detail any stage until the user
+   approves the shape.**
+4. For each stage, in order: **draft** the stage detail (goal, files/modules, approach per the
+   ladder, concrete changes, **the test(s) to write first from the AC** — TDD red, verify step,
+   checkpoint, safe-to-stop flag, tasks covered) → **present it and STOP** (approve / edit /
+   re-split — end your turn, wait for the verdict; do not draft the next stage or write the file
+   yet) → on approval, **write** it into `plan-<platform>.md` **with its `Approved: <commit · date>`
+   recorded** and move to the next stage. Every stage with real logic must name its test so
+   `do-development` can write it first; flag stages that genuinely can't be unit-tested.
+5. After all stages: write the sequencing summary (dependency order, which checkpoints are safe stop
+   points, any uncovered tasks). **The coverage check is not tasks-only:** confirm every hub-decided
+   **integrity AC** (entity visibility · on-delete behavior · freshness), every **feature-flow
+   step** (hub §3), and every **flow binding** also maps to a stage — flag any that fell between
+   tasks.
 
-This skill writes the **plan**. Implementing it (coding stage-by-stage, pausing at checkpoints) is the user's call to make afterwards — the plan is what lets them stop wherever they want.
+This skill writes the **plan**. Implementing it (coding stage-by-stage, pausing at checkpoints) is
+the user's call to make afterwards — the plan is what lets them stop wherever they want.

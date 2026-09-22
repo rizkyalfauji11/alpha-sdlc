@@ -11,9 +11,12 @@
 
 > Every acceptance criterion maps to at least one test case, at the **right level** — placed once
 > where it's cheapest and most stable (don't re-test the same thing across levels). Cover the
-> negative / error / edge / auth / offline cases the AC implies — not just the happy path. Mark uncovered AC.
-> **Level** = API · UI · Integration · E2E. Visual parity is a UI-level check (within platform tolerance);
-> **token/style conformance is a separate UI check** — a wrong token is a bug even inside pixel tolerance.
+> negative / error / edge / auth / offline cases the AC implies — not just the happy path. Mark
+> uncovered AC.
+> **Level** = API · UI · Integration · E2E. Visual parity is a UI-level check (within platform
+> tolerance);
+> **token/style conformance is a separate UI check** — a wrong token is a bug even inside pixel
+> tolerance.
 
 ## AC → test coverage
 
@@ -34,7 +37,8 @@
 
 ### TC1 — <what it verifies>
 - **Approved:** <YYYY-MM-DD — this test's write→approve gate, before it ran>
-- **AC:** <the TRD's numbered AC ID + its essence, e.g. `AC-2 — archived parent shows "unavailable"`; `A1`…`A6` on a foundation TRD>
+- **AC:** <the TRD's numbered AC ID + its essence, e.g. `AC-2 — archived parent shows
+  "unavailable"`; `A1`…`A6` on a foundation TRD>
 - **Preconditions:** <state / data / auth / environment needed before starting>
 - **Steps:**
   1. <action — e.g. tap `qris_widget_scan_button`>
@@ -53,12 +57,16 @@
 
 ## Boot & Smoke (integrated) — mandatory
 
-> The real frontend + real backend booted together (per `docs/basics/09-environment.md` → *Full-stack
-> run recipe*), the **critical journeys named in the hub's §3 *Feature flow*** — driven through the real HTTP stack with
-> **relevant, domain-realistic data (never randomized/placeholder)**. **Not markable manual** — if it
+> The real frontend + real backend booted together (per `docs/basics/09-environment.md` →
+> *Full-stack
+> run recipe*), the **critical journeys named in the hub's §3 *Feature flow*** — driven through the
+> real HTTP stack with
+> **relevant, domain-realistic data (never randomized/placeholder)**. **Not markable manual** — if
+> it
 > didn't run, the feature is blocked, not done. A pass = every cell below is clean.
 
-**Stack booted:** <BE cmd + ready-check · FE cmd + ready-check · FE→BE base URL used> — or the blocker if it couldn't boot.
+**Stack booted:** <BE cmd + ready-check · FE cmd + ready-check · FE→BE base URL used> — or the
+blocker if it couldn't boot.
 
 | Critical journey | 4xx/5xx (unexpected) | Console errors | Error-boundary / crash | Requests match contract/routes | Result |
 |------------------|----------------------|----------------|------------------------|--------------------------------|--------|
@@ -79,12 +87,23 @@
 
 - **AC covered:** <n of m>
 - **By level:** API <n> · UI <n> · Integration <n> · E2E <n>
-- **Boot & Smoke (integrated):** <pass / FAILED / blocked — with blocker>  — *mandatory; feature is not done until this passes*
-- **Flow dependencies:** <each binding from the hub's Flow-dependencies sub-table → its data-flow test in **both directions** (create: appears per decided freshness · destructive: on-delete edge honored) · status, or "none">  — *each binding must have both*
-- **Integrity coverage (per consumed entity):** <entity → visibility ✓ (allowed states only) · on-delete ✓ (no dangling ref/crash) · freshness ✓ (decided mechanism) — or "none consumed">
-- **Stepped flows:** <each Multi-step flow → its wizard test set (per-step validation · back/resume · cross-step refetch · abort-clean · atomic commit) · status, or "none">
-- **Section cases (client UI):** <every case ID from each screen's `section-slicing/<screen>.md` → its test → status (e.g. `body.summary/C1–C4` ✓ · `ftr.actions/C5` ✓ · interaction `X1` ✓). Per-screen case totals are the plan's *Screen stage map*; an unasserted case is a coverage gap, not a pass. "none — no section-slicing doc" if not applicable.>
-- **Style conformance (client UI):** <static no-raw-literals: pass/fail (+ literals found) · computed-style assertions: which ran per platform (web strongest; note weaker Android/iOS coverage honestly) · screenshot baseline: tool or "none in repo" · cross-screen consistency vs sibling screens · unregistered deviations found → bugs>
+- **Boot & Smoke (integrated):** <pass / FAILED / blocked — with blocker> — *mandatory; feature is
+  not done until this passes*
+- **Flow dependencies:** <each binding from the hub's Flow-dependencies sub-table → its data-flow
+  test in **both directions** (create: appears per decided freshness · destructive: on-delete edge
+  honored) · status, or "none"> — *each binding must have both*
+- **Integrity coverage (per consumed entity):** <entity → visibility ✓ (allowed states only) ·
+  on-delete ✓ (no dangling ref/crash) · freshness ✓ (decided mechanism) — or "none consumed">
+- **Stepped flows:** <each Multi-step flow → its wizard test set (per-step validation · back/resume
+  · cross-step refetch · abort-clean · atomic commit) · status, or "none">
+- **Section cases (client UI):** <every case ID from each screen's `section-slicing/<screen>.md` →
+  its test → status (e.g. `body.summary/C1–C4` ✓ · `ftr.actions/C5` ✓ · interaction `X1` ✓).
+  Per-screen case totals are the plan's *Screen stage map*; an unasserted case is a coverage gap,
+  not a pass. "none — no section-slicing doc" if not applicable.>
+- **Style conformance (client UI):** <static no-raw-literals: pass/fail (+ literals found) ·
+  computed-style assertions: which ran per platform (web strongest; note weaker Android/iOS coverage
+  honestly) · screenshot baseline: tool or "none in repo" · cross-screen consistency vs sibling
+  screens · unregistered deviations found → bugs>
 
 - **E2E scope (risk-calibrated):** <which critical journeys got E2E, and why others didn't>
 - **Uncovered AC (gaps):** <list, or "none">

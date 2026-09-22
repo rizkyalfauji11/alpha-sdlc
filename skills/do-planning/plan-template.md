@@ -14,11 +14,15 @@
 ## Design references *(UI platforms)*
 
 > The design each screen must match 1:1 (within platform-best-practice tolerance).
-> Figma → paste the frame link; image → commit it to `docs/development/<feature-name>/design/<screen>.png`.
+> Figma → paste the frame link; image → commit it to
+> `docs/development/<feature-name>/design/<screen>.png`.
 > **One row per screen, per flow step, and per specced state** — carry everything grooming captured;
-> a state with no ref carries its explicit marker (Open Decision / platform default per `04-ux-conventions`).
-> **The reference is what to build, not where the numbers come from:** spacing, type, color and border
-> **values come from the screen's widget-spec *Style bindings* → `docs/basics/18-design-tokens.md`** —
+> a state with no ref carries its explicit marker (Open Decision / platform default per
+> `04-ux-conventions`).
+> **The reference is what to build, not where the numbers come from:** spacing, type, color and
+> border
+> **values come from the screen's widget-spec *Style bindings* → `docs/basics/18-design-tokens.md`**
+> —
 > never measured off the image.
 
 | Screen / step / state | Design (Figma link / image path) | Specific needs |
@@ -35,7 +39,9 @@
 
 _Approved: <YYYY-MM-DD — the layout gate>_
 
-**Approach (ladder rung · world-wide standard):** <required — name the rung AND the industry-standard way today, e.g. "rung 2: reuse existing package structure; no new modules · standard: agrees" — conflicts surfaced per the tiered rule>
+**Approach (ladder rung · world-wide standard):** <required — name the rung AND the
+industry-standard way today, e.g. "rung 2: reuse existing package structure; no new modules ·
+standard: agrees" — conflicts surfaced per the tiered rule>
 
 | Concern | Package / directory | New or existing? | Notes |
 |---------|---------------------|------------------|-------|
@@ -46,10 +52,14 @@ _Approved: <YYYY-MM-DD — the layout gate>_
 
 ## Screen stage map *(UI platforms)*
 
-> How each screen's presentation work splits: **shell → section stages → assembly**. A section earns its
-> own stage when it has more than one case, its own data source, or a repeating item template; trivial
-> siblings group. Every section and case is claimed by **exactly one** section stage; every interaction
-> (`X`) row is claimed by the assembly stage. This table is the coverage check — an unclaimed case is the
+> How each screen's presentation work splits: **shell → section stages → assembly**. A section earns
+> its
+> own stage when it has more than one case, its own data source, or a repeating item template;
+> trivial
+> siblings group. Every section and case is claimed by **exactly one** section stage; every
+> interaction
+> (`X`) row is claimed by the assembly stage. This table is the coverage check — an unclaimed case
+> is the
 > missed case.
 
 | Screen | Shell | Section stages (top-down) | Assembly | Cases claimed |
@@ -58,29 +68,68 @@ _Approved: <YYYY-MM-DD — the layout gate>_
 
 ## Stages
 
-> **Stages split by architecture layer** — a screen is a sequence, not a stage: `[contract]` (only if the
+> **Stages split by architecture layer** — a screen is a sequence, not a stage: `[contract]` (only
+> if the
 > API contract changes) → `[domain]` → `[data]` → `[presentation]`, using the layer names in
 > `docs/basics/02-architecture.md`. Unlayered project → minimum `[UI]` vs `[data-integration]`
-> (API/DB/3rd-party). **Only the layers this slice actually touches** — reusing an existing endpoint with
-> no new business rule is one `[presentation]` stage, not three. **Shared lower-layer work is staged once**
+> (API/DB/3rd-party). **Only the layers this slice actually touches** — reusing an existing endpoint
+> with
+> no new business rule is one `[presentation]` stage, not three. **Shared lower-layer work is staged
+> once**
 > (3 screens over 1 repository = domain + data + one presentation stage per screen).
 
 ### Stage 1 — [<layer>] <goal>
-- **Covers:** <task IDs / Jira keys / the TRD's numbered AC IDs (e.g. `AC-3, AC-7` — the spoke's §8 registry on a hub/spoke feature; `A1`…`A6` on a foundation TRD) / the contract-delta entries this stage merges (the `TIGHTENS`/`REMOVES` ones held back from the `[contract]` stage)>
-- **Layer:** <contract / domain / data / presentation — or UI / data-integration if the project isn't layered. The diff **stays inside this layer**: business logic doesn't land in a ViewModel, a presentation stage doesn't reach into data. `do-development`'s conformance review checks the diff against this declaration.>
+- **Covers:** <task IDs / Jira keys / the TRD's numbered AC IDs (e.g. `AC-3, AC-7` — the spoke's §8
+  registry on a hub/spoke feature; `A1`…`A6` on a foundation TRD) / the contract-delta entries this
+  stage merges (the `TIGHTENS`/`REMOVES` ones held back from the `[contract]` stage)>
+- **Layer:** <contract / domain / data / presentation — or UI / data-integration if the project
+  isn't layered. The diff **stays inside this layer**: business logic doesn't land in a ViewModel, a
+  presentation stage doesn't reach into data. `do-development`'s conformance review checks the diff
+  against this declaration.>
 - **Files / modules:** <paths>
-- **Approach:** <what / ladder rung · world-wide standard (agrees, or the surfaced conflict) — reuse X, native Y, etc.>
-- **Changes (shape, not full code):** per file, what changes; new/changed **signatures, data shapes, endpoints, or props**; **pseudocode or notes only for tricky logic** (races, money caps, retries, edge cases). For stages touching the contract: merging the **approved contract delta** (hub §5, `docs/development/<feature>/contract/`) + **typed-client regeneration** come first (per `05-tech-stack.md` → Code generation) — never a re-translation of the summary table; merge only the entries §5's change-kind label marks safe ahead of the code — a `TIGHTENS`/`REMOVES` entry merges in the stage that carries the code satisfying or performing it, named on that stage's `Covers:`. For stages touching shared entities: name the **query keys read + invalidations/events fired** (per `08-data-cache.md`). Detail scales with risk — trivial changes stay a line, risky ones get the interface + edge cases. Do *not* paste full method bodies/boilerplate.
-- **Design ref (UI stages):** which screen + design (from *Design references* above) and the states to match — the parity target for this stage. `n/a` for non-UI stages.
-- **Stage kind (UI presentation):** <`shell` (scaffold + route + screen state + empty slots) · `section` · `assembly` (full screen + interactions) — from the *Screen stage map* above. `n/a` for non-UI stages.>
-- **Section(s) + element scope (UI section stages):** <the section ID(s) this stage builds (e.g. `body.list` + `body.list.item`) and the widget-spec rows whose `Section` column matches — that's this stage's element scope.>
-- **Section cases (UI stages):** the case IDs from `section-slicing/<screen>.md` this stage implements (e.g. `body.summary/C1–C4` · `ftr.actions/C5`), each with its crop. A **section** stage compares against its **crops only**; the **assembly** stage owns full-screen parity + the interaction (`X`) rows. Every case claimed by exactly one stage — unclaimed is the missed case, claimed twice means two stages fight over the same view. `n/a` for non-UI stages.
-- **Test first (TDD red):** the failing test(s) that prove this stage, derived from the AC — what they assert. If the stage can't be unit-tested (native widget render, pure UI), say so and give the manual/observed check instead.
+- **Approach:** <what / ladder rung · world-wide standard (agrees, or the surfaced conflict) — reuse
+  X, native Y, etc.>
+- **Changes (shape, not full code):** per file, what changes; new/changed **signatures, data shapes,
+  endpoints, or props**; **pseudocode or notes only for tricky logic** (races, money caps, retries,
+  edge cases). For stages touching the contract: merging the **approved contract delta** (hub §5,
+  `docs/development/<feature>/contract/`) + **typed-client regeneration** come first (per
+  `05-tech-stack.md` → Code generation) — never a re-translation of the summary table; merge only
+  the entries §5's change-kind label marks safe ahead of the code — a `TIGHTENS`/`REMOVES` entry
+  merges in the stage that carries the code satisfying or performing it, named on that stage's
+  `Covers:`. For stages touching shared entities: name the **query keys read + invalidations/events
+  fired** (per `08-data-cache.md`). Detail scales with risk — trivial changes stay a line, risky
+  ones get the interface + edge cases. Do *not* paste full method bodies/boilerplate.
+- **Design ref (UI stages):** which screen + design (from *Design references* above) and the states
+  to match — the parity target for this stage. `n/a` for non-UI stages.
+- **Stage kind (UI presentation):** <`shell` (scaffold + route + screen state + empty slots) ·
+  `section` · `assembly` (full screen + interactions) — from the *Screen stage map* above. `n/a` for
+  non-UI stages.>
+- **Section(s) + element scope (UI section stages):** <the section ID(s) this stage builds (e.g.
+  `body.list` + `body.list.item`) and the widget-spec rows whose `Section` column matches — that's
+  this stage's element scope.>
+- **Section cases (UI stages):** the case IDs from `section-slicing/<screen>.md` this stage
+  implements (e.g. `body.summary/C1–C4` · `ftr.actions/C5`), each with its crop. A **section** stage
+  compares against its **crops only**; the **assembly** stage owns full-screen parity + the
+  interaction (`X`) rows. Every case claimed by exactly one stage — unclaimed is the missed case,
+  claimed twice means two stages fight over the same view. `n/a` for non-UI stages.
+- **Test first (TDD red):** the failing test(s) that prove this stage, derived from the AC — what
+  they assert. If the stage can't be unit-tested (native widget render, pure UI), say so and give
+  the manual/observed check instead.
 - **Verify:** <how to confirm green — run the test(s) + build/observe>
-- **Conformance review — docs this stage must be checked against:** <the `docs/basics/` docs the stage's changes touch, e.g. `02-architecture` (layer placement) · `10-conventions` (error handling/logging) · `08-data-cache` (query keys + invalidation) · `18-design-tokens` (zero raw literals) — so the reviewer audits the right ones instead of guessing. Principles + plan/AC conformance are always checked.>
-- **Approved (plan gate):** <commit `<hash>` · approved <YYYY-MM-DD> — set by do-planning when this stage's draft passes its gate; `do-development` reads it before building the stage>
-- **Checkpoint verdict:** <pending — set by do-development when the built stage passes review: `approved <date>` or `auto <date>`; separate from *done*>
-- **⏸ Checkpoint — review here.** **Safe to stop after?** <yes — compiles & tests pass / no — leaves X half-done until Stage N. **Safe ≠ complete** — note when the slice isn't user-visible yet (e.g. "safe: green; but nothing on screen until Stage 4 [presentation]"). **A partially-sectioned screen is *not* safe** — green but visually broken (e.g. "no: 2 of 4 sections built; screen is broken until Stage 9 assembly").>
+- **Conformance review — docs this stage must be checked against:** <the `docs/basics/` docs the
+  stage's changes touch, e.g. `02-architecture` (layer placement) · `10-conventions` (error
+  handling/logging) · `08-data-cache` (query keys + invalidation) · `18-design-tokens` (zero raw
+  literals) — so the reviewer audits the right ones instead of guessing. Principles + plan/AC
+  conformance are always checked.>
+- **Approved (plan gate):** <commit `<hash>` · approved <YYYY-MM-DD> — set by do-planning when this
+  stage's draft passes its gate; `do-development` reads it before building the stage>
+- **Checkpoint verdict:** <pending — set by do-development when the built stage passes review:
+  `approved <date>` or `auto <date>`; separate from *done*>
+- **⏸ Checkpoint — review here.** **Safe to stop after?** <yes — compiles & tests pass / no — leaves
+  X half-done until Stage N. **Safe ≠ complete** — note when the slice isn't user-visible yet (e.g.
+  "safe: green; but nothing on screen until Stage 4 [presentation]"). **A partially-sectioned screen
+  is *not* safe** — green but visually broken (e.g. "no: 2 of 4 sections built; screen is broken
+  until Stage 9 assembly").>
 
 ### Stage 2 — [<layer>] <goal>
 - **Covers:** <…>
@@ -92,8 +141,10 @@ _Approved: <YYYY-MM-DD — the layout gate>_
 - **Changes:** <…>
 - **Verify:** <…>
 - **Conformance review — docs:** <…>
-- **Approved (plan gate):** <commit `<hash>` · approved <YYYY-MM-DD> — set by do-planning when this stage's draft passes its gate; `do-development` reads it before building the stage>
-- **Checkpoint verdict:** <pending — set by do-development when the built stage passes review: `approved <date>` or `auto <date>`; separate from *done*>
+- **Approved (plan gate):** <commit `<hash>` · approved <YYYY-MM-DD> — set by do-planning when this
+  stage's draft passes its gate; `do-development` reads it before building the stage>
+- **Checkpoint verdict:** <pending — set by do-development when the built stage passes review:
+  `approved <date>` or `auto <date>`; separate from *done*>
 - **⏸ Checkpoint — review here.** **Safe to stop after?** <…>
 
 <!-- repeat; prefer many small stages over few big ones -->
@@ -102,5 +153,7 @@ _Approved: <YYYY-MM-DD — the layout gate>_
 
 - **Order / dependencies:** <which stage must precede which, and why>
 - **Safe stop points:** <list the checkpoints where the codebase is in a working/shippable state>
-- **Uncovered tasks / AC:** <derived from the TRD's numbered AC register against the stages' `Covers:` — any AC (incl. each **integrity AC**: visibility · on-delete · freshness), task, **feature-flow step**, or **flow binding** not yet mapped to a stage — or "none">
+- **Uncovered tasks / AC:** <derived from the TRD's numbered AC register against the stages'
+  `Covers:` — any AC (incl. each **integrity AC**: visibility · on-delete · freshness), task,
+  **feature-flow step**, or **flow binding** not yet mapped to a stage — or "none">
 

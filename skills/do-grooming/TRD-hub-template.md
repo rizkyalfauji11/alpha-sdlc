@@ -36,40 +36,56 @@ _Approved: <YYYY-MM-DD>_
 _Approved: <YYYY-MM-DD>_
 
 > How this feature relates to **other features** — so a dependency is reused/sequenced, not missed.
-> Grounded in `docs/basics/16-feature-map.md` + sibling feature TRDs; register this feature in the map.
+> Grounded in `docs/basics/16-feature-map.md` + sibling feature TRDs; register this feature in the
+> map.
 
 | Depends on / relates to | Kind | Integration points | Status | Blocking? |
 |-------------------------|------|---------------------|--------|-----------|
 | <menu-categories> | depends-on (reuse) | <needs category id + list from `GET /categories`> | shipped | no |
 | <payments-v2> | prerequisite (not built) | <needs its charge API> | planned | **YES → Open Decision** |
 
-- **Kinds:** depends-on (reuse an existing feature's contract/data/UI — don't break it) · prerequisite (must be built first) · shared-contract (extends a model another feature owns).
-- **Hard rule:** a **prerequisite that isn't built yet blocks the affected slice** → raise it as an **Open Decision** in the spoke; it's built/decided before the dependent slice proceeds. Never design around a phantom.
+- **Kinds:** depends-on (reuse an existing feature's contract/data/UI — don't break it) ·
+  prerequisite (must be built first) · shared-contract (extends a model another feature owns).
+- **Hard rule:** a **prerequisite that isn't built yet blocks the affected slice** → raise it as an
+  **Open Decision** in the spoke; it's built/decided before the dependent slice proceeds. Never
+  design around a phantom.
 
-**Entities touched** — every entity this feature owns or consumes, resolved against `docs/basics/06-domain-model.md` (new/changed entities are registered back into it):
+**Entities touched** — every entity this feature owns or consumes, resolved against
+`docs/basics/06-domain-model.md` (new/changed entities are registered back into it):
 
 | Entity | Owns / consumes | Source of truth (owner · endpoint) | States visible here | On-delete impact on this feature | New/changed? → registered |
 |--------|-----------------|-------------------------------------|---------------------|----------------------------------|---------------------------|
 | <EntityA> | consumes (read) | <feature-1 · `GET /entity-a`> | <active only> | <A archived → row shows "unavailable", never dangles> | <no> |
 | <EntityD> | owns | <this feature> | <draft / published> | <deleting D cascades its join rows> | <yes → domain model updated> |
 
-- A consumer binds to the **owner's endpoint**, never a private copy; each *States visible* and *On-delete* cell becomes **testable AC**. A conflict with the domain model → Open Decision + a Contradictions entry there — never model around it.
+- A consumer binds to the **owner's endpoint**, never a private copy; each *States visible* and
+  *On-delete* cell becomes **testable AC**. A conflict with the domain model → Open Decision + a
+  Contradictions entry there — never model around it.
 
-**Flow dependencies (field / section grain)** — specific inputs/sections whose data flows from another feature:
+**Flow dependencies (field / section grain)** — specific inputs/sections whose data flows from
+another feature:
 
 | Consuming element (field / section) | Direction | Source feature · flow / endpoint | Data contract | Freshness (decided) | Data-flow test |
 |-------------------------------------|-----------|----------------------------------|---------------|---------------------|----------------|
 | <create-form → options dropdown> | consumes-options-from | <feature-1 · `GET /entity-a/:id/options`> | <`{id,label}[]`> | <on-mutation invalidation — a new option appears without app restart> | <create option in source → dropdown shows it> |
 | <detail page → related list> | displays-created-by | <feature-2 · `POST /entity-c` → `GET /entity-c?parent=`> | <entity shape> | <real-time event / refetch-on-focus> | <create item → it appears in the list> |
 
-- **Direction:** consumes-options-from (an input's options/values come from the source) · displays-created-by (a list/section shows entities the source creates) · writes-to (this feature feeds the source).
-- **Freshness is decided at grooming** — when the source changes, when must this consumer see it, via which mechanism per `docs/basics/08-data-cache.md` → *Shared server-state sync* (mutation → invalidation · real-time event · refetch-on-focus). Undecided freshness = the "consumer's list not synchronized" bug; each cell becomes testable AC.
-- Each binding gets a **mandatory cross-feature data-flow test** in `do-testing` (seed/create in the source → assert it flows into this feature's field/section, real data, **within the decided freshness**). A broken binding is a bug; an untested one is a coverage gap.
+- **Direction:** consumes-options-from (an input's options/values come from the source) ·
+  displays-created-by (a list/section shows entities the source creates) · writes-to (this feature
+  feeds the source).
+- **Freshness is decided at grooming** — when the source changes, when must this consumer see it,
+  via which mechanism per `docs/basics/08-data-cache.md` → *Shared server-state sync* (mutation →
+  invalidation · real-time event · refetch-on-focus). Undecided freshness = the "consumer's list not
+  synchronized" bug; each cell becomes testable AC.
+- Each binding gets a **mandatory cross-feature data-flow test** in `do-testing` (seed/create in the
+  source → assert it flows into this feature's field/section, real data, **within the decided
+  freshness**). A broken binding is a bug; an untested one is a coverage gap.
 
 ## 3. Feature flow
 _Approved: <YYYY-MM-DD>_
 
-> **What the user does and what the system does back, end to end, platform-neutral.** Plain enough for
+> **What the user does and what the system does back, end to end, platform-neutral.** Plain enough
+> for
 > a product owner to check without a walkthrough. Per-platform screen mechanics stay in the spoke
 > (*Multi-step flows*), per-screen cases in `section-slicing/`, service topology in §4 below.
 
@@ -80,9 +96,13 @@ _Approved: <YYYY-MM-DD>_
 | 3 | <scans the merchant QR> | <validates the code, fetches merchant + limits> | <amount form, merchant name shown> |
 | 4 | <confirms the amount> | <debits, writes the transaction> | <receipt + transaction id> |
 
-**Alternate paths:** <invalid QR → error, retry stays on the scanner · balance too low → blocked before any debit · permission denied → settings prompt. One line each; every branch a user can actually hit.>
+**Alternate paths:** <invalid QR → error, retry stays on the scanner · balance too low → blocked
+before any debit · permission denied → settings prompt. One line each; every branch a user can
+actually hit.>
 
-**Critical journeys:** <the paths that must work for the feature to be shippable — e.g. "1→4 happy path · 3 invalid QR". `do-testing` drives exactly these in its **Boot & Smoke** gate, so name them here rather than leaving them to be invented at test time.>
+**Critical journeys:** <the paths that must work for the feature to be shippable — e.g. "1→4 happy
+path · 3 invalid QR". `do-testing` drives exactly these in its **Boot & Smoke** gate, so name them
+here rather than leaving them to be invented at test time.>
 
 <Each row is a natural acceptance criterion — the spoke's Work slices carry the assertable version.>
 
@@ -91,7 +111,9 @@ _Approved: <YYYY-MM-DD>_
 
 <End-to-end picture: which clients and services are involved and how they interact.>
 
-**Approach (ladder rung · world-wide standard):** <required — name the rung the overall approach stops at AND the industry-standard way today, e.g. "rung 2: reuse existing APIs, no new backend · standard: agrees" — conflicts surfaced per the tiered rule>
+**Approach (ladder rung · world-wide standard):** <required — name the rung the overall approach
+stops at AND the industry-standard way today, e.g. "rung 2: reuse existing APIs, no new backend ·
+standard: agrees" — conflicts surfaced per the tiered rule>
 
 
 ```mermaid
@@ -105,11 +127,17 @@ graph TD
 ## 5. API contracts
 _Approved: <YYYY-MM-DD>_
 
-<The backend↔client contract — the shared truth every spoke references. Method, path, request, response, errors.>
+<The backend↔client contract — the shared truth every spoke references. Method, path, request,
+response, errors.>
 
-**Machine-checkable spec:** <required — path/link to the authoritative OpenAPI/Swagger (or shared schema/types) file, and which repo owns it. If none exists yet, that's a work slice.>
+**Machine-checkable spec:** <required — path/link to the authoritative OpenAPI/Swagger (or shared
+schema/types) file, and which repo owns it. If none exists yet, that's a work slice.>
 
-**Contract delta (gated with this section):** <`../contract/openapi-delta.yaml` — the machine-checkable fragment for every endpoint this feature adds/changes. **This fragment is what gets approved and what spokes derive typed clients + fixtures from**; the table below is the human summary, never a second source of truth. Development's `[contract]` stage merges this approved fragment into the project spec and regenerates — no re-translation.>
+**Contract delta (gated with this section):** <`../contract/openapi-delta.yaml` — the
+machine-checkable fragment for every endpoint this feature adds/changes. **This fragment is what
+gets approved and what spokes derive typed clients + fixtures from**; the table below is the human
+summary, never a second source of truth. Development's `[contract]` stage merges this approved
+fragment into the project spec and regenerates — no re-translation.>
 
 > The table is a human-readable summary of the spec above — not a second source of truth.
 > Specify fields **precisely**: exact type, nullability, enum values, and **localized fields as
@@ -123,7 +151,8 @@ _Approved: <YYYY-MM-DD>_
 ## 6. Cross-cutting concerns
 _Approved: <YYYY-MM-DD>_
 
-<Things every platform must agree on: auth, error model, API versioning & backward compatibility, feature flags, i18n/localization, analytics events.>
+<Things every platform must agree on: auth, error model, API versioning & backward compatibility,
+feature flags, i18n/localization, analytics events.>
 
 ## 7. Change manifest
 _Approved: <YYYY-MM-DD>_

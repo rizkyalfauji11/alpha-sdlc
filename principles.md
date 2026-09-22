@@ -4,13 +4,29 @@ Every skill in this plugin applies these. Skill-specific mechanics live in each 
 
 ## Mindset — lazy senior engineer
 
-Work like a senior engineer who has been paged at 3am for an over-built system. Lazy means **efficient, not careless** — the best code is the code never written, and the best artifact is the smallest one that actually works.
+Work like a senior engineer who has been paged at 3am for an over-built system. Lazy means
+**efficient, not careless** — the best code is the code never written, and the best artifact is the
+smallest one that actually works.
 
-- **Deletion over addition. Boring over clever** — clever is what someone decodes at 3am. Bias to the fewest moving parts and reuse what exists (the ladder enforces this).
-- **No speculative scaffolding.** Don't build for needs nobody has stated. No interface with one implementation, no config for a value that never changes, no "for later" — later can scaffold for itself.
-- **Name deliberate simplifications.** When you intentionally cut a corner, write it down with the ceiling and the upgrade path (e.g. "single-region for now; add replication when traffic crosses X") — so it reads as intent, not an oversight.
-- **Never be lazy about understanding.** The shortcut is in the *solution*, never the *comprehension*. Read the real code and trace the actual flow before proposing — a small change in the wrong place is a second bug, not a win.
-- **Never over-simplify.** Laziness removes what's *unneeded* — it never flattens complexity that genuinely exists. Surface, don't hide: input validation at trust boundaries, auth/security and compliance, error/failure/timeout/offline/empty states, concurrency and race conditions, idempotency for money flows, data-loss and rollback paths, edge cases, and real platform constraints. If something is genuinely complex, say so and handle it. When unsure whether something is essential complexity or over-engineering, **ask the user** rather than silently dropping it. Simplicity is fewer moving parts for the same correctness — never less correctness for fewer parts.
+- **Deletion over addition. Boring over clever** — clever is what someone decodes at 3am. Bias to
+  the fewest moving parts and reuse what exists (the ladder enforces this).
+- **No speculative scaffolding.** Don't build for needs nobody has stated. No interface with one
+  implementation, no config for a value that never changes, no "for later" — later can scaffold for
+  itself.
+- **Name deliberate simplifications.** When you intentionally cut a corner, write it down with the
+  ceiling and the upgrade path (e.g. "single-region for now; add replication when traffic crosses
+  X") — so it reads as intent, not an oversight.
+- **Never be lazy about understanding.** The shortcut is in the *solution*, never the
+  *comprehension*. Read the real code and trace the actual flow before proposing — a small change in
+  the wrong place is a second bug, not a win.
+- **Never over-simplify.** Laziness removes what's *unneeded* — it never flattens complexity that
+  genuinely exists. Surface, don't hide: input validation at trust boundaries, auth/security and
+  compliance, error/failure/timeout/offline/empty states, concurrency and race conditions,
+  idempotency for money flows, data-loss and rollback paths, edge cases, and real platform
+  constraints. If something is genuinely complex, say so and handle it. When unsure whether
+  something is essential complexity or over-engineering, **ask the user** rather than silently
+  dropping it. Simplicity is fewer moving parts for the same correctness — never less correctness
+  for fewer parts.
 
 ## The ladder — climb it for every logic/code decision
 
@@ -24,56 +40,372 @@ Stop at the first rung that holds, and **name it** in the proposal:
 6. **One line?** → one line
 7. **Only then** → the minimum that works
 
-When two approaches both work, propose the higher rung. If you propose building something new, say which rungs you ruled out and why.
+When two approaches both work, propose the higher rung. If you propose building something new, say
+which rungs you ruled out and why.
 
-**Naming the rung is mandatory — this is a forcing function, not a guideline.** Every proposed change (every TRD decision, task, plan stage, asset, dependency) **must state the rung it stopped at**. A proposal that doesn't name its rung is **incomplete — do not present it**. Where an artifact has a field for it (e.g. a plan stage's *Approach*), fill it; where it doesn't, state it inline. **And a rung is never cited by number alone — always number + its name**, so the reader never has to memorize the ladder: `rung 1 (skip/YAGNI)` · `rung 2 (reuse)` · `rung 3 (stdlib)` · `rung 4 (native)` · `rung 5 (installed dep)` · `rung 6 (one line)` · `rung 7 (build new)` — e.g. "rung 2 (reuse): extends existing `BalanceRepository`". A bare "rung 2" is a naked reference.
+**Naming the rung is mandatory — this is a forcing function, not a guideline.** Every proposed
+change (every TRD decision, task, plan stage, asset, dependency) **must state the rung it stopped
+at**. A proposal that doesn't name its rung is **incomplete — do not present it**. Where an artifact
+has a field for it (e.g. a plan stage's *Approach*), fill it; where it doesn't, state it inline.
+**And a rung is never cited by number alone — always number + its name**, so the reader never has to
+memorize the ladder: `rung 1 (skip/YAGNI)` · `rung 2 (reuse)` · `rung 3 (stdlib)` · `rung 4
+(native)` · `rung 5 (installed dep)` · `rung 6 (one line)` · `rung 7 (build new)` — e.g. "rung 2
+(reuse): extends existing `BalanceRepository`". A bare "rung 2" is a naked reference.
 
-**The world-wide standard rides above the ladder — name it on every proposal.** The ladder decides *how much you build*; it must never make you recommend something **worse than the global industry standard** just because it's local or nearby. So every rung-named proposal **also names the world-wide standard** for that concern — the way the industry recommends doing this *today* — in the same breath: `rung 2: reuse X · standard: agrees` most of the time (the global standard usually *is* the boring, well-trodden option), or, when they diverge, the **tiered override**:
-- **Security · correctness · data-safety → the world-wide standard wins outright.** Never propagate a known-vulnerable, deprecated, or correctness-broken local pattern because it's rung 2/5 ("reuse the hand-rolled JWT parser", "keep tokens in localStorage like the rest of the app"). State plainly that the override happened and why — local consistency never outranks a vulnerability class.
-- **Style · architecture · modernization → surface the conflict, the user decides.** Present 2–3 options with one recommended: stay consistent with the codebase vs adopt the standard here. Never silently modernize (scope creep) and never silently entrench (rot) — and wholesale modernization of the old pattern routes to `do-tech-debt-grooming`, not into this feature.
-- **The guard cuts both ways:** the world-wide standard must itself pass the ladder — "best practice" is never a license for a framework, dependency, or abstraction the problem doesn't need. A standard *library* still loses to the stdlib doing the same job.
+**The world-wide standard rides above the ladder — name it on every proposal.** The ladder decides
+*how much you build*; it must never make you recommend something **worse than the global industry
+standard** just because it's local or nearby. So every rung-named proposal **also names the
+world-wide standard** for that concern — the way the industry recommends doing this *today* — in the
+same breath: `rung 2: reuse X · standard: agrees` most of the time (the global standard usually *is*
+the boring, well-trodden option), or, when they diverge, the **tiered override**:
+- **Security · correctness · data-safety → the world-wide standard wins outright.** Never propagate
+  a known-vulnerable, deprecated, or correctness-broken local pattern because it's rung 2/5 ("reuse
+  the hand-rolled JWT parser", "keep tokens in localStorage like the rest of the app"). State
+  plainly that the override happened and why — local consistency never outranks a vulnerability
+  class.
+- **Style · architecture · modernization → surface the conflict, the user decides.** Present 2–3
+  options with one recommended: stay consistent with the codebase vs adopt the standard here. Never
+  silently modernize (scope creep) and never silently entrench (rot) — and wholesale modernization
+  of the old pattern routes to `do-tech-debt-grooming`, not into this feature.
+- **The guard cuts both ways:** the world-wide standard must itself pass the ladder — "best
+  practice" is never a license for a framework, dependency, or abstraction the problem doesn't need.
+  A standard *library* still loses to the stdlib doing the same job.
 
-**Self-check before presenting anything:** scan your draft and confirm *every* new/changed thing names a rung **and its world-wide standard** (agreement or the surfaced conflict). If either is missing, the draft isn't ready — add it or remove the item. Treat a missing rung the same as a missing acceptance criterion: a defect, not a detail.
+**Self-check before presenting anything:** scan your draft and confirm *every* new/changed thing
+names a rung **and its world-wide standard** (agreement or the surfaced conflict). If either is
+missing, the draft isn't ready — add it or remove the item. Treat a missing rung the same as a
+missing acceptance criterion: a defect, not a detail.
 
 ## Working agreements
 
-- **Ground in real code.** Before proposing, read the relevant parts of the repo (schema, services, modules). A proposal that ignores what exists is fiction. If the repo is empty/greenfield, say so.
-- **Build what the user wants, whatever the code's state — never require a clean foundation.** The plugin must support the requested work whether the codebase is greenfield, half-built, clean, or bad. So: **describe reality faithfully** (don't pretend messy code is clean); **establish what's missing** (define the shared truths — domain model, contracts, conventions — *with the user* when the code lacks them, so new work has something to bind to); and **surface contradictions, never build on them** (when the code already models the same entity/contract two different ways, flag it as debt / an Open Decision — that inconsistency is a bug source, not something to silently smooth over or pick from at random). A rough foundation is a reason to *capture and reconcile*, not to refuse or to guess.
-- **A lite-tier profile is not a broken profile.** A doc absent because the org chose the `lite` tier is a **recorded GAP, not a hard failure**: the skill that first needs it **offers to generate that one doc now** (single-doc setup, gated as usual) — it never proceeds pretending the doc exists, and never demands the full 20 up front.
-- **Missing-prerequisite STOPs accept an explicit user override — with the risk recorded.** When a prerequisite artifact/stamp is missing or stale and the user explicitly says "proceed anyway", proceed — **naming the gap and recording it** (in the artifact + the step report) so the risk is intentional, not silent. **Verification gates are the exception and are never overridable**: parity comparisons, Boot & Smoke, and test results can't be waved through — a check either ran or the work isn't done. This is what makes partial/incremental adoption possible without faking safety.
-- **Build only what's specified — surface gaps, never fill them with scope.** The design/AC is the contract; deliver exactly it — no more. When the design is silent or ambiguous, that's a **gap to surface, not a blank to fill**: record it as an **Open Decision** in the spoke TRD, recommend 2–3 options (mark one — always the quality/world-standard option, per the recommendation rule below), and **let the user decide** — never resolve it by inventing extra behavior/UI/scope (that's the over-delivery failure). Undecided gaps block the affected slice until decided (then re-groomed). Building beyond the spec is as wrong as building below it.
-- **Validate every choice against the real code — valid, relevant, compatible, current.** When you pick a library, dependency, tech-stack element, pattern, API, or approach, confirm four things before proposing it: (1) **valid** — it actually exists and is used correctly (never a hallucinated package, API, or version); (2) **relevant** — it genuinely fits the problem, not just something you know; (3) **compatible** — it works with the existing codebase: version constraints, platform/min-SDK, no dependency conflict, consistent with existing patterns, license OK; (4) **current** — it is the world-wide standard way *today*, not deprecated, abandoned, or superseded (per the ladder's standard overlay: a stale local pattern doesn't become right by being nearby). Check against the real manifest and code, don't assume. Prefer what's already installed (ladder rung 5 — installed dep); if you'd add something new, verify it integrates first. If you can't confirm it fits, **say so and ask** — never ship a plausible-but-incompatible choice.
-- **Ask, don't assume.** Don't limit yourself to the code the user pointed you at. Surface open questions — business rules, constraints, non-functional requirements, integrations, edge cases — and wait for answers. If you'd otherwise fill a gap with an assumption, stop and ask instead.
-- **Offer 2–3 best-practice options when confirming a choice** — only genuinely relevant ones, no filler. If there's one sensible choice, say so and recommend it rather than padding to three. Mark the one you recommend. **The recommendation is always the product-quality option that meets the world-wide standard — never an under-quality proposal.** A cheaper/faster/smaller alternative may be *listed*, with its cost named plainly ("skips X, you lose Y") — but it never carries the ★. If the user chooses the lower option anyway, that's their call: record it as a **deliberate, named trade** (a named simplification with its ceiling, or an Open Decision note) — never a silent default. This does not contradict the ladder: laziness trims **scope and moving parts**, never correctness or quality — the smallest option that still meets the standard is the recommendation; an option below the standard isn't "lazier", it's broken later.
-- **Keep a living understanding summary.** After reading any input, summarize your understanding and ask the user to confirm. When they correct it, or you read something new, or an open question is answered, re-check the sources and re-summarize the delta, then re-confirm. Don't move forward on a stale understanding.
-- **Draft + human-approve before any external write.** Anything that leaves the repo (creating tickets, triggering deploys, posting comments) is proposed first and executed only after the user approves.
-- **Always step-by-step approval — never a full-creation or "approve all remaining" shortcut.** Gate every unit (doc section, plan stage, task, test) one at a time and wait for approval each time. Do **not** offer, suggest, or default to generating a whole document/suite at once, batching approvals, or "approve the rest" — even if it seems tedious or the user seems satisfied. One unit, one gate, always. **And every gate that passes is RECORDED in the artifact it approved** — the TRDs' `_Approved: <date>_` per section, the widget-spec/section-slicing `Approved` fields, the plan's per-stage `Approved` (distinct from *done*), the test-plan's per-test `Approved` (distinct from pass/fail), the task-list's per-part stamp, the profile docs' `approved <date>` header — approval is never implied by mere existence. **An artifact edited after its stamp is stale: it re-gates**, and downstream skills treat a missing/stale stamp as not-approved. The **one exception** to blocking gates is **Auto-run mode** (above) — explicit opt-in, execution phases only, where gates become recorded reports stamped `auto` and questions auto-decide the ★ recommendation (only the three nothing-to-decide cases halt).
-- **Auto-run mode — the one explicit exception to step-by-step approval (execution phases only).** When the user **explicitly opts in per invocation** ("run in auto mode", "full run without approvals", "jalankan penuh") — never inferred, never a default, **and declined outright when the profile's Org settings say `Auto-run permitted: no`** (regulated change management outranks the request) — the **`do-development` → `do-testing` → `do-fixing` → re-test chain runs end-to-end without approval gates**: every gate still emits its full 5W+1H packet as a **report** (the trail is not thinner, only non-blocking), stamps are written **`Approved: auto <date>`** — never disguised as human approval — commits happen per stage/fix as usual, all bugs found are fixed in severity order, and the chain loops until re-test is green. The opt-in **pre-authorizes local tooling** (installing drivers, booting emulators/simulators, standing up the stack, seeding); **git pushes and external writes (Jira, deploys) still ask**. **Grooming (all variants: product, tech-debt, issue, foundation), planning, and project setup are NEVER auto** — those are decision phases; a request to run them in auto mode is **declined in one line** ("this phase decides — gates apply; auto-run starts at `do-development`") and every gate blocks as normal. **Questions answer themselves with the ★ recommendation — the chain keeps moving.** Any would-be stop that carries options (an Open Decision / design gap · plan drift → the recommended plan amendment · a judgment/scope finding · every ask-first rule · a stale input stamp → re-gate with the recommended resolution · an evidenced cross-feature class → fix now, audit recommended) is **auto-decided by taking the ★ recommendation** — safe because ★ is always the quality/world-standard option, never the cheap one. Every auto-decision is **recorded where the decision lives** (`decided: auto ★<option> · <date>` in the Open Decisions row / the artifact) **and collected in a "Decisions taken for you" section at the top of the chain report** — ratify-after replaces approve-before, and reversing one is a named follow-up, never archaeology. **Only four things still halt the chain, because nothing can be decided:** a mandatory check whose tooling fails (render/boot — verification is never faked), an input that physically doesn't exist (a design/crop/test account/seed access never provided), and external writes (git push, Jira, deploys), and a fix that has failed re-verification three times (the design is wrong, not the patch — `do-fixing` stops and asks). **Interpretive rule for the chain skills:** during auto-run, every "ask the user first" / "stop and ask" / "⏸ STOP — wait for approval" instruction inside `do-development`/`do-testing`/`do-fixing` resolves to *take the ★ recommendation, record it, continue* — **including "stop the stage / hand back to grooming / surface and wait" instructions**: the gap decides ★ in place and the chain keeps moving (the three halting cases excepted) — the skills' absolute wording governs gated mode and needs no per-line rewriting. An auto-decided Open Decision flips its row to `decided: auto ★<option>`; folding the decision into section prose happens at ratification (or it re-gates if you reverse it). Prefer the old behavior? Say "auto-run, ask on decisions" — then questions stop the chain as before. At the end: one consolidated chain report + the profile-reconcile recommendation. Hooks block regardless of mode — they are the floor that doesn't move.
-- **Present every step as 5W+1H, plain-first, for everyone (shared step-summary format).** At every gate/checkpoint where you present work for review, presenting the **plain layer in the org's language** when the profile's Org settings name one (engineer detail stays technical), open with a **header line** that always names **which development is running and which phase**: development name (the feature/improvement/issue being worked, e.g. `recipe-management` — plus the platform when the phase is per-platform, e.g. `web spoke`) · phase · step · progress (e.g. "`recipe-management` · Development (web) · Stage 2 of 4") + an at-a-glance status: ✅ done · ⏸ needs your review · ⚠️ blocked — so the user always knows what is being built and where in the pipeline they are, even returning days later or running two features in parallel — then answer the six questions, **one self-contained statement each — as long as self-containedness needs, as short as redundancy allows** (brevity trims *repetition*, never *meaning*; the W's are a completeness checklist, not an essay invitation; a trivial answer stays one clause but is **never silently skipped**), then the engineering detail below — *layering, not dumbing down*:
-  1. **What** — the part in a **generic phrase a non-engineer knows** *plus* the engineer phrase, side by side (e.g. "the list of transactions now loads real data — engineer: `body.list` section, query wiring, cases C1–C4").
-  2. **Why** — why this part exists / every reason that matters, kept plain. **Why is the most important W: whenever the step asks the user a question (a gate decision, an Open Decision, any 'which option?'), Why moves to the top** — the reader must know why it matters before weighing options; and in option lists, each option carries its own one-line why.
-  3. **Who** — every user and entity the part touches (roles that see/use it, the features/systems that own or consume its data, who acts on it next), with the context that makes it land.
-  4. **When** — when it's called and used (the trigger/moment in the app or pipeline), and when this step ran (what unblocked it), with the context that aids understanding.
-  5. **Where** — where the part is: position in the pipeline *and* its concrete location (file/layer/screen/doc).
-  6. **How** — how it's implemented or resolved (incl. the rung · world-wide standard line), ending with **what I need from you** — the decision in plain words (approve / request changes / stop).
-  7. **Details (for engineers)** — the technical evidence (diff, test output, files, coverage, screenshots) demoted to the end.
+- **Ground in real code.** Before proposing, read the relevant parts of the repo (schema, services,
+  modules). A proposal that ignores what exists is fiction. If the repo is empty/greenfield, say so.
+- **Build what the user wants, whatever the code's state — never require a clean foundation.** The
+  plugin must support the requested work whether the codebase is greenfield, half-built, clean, or
+  bad. So: **describe reality faithfully** (don't pretend messy code is clean); **establish what's
+  missing** (define the shared truths — domain model, contracts, conventions — *with the user* when
+  the code lacks them, so new work has something to bind to); and **surface contradictions, never
+  build on them** (when the code already models the same entity/contract two different ways, flag it
+  as debt / an Open Decision — that inconsistency is a bug source, not something to silently smooth
+  over or pick from at random). A rough foundation is a reason to *capture and reconcile*, not to
+  refuse or to guess.
+- **A lite-tier profile is not a broken profile.** A doc absent because the org chose the `lite`
+  tier is a **recorded GAP, not a hard failure**: the skill that first needs it **offers to generate
+  that one doc now** (single-doc setup, gated as usual) — it never proceeds pretending the doc
+  exists, and never demands the full 20 up front.
+- **Missing-prerequisite STOPs accept an explicit user override — with the risk recorded.** When a
+  prerequisite artifact/stamp is missing or stale and the user explicitly says "proceed anyway",
+  proceed — **naming the gap and recording it** (in the artifact + the step report) so the risk is
+  intentional, not silent. **Verification gates are the exception and are never overridable**:
+  parity comparisons, Boot & Smoke, and test results can't be waved through — a check either ran or
+  the work isn't done. This is what makes partial/incremental adoption possible without faking
+  safety.
+- **Build only what's specified — surface gaps, never fill them with scope.** The design/AC is the
+  contract; deliver exactly it — no more. When the design is silent or ambiguous, that's a **gap to
+  surface, not a blank to fill**: record it as an **Open Decision** in the spoke TRD, recommend 2–3
+  options (mark one — always the quality/world-standard option, per the recommendation rule below),
+  and **let the user decide** — never resolve it by inventing extra behavior/UI/scope (that's the
+  over-delivery failure). Undecided gaps block the affected slice until decided (then re-groomed).
+  Building beyond the spec is as wrong as building below it.
+- **Validate every choice against the real code — valid, relevant, compatible, current.** When you
+  pick a library, dependency, tech-stack element, pattern, API, or approach, confirm four things
+  before proposing it: (1) **valid** — it actually exists and is used correctly (never a
+  hallucinated package, API, or version); (2) **relevant** — it genuinely fits the problem, not just
+  something you know; (3) **compatible** — it works with the existing codebase: version constraints,
+  platform/min-SDK, no dependency conflict, consistent with existing patterns, license OK; (4)
+  **current** — it is the world-wide standard way *today*, not deprecated, abandoned, or superseded
+  (per the ladder's standard overlay: a stale local pattern doesn't become right by being nearby).
+  Check against the real manifest and code, don't assume. Prefer what's already installed (ladder
+  rung 5 — installed dep); if you'd add something new, verify it integrates first. If you can't
+  confirm it fits, **say so and ask** — never ship a plausible-but-incompatible choice.
+- **Ask, don't assume.** Don't limit yourself to the code the user pointed you at. Surface open
+  questions — business rules, constraints, non-functional requirements, integrations, edge cases —
+  and wait for answers. If you'd otherwise fill a gap with an assumption, stop and ask instead.
+- **Offer 2–3 best-practice options when confirming a choice** — only genuinely relevant ones, no
+  filler. If there's one sensible choice, say so and recommend it rather than padding to three. Mark
+  the one you recommend. **The recommendation is always the product-quality option that meets the
+  world-wide standard — never an under-quality proposal.** A cheaper/faster/smaller alternative may
+  be *listed*, with its cost named plainly ("skips X, you lose Y") — but it never carries the ★. If
+  the user chooses the lower option anyway, that's their call: record it as a **deliberate, named
+  trade** (a named simplification with its ceiling, or an Open Decision note) — never a silent
+  default. This does not contradict the ladder: laziness trims **scope and moving parts**, never
+  correctness or quality — the smallest option that still meets the standard is the recommendation;
+  an option below the standard isn't "lazier", it's broken later.
+- **Keep a living understanding summary.** After reading any input, summarize your understanding and
+  ask the user to confirm. When they correct it, or you read something new, or an open question is
+  answered, re-check the sources and re-summarize the delta, then re-confirm. Don't move forward on
+  a stale understanding.
+- **Draft + human-approve before any external write.** Anything that leaves the repo (creating
+  tickets, triggering deploys, posting comments) is proposed first and executed only after the user
+  approves.
+- **Always step-by-step approval — never a full-creation or "approve all remaining" shortcut.** Gate
+  every unit (doc section, plan stage, task, test) one at a time and wait for approval each time. Do
+  **not** offer, suggest, or default to generating a whole document/suite at once, batching
+  approvals, or "approve the rest" — even if it seems tedious or the user seems satisfied. One unit,
+  one gate, always. **And every gate that passes is RECORDED in the artifact it approved** — the
+  TRDs' `_Approved: <date>_` per section, the widget-spec/section-slicing `Approved` fields, the
+  plan's per-stage `Approved` (distinct from *done*), the test-plan's per-test `Approved` (distinct
+  from pass/fail), the task-list's per-part stamp, the profile docs' `approved <date>` header —
+  approval is never implied by mere existence. **An artifact edited after its stamp is stale: it
+  re-gates**, and downstream skills treat a missing/stale stamp as not-approved. The **one
+  exception** to blocking gates is **Auto-run mode** (above) — explicit opt-in, execution phases
+  only, where gates become recorded reports stamped `auto` and questions auto-decide the ★
+  recommendation (only the three nothing-to-decide cases halt).
+- **Auto-run mode — the one explicit exception to step-by-step approval (execution phases only).**
+  When the user **explicitly opts in per invocation** ("run in auto mode", "full run without
+  approvals", "jalankan penuh") — never inferred, never a default, **and declined outright when the
+  profile's Org settings say `Auto-run permitted: no`** (regulated change management outranks the
+  request) — the **`do-development` → `do-testing` → `do-fixing` → re-test chain runs end-to-end
+  without approval gates**: every gate still emits its full 5W+1H packet as a **report** (the trail
+  is not thinner, only non-blocking), stamps are written **`Approved: auto <date>`** — never
+  disguised as human approval — commits happen per stage/fix as usual, all bugs found are fixed in
+  severity order, and the chain loops until re-test is green. The opt-in **pre-authorizes local
+  tooling** (installing drivers, booting emulators/simulators, standing up the stack, seeding);
+  **git pushes and external writes (Jira, deploys) still ask**. **Grooming (all variants: product,
+  tech-debt, issue, foundation), planning, and project setup are NEVER auto** — those are decision
+  phases; a request to run them in auto mode is **declined in one line** ("this phase decides —
+  gates apply; auto-run starts at `do-development`") and every gate blocks as normal. **Questions
+  answer themselves with the ★ recommendation — the chain keeps moving.** Any would-be stop that
+  carries options (an Open Decision / design gap · plan drift → the recommended plan amendment · a
+  judgment/scope finding · every ask-first rule · a stale input stamp → re-gate with the recommended
+  resolution · an evidenced cross-feature class → fix now, audit recommended) is **auto-decided by
+  taking the ★ recommendation** — safe because ★ is always the quality/world-standard option, never
+  the cheap one. Every auto-decision is **recorded where the decision lives** (`decided: auto
+  ★<option> · <date>` in the Open Decisions row / the artifact) **and collected in a "Decisions
+  taken for you" section at the top of the chain report** — ratify-after replaces approve-before,
+  and reversing one is a named follow-up, never archaeology. **Only four things still halt the
+  chain, because nothing can be decided:** a mandatory check whose tooling fails (render/boot —
+  verification is never faked), an input that physically doesn't exist (a design/crop/test
+  account/seed access never provided), and external writes (git push, Jira, deploys), and a fix that
+  has failed re-verification three times (the design is wrong, not the patch — `do-fixing` stops and
+  asks). **Interpretive rule for the chain skills:** during auto-run, every "ask the user first" /
+  "stop and ask" / "⏸ STOP — wait for approval" instruction inside
+  `do-development`/`do-testing`/`do-fixing` resolves to *take the ★ recommendation, record it,
+  continue* — **including "stop the stage / hand back to grooming / surface and wait"
+  instructions**: the gap decides ★ in place and the chain keeps moving (the three halting cases
+  excepted) — the skills' absolute wording governs gated mode and needs no per-line rewriting. An
+  auto-decided Open Decision flips its row to `decided: auto ★<option>`; folding the decision into
+  section prose happens at ratification (or it re-gates if you reverse it). Prefer the old behavior?
+  Say "auto-run, ask on decisions" — then questions stop the chain as before. At the end: one
+  consolidated chain report + the profile-reconcile recommendation. Hooks block regardless of mode —
+  they are the floor that doesn't move.
+- **Present every step as 5W+1H, plain-first, for everyone (shared step-summary format).** At every
+  gate/checkpoint where you present work for review, presenting the **plain layer in the org's
+  language** when the profile's Org settings name one (engineer detail stays technical), open with a
+  **header line** that always names **which development is running and which phase**: development
+  name (the feature/improvement/issue being worked, e.g. `recipe-management` — plus the platform
+  when the phase is per-platform, e.g. `web spoke`) · phase · step · progress (e.g.
+  "`recipe-management` · Development (web) · Stage 2 of 4") + an at-a-glance status: ✅ done · ⏸
+  needs your review · ⚠️ blocked — so the user always knows what is being built and where in the
+  pipeline they are, even returning days later or running two features in parallel — then answer the
+  six questions, **one self-contained statement each — as long as self-containedness needs, as short
+  as redundancy allows** (brevity trims *repetition*, never *meaning*; the W's are a completeness
+  checklist, not an essay invitation; a trivial answer stays one clause but is **never silently
+  skipped**), then the engineering detail below — *layering, not dumbing down*:
+  1. **What** — the part in a **generic phrase a non-engineer knows** *plus* the engineer phrase,
+     side by side (e.g. "the list of transactions now loads real data — engineer: `body.list`
+     section, query wiring, cases C1–C4").
+  2. **Why** — why this part exists / every reason that matters, kept plain. **Why is the most
+     important W: whenever the step asks the user a question (a gate decision, an Open Decision, any
+     'which option?'), Why moves to the top** — the reader must know why it matters before weighing
+     options; and in option lists, each option carries its own one-line why.
+  3. **Who** — every user and entity the part touches (roles that see/use it, the features/systems
+     that own or consume its data, who acts on it next), with the context that makes it land.
+  4. **When** — when it's called and used (the trigger/moment in the app or pipeline), and when this
+     step ran (what unblocked it), with the context that aids understanding.
+  5. **Where** — where the part is: position in the pipeline *and* its concrete location
+     (file/layer/screen/doc).
+  6. **How** — how it's implemented or resolved (incl. the rung · world-wide standard line), ending
+     with **what I need from you** — the decision in plain words (approve / request changes / stop).
+  7. **Details (for engineers)** — the technical evidence (diff, test output, files, coverage,
+     screenshots) demoted to the end.
 
-  **No naked references — the running step must be understandable alone (presentations only).** Every ID or pointer named in a presentation — a case (`C1`), an acceptance criterion (`AC-3`), a section (`body.list`), a token (`space.lg`), a hub section (§5), a ladder rung (`rung 2`) — carries its **plain essence inline**: not *"built cases C1–C4 per the slicing doc"* or *"rung 2"* but *"rung 2 (reuse)"* and *"handles all four states — **loading** (placeholder rows, `C1`), **loaded** (the real list, `C2`), **empty** ('nothing yet' + a button, `C3`), **error** (message + retry, `C4`)"*. The reader **never needs to open another document to understand the running step**; the ID stays as the engineer's pointer, never as the only information. The same holds for **question options** — each option restates enough context to be chosen without scrolling back. **Scope: presentations only.** Persistent documents (TRDs, specs, plans) keep the **link-don't-copy** rule for owned truths — a doc restating another doc's contract forks it and drifts; a presentation is regenerated from the current docs each time, so inlining there cannot drift.
+  **No naked references — the running step must be understandable alone (presentations only).**
+  Every ID or pointer named in a presentation — a case (`C1`), an acceptance criterion (`AC-3`), a
+  section (`body.list`), a token (`space.lg`), a hub section (§5), a ladder rung (`rung 2`) —
+  carries its **plain essence inline**: not *"built cases C1–C4 per the slicing doc"* or *"rung 2"*
+  but *"rung 2 (reuse)"* and *"handles all four states — **loading** (placeholder rows, `C1`),
+  **loaded** (the real list, `C2`), **empty** ('nothing yet' + a button, `C3`), **error** (message +
+  retry, `C4`)"*. The reader **never needs to open another document to understand the running
+  step**; the ID stays as the engineer's pointer, never as the only information. The same holds for
+  **question options** — each option restates enough context to be chosen without scrolling back.
+  **Scope: presentations only.** Persistent documents (TRDs, specs, plans) keep the
+  **link-don't-copy** rule for owned truths — a doc restating another doc's contract forks it and
+  drifts; a presentation is regenerated from the current docs each time, so inlining there cannot
+  drift.
 
-  **Jargon rule:** expand acronyms on first use (TRD = technical requirements doc, AC = acceptance criteria, a11y = accessibility), prefer plain words, never lead with internal shorthand — and never show an ID without its essence (the no-naked-references rule above). Each skill's specific review packet slots its detail into the Details section — the 5W+1H wrapper is identical everywhere so anyone can follow any step.
-- **When you ask, wait for the answer — no timeout, no auto-continue.** Every question and every approval gate blocks on the user's response. Never proceed on a default, an assumption, or after any delay; there is no time limit on the user. The next step depends entirely on their answer — if they haven't answered, stop and wait for it. **Asking is the end of your turn:** after you present a question or an artifact for approval, produce nothing further in that turn — do **not** ask-and-then-answer yourself, and do **not** roll on to the next step. End the turn, wait for the user's reply, and only then continue. Treat every "get the user to approve / ask the user" instruction in any skill as a hard STOP, not a passing note. **The one carve-out is Auto-run mode** (above): there, questions that carry options are never asked in the first place — they auto-decide the ★ recommendation and are recorded for ratification — so this rule governs questions actually ASKED (including auto-run's three halting cases), and those still block absolutely.
-- **Keep the project profile current (`docs/basics/`).** When your work changes something a profile doc records, **update that doc in the same change and re-stamp its commit** — so the profile the next phase grounds in stays true. Map of change → doc: new/changed endpoint or base URL → `api-reference`; schema/migration → `database`; new/changed entity, relationship, or entity ownership → `domain-model`; new/changed shared-state sync convention → `data-cache`; new/changed auth or token handling → `auth`; new key library or build change → `tech-stack`; new env var / flag / variant → `environment`; new asset → `asset-registry` (register-on-create); new reusable helper/base class/wrapper or a unit promoted to core → `code-inventory` (register-on-create); new named simplification, contradiction, duplicate, deferral, or class-suspicion → `tech-debt-register` (register-on-create, with its ceiling); changed layer-wiring pattern → `architecture`; new feature or changed cross-feature dependency → `feature-map` (register-on-create); new screen / nav / component → `ui-architecture`; new/changed UX convention → `ux-conventions` (register-on-create); pipeline/release change → `cicd-deployment`; new auth/PII/encryption handling → `security-compliance` (observed only, re-flag for sign-off); structural/layering change → `architecture` or `conventions`; branching/PR/merge/release-process change → `git-management`. **"If needed" is literal** — only touch a doc when the change alters a fact it records; don't churn docs for changes they don't track (e.g. a dependency version bump that only lives in the manifest). Announce profile updates so they're visible at the phase's review. This is the counterpart to `do-project-setup`'s refresh mode. **And when a feature's SDLC completes, run `do-project-setup` in refresh mode to reconcile the whole profile** — the per-change updates are the belt; this end-of-feature reconcile is the suspenders (it catches a new feature to register in `feature-map`, a new convention, or cross-feature deps the incremental updates missed), so the next feature grooms against an accurate profile.
-- **UI containers must never clip — verify at content + viewport extremes.** Any **variable-content container** (dialog, bottom sheet, list, form, multi-line text) must **fit its content or scroll — never clip or cut off content**. Verify it not just at the design's ideal content but at the extremes: **longest realistic content · largest dynamic-type / font scale · smallest supported screen**. Scoped to variable-content containers (a fixed-size icon doesn't need it). Enforced when building (`do-development`) and testing (`do-testing`) — this is the class of bug where a dialog looks right in the mockup but clips real content.
-- **Integrated real-data gate — never call a feature "done" on mock/assumed data alone.** The frontend's assumptions about the backend (HTTP method, path, field shape/type, nullability, enum values, loading/error/empty states) are only *true* once the real screens render against real backend responses. Isolated tests validate each side against its own mocks — which encode the same assumption — so a mismatch is invisible until the app is assembled. Therefore: before a feature is done, the **assembled application** (real backend + real frontend, wired the way the user actually runs it) must be **booted and its critical journeys driven through the real HTTP stack**, and must show **zero unexpected 4xx/5xx, zero client/browser console errors, and zero error-boundary / crash activations** — *even when every isolated unit/UI test is green* (an error boundary hides a crash behind a fallback that looks fine to a screenshot — that still fails this gate). Mocks and fixtures **derive from the shared machine-checkable contract** (or from recorded real responses) — never hand-authored shapes that silently drift from reality. **The data used must be relevant and domain-realistic — never randomized/placeholder text** (a lorem or random string renders fine where a real localized `{en,id}` value or a genuinely long name crashes; fake data hides the very bugs this gate exists to catch). Where the client is typed (e.g. TypeScript), it consumes a **client generated from that contract** so a shape mismatch fails at compile time, not at 3am. This is the exact class of bug — a 405 from a method/path mismatch, a localized `{en,id}` object rendered as a string, an unhandled null or empty list — that every isolated test passes and only the running app reveals. Enforced in `do-development` (a smoke check per full-stack stage) and `do-testing` (the non-skippable **Boot & Smoke (integrated)** level). Its reach is honest, not total: it closes the FE↔BE integration and real-data-render class completely, but a **silent logic error** (renders fine, computes wrong) needs an AC assertion, and a journey the smoke run never walks isn't covered — so name the critical journeys **at grooming, in the hub's *Feature flow* section** (not at test time, where "critical" gets re-guessed) and keep the AC tests.
-- **The app runs where you can see it.** Wherever a phase boots the real app — the visual-parity render, an integrated smoke, `do-testing`'s Boot & Smoke, a fix's re-verification — it launches **visibly** (headed browser, emulator/simulator window on screen) and slowly enough to follow. A run the user watched beats a screenshot they're asked to trust, and a journey that goes wrong is caught in the second it happens rather than in a diff afterwards. The per-surface launch command lives in `docs/basics/09-environment.md` → *Full-stack run recipe*, so it isn't re-derived each run. **No display** (CI, SSH, a headless box) → fall back to headless and **name it in the step report** — a recorded GAP, not a silent downgrade: the measurement is unchanged, only the watching is lost.
-- **Component fidelity — build exactly the component the design specifies, every element no matter how small.** The design's choice of element is intent, not decoration: match its **type and the behavior that type implies**, and never substitute something that merely looks close (a toggle built as a checkbox looks almost right but breaks the behavior). This holds for the smallest control as much as the largest layout — be aware of *every* component. **If you have a recommendation to deviate** — a different component, an "improvement", anything not in the design — **ask the user first; never apply your own preference silently.** When the design is ambiguous about an element, surface it (Open Decision), don't guess. Recorded in the widget spec, built in `do-development`, asserted in `do-testing` — like any other spec.
-- **Visual values are tokens — zero raw literals.** On client UI every spacing, font size/weight/family/line-height, color, border thickness, radius, elevation, icon and control size comes from the project's **design-token contract** (`docs/basics/18-design-tokens.md`) by **name**. Never read a value off a mockup — eyeballing a raster is why padding, text size, fonts and hairlines differ screen to screen. Emphasis is a weight token (never a size bump), lines take their thickness/inset/length from tokens and their container, and a value the scale lacks is **snapped and reported** or raised as an Open Decision (new scale step vs approved deviation) — never a stray literal. A wrong token is a defect **even when a pixel-diff passes**.
-- **Enumerate, then cover — no case ships unbuilt.** Where behavior varies, the cases are **written down and each one accounted for**, not left to whoever remembers: a screen's regions and every case they render (`section-slicing/<screen>.md` — condition, how many views *and which*, what drives it, with a cropped design per case), and a plan claims every case in some stage. A case that is unclaimed, unbuilt, uncompared, or unasserted is a **missed case** — the defect this discipline exists to prevent — and a case the design never covered is an Open Decision, never an invention.
-- **A spoke never disagrees with its hub.** The hub is the single source of truth; spokes **link** to it and are **reviewed against it** before they're complete (contract fidelity, manifest ↔ slices both ways, entity ownership, dependencies with their decided freshness, hub rules enumerated as numbered AC, cross-spoke consistency). When the spoke is wrong, fix the spoke; when the **hub** is wrong, fix the hub and **re-align every other spoke** — never patch a spoke to match a hub you know is wrong. A deliberate platform difference is a decided exception recorded **in the hub**, never a silent divergence.
-- **Correct every site of the fact, not just the one reported.** Before writing a correction, **grep for the fact you are about to change** and list every site it lives at — fix them all in the same edit, or name the ones you deliberately leave and why — then state the **search coverage**: what was scanned and how, and any area not covered. A correction isn't done when the reported site is right; it's done when the grep is clean. **A note saying "corrected" is not a correction** — make the edit in the same pass. When the corrected fact was a **decided** one, the correction re-gates (step-by-step approval, above).
-- **Every change is reviewed before it's presented — fresh eyes, not the author's.** A stage's diff, or a fix, is audited against the **profile docs it touches, these principles, and its own plan/AC** *before* verification and *before* it reaches the user — ideally by a reviewer with the diff and the docs but **not** the reasoning that produced it, because the context that made a decision is the worst context for auditing it. **Objective violations** (wrong layer, raw literal, swallowed error, hand-written type where a generator exists, missing profile update, an unbuilt case) are fixed in the same unit of work; **judgment or scope findings** (invented behavior, scope beyond the plan, a deviation from a decided convention) are a hard STOP → Open Decision, because self-approving a scope change defeats the gate.
-- **Diagrams target the oldest renderer in the toolchain — Mermaid 9.x is the floor.** Docs get read in IDE previews, wikis and GitHub, which lag the Mermaid release by years, and a diagram that throws `syntax error in graph` is worse than no diagram. So use only **`graph TD`/`graph LR`, `sequenceDiagram`, `erDiagram`, `stateDiagram-v2`, and basic `classDiagram`** — never `mindmap`, `timeline`, `quadrantChart`, `sankey-beta`, `xychart-beta`, `block-beta`, `packet-beta`, `architecture-beta`, the `@{ shape: … }` node syntax, or markdown (`**bold**`) inside labels; each needs 9.3–11.3. **Quote any label containing `(` `)` `:` `,` `#` or `-`** (`A["Fetch (cached)"]`, not `A[Fetch (cached)]`) and never use `end` as a node id — those break every version. Prefer a table when a diagram would only restate it.
-- **Comments: none. The names carry the meaning.** Source code ships with **zero comments** — no explanatory prose, no doc comments (JSDoc/KDoc/Javadoc/Python docstrings), no license headers, no section banners, no provenance. Every urge to write one is a naming or structure problem: **rename the variable, extract and name the function, introduce a named constant instead of the magic number, name the predicate.** `retryAfterUpstreamRateLimit()` and `MAX_TRANSFER_IDR = 1_000_000` say what a comment would have said, and they can't fall out of date the way a comment does. **The only comments allowed are machine directives** a compiler, linter, type-checker or coverage tool actually acts on — `eslint-disable`, `@ts-expect-error`, `# noqa`, `# type: ignore`, `# pragma: no cover`, `//go:build`, `swiftlint:disable`, shebangs — because they aren't documentation and no rename replaces them. **Where the *why* genuinely can't fit in a name** — an upstream bug you're working around, a regulatory threshold, the benchmark behind a constant — it goes in the **commit message / PR description**, which is where history belongs and where it can't rot next to code that has since changed. Hook-enforced: `validate-comments` blocks the write. *(The trade-off is deliberate: some context leaves the file. That's the cost of never reading a comment that lies.)*
-- **Naming is the documentation.** Since nothing is explained in prose, names must earn it: a function name states what it does *and* the condition it applies to; a variable name states what it holds including unit and currency (`amountIdr`, `timeoutMs`, `isAwaitingSettlement`); a boolean reads as a claim; a constant replaces every magic number and encodes the rule (`MAX_TRANSFER_IDR`). Prefer a small named function over an inline block a comment would have introduced. If a name would need to be a sentence, the function is doing too much — split it. Vague names (`data`, `temp`, `handle`, `process`, `flag`, `util`) are the real violation once comments are gone.
-- **Respect the project's architecture — including clean architecture.** Detect how the real codebase is structured and conform to it (ladder rung 2 — reuse). If the project uses **clean / layered architecture**, keep each change in the correct layer — **presentation / domain / data** — and honor the dependency rule: the **domain** layer depends on nothing; presentation and data depend on the domain (via its interfaces); no layer reaches across to skip the domain (e.g. presentation calling data directly). Put business logic in domain, I/O in data, UI/state in presentation. **Conditional:** only when the project already uses this — do **not** impose layering on a project that doesn't (that's over-engineering). When unsure whether the project uses it, check the package structure and ask.
-- **Test-first across the pipeline.** Implementation is TDD (red → green → refactor), so every upstream artifact must be TDD-ready. Each phase has a role: **grooming/slicing** write acceptance criteria as **testable** specs (an assertable behavior, not a vibe); **planning** names, per stage, **the test that will prove it**; **development** writes that test first, watches it fail, then implements the minimum to pass. Doc-only skills don't run tests — their job is to produce testable AC and per-stage test definitions so TDD downstream is mechanical, not guesswork. Calibrate: specify tests for real behavior/logic/AC, never trivial getters, and never fake a test to look TDD.
+  **Jargon rule:** expand acronyms on first use (TRD = technical requirements doc, AC = acceptance
+  criteria, a11y = accessibility), prefer plain words, never lead with internal shorthand — and
+  never show an ID without its essence (the no-naked-references rule above). Each skill's specific
+  review packet slots its detail into the Details section — the 5W+1H wrapper is identical
+  everywhere so anyone can follow any step.
+- **When you ask, wait for the answer — no timeout, no auto-continue.** Every question and every
+  approval gate blocks on the user's response. Never proceed on a default, an assumption, or after
+  any delay; there is no time limit on the user. The next step depends entirely on their answer — if
+  they haven't answered, stop and wait for it. **Asking is the end of your turn:** after you present
+  a question or an artifact for approval, produce nothing further in that turn — do **not**
+  ask-and-then-answer yourself, and do **not** roll on to the next step. End the turn, wait for the
+  user's reply, and only then continue. Treat every "get the user to approve / ask the user"
+  instruction in any skill as a hard STOP, not a passing note. **The one carve-out is Auto-run
+  mode** (above): there, questions that carry options are never asked in the first place — they
+  auto-decide the ★ recommendation and are recorded for ratification — so this rule governs
+  questions actually ASKED (including auto-run's three halting cases), and those still block
+  absolutely.
+- **Keep the project profile current (`docs/basics/`).** When your work changes something a profile
+  doc records, **update that doc in the same change and re-stamp its commit** — so the profile the
+  next phase grounds in stays true. Map of change → doc: new/changed endpoint or base URL →
+  `api-reference`; schema/migration → `database`; new/changed entity, relationship, or entity
+  ownership → `domain-model`; new/changed shared-state sync convention → `data-cache`; new/changed
+  auth or token handling → `auth`; new key library or build change → `tech-stack`; new env var /
+  flag / variant → `environment`; new asset → `asset-registry` (register-on-create); new reusable
+  helper/base class/wrapper or a unit promoted to core → `code-inventory` (register-on-create); new
+  named simplification, contradiction, duplicate, deferral, or class-suspicion →
+  `tech-debt-register` (register-on-create, with its ceiling); changed layer-wiring pattern →
+  `architecture`; new feature or changed cross-feature dependency → `feature-map`
+  (register-on-create); new screen / nav / component → `ui-architecture`; new/changed UX convention
+  → `ux-conventions` (register-on-create); pipeline/release change → `cicd-deployment`; new
+  auth/PII/encryption handling → `security-compliance` (observed only, re-flag for sign-off);
+  structural/layering change → `architecture` or `conventions`; branching/PR/merge/release-process
+  change → `git-management`. **"If needed" is literal** — only touch a doc when the change alters a
+  fact it records; don't churn docs for changes they don't track (e.g. a dependency version bump
+  that only lives in the manifest). Announce profile updates so they're visible at the phase's
+  review. This is the counterpart to `do-project-setup`'s refresh mode. **And when a feature's SDLC
+  completes, run `do-project-setup` in refresh mode to reconcile the whole profile** — the
+  per-change updates are the belt; this end-of-feature reconcile is the suspenders (it catches a new
+  feature to register in `feature-map`, a new convention, or cross-feature deps the incremental
+  updates missed), so the next feature grooms against an accurate profile.
+- **UI containers must never clip — verify at content + viewport extremes.** Any **variable-content
+  container** (dialog, bottom sheet, list, form, multi-line text) must **fit its content or scroll —
+  never clip or cut off content**. Verify it not just at the design's ideal content but at the
+  extremes: **longest realistic content · largest dynamic-type / font scale · smallest supported
+  screen**. Scoped to variable-content containers (a fixed-size icon doesn't need it). Enforced when
+  building (`do-development`) and testing (`do-testing`) — this is the class of bug where a dialog
+  looks right in the mockup but clips real content.
+- **Integrated real-data gate — never call a feature "done" on mock/assumed data alone.** The
+  frontend's assumptions about the backend (HTTP method, path, field shape/type, nullability, enum
+  values, loading/error/empty states) are only *true* once the real screens render against real
+  backend responses. Isolated tests validate each side against its own mocks — which encode the same
+  assumption — so a mismatch is invisible until the app is assembled. Therefore: before a feature is
+  done, the **assembled application** (real backend + real frontend, wired the way the user actually
+  runs it) must be **booted and its critical journeys driven through the real HTTP stack**, and must
+  show **zero unexpected 4xx/5xx, zero client/browser console errors, and zero error-boundary /
+  crash activations** — *even when every isolated unit/UI test is green* (an error boundary hides a
+  crash behind a fallback that looks fine to a screenshot — that still fails this gate). Mocks and
+  fixtures **derive from the shared machine-checkable contract** (or from recorded real responses) —
+  never hand-authored shapes that silently drift from reality. **The data used must be relevant and
+  domain-realistic — never randomized/placeholder text** (a lorem or random string renders fine
+  where a real localized `{en,id}` value or a genuinely long name crashes; fake data hides the very
+  bugs this gate exists to catch). Where the client is typed (e.g. TypeScript), it consumes a
+  **client generated from that contract** so a shape mismatch fails at compile time, not at 3am.
+  This is the exact class of bug — a 405 from a method/path mismatch, a localized `{en,id}` object
+  rendered as a string, an unhandled null or empty list — that every isolated test passes and only
+  the running app reveals. Enforced in `do-development` (a smoke check per full-stack stage) and
+  `do-testing` (the non-skippable **Boot & Smoke (integrated)** level). Its reach is honest, not
+  total: it closes the FE↔BE integration and real-data-render class completely, but a **silent logic
+  error** (renders fine, computes wrong) needs an AC assertion, and a journey the smoke run never
+  walks isn't covered — so name the critical journeys **at grooming, in the hub's *Feature flow*
+  section** (not at test time, where "critical" gets re-guessed) and keep the AC tests.
+- **The app runs where you can see it.** Wherever a phase boots the real app — the visual-parity
+  render, an integrated smoke, `do-testing`'s Boot & Smoke, a fix's re-verification — it launches
+  **visibly** (headed browser, emulator/simulator window on screen) and slowly enough to follow. A
+  run the user watched beats a screenshot they're asked to trust, and a journey that goes wrong is
+  caught in the second it happens rather than in a diff afterwards. The per-surface launch command
+  lives in `docs/basics/09-environment.md` → *Full-stack run recipe*, so it isn't re-derived each
+  run. **No display** (CI, SSH, a headless box) → fall back to headless and **name it in the step
+  report** — a recorded GAP, not a silent downgrade: the measurement is unchanged, only the watching
+  is lost.
+- **Component fidelity — build exactly the component the design specifies, every element no matter how small.**
+  The design's choice of element is intent, not decoration: match its **type and the behavior that
+  type implies**, and never substitute something that merely looks close (a toggle built as a
+  checkbox looks almost right but breaks the behavior). This holds for the smallest control as much
+  as the largest layout — be aware of *every* component. **If you have a recommendation to deviate**
+  — a different component, an "improvement", anything not in the design — **ask the user first;
+  never apply your own preference silently.** When the design is ambiguous about an element, surface
+  it (Open Decision), don't guess. Recorded in the widget spec, built in `do-development`, asserted
+  in `do-testing` — like any other spec.
+- **Visual values are tokens — zero raw literals.** On client UI every spacing, font
+  size/weight/family/line-height, color, border thickness, radius, elevation, icon and control size
+  comes from the project's **design-token contract** (`docs/basics/18-design-tokens.md`) by
+  **name**. Never read a value off a mockup — eyeballing a raster is why padding, text size, fonts
+  and hairlines differ screen to screen. Emphasis is a weight token (never a size bump), lines take
+  their thickness/inset/length from tokens and their container, and a value the scale lacks is
+  **snapped and reported** or raised as an Open Decision (new scale step vs approved deviation) —
+  never a stray literal. A wrong token is a defect **even when a pixel-diff passes**.
+- **Enumerate, then cover — no case ships unbuilt.** Where behavior varies, the cases are **written
+  down and each one accounted for**, not left to whoever remembers: a screen's regions and every
+  case they render (`section-slicing/<screen>.md` — condition, how many views *and which*, what
+  drives it, with a cropped design per case), and a plan claims every case in some stage. A case
+  that is unclaimed, unbuilt, uncompared, or unasserted is a **missed case** — the defect this
+  discipline exists to prevent — and a case the design never covered is an Open Decision, never an
+  invention.
+- **A spoke never disagrees with its hub.** The hub is the single source of truth; spokes **link**
+  to it and are **reviewed against it** before they're complete (contract fidelity, manifest ↔
+  slices both ways, entity ownership, dependencies with their decided freshness, hub rules
+  enumerated as numbered AC, cross-spoke consistency). When the spoke is wrong, fix the spoke; when
+  the **hub** is wrong, fix the hub and **re-align every other spoke** — never patch a spoke to
+  match a hub you know is wrong. A deliberate platform difference is a decided exception recorded
+  **in the hub**, never a silent divergence.
+- **Correct every site of the fact, not just the one reported.** Before writing a correction, **grep
+  for the fact you are about to change** and list every site it lives at — fix them all in the same
+  edit, or name the ones you deliberately leave and why — then state the **search coverage**: what
+  was scanned and how, and any area not covered. A correction isn't done when the reported site is
+  right; it's done when the grep is clean. **A note saying "corrected" is not a correction** — make
+  the edit in the same pass. When the corrected fact was a **decided** one, the correction re-gates
+  (step-by-step approval, above).
+- **Every change is reviewed before it's presented — fresh eyes, not the author's.** A stage's diff,
+  or a fix, is audited against the **profile docs it touches, these principles, and its own
+  plan/AC** *before* verification and *before* it reaches the user — ideally by a reviewer with the
+  diff and the docs but **not** the reasoning that produced it, because the context that made a
+  decision is the worst context for auditing it. **Objective violations** (wrong layer, raw literal,
+  swallowed error, hand-written type where a generator exists, missing profile update, an unbuilt
+  case) are fixed in the same unit of work; **judgment or scope findings** (invented behavior, scope
+  beyond the plan, a deviation from a decided convention) are a hard STOP → Open Decision, because
+  self-approving a scope change defeats the gate.
+- **Diagrams target the oldest renderer in the toolchain — Mermaid 9.x is the floor.** Docs get read
+  in IDE previews, wikis and GitHub, which lag the Mermaid release by years, and a diagram that
+  throws `syntax error in graph` is worse than no diagram. So use only **`graph TD`/`graph LR`,
+  `sequenceDiagram`, `erDiagram`, `stateDiagram-v2`, and basic `classDiagram`** — never `mindmap`,
+  `timeline`, `quadrantChart`, `sankey-beta`, `xychart-beta`, `block-beta`, `packet-beta`,
+  `architecture-beta`, the `@{ shape: … }` node syntax, or markdown (`**bold**`) inside labels; each
+  needs 9.3–11.3. **Quote any label containing `(` `)` `:` `,` `#` or `-`** (`A["Fetch (cached)"]`,
+  not `A[Fetch (cached)]`) and never use `end` as a node id — those break every version. Prefer a
+  table when a diagram would only restate it.
+- **Comments: none. The names carry the meaning.** Source code ships with **zero comments** — no
+  explanatory prose, no doc comments (JSDoc/KDoc/Javadoc/Python docstrings), no license headers, no
+  section banners, no provenance. Every urge to write one is a naming or structure problem: **rename
+  the variable, extract and name the function, introduce a named constant instead of the magic
+  number, name the predicate.** `retryAfterUpstreamRateLimit()` and `MAX_TRANSFER_IDR = 1_000_000`
+  say what a comment would have said, and they can't fall out of date the way a comment does. **The
+  only comments allowed are machine directives** a compiler, linter, type-checker or coverage tool
+  actually acts on — `eslint-disable`, `@ts-expect-error`, `# noqa`, `# type: ignore`, `# pragma: no
+  cover`, `//go:build`, `swiftlint:disable`, shebangs — because they aren't documentation and no
+  rename replaces them. **Where the *why* genuinely can't fit in a name** — an upstream bug you're
+  working around, a regulatory threshold, the benchmark behind a constant — it goes in the **commit
+  message / PR description**, which is where history belongs and where it can't rot next to code
+  that has since changed. Hook-enforced: `validate-comments` blocks the write. *(The trade-off is
+  deliberate: some context leaves the file. That's the cost of never reading a comment that lies.)*
+- **Naming is the documentation.** Since nothing is explained in prose, names must earn it: a
+  function name states what it does *and* the condition it applies to; a variable name states what
+  it holds including unit and currency (`amountIdr`, `timeoutMs`, `isAwaitingSettlement`); a boolean
+  reads as a claim; a constant replaces every magic number and encodes the rule
+  (`MAX_TRANSFER_IDR`). Prefer a small named function over an inline block a comment would have
+  introduced. If a name would need to be a sentence, the function is doing too much — split it.
+  Vague names (`data`, `temp`, `handle`, `process`, `flag`, `util`) are the real violation once
+  comments are gone.
+- **Respect the project's architecture — including clean architecture.** Detect how the real
+  codebase is structured and conform to it (ladder rung 2 — reuse). If the project uses **clean /
+  layered architecture**, keep each change in the correct layer — **presentation / domain / data** —
+  and honor the dependency rule: the **domain** layer depends on nothing; presentation and data
+  depend on the domain (via its interfaces); no layer reaches across to skip the domain (e.g.
+  presentation calling data directly). Put business logic in domain, I/O in data, UI/state in
+  presentation. **Conditional:** only when the project already uses this — do **not** impose
+  layering on a project that doesn't (that's over-engineering). When unsure whether the project uses
+  it, check the package structure and ask.
+- **Test-first across the pipeline.** Implementation is TDD (red → green → refactor), so every
+  upstream artifact must be TDD-ready. Each phase has a role: **grooming/slicing** write acceptance
+  criteria as **testable** specs (an assertable behavior, not a vibe); **planning** names, per
+  stage, **the test that will prove it**; **development** writes that test first, watches it fail,
+  then implements the minimum to pass. Doc-only skills don't run tests — their job is to produce
+  testable AC and per-stage test definitions so TDD downstream is mechanical, not guesswork.
+  Calibrate: specify tests for real behavior/logic/AC, never trivial getters, and never fake a test
+  to look TDD.

@@ -3,54 +3,239 @@ name: do-testing
 description: Write and run the feature-level tests for an implemented feature, per platform — API tests for backend, UI + integration tests for web/Android/iOS — all derived from the acceptance criteria, with AC→test coverage tracked. Use when the user wants to test a feature, write API/UI/integration/E2E tests, verify acceptance criteria, or do the testing phase. Triggers on "test the feature", "write API tests", "UI tests", "integration tests", "e2e tests", "/do-testing".
 ---
 
-You are writing the **feature-level tests** for an implemented feature. This is the testing phase — broader than `do-development`'s per-stage unit TDD. The tests assert the **acceptance criteria** (carried from the TRD/tasks — the contract this whole pipeline has protected) and the **API contract** (hub TRD).
+You are writing the **feature-level tests** for an implemented feature. This is the testing phase —
+broader than `do-development`'s per-stage unit TDD. The tests assert the **acceptance criteria**
+(carried from the TRD/tasks — the contract this whole pipeline has protected) and the **API
+contract** (hub TRD).
 
-**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind — especially: tests derive from **testable AC**; **never over-simplify** (cover negative / error / edge / auth / offline cases, not just the happy path); ground in real code; reuse the project's existing test framework and fixtures (ladder rung 2 — reuse: don't introduce a new test stack); calibrate (don't test framework code or trivial getters — that's redundant with unit tests).
+**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the
+INDEX of these rules, never their text, so the file is the only place they actually bind —
+especially: tests derive from **testable AC**; **never over-simplify** (cover negative / error /
+edge / auth / offline cases, not just the happy path); ground in real code; reuse the project's
+existing test framework and fixtures (ladder rung 2 — reuse: don't introduce a new test stack);
+calibrate (don't test framework code or trivial getters — that's redundant with unit tests).
 
 ## Test levels — every AC covered once, at the cheapest reliable level
 
-Unit-level is already done by `do-development`'s per-stage TDD. `do-testing` owns the upper levels. **Each level tests what lower levels can't — don't re-test the same thing at multiple levels** (redundant coverage is slower and flakier, not safer). Cover every AC, but place each check at the level where it's cheapest and most stable.
+Unit-level is already done by `do-development`'s per-stage TDD. `do-testing` owns the upper levels.
+**Each level tests what lower levels can't — don't re-test the same thing at multiple levels**
+(redundant coverage is slower and flakier, not safer). Cover every AC, but place each check at the
+level where it's cheapest and most stable.
 
-1. **API** *(backend)* — the hub **API contract** in isolation: happy path, request/response schema, status codes, auth/authorization, validation/error responses, idempotency for money flows, boundary/edge inputs.
-2. **UI** *(clients — appearance + composition)*. Locate elements by their **widget-spec Test IDs** (`docs/development/<feature-name>/widget-spec/<screen>.md`) — Android `resource-id` (`android:id` / Compose `testTag` via `testTagsAsResourceId`), iOS `accessibilityIdentifier`, Web `data-testid` — never brittle text/xpath; if an element isn't specced, flag it.
-   - **Visual parity** vs the design (`design/<screen>.png` / Figma) — icons, colors, spacing, typography, **and each element's type** — AI checklist + pixel-diff, **within platform-best-practice tolerance** (not literal pixel-identical; flag intentional platform deviations). **Capture the full scroll extent** (web `fullPage`; mobile scroll-and-stitch — load lazy content first) and **compare per section**: every design section incl. below-the-fold must be covered — an **uncovered / below-the-fold section is a bug**, never a silent pass. Virtualized/infinite lists → compare the item template + representative sections. Save actual + diff to `design/compared-ui/`.
-   - **View composition + type** — element presence, hierarchy, arrangement, layout, **and each element's type: assert its rendered a11y role matches the widget spec** (`switch` / `radio` / `checkbox` / `button` / …) — machine-checkable and non-flaky. Also assert any behavior the type implies where it's an AC. **A type mismatch is always logged as a bug** (severity judged by behavioral impact — behavior-changing is major/blocker, a cosmetic swap is lower), never waved through on visual tolerance.
-   - **Scaffold conformance** — the screen matches its declared scaffold (widget-spec `Scaffold · slicing` ↔ `03-ui-architecture.md`): header anatomy present (title/description/actions **in the declared region**, e.g. top-right), divider between header and body, **body slicing ratio** as declared (assert region proportions, within tolerance). This catches **cross-screen drift** that per-screen pixel-tolerance lets slide — two screens each "close enough" to their own mockup but composed differently from each other. A scaffold deviation not recorded as an approved Open Decision is a bug.
-   - **Token & style conformance** — the screen's visual *values* match the standard (`docs/basics/18-design-tokens.md` ↔ widget-spec *Style bindings*). Two checks, and the first is mandatory on every platform: **(a) static — no raw literals** (spacing/font-size/weight/family/hex/border values written inline instead of tokens), run via the doc's *Enforcement* command; **(b) rendered — assert computed styles** where the framework exposes them: font-family/size/weight per typography role, divider thickness + inset, padding on the screen frame and key containers, control heights and tap-target minimum. **Web is strongest here** (`getComputedStyle`); **Android/iOS assertion coverage is weaker** — say which checks actually ran rather than implying parity, lean on the static check, and reuse the repo's existing screenshot-baseline tool if it has one (don't add a dependency for this). Also **compare across screens**: the feature's screens must agree with each other *and* with sibling screens of the same scaffold — a body text size or card padding that differs from the house value is a bug even when both screens match their own mockup (this is the drift pixel-tolerance-per-screen lets through, and the reason "each screen looked fine" ships an inconsistent app). **A deviation that isn't in the doc's *Approved deviations* table is a bug**; anything already listed there is not re-flagged.
-   - **Section cases** — drive each case in the screen's `section-slicing/<screen>.md` and assert what it declares: the section is **shown/hidden** per its condition (and **collapses vs keeps space** as declared), the **count *and* identity of views rendered** matches (3 skeleton rows, primary + secondary — not merely "something rendered"), the declared **precedence** holds for each *Interactions* row, and the **unknown/missing-data** case behaves as specced (offline, null field, failed flag fetch). Locate by widget-spec Test IDs, and set up each case through its **declared source** (real role, real flag, real query state) rather than forcing the component's internal state. Track it as **case → test** in the test plan: an unasserted case is a coverage gap, and a case that renders differently from its crop is a bug.
-   - **States & UX conventions** — loading / error / empty / offline; theming; a11y labels — **asserted against `docs/basics/04-ux-conventions.md`**: the submit/CTA stays disabled until mandatory fields are valid, mandatory fields are marked per the convention, snackbars fire on the right events with the right style, and empty/error states match the standard. A deviation from the documented convention is a bug (unless the design deliberately overrode it).
-   - **Content-fit** — variable-content containers (dialog / sheet / list / form / multi-line text) must **fit content or scroll, never clip**. Test at extremes: longest content, largest dynamic-type/font, smallest supported screen. (This is the "dialog doesn't cover its content" class of bug.)
-   - **Stepped flows (wizard)** — when the spoke has a *Multi-step flows* spec, derive its test set from it (this is where "step-by-step configuration has many bugs" is caught): **per-step validation** blocks Next until valid; **Back preserves entered data**; **cross-step dependency** — changing an earlier choice refetches the dependent later step's options; **partial save/resume** works as specced; **abort mid-flow → nothing persisted**; **complete → atomic commit** (all-or-nothing — a mid-flow server error leaves no half-written data and recovers without losing input). The persistence/commit assertions run at the Integration level against the real backend.
-3. **Integration** *(UI ↔ API alignment)* — real API calls: data renders, actions hit the right endpoints, loading/error states driven by real responses, **contract fields consumed correctly** (no field-name/type drift), navigation, persistence/offline.
-4. **System / E2E** *(production-readiness)* — full user journeys across UI→API→DB in a prod-like env: auth, permissions, feature flags, cross-service, perf/security basics, offline/recovery. **Calibrate to risk** — the *critical* journeys + key failure modes (a payment flow earns full E2E; a tooltip doesn't), not every permutation.
-5. **Boot & Smoke (integrated) — MANDATORY, non-skippable.** The gate that catches what every level above misses because they run each side against its own mocks: the **real frontend and real backend booted together and wired the way the user actually runs the app** (per `docs/basics/09-environment.md`'s *Full-stack run recipe*: start each service, FE pointed at the running BE), then the feature's **critical journeys driven through the real HTTP stack in a real browser/client**, using **relevant, domain-realistic data — never randomized/placeholder** (fake data hides the very bugs this catches). **Authenticate the journey the real way per `docs/basics/13-auth.md`**; where auth applies, include a **token-refresh / 401-handling** check (expired token → refresh-and-retry, no loop). It **fails on any of**: an unexpected **4xx/5xx** on the feature's routes (→ 405/route/method drift); a **client/browser console error**; a **failed network request**; or an **error-boundary / crash activation** — the last is critical, because an error boundary hides a render crash (e.g. a localized `{en,id}` object rendered as a string) behind a fallback that looks fine to a screenshot. It also **reconciles runtime vs. contract**: capture the FE's actual outgoing requests (method · path · body) and confirm each matches a **real registered backend route** and the machine-checkable contract — a runtime diff, not doc-vs-doc. **Cross-feature integration:** include at least one journey that exercises each feature this one depends on (per the hub's *Feature dependencies*) — the new feature must work with the depended-on feature end-to-end **and not break it** (a regression in the depended-on feature is a bug). **And a mandatory per-binding data-flow test for each Flow dependency** (the hub's Flow-dependencies sub-table), in **both directions**:
-   - **Create direction:** seed/create in the source feature → assert it flows into this feature's field/section with real data — **per the binding's decided Freshness** (without app restart · on the real-time event · on refocus — assert the *mechanism the TRD chose*, or "eventually appears after reopening" passes as synchronized).
-   - **Destructive direction (never skip):** **delete/archive in the owner → the consumer behaves per the decided on-delete edge** (hub *Entities touched* / `06-domain-model.md`) — the restrict message shows, the row flags "unavailable", **never a dangling reference or crash**. This is the nastiest cross-feature integrity bug and the create-direction test cannot catch it.
-   - **Lifecycle visibility:** seed entities in **every lifecycle state** → the consumer shows **exactly the allowed subset** (archived doesn't appear, draft doesn't leak) per the decided visibility rule.
-   An uncovered binding/edge is a coverage gap; a broken one is a bug. (Never satisfy any of this with a mocked source — that's the bug it exists to catch.) This level owns the FE↔BE **seam**; unlike levels 1–4 it **cannot be marked manual or skipped for the feature's critical path** (see Environment below).
+1. **API** *(backend)* — the hub **API contract** in isolation: happy path, request/response schema,
+   status codes, auth/authorization, validation/error responses, idempotency for money flows,
+   boundary/edge inputs.
+2. **UI** *(clients — appearance + composition)*. Locate elements by their **widget-spec Test IDs**
+   (`docs/development/<feature-name>/widget-spec/<screen>.md`) — Android `resource-id` (`android:id`
+   / Compose `testTag` via `testTagsAsResourceId`), iOS `accessibilityIdentifier`, Web `data-testid`
+   — never brittle text/xpath; if an element isn't specced, flag it.
+   - **Visual parity** vs the design (`design/<screen>.png` / Figma) — icons, colors, spacing,
+     typography, **and each element's type** — AI checklist + pixel-diff, **within
+     platform-best-practice tolerance** (not literal pixel-identical; flag intentional platform
+     deviations). **Capture the full scroll extent** (web `fullPage`; mobile scroll-and-stitch —
+     load lazy content first) and **compare per section**: every design section incl. below-the-fold
+     must be covered — an **uncovered / below-the-fold section is a bug**, never a silent pass.
+     Virtualized/infinite lists → compare the item template + representative sections. Save actual +
+     diff to `design/compared-ui/`.
+   - **View composition + type** — element presence, hierarchy, arrangement, layout, **and each
+     element's type: assert its rendered a11y role matches the widget spec** (`switch` / `radio` /
+     `checkbox` / `button` / …) — machine-checkable and non-flaky. Also assert any behavior the type
+     implies where it's an AC. **A type mismatch is always logged as a bug** (severity judged by
+     behavioral impact — behavior-changing is major/blocker, a cosmetic swap is lower), never waved
+     through on visual tolerance.
+   - **Scaffold conformance** — the screen matches its declared scaffold (widget-spec `Scaffold ·
+     slicing` ↔ `03-ui-architecture.md`): header anatomy present (title/description/actions **in the
+     declared region**, e.g. top-right), divider between header and body, **body slicing ratio** as
+     declared (assert region proportions, within tolerance). This catches **cross-screen drift**
+     that per-screen pixel-tolerance lets slide — two screens each "close enough" to their own
+     mockup but composed differently from each other. A scaffold deviation not recorded as an
+     approved Open Decision is a bug.
+   - **Token & style conformance** — the screen's visual *values* match the standard
+     (`docs/basics/18-design-tokens.md` ↔ widget-spec *Style bindings*). Two checks, and the first
+     is mandatory on every platform: **(a) static — no raw literals**
+     (spacing/font-size/weight/family/hex/border values written inline instead of tokens), run via
+     the doc's *Enforcement* command; **(b) rendered — assert computed styles** where the framework
+     exposes them: font-family/size/weight per typography role, divider thickness + inset, padding
+     on the screen frame and key containers, control heights and tap-target minimum. **Web is
+     strongest here** (`getComputedStyle`); **Android/iOS assertion coverage is weaker** — say which
+     checks actually ran rather than implying parity, lean on the static check, and reuse the repo's
+     existing screenshot-baseline tool if it has one (don't add a dependency for this). Also
+     **compare across screens**: the feature's screens must agree with each other *and* with sibling
+     screens of the same scaffold — a body text size or card padding that differs from the house
+     value is a bug even when both screens match their own mockup (this is the drift
+     pixel-tolerance-per-screen lets through, and the reason "each screen looked fine" ships an
+     inconsistent app). **A deviation that isn't in the doc's *Approved deviations* table is a
+     bug**; anything already listed there is not re-flagged.
+   - **Section cases** — drive each case in the screen's `section-slicing/<screen>.md` and assert
+     what it declares: the section is **shown/hidden** per its condition (and **collapses vs keeps
+     space** as declared), the **count *and* identity of views rendered** matches (3 skeleton rows,
+     primary + secondary — not merely "something rendered"), the declared **precedence** holds for
+     each *Interactions* row, and the **unknown/missing-data** case behaves as specced (offline,
+     null field, failed flag fetch). Locate by widget-spec Test IDs, and set up each case through
+     its **declared source** (real role, real flag, real query state) rather than forcing the
+     component's internal state. Track it as **case → test** in the test plan: an unasserted case is
+     a coverage gap, and a case that renders differently from its crop is a bug.
+   - **States & UX conventions** — loading / error / empty / offline; theming; a11y labels —
+     **asserted against `docs/basics/04-ux-conventions.md`**: the submit/CTA stays disabled until
+     mandatory fields are valid, mandatory fields are marked per the convention, snackbars fire on
+     the right events with the right style, and empty/error states match the standard. A deviation
+     from the documented convention is a bug (unless the design deliberately overrode it).
+   - **Content-fit** — variable-content containers (dialog / sheet / list / form / multi-line text)
+     must **fit content or scroll, never clip**. Test at extremes: longest content, largest
+     dynamic-type/font, smallest supported screen. (This is the "dialog doesn't cover its content"
+     class of bug.)
+   - **Stepped flows (wizard)** — when the spoke has a *Multi-step flows* spec, derive its test set
+     from it (this is where "step-by-step configuration has many bugs" is caught): **per-step
+     validation** blocks Next until valid; **Back preserves entered data**; **cross-step
+     dependency** — changing an earlier choice refetches the dependent later step's options;
+     **partial save/resume** works as specced; **abort mid-flow → nothing persisted**; **complete →
+     atomic commit** (all-or-nothing — a mid-flow server error leaves no half-written data and
+     recovers without losing input). The persistence/commit assertions run at the Integration level
+     against the real backend.
+3. **Integration** *(UI ↔ API alignment)* — real API calls: data renders, actions hit the right
+   endpoints, loading/error states driven by real responses, **contract fields consumed correctly**
+   (no field-name/type drift), navigation, persistence/offline.
+4. **System / E2E** *(production-readiness)* — full user journeys across UI→API→DB in a prod-like
+   env: auth, permissions, feature flags, cross-service, perf/security basics, offline/recovery.
+   **Calibrate to risk** — the *critical* journeys + key failure modes (a payment flow earns full
+   E2E; a tooltip doesn't), not every permutation.
+5. **Boot & Smoke (integrated) — MANDATORY, non-skippable.** The gate that catches what every level
+   above misses because they run each side against its own mocks: the **real frontend and real
+   backend booted together and wired the way the user actually runs the app** (per
+   `docs/basics/09-environment.md`'s *Full-stack run recipe*: start each service, FE pointed at the
+   running BE), then the feature's **critical journeys driven through the real HTTP stack in a real
+   browser/client**, using **relevant, domain-realistic data — never randomized/placeholder** (fake
+   data hides the very bugs this catches). **Authenticate the journey the real way per
+   `docs/basics/13-auth.md`**; where auth applies, include a **token-refresh / 401-handling** check
+   (expired token → refresh-and-retry, no loop). It **fails on any of**: an unexpected **4xx/5xx**
+   on the feature's routes (→ 405/route/method drift); a **client/browser console error**; a
+   **failed network request**; or an **error-boundary / crash activation** — the last is critical,
+   because an error boundary hides a render crash (e.g. a localized `{en,id}` object rendered as a
+   string) behind a fallback that looks fine to a screenshot. It also **reconciles runtime vs.
+   contract**: capture the FE's actual outgoing requests (method · path · body) and confirm each
+   matches a **real registered backend route** and the machine-checkable contract — a runtime diff,
+   not doc-vs-doc. **Cross-feature integration:** include at least one journey that exercises each
+   feature this one depends on (per the hub's *Feature dependencies*) — the new feature must work
+   with the depended-on feature end-to-end **and not break it** (a regression in the depended-on
+   feature is a bug). **And a mandatory per-binding data-flow test for each Flow dependency** (the
+   hub's Flow-dependencies sub-table), in **both directions**:
+   - **Create direction:** seed/create in the source feature → assert it flows into this feature's
+     field/section with real data — **per the binding's decided Freshness** (without app restart ·
+     on the real-time event · on refocus — assert the *mechanism the TRD chose*, or "eventually
+     appears after reopening" passes as synchronized).
+   - **Destructive direction (never skip):** **delete/archive in the owner → the consumer behaves
+     per the decided on-delete edge** (hub *Entities touched* / `06-domain-model.md`) — the restrict
+     message shows, the row flags "unavailable", **never a dangling reference or crash**. This is
+     the nastiest cross-feature integrity bug and the create-direction test cannot catch it.
+   - **Lifecycle visibility:** seed entities in **every lifecycle state** → the consumer shows
+     **exactly the allowed subset** (archived doesn't appear, draft doesn't leak) per the decided
+     visibility rule.
+   An uncovered binding/edge is a coverage gap; a broken one is a bug. (Never satisfy any of this
+   with a mocked source — that's the bug it exists to catch.) This level owns the FE↔BE **seam**;
+   unlike levels 1–4 it **cannot be marked manual or skipped for the feature's critical path** (see
+   Environment below).
 
-Use each platform's existing framework (detect + reuse — ladder rung 2, reuse): backend HTTP/contract; Web Playwright/Cypress + component; Android Espresso/Compose-UI; iOS XCUITest; render/screenshot + pixel-diff tooling for visual parity; for token conformance, the project's existing lint/static check plus computed-style assertions in the UI framework already in use (and its existing screenshot-baseline tool if it has one — don't add a new dependency for this).
+Use each platform's existing framework (detect + reuse — ladder rung 2, reuse): backend
+HTTP/contract; Web Playwright/Cypress + component; Android Espresso/Compose-UI; iOS XCUITest;
+render/screenshot + pixel-diff tooling for visual parity; for token conformance, the project's
+existing lint/static check plus computed-style assertions in the UI framework already in use (and
+its existing screenshot-baseline tool if it has one — don't add a new dependency for this).
 
-**Verify-only — collect all bugs, report before any fixing.** `do-testing` **never fixes**. Every failure (a broken assertion, a parity miss, an integration/E2E failure) is logged as a **bug** in the test-plan's *Bugs found* section (severity · level · repro · which AC). Run the suite, gather **all** bugs, then **present the consolidated bug report to the user first** — do not start fixing anything. The user triages what to fix; confirmed fixes go to **`do-fixing`** (the dedicated fixing skill), not done here. **In auto-run mode** (`principles.md` → *Auto-run mode*): per-test approvals become reports (`Approved: auto <date>` in each procedure block), the pre-authorized tooling/env stands up without asking, the bug report is **emitted, not gated**, and **every bug routes to `do-fixing` in severity order** (blockers first) — a bug that is really a **design gap** auto-decides its ★ recommendation (recorded as `decided: auto`, ratified in the chain report). The chain then continues into `do-fixing` automatically.
+**Verify-only — collect all bugs, report before any fixing.** `do-testing` **never fixes**. Every
+failure (a broken assertion, a parity miss, an integration/E2E failure) is logged as a **bug** in
+the test-plan's *Bugs found* section (severity · level · repro · which AC). Run the suite, gather
+**all** bugs, then **present the consolidated bug report to the user first** — do not start fixing
+anything. The user triages what to fix; confirmed fixes go to **`do-fixing`** (the dedicated fixing
+skill), not done here. **In auto-run mode** (`principles.md` → *Auto-run mode*): per-test approvals
+become reports (`Approved: auto <date>` in each procedure block), the pre-authorized tooling/env
+stands up without asking, the bug report is **emitted, not gated**, and **every bug routes to
+`do-fixing` in severity order** (blockers first) — a bug that is really a **design gap**
+auto-decides its ★ recommendation (recorded as `decided: auto`, ratified in the chain report). The
+chain then continues into `do-fixing` automatically.
 
-**Visual comparison is mandatory — never skip.** If the render/screenshot tooling fails at the UI level, **STOP, report the issue + a concrete fix, and wait** (same as `do-development`). Complete the comparison via a fixed tool or a user manual compare — never skip or continue past it, never mark UI parity passed unverified.
+**Visual comparison is mandatory — never skip.** If the render/screenshot tooling fails at the UI
+level, **STOP, report the issue + a concrete fix, and wait** (same as `do-development`). Complete
+the comparison via a fixed tool or a user manual compare — never skip or continue past it, never
+mark UI parity passed unverified.
 
-**Environment:** integration and E2E need a prod-like environment in-session (services up, test data, maybe a device/emulator). Tell the user what's needed and **ask before standing anything up**; if it can't be stood up, mark **those levels (1–4)** manual and say so — never fake a pass. **(Auto-run: standing up env/tooling is pre-authorized — boot, seed, report; only an actual failure halts.)**
+**Environment:** integration and E2E need a prod-like environment in-session (services up, test
+data, maybe a device/emulator). Tell the user what's needed and **ask before standing anything up**;
+if it can't be stood up, mark **those levels (1–4)** manual and say so — never fake a pass.
+**(Auto-run: standing up env/tooling is pre-authorized — boot, seed, report; only an actual failure
+halts.)**
 
-**Boot & Smoke is the exception — it is a hard gate, not a manual-able level.** The feature is **not "done" until the real assembled app boots and its critical journeys pass** the Boot & Smoke checks (zero unexpected 4xx/5xx, zero console errors, zero error-boundary trips). If the stack genuinely can't be booted in-session (missing/incomplete run recipe, env truly unavailable), **do not mark it manual and move on** — report the exact blocker + concrete fix (complete the run recipe, install the driver, boot the device, point at a shared dev/staging environment) and **leave the feature blocked, not done**, until the integrated boot actually runs. Fix the blocker or the feature stays blocked — never claim done on isolated levels alone. (The one narrow allowance: if the run recipe is missing, the fix is to fill it in `do-project-setup` — that's the blocker to resolve, not a reason to skip.)
+**Boot & Smoke is the exception — it is a hard gate, not a manual-able level.** The feature is **not
+"done" until the real assembled app boots and its critical journeys pass** the Boot & Smoke checks
+(zero unexpected 4xx/5xx, zero console errors, zero error-boundary trips). If the stack genuinely
+can't be booted in-session (missing/incomplete run recipe, env truly unavailable), **do not mark it
+manual and move on** — report the exact blocker + concrete fix (complete the run recipe, install the
+driver, boot the device, point at a shared dev/staging environment) and **leave the feature blocked,
+not done**, until the integrated boot actually runs. Fix the blocker or the feature stays blocked —
+never claim done on isolated levels alone. (The one narrow allowance: if the run recipe is missing,
+the fix is to fill it in `do-project-setup` — that's the blocker to resolve, not a reason to skip.)
 
 ## Source & output
 
-- **Inputs:** the implemented feature, the TRD (hub API contract + spoke AC — the primary source), the plan, and the tasks / Jira keys if the Jira phases were run.
-- **Test code is code — zero comments, names carry the case.** The same rules bind here as anywhere (`principles.md`): no comments in test files (hook-blocked), and the **test name states the case it proves** — `showsEmptyStateWhenListIsEmpty`, `hidesPrimaryActionWhenOffline`, ideally naming the section case ID it covers — so a failing test report reads as a list of broken behaviors, not `test_3`. Fixtures follow the same discipline: named, contract-derived, domain-realistic (never randomized/placeholder).
-- **Per platform.** Track coverage in `docs/development/<feature-name>/test-plan-<platform>.md` using `test-plan-template.md` — an **AC → test case → level → status** table (level = API / UI / Integration / E2E) so every AC is provably covered *and you can see at which level*. This doc is the reviewable artifact; the test files are the deliverable.
+- **Inputs:** the implemented feature, the TRD (hub API contract + spoke AC — the primary source),
+  the plan, and the tasks / Jira keys if the Jira phases were run.
+- **Test code is code — zero comments, names carry the case.** The same rules bind here as anywhere
+  (`principles.md`): no comments in test files (hook-blocked), and the **test name states the case
+  it proves** — `showsEmptyStateWhenListIsEmpty`, `hidesPrimaryActionWhenOffline`, ideally naming
+  the section case ID it covers — so a failing test report reads as a list of broken behaviors, not
+  `test_3`. Fixtures follow the same discipline: named, contract-derived, domain-realistic (never
+  randomized/placeholder).
+- **Per platform.** Track coverage in `docs/development/<feature-name>/test-plan-<platform>.md`
+  using `test-plan-template.md` — an **AC → test case → level → status** table (level = API / UI /
+  Integration / E2E) so every AC is provably covered *and you can see at which level*. This doc is
+  the reviewable artifact; the test files are the deliverable.
 
 ## Flow
 
-> Present every gate below (plan, per-test approval, coverage + bug report) in the shared **step-summary format** (`principles.md`): header (development · phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need from you) · engineer detail (coverage tables, failures) last.
+> Present every gate below (plan, per-test approval, coverage + bug report) in the shared
+> **step-summary format** (`principles.md`): header (development · phase · step · status) · **What**
+> (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** ·
+> **Where** · **How** (ends with what I need from you) · engineer detail (coverage tables, failures)
+> last.
 
-1. **Plan & confirm.** Read the AC + API contract + implemented code, detect the existing test framework/fixtures, and lay out the test plan as a **pyramid** — map every AC to the **right level(s)** (API / UI / Integration / E2E), placing each check once where it's cheapest and most stable, and calibrating E2E to risk. **Then take the feature's critical journeys from the hub's §3 *Feature flow* → *Critical journeys* (grooming decided them; don't re-invent them here — if that line is missing or vague, say so and get it decided rather than guessing what "critical" meant) **and drive exactly those in the mandatory Boot & Smoke level** and confirm the *Full-stack run recipe* exists in `docs/basics/09-environment.md` (if it's missing/incomplete, that's the first blocker to resolve — send to `do-project-setup`). Summarize it for the user to confirm; flag any AC that's untestable as written (send back to grooming), and **name any environment/tooling the levels will need — ask before standing it up**. **(Auto-run: the plan is emitted as a report and testing proceeds immediately.)**
-2. **Per test: write → approve → run.** Go one test at a time. **Write** the test case **and its step-by-step procedure** in the test-plan doc (Preconditions → numbered Steps → Expected, per the template) — so every test point documents *how* to test it, executable by a human QA and unambiguous for the automated test. **Present it for approval** (does it assert the right AC? are the steps right?), and only **after the user approves — record the test's `Approved: <date>` in its procedure block — run it** — then report the result honestly (show failures — never claim pass on red) and record its status. Then move to the next test. Do not batch-write a suite and run it all at once; the user approves each created test before it runs — one test at a time, never "approve & run the rest". **(Auto-run: each written case records `Approved: auto <date>` and runs immediately — one at a time, no batching, no asking.)**
-3. **Coverage + bug report.** Confirm every AC maps to at least one passing test at the right level; show the **pyramid coverage** (API / UI / Integration / E2E) **and the Boot & Smoke result** (the critical journeys run against the real assembled app, with 4xx/5xx · console errors · error-boundary trips all zero). **Flag any uncovered AC or level 1–4 marked manual** explicitly. **Boot & Smoke is not reportable as manual** — if it hasn't actually run, the feature is blocked, not covered (say so with the blocker + fix). Then present the **consolidated *Bugs found* report** — every bug with severity · level · repro · AC — and let the user triage. **Fix nothing here**; confirmed fixes hand off to **`do-fixing`**. **(Auto-run: the report is emitted, every bug routes to `do-fixing` in severity order, and the chain continues.)**
+1. **Plan & confirm.** Read the AC + API contract + implemented code, detect the existing test
+   framework/fixtures, and lay out the test plan as a **pyramid** — map every AC to the **right
+   level(s)** (API / UI / Integration / E2E), placing each check once where it's cheapest and most
+   stable, and calibrating E2E to risk. **Then take the feature's critical journeys from the hub's
+   §3 *Feature flow* → *Critical journeys* (grooming decided them; don't re-invent them here — if
+   that line is missing or vague, say so and get it decided rather than guessing what "critical"
+   meant) **and drive exactly those in the mandatory Boot & Smoke level** and confirm the
+   *Full-stack run recipe* exists in `docs/basics/09-environment.md` (if it's missing/incomplete,
+   that's the first blocker to resolve — send to `do-project-setup`). Summarize it for the user to
+   confirm; flag any AC that's untestable as written (send back to grooming), and **name any
+   environment/tooling the levels will need — ask before standing it up**. **(Auto-run: the plan is
+   emitted as a report and testing proceeds immediately.)**
+2. **Per test: write → approve → run.** Go one test at a time. **Write** the test case **and its
+   step-by-step procedure** in the test-plan doc (Preconditions → numbered Steps → Expected, per the
+   template) — so every test point documents *how* to test it, executable by a human QA and
+   unambiguous for the automated test. **Present it for approval** (does it assert the right AC? are
+   the steps right?), and only **after the user approves — record the test's `Approved: <date>` in
+   its procedure block — run it** — then report the result honestly (show failures — never claim
+   pass on red) and record its status. Then move to the next test. Do not batch-write a suite and
+   run it all at once; the user approves each created test before it runs — one test at a time,
+   never "approve & run the rest". **(Auto-run: each written case records `Approved: auto <date>`
+   and runs immediately — one at a time, no batching, no asking.)**
+3. **Coverage + bug report.** Confirm every AC maps to at least one passing test at the right level;
+   show the **pyramid coverage** (API / UI / Integration / E2E) **and the Boot & Smoke result** (the
+   critical journeys run against the real assembled app, with 4xx/5xx · console errors ·
+   error-boundary trips all zero). **Flag any uncovered AC or level 1–4 marked manual** explicitly.
+   **Boot & Smoke is not reportable as manual** — if it hasn't actually run, the feature is blocked,
+   not covered (say so with the blocker + fix). Then present the **consolidated *Bugs found*
+   report** — every bug with severity · level · repro · AC — and let the user triage. **Fix nothing
+   here**; confirmed fixes hand off to **`do-fixing`**. **(Auto-run: the report is emitted, every
+   bug routes to `do-fixing` in severity order, and the chain continues.)**
 
-When there are no bugs, every AC is covered, **and Boot & Smoke has actually passed against the real assembled app**, report the result and the coverage doc; the feature is ready for the deployment phase. **Then reconcile the profile — run `do-project-setup` in refresh mode** so `docs/basics/` reflects what was built (new endpoints → `api-reference`, new screens → `ui-architecture`, the feature itself + its deps → `feature-map`, any new convention → `conventions`/`ux-conventions`, new token handling → `auth`) before the next feature grooms against it. When there are bugs, hand the triaged list to `do-fixing` — **always `do-fixing`, never `do-issue-grooming` directly**: a testing bug is in-pipeline work, and any class escalation happens from inside `do-fixing` only with found cross-feature evidence (and never instead of the fix). Do the profile reconcile after the fixes land and re-testing is green.
+When there are no bugs, every AC is covered, **and Boot & Smoke has actually passed against the real
+assembled app**, report the result and the coverage doc; the feature is ready for the deployment
+phase. **Then reconcile the profile — run `do-project-setup` in refresh mode** so `docs/basics/`
+reflects what was built (new endpoints → `api-reference`, new screens → `ui-architecture`, the
+feature itself + its deps → `feature-map`, any new convention → `conventions`/`ux-conventions`, new
+token handling → `auth`) before the next feature grooms against it. When there are bugs, hand the
+triaged list to `do-fixing` — **always `do-fixing`, never `do-issue-grooming` directly**: a testing
+bug is in-pipeline work, and any class escalation happens from inside `do-fixing` only with found
+cross-feature evidence (and never instead of the fix). Do the profile reconcile after the fixes land
+and re-testing is green.

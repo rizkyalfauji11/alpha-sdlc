@@ -3,74 +3,389 @@ name: do-development
 description: Implement a feature stage-by-stage by executing its development plan — write the code for one stage, verify it, then STOP at the stage's checkpoint for review before continuing. Keeps changes small and reviewable; lets the user stop after any safe stage. Use when the user wants to build/implement/code a planned feature, execute the dev plan, or work through the stages. Triggers on "implement", "build the feature", "execute the plan", "code the stages", "/do-development", "start development".
 ---
 
-You are **implementing a feature by executing its development plan**, one stage at a time. The plan (`plan-<platform>.md` from `do-planning`) already decided the stages, order, package layout, and checkpoints — you follow it. **The whole discipline is: implement one stage → review it against the profile + principles → verify → stop at the checkpoint → wait for approval.** Never run past a checkpoint unattended — **unless the user explicitly opted into auto-run mode** (`principles.md` → *Auto-run mode*): then each checkpoint emits its full packet as a **report**, stamps `Approved: auto <date>`, commits, and continues — through every stage and **onward into `do-testing`** when the last stage lands — while questions auto-answer with the ★ recommendation (recorded, per *Auto-run mode*) and the chain halts only where nothing can be decided: failed mandatory tooling, physically missing inputs, external writes.
+You are **implementing a feature by executing its development plan**, one stage at a time. The plan
+(`plan-<platform>.md` from `do-planning`) already decided the stages, order, package layout, and
+checkpoints — you follow it. **The whole discipline is: implement one stage → review it against the
+profile + principles → verify → stop at the checkpoint → wait for approval.** Never run past a
+checkpoint unattended — **unless the user explicitly opted into auto-run mode** (`principles.md` →
+*Auto-run mode*): then each checkpoint emits its full packet as a **report**, stamps `Approved: auto
+<date>`, commits, and continues — through every stage and **onward into `do-testing`** when the last
+stage lands — while questions auto-answer with the ★ recommendation (recorded, per *Auto-run mode*)
+and the chain halts only where nothing can be decided: failed mandatory tooling, physically missing
+inputs, external writes.
 
-**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind — now against the *code itself*: climb the ladder for every implementation decision (reuse before writing), **never over-simplify** (keep the validation, error handling, edge cases the plan calls for), ground in real code, and surface (don't silently absorb) any place reality differs from the plan.
+**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the
+INDEX of these rules, never their text, so the file is the only place they actually bind — now
+against the *code itself*: climb the ladder for every implementation decision (reuse before
+writing), **never over-simplify** (keep the validation, error handling, edge cases the plan calls
+for), ground in real code, and surface (don't silently absorb) any place reality differs from the
+plan.
 
-**Ground in the shared truths before stage 1:** read the profile docs the plan/TRD bind to — `docs/basics/06-domain-model.md`, `16-feature-map.md`, `08-data-cache.md`, `04-ux-conventions.md`, `10-conventions.md`, and for client UI work **`18-design-tokens.md`** (the visual contract you'll build every value from) — so stages are built by someone who has loaded what the plan references, not just the plan text. (No STOP gate here — the plan already grounded in the profile; this is orientation, not re-derivation.) **The moment you open `plan-<platform>.md`, check what it targets — if it's a client platform (Android, iOS or Web), read this skill's `client-ui.md` in full right then, before stage 1.** The plan's `Platform` row says which, and that row ships as an unfilled `<placeholder>`, so the `plan-<platform>.md` filename is the fallback. Read `client-ui.md` **once for the whole run, not per stage** — a `[domain]` or `[data]` stage in a client plan still reads it, because which stage is `[presentation]` is only known one stage at a time. A Backend plan skips the file entirely.
+**Ground in the shared truths before stage 1:** read the profile docs the plan/TRD bind to —
+`docs/basics/06-domain-model.md`, `16-feature-map.md`, `08-data-cache.md`, `04-ux-conventions.md`,
+`10-conventions.md`, and for client UI work **`18-design-tokens.md`** (the visual contract you'll
+build every value from) — so stages are built by someone who has loaded what the plan references,
+not just the plan text. (No STOP gate here — the plan already grounded in the profile; this is
+orientation, not re-derivation.) **The moment you open `plan-<platform>.md`, check what it targets —
+if it's a client platform (Android, iOS or Web), read this skill's `client-ui.md` in full right
+then, before stage 1.** The plan's `Platform` row says which, and that row ships as an unfilled
+`<placeholder>`, so the `plan-<platform>.md` filename is the fallback. Read `client-ui.md` **once
+for the whole run, not per stage** — a `[domain]` or `[data]` stage in a client plan still reads it,
+because which stage is `[presentation]` is only known one stage at a time. A Backend plan skips the
+file entirely.
 
 ## Source
 
-- **Input = the plan**, normally `docs/development/<feature-name>/plan-<platform>.md`, plus the TRD spoke + tasks it references. **Check a stage's `Approved (plan gate)` stamp before building it, starting at stage 1: missing, still the template placeholder, or recorded at a commit/date before the plan's last change → STOP** and send it back to `do-planning` — the plan was never approved, or was edited after approval (an explicit *proceed anyway* still overrides, with the gap recorded, per `principles.md`). **Before stage 1, also check the plan covers the TRD:** an AC in the TRD's numbered AC register that no stage's `Covers:` claims → **STOP** back to `do-planning` — that's decided scope nobody planned to build, and it otherwise surfaces as an uncovered AC at `do-testing`, three phases later. If there's no plan, point the user to `do-planning` first — this skill executes a plan, it doesn't invent one.
-- The plan **is the state**: stages get marked done as they pass review, so a re-run resumes at the next unfinished stage.
+- **Input = the plan**, normally `docs/development/<feature-name>/plan-<platform>.md`, plus the TRD
+  spoke + tasks it references. **Check a stage's `Approved (plan gate)` stamp before building it,
+  starting at stage 1: missing, still the template placeholder, or recorded at a commit/date before
+  the plan's last change → STOP** and send it back to `do-planning` — the plan was never approved,
+  or was edited after approval (an explicit *proceed anyway* still overrides, with the gap recorded,
+  per `principles.md`). **Before stage 1, also check the plan covers the TRD:** an AC in the TRD's
+  numbered AC register that no stage's `Covers:` claims → **STOP** back to `do-planning` — that's
+  decided scope nobody planned to build, and it otherwise surfaces as an uncovered AC at
+  `do-testing`, three phases later. If there's no plan, point the user to `do-planning` first — this
+  skill executes a plan, it doesn't invent one.
+- The plan **is the state**: stages get marked done as they pass review, so a re-run resumes at the
+  next unfinished stage.
 
 ## Rules
 
-- **Test-Driven Development — test first, every stage.** Implement each stage as **red → green → refactor**: write the failing test(s) first, watch them fail for the right reason, write the minimal code to pass, then refactor while green. The tests come from the **stage's acceptance criteria** (the AC carried from the TRD/tasks) — that's the spec. Calibrate per `principles.md`: test real behavior, logic, and the AC; don't write test theater for trivial getters. Where a stage genuinely can't be unit-tested (e.g. native widget rendering, pure UI, or **greenfield scaffolding stages** — there's nothing to assert until the harness exists), say so and fall back to the plan's verify step — don't fake a test to look TDD. For scaffolding, the verify step *is* the real check: **the command runs (build/run/test/lint), the created tree matches the foundation TRD's structure section, and the dependency rule holds** — and the conformance review checks the built tree against that structure, which is what makes base drift catchable on day one.
-- **One stage at a time. Hard stop at each ⏸ checkpoint.** Implement the current stage, verify it, present it, and **wait for approval** before the next stage. "Approved stage 1" is not approval for stage 2. **(Auto-run: the checkpoint emits as a report — stamp `Checkpoint verdict: auto <date>`, commit, and move to the next stage immediately; no waiting, no asking.)**
-- **Respect "safe to stop after".** When the user wants to halt, stop cleanly after a stage the plan marks safe (working/shippable state). If they want to stop at an unsafe point, tell them what's left half-done.
-- **Plan drift → surface it, don't wing it.** If implementing reveals the plan is wrong, incomplete, or fights the real code, stop and tell the user; update the plan (or send it back to `do-planning`) before coding around it. **(Auto-run: adopt the ★-recommended plan amendment, record it in the plan + report, continue.)**
-- **Build only decided scope — undecided gap → Open Decision → back to grooming.** Implement exactly the design/AC, never more. If a stage hits something the design doesn't cover (a gap you'd have to guess), **stop the stage, add it to the spoke's `Open Decisions`, and hand back to `do-grooming`** for the user to decide. Never invent behavior/UI/scope to fill it (that's the over-delivery bug). **(Auto-run: the gap auto-decides its ★ recommendation on the spot — record `decided: auto ★<option>` in the spoke's Open Decisions and keep building per it; no mid-chain hand-back to grooming.)**
-- **Follow the codebase, not your taste.** Match existing conventions, naming, and the package layout the plan fixed. The ladder governs build-vs-reuse.
-- **Conformance review before verifying — fresh eyes on the diff, never the author's.** Every stage gets reviewed against the profile, the principles, and its own plan **before** the visual/smoke verification and **before** it's presented (flow step 5). Run it with a **reviewer subagent** handed only the **stage diff + the stage's plan/AC + `../../principles.md` + the `docs/basics/` docs the diff touches** — the principles are in the packet because the principles-conformance check audits against them, and a reviewer asked to check a document it was never given checks nothing — deliberately *not* your build reasoning, because the context that made a decision is the worst context for auditing it ("I wrote it, so it looks right"). Every finding is labeled **measured** or **inferred** — measured names the file and line, the command, test or grep that produced it, and **which copy was read** (committed `HEAD` or the working tree, and which files were already modified when the review started); **inferred is a question, not a defect.** The reviewer **leaves the working tree exactly as it found it.** And the author **verifies before acting** — open the cited file at the cited line before editing anything on a report's authority: a review that is wrong in one finding is not wrong in all of them, and acting on the wrong one costs a whole round. The reviewer also gets **`conformance-reviewer.md`** (this skill's directory) — the three-part checklist it works from: profile conformance · principles conformance · plan/AC conformance.
+- **Test-Driven Development — test first, every stage.** Implement each stage as **red → green →
+  refactor**: write the failing test(s) first, watch them fail for the right reason, write the
+  minimal code to pass, then refactor while green. The tests come from the **stage's acceptance
+  criteria** (the AC carried from the TRD/tasks) — that's the spec. Calibrate per `principles.md`:
+  test real behavior, logic, and the AC; don't write test theater for trivial getters. Where a stage
+  genuinely can't be unit-tested (e.g. native widget rendering, pure UI, or **greenfield scaffolding
+  stages** — there's nothing to assert until the harness exists), say so and fall back to the plan's
+  verify step — don't fake a test to look TDD. For scaffolding, the verify step *is* the real check:
+  **the command runs (build/run/test/lint), the created tree matches the foundation TRD's structure
+  section, and the dependency rule holds** — and the conformance review checks the built tree
+  against that structure, which is what makes base drift catchable on day one.
+- **One stage at a time. Hard stop at each ⏸ checkpoint.** Implement the current stage, verify it,
+  present it, and **wait for approval** before the next stage. "Approved stage 1" is not approval
+  for stage 2. **(Auto-run: the checkpoint emits as a report — stamp `Checkpoint verdict: auto
+  <date>`, commit, and move to the next stage immediately; no waiting, no asking.)**
+- **Respect "safe to stop after".** When the user wants to halt, stop cleanly after a stage the plan
+  marks safe (working/shippable state). If they want to stop at an unsafe point, tell them what's
+  left half-done.
+- **Plan drift → surface it, don't wing it.** If implementing reveals the plan is wrong, incomplete,
+  or fights the real code, stop and tell the user; update the plan (or send it back to
+  `do-planning`) before coding around it. **(Auto-run: adopt the ★-recommended plan amendment,
+  record it in the plan + report, continue.)**
+- **Build only decided scope — undecided gap → Open Decision → back to grooming.** Implement exactly
+  the design/AC, never more. If a stage hits something the design doesn't cover (a gap you'd have to
+  guess), **stop the stage, add it to the spoke's `Open Decisions`, and hand back to `do-grooming`**
+  for the user to decide. Never invent behavior/UI/scope to fill it (that's the over-delivery bug).
+  **(Auto-run: the gap auto-decides its ★ recommendation on the spot — record `decided: auto
+  ★<option>` in the spoke's Open Decisions and keep building per it; no mid-chain hand-back to
+  grooming.)**
+- **Follow the codebase, not your taste.** Match existing conventions, naming, and the package
+  layout the plan fixed. The ladder governs build-vs-reuse.
+- **Conformance review before verifying — fresh eyes on the diff, never the author's.** Every stage
+  gets reviewed against the profile, the principles, and its own plan **before** the visual/smoke
+  verification and **before** it's presented (flow step 5). Run it with a **reviewer subagent**
+  handed only the **stage diff + the stage's plan/AC + `../../principles.md` + the `docs/basics/`
+  docs the diff touches** — the principles are in the packet because the principles-conformance
+  check audits against them, and a reviewer asked to check a document it was never given checks
+  nothing — deliberately *not* your build reasoning, because the context that made a decision is the
+  worst context for auditing it ("I wrote it, so it looks right"). Every finding is labeled
+  **measured** or **inferred** — measured names the file and line, the command, test or grep that
+  produced it, and **which copy was read** (committed `HEAD` or the working tree, and which files
+  were already modified when the review started); **inferred is a question, not a defect.** The
+  reviewer **leaves the working tree exactly as it found it.** And the author **verifies before
+  acting** — open the cited file at the cited line before editing anything on a report's authority:
+  a review that is wrong in one finding is not wrong in all of them, and acting on the wrong one
+  costs a whole round. The reviewer also gets **`conformance-reviewer.md`** (this skill's directory)
+  — the three-part checklist it works from: profile conformance · principles conformance · plan/AC
+  conformance.
 
-  **Findings split by kind.** An **objective violation** → fix it in this stage and re-verify green (wrong layer · raw literal instead of a token · swallowed/missing error log · hand-written type where the generator exists · private query key for a shared entity · unregistered asset/component · missing profile-doc update · stray console.log · any comment at all beyond a machine directive — delete it and rename, and if the *why* can't live in a name put it in the commit message). A **judgment or scope finding** → **hard STOP**: a design gap filled with invented behavior/UI, scope beyond the plan, a deviation from a decided convention, or a simplification that trades away correctness goes back as an **Open Decision** for the user (`do-grooming`) — **never fix-and-continue on those**, because self-approving a scope change is exactly the gate this step exists to hold. Anything deliberate survives only when it's **named and accepted** in the stage packet. **(Auto-run: a judgment/scope finding auto-decides its ★ resolution — recorded — and the stage continues.)**
+  **Findings split by kind.** An **objective violation** → fix it in this stage and re-verify green
+  (wrong layer · raw literal instead of a token · swallowed/missing error log · hand-written type
+  where the generator exists · private query key for a shared entity · unregistered asset/component
+  · missing profile-doc update · stray console.log · any comment at all beyond a machine directive —
+  delete it and rename, and if the *why* can't live in a name put it in the commit message). A
+  **judgment or scope finding** → **hard STOP**: a design gap filled with invented behavior/UI,
+  scope beyond the plan, a deviation from a decided convention, or a simplification that trades away
+  correctness goes back as an **Open Decision** for the user (`do-grooming`) — **never
+  fix-and-continue on those**, because self-approving a scope change is exactly the gate this step
+  exists to hold. Anything deliberate survives only when it's **named and accepted** in the stage
+  packet. **(Auto-run: a judgment/scope finding auto-decides its ★ resolution — recorded — and the
+  stage continues.)**
 
-  **This step replaces the scattered self-checks** — conventions/error-handling, the token no-raw-literals check, and comment hygiene all run here, once, instead of three partial passes. **If a reviewer subagent can't run in this session, say so and run the same checklist inline as an explicit self-review** — the step is never skipped, and "looks fine" is not a review.
-- **The UI mechanics live in `client-ui.md` (this skill's directory) — read it now if you have not.** It carries the shapes only: full-scroll capture per platform, the `compared-ui/` trail's filenames, the per-platform Test ID attribute, the scaffold field, the parity dispatch per stage kind, and the UI slots of the stage packet. **The rules in this list still state every UI prohibition inline** — `client-ui.md` adds none, relaxes none, and where the two ever seem to disagree this list wins.
-- **Visual parity for UI (frontend/mobile) — render, compare, fix; don't trust code-from-image.** For a UI stage with **design reference(s)** (Figma links or `docs/development/<feature-name>/design/<screen>.png`, from the plan — which lists them **per screen, per flow step, and per specced state**): after it's green, **render and compare every ref row the stage covers** — the main screen alone is not parity when the plan also carries step/state refs (a "flagged: platform default" state is checked against the `04-ux-conventions` standard instead). Render the screen and screenshot it, then compare to the design **two ways — (a) an AI visual checklist** (layout, spacing, colors, typography, component fidelity (**each element is the type the widget spec declares**), and *every* state: default/loading/error/empty/pressed) — **report spacing/type/border findings as *measured value → token name*, never "looks close"** (e.g. "card inner padding measured 12, bound to `space.lg` = 16 → fixed"); a mismatch against the widget-spec *Style bindings* is a defect **even when the pixel-diff is inside tolerance** — tolerance forgives rendering differences, never a wrong token — **and (b) a pixel-diff**. List every mismatch, fix, and **re-render until parity**. **When the screen is taller than the viewport, full-scroll coverage is mandatory:** map every design section top→bottom (including **below-the-fold**) to a captured region and **compare per section** — parity is **not passed while any section is uncompared** (a viewport-only screenshot silently skips scrolled content — the exact bug this prevents). For **virtualized / infinite lists**, compare the item template + representative sections + key states, and say so — don't claim to capture an unbounded page. **Tolerance follows platform best-practice** — don't force pixel-identical where iOS/Android/web norms dictate otherwise; **flag intentional platform deviations** instead of "fixing" them wrong. Capture the **full scrollable extent, not just the viewport** (load lazy/deferred content first) — the per-platform capture commands and the pixel-diff tooling are in `client-ui.md` §1. **Save every iteration** as a review trail — the actual screenshot and its diff overlay, named and filed per `client-ui.md` §2. These are **local review artifacts** — ensure `docs/development/<feature-name>/design/compared-ui/` is in the project's `.gitignore` (add the line if missing); never commit them. **If you must install tooling (browser driver, emulator/simulator, pixel-diff lib) or boot a device, tell the user what and why and get the OK first.** **If the render/screenshot tooling fails or isn't working, do NOT skip or continue past the UI comparison** — STOP, report the exact problem and a concrete fix (install / permission / config / boot the device), and wait. The UI comparison must still happen — either fix the tool, or the user does a manual visual compare — but it is **never skipped or auto-continued**, and never claim parity you didn't verify.
-- **Every visual value resolves to a token — zero raw literals.** On client UI, spacing, font size/weight/family/line-height, color, border thickness, radius, elevation, icon and control sizes come from **`docs/basics/18-design-tokens.md`** by **name**, via the screen's widget-spec *Style bindings*. **Never read a value off the mockup** — eyeballing a raster is exactly why padding, text size, font and hairlines differ from screen to screen. Concretely: no `padding: 13`, no `fontSize: 15`, no `fontWeight: 600` written inline, no `#EEE`, no `borderWidth: 1.5`, no fractional dp/pt/px. **Emphasis is a weight token** (never a size bump or a family swap), **underline only where the standard allows it**, **case comes from the typography role** — no ad-hoc transforms. **Lines are tokens too:** thickness from the token, inset-vs-full-bleed as declared, length derived from the container (never a fixed width), one line per boundary. If the stage needs a value the scale doesn't have: **snap to the nearest token and report it**, or — if the design uses it systematically — **stop and raise an Open Decision** (new scale step vs approved deviation) back to `do-grooming`; a genuinely **new token** is **registered in `18-design-tokens.md` on create**, like an asset. The **conformance review (step 5)** audits this: it runs the project's no-raw-literals check from the doc's *Enforcement* table, or greps the diff for numeric/hex literals in UI code — a literal that slipped through is an objective violation, fixed in the stage before it's presented.
-- **Every section case gets built and compared — a missed case is a blocker, not a detail.** For any screen with a **`docs/development/<feature-name>/section-slicing/<screen>.md`**, that doc is the case contract: read it **before** writing the screen and **enumerate every case ID** (`body.summary/C3`, `ftr.actions/C5`) plus every row of its *Interactions that matter*. Then:
-  - **Implement every case**, with its visibility driven by the **declared source and trigger** (server field · role · flag · cache state; on mount · on query settle · on flag fetch · on focus) — not a convenient local boolean that happens to look right. Honor the declared **collapse-vs-keep-space** behavior and the **precedence** rule when two conditions are true at once, and implement the declared **unknown/missing-data** case (offline, null field, failed flag fetch) rather than letting it fall through to a blank region.
-  - **Render each case and compare it to that case's crop** (`design/sections/<screen>/<section-id>[--<case>].png`) — the same AI-checklist + pixel-diff loop as full-screen parity, but **per case**, which is the point: a full-screen mockup only ever shows one case, so comparing against it passes a screen whose other four cases were never built.
-  - **Report case coverage as a table** — case ID → implemented? → compared? → verdict. **Every case must be accounted for.** A case that is *not implemented*, or implemented but *never rendered*, is an **objective violation** → fix it in this stage. A case whose crop is **`pending export`** or missing with no explicit marker → **STOP and report**; don't guess the design and don't quietly skip it (that's the missed-case bug arriving anyway, one phase later).
-  - **A case the design never covered** is an **Open Decision back to `do-grooming`** — never invented here.
-  - **Views count is part of the spec:** if a case says *"3 skeleton rows"* or *"primary + secondary"*, assert the count and identity, not just "something rendered".
-- **Build common interactions per the UX conventions.** Implement submit enable/disable, mandatory-field marking, empty/loading/error states, snackbars, and confirmations per `docs/basics/04-ux-conventions.md` — consistent with the rest of the app, not ad-hoc. If a stage needs a UX pattern the conventions don't cover, that's an undecided gap → **Open Decision back to `do-grooming`** (which asks the user add-new-vs-reuse and registers the choice) — don't invent a one-off.
-- **Content-fit for variable-content containers.** When building a dialog / bottom sheet / list / form / multi-line text, it must **fit its content or scroll — never clip**. Verify at content + viewport **extremes**, not just the mockup's ideal content: **longest realistic content, largest dynamic-type/font scale, smallest supported screen** (render those cases in the visual-parity step). Follow the widget-spec's *Container sizing & overflow* entry. This is the "dialog doesn't fit its content" bug — catch it here.
-- **Consume the backend via the contract's types — don't re-guess the shape.** When a stage calls the backend, use the **typed client / types generated from the hub's machine-checkable contract** (per `docs/basics/15-api-reference.md`); if the project generates them, run the generator rather than hand-writing an interface (a hand-written type is where `title: string` diverges from the real `title: {en,id}` and crashes at render). Handle **every field as the contract types it** — nullable, enum, and **localized objects rendered through the locale helper, never raw** (raw render of `{en,id}` is the "Objects are not valid as a React child" crash). Test fixtures for this stage **derive from the contract (or recorded real responses) with relevant, domain-realistic values — never hand-authored or randomized/placeholder shapes** that can pass while reality fails. For **authenticated** calls, follow `docs/basics/13-auth.md`'s token handling — attach/refresh via the existing interceptor and handle 401 (refresh-and-retry, no loop); don't hand-roll a parallel auth path. **Shared-entity stages implement exactly the cache wiring the plan named** — the canonical query keys read and the invalidations/events fired, per `docs/basics/08-data-cache.md`'s sync convention; a private key for an entity another feature owns is drift, not a choice.
-- **Integrated smoke for full-stack stages — boot both, hit it for real.** With layer-split stages the seam is crossed **twice**, and both count: the **`data` stage** is where the real API/DB/3rd-party call lands (drive the real request — a data stage that passes on unit tests alone is exactly the hole this gate exists to close), and the **`presentation` stage** is where the real response renders (drive the screen against it). When a stage crosses the frontend↔backend seam (a new/changed endpoint, a screen that calls one), a green unit test is not enough — after it's green, **boot the real backend + real frontend** per `docs/basics/09-environment.md`'s *Full-stack run recipe* (FE pointed at the running BE) and exercise the stage's actual request through the real HTTP stack **with relevant, domain-realistic data (never randomized/placeholder)**. It must show **zero unexpected 4xx/5xx (catches 405/route/method drift), zero client/browser console errors, and zero error-boundary/crash activations** — an error boundary hiding the crash behind a fallback that *looks* fine still fails. If you can't boot both in-session (missing recipe, env can't stand up), **STOP and say so** at the checkpoint — don't mark the stage passed on isolated tests alone. **The smoke checks freshness, not just errors:** when the stage has a flow binding / touches shared entities, also **mutate in the source** (create/update via the owner's real flow) and confirm the consumer's view **updates per the TRD's decided freshness** — a smoke that never changes the owner's data passes while "the consumer's list isn't synchronized" ships. This catches the wiring/data-shape bug *at the stage that caused it*, not at the end. (The full feature-level version is `do-testing`'s Boot & Smoke gate.)
-- **Apply the widget-spec Test IDs (client UI).** When implementing UI on Android/iOS/Web, set each element's **exact Test ID** from the screen's widget-spec doc via that platform's native attribute, and its content description as the accessibility label. If you add a UI element the spec doesn't list, **add it to the widget spec** (with a convention-following ID) — don't ship an unaddressable element. These IDs are the contract `do-testing` locates by; a missing/renamed ID breaks QA's UI tests.
-- **Build each element as its specced type — don't substitute.** Implement every interactive element as the **type** the widget spec declares (button, toggle, radio, checkbox, dropdown, …); the type is intent, not cosmetic — a toggle built as a checkbox looks close but breaks the behavior. **Use the canonical component the widget spec bound it to** (from `docs/basics/03-ui-architecture.md` → component inventory) — never a hand-rolled look-alike; if the stage genuinely needs a **new reusable** component, **register it in the inventory on create** (like assets). **Compose the screen from its declared scaffold** — reuse the scaffold's **code component** when one exists (rung 2 — reuse); if the pattern recurs across screens but no component exists, **propose extracting one and ask first** (don't force the abstraction, don't hand-build the layout differently per screen either). **Never swap in a different or "better" component on your own — if you have a recommendation to deviate, ask the user first** (or raise it as an Open Decision back to `do-grooming`); silently substituting is drift. `do-testing` asserts the rendered a11y role matches the spec, so a mismatch will fail.
-- **Reuse lookup before writing any shared-ish logic (rung 2 — reuse — has an index).** Before writing a helper, formatter, validator, base class, wrapper, or hook, **search `docs/basics/19-code-inventory.md` first** (it catalogs reusable units project-wide, not just core/common) — exact match → reuse; similar → adapt + update its row; none → write it and **register it on create** (name · plain+engineer description · location · used-by). A duplicate of a registered job is drift — if the inventory shows one already exists elsewhere, reuse or raise it, never write a second. **Wire every boundary per `02-architecture.md` → Layer interaction & wiring patterns** — interface/impl/binding placement, async and error types at the boundary, DTO mapping at the data edge — the conformance review checks the pattern, not just the dependency rule.
-- **Asset search flow, then register-on-create.** Before creating any asset, search in order, stopping at the first hit: (1) **registry** `docs/basics/17-asset-registry.md` by name/tags; (2) **assets module** — if no registry or no match, the asset-providing module/package located via `docs/basics/03-ui-architecture.md`; (3) **ask the user** — whole-project scan or create new. Exact → reuse; similar → adapt + re-validate with the user. Only when the outcome is genuinely **create new**, create it *and* **register it** in `17-asset-registry.md` (name, description, path, tags) — an unregistered new asset breaks the search-before-create loop and duplicates creep back.
-- **Commit every approved stage automatically.** A stage maps naturally to a commit/PR — the moment the user **approves** the stage, **commit its changes right away** with a conventional message (no offer, no asking; approval *is* the go-ahead). Commit only — don't push unless the user asks. Branch first if the project uses feature branches; if it commits straight to its working branch, commit there. Never commit an *unapproved* stage — the approval gate still stands; auto-commit fires only after it passes.
-- **Move the Jira ticket to In Progress when its work starts — only if the work is tracked in Jira.** If the Jira phases were skipped and there are no ticket keys, **skip this rule entirely** (nothing to update). When a stage begins and it *is* linked to a Jira key (written back by `do-uploading`), transition that ticket to **In Progress** via the Atlassian MCP — use `getTransitionsForJiraIssue` to find the board's actual transition name (boards differ), then `transitionJiraIssue`. Skip if it's already In Progress or has no linked key; transition each ticket only once (when the first stage touching it starts). Announce the transition; don't gate each one — running this skill is the approval. If the transition fails, report it and continue coding (don't block implementation on a status update).
+  **This step replaces the scattered self-checks** — conventions/error-handling, the token
+  no-raw-literals check, and comment hygiene all run here, once, instead of three partial passes.
+  **If a reviewer subagent can't run in this session, say so and run the same checklist inline as an
+  explicit self-review** — the step is never skipped, and "looks fine" is not a review.
+- **The UI mechanics live in `client-ui.md` (this skill's directory) — read it now if you have not.**
+  It carries the shapes only: full-scroll capture per platform, the `compared-ui/` trail's
+  filenames, the per-platform Test ID attribute, the scaffold field, the parity dispatch per stage
+  kind, and the UI slots of the stage packet. **The rules in this list still state every UI
+  prohibition inline** — `client-ui.md` adds none, relaxes none, and where the two ever seem to
+  disagree this list wins.
+- **Visual parity for UI (frontend/mobile) — render, compare, fix; don't trust code-from-image.**
+  For a UI stage with **design reference(s)** (Figma links or
+  `docs/development/<feature-name>/design/<screen>.png`, from the plan — which lists them **per
+  screen, per flow step, and per specced state**): after it's green, **render and compare every ref
+  row the stage covers** — the main screen alone is not parity when the plan also carries step/state
+  refs (a "flagged: platform default" state is checked against the `04-ux-conventions` standard
+  instead). Render the screen and screenshot it, then compare to the design **two ways — (a) an AI
+  visual checklist** (layout, spacing, colors, typography, component fidelity (**each element is the
+  type the widget spec declares**), and *every* state: default/loading/error/empty/pressed) —
+  **report spacing/type/border findings as *measured value → token name*, never "looks close"**
+  (e.g. "card inner padding measured 12, bound to `space.lg` = 16 → fixed"); a mismatch against the
+  widget-spec *Style bindings* is a defect **even when the pixel-diff is inside tolerance** —
+  tolerance forgives rendering differences, never a wrong token — **and (b) a pixel-diff**. List
+  every mismatch, fix, and **re-render until parity**. **When the screen is taller than the
+  viewport, full-scroll coverage is mandatory:** map every design section top→bottom (including
+  **below-the-fold**) to a captured region and **compare per section** — parity is **not passed
+  while any section is uncompared** (a viewport-only screenshot silently skips scrolled content —
+  the exact bug this prevents). For **virtualized / infinite lists**, compare the item template +
+  representative sections + key states, and say so — don't claim to capture an unbounded page.
+  **Tolerance follows platform best-practice** — don't force pixel-identical where iOS/Android/web
+  norms dictate otherwise; **flag intentional platform deviations** instead of "fixing" them wrong.
+  Capture the **full scrollable extent, not just the viewport** (load lazy/deferred content first) —
+  the per-platform capture commands and the pixel-diff tooling are in `client-ui.md` §1. **Save
+  every iteration** as a review trail — the actual screenshot and its diff overlay, named and filed
+  per `client-ui.md` §2. These are **local review artifacts** — ensure
+  `docs/development/<feature-name>/design/compared-ui/` is in the project's `.gitignore` (add the
+  line if missing); never commit them. **If you must install tooling (browser driver,
+  emulator/simulator, pixel-diff lib) or boot a device, tell the user what and why and get the OK
+  first.** **If the render/screenshot tooling fails or isn't working, do NOT skip or continue past
+  the UI comparison** — STOP, report the exact problem and a concrete fix (install / permission /
+  config / boot the device), and wait. The UI comparison must still happen — either fix the tool, or
+  the user does a manual visual compare — but it is **never skipped or auto-continued**, and never
+  claim parity you didn't verify.
+- **Every visual value resolves to a token — zero raw literals.** On client UI, spacing, font
+  size/weight/family/line-height, color, border thickness, radius, elevation, icon and control sizes
+  come from **`docs/basics/18-design-tokens.md`** by **name**, via the screen's widget-spec *Style
+  bindings*. **Never read a value off the mockup** — eyeballing a raster is exactly why padding,
+  text size, font and hairlines differ from screen to screen. Concretely: no `padding: 13`, no
+  `fontSize: 15`, no `fontWeight: 600` written inline, no `#EEE`, no `borderWidth: 1.5`, no
+  fractional dp/pt/px. **Emphasis is a weight token** (never a size bump or a family swap),
+  **underline only where the standard allows it**, **case comes from the typography role** — no
+  ad-hoc transforms. **Lines are tokens too:** thickness from the token, inset-vs-full-bleed as
+  declared, length derived from the container (never a fixed width), one line per boundary. If the
+  stage needs a value the scale doesn't have: **snap to the nearest token and report it**, or — if
+  the design uses it systematically — **stop and raise an Open Decision** (new scale step vs
+  approved deviation) back to `do-grooming`; a genuinely **new token** is **registered in
+  `18-design-tokens.md` on create**, like an asset. The **conformance review (step 5)** audits this:
+  it runs the project's no-raw-literals check from the doc's *Enforcement* table, or greps the diff
+  for numeric/hex literals in UI code — a literal that slipped through is an objective violation,
+  fixed in the stage before it's presented.
+- **Every section case gets built and compared — a missed case is a blocker, not a detail.** For any
+  screen with a **`docs/development/<feature-name>/section-slicing/<screen>.md`**, that doc is the
+  case contract: read it **before** writing the screen and **enumerate every case ID**
+  (`body.summary/C3`, `ftr.actions/C5`) plus every row of its *Interactions that matter*. Then:
+  - **Implement every case**, with its visibility driven by the **declared source and trigger**
+    (server field · role · flag · cache state; on mount · on query settle · on flag fetch · on
+    focus) — not a convenient local boolean that happens to look right. Honor the declared
+    **collapse-vs-keep-space** behavior and the **precedence** rule when two conditions are true at
+    once, and implement the declared **unknown/missing-data** case (offline, null field, failed flag
+    fetch) rather than letting it fall through to a blank region.
+  - **Render each case and compare it to that case's crop**
+    (`design/sections/<screen>/<section-id>[--<case>].png`) — the same AI-checklist + pixel-diff
+    loop as full-screen parity, but **per case**, which is the point: a full-screen mockup only ever
+    shows one case, so comparing against it passes a screen whose other four cases were never built.
+  - **Report case coverage as a table** — case ID → implemented? → compared? → verdict. **Every case
+    must be accounted for.** A case that is *not implemented*, or implemented but *never rendered*,
+    is an **objective violation** → fix it in this stage. A case whose crop is **`pending export`**
+    or missing with no explicit marker → **STOP and report**; don't guess the design and don't
+    quietly skip it (that's the missed-case bug arriving anyway, one phase later).
+  - **A case the design never covered** is an **Open Decision back to `do-grooming`** — never
+    invented here.
+  - **Views count is part of the spec:** if a case says *"3 skeleton rows"* or *"primary +
+    secondary"*, assert the count and identity, not just "something rendered".
+- **Build common interactions per the UX conventions.** Implement submit enable/disable,
+  mandatory-field marking, empty/loading/error states, snackbars, and confirmations per
+  `docs/basics/04-ux-conventions.md` — consistent with the rest of the app, not ad-hoc. If a stage
+  needs a UX pattern the conventions don't cover, that's an undecided gap → **Open Decision back to
+  `do-grooming`** (which asks the user add-new-vs-reuse and registers the choice) — don't invent a
+  one-off.
+- **Content-fit for variable-content containers.** When building a dialog / bottom sheet / list /
+  form / multi-line text, it must **fit its content or scroll — never clip**. Verify at content +
+  viewport **extremes**, not just the mockup's ideal content: **longest realistic content, largest
+  dynamic-type/font scale, smallest supported screen** (render those cases in the visual-parity
+  step). Follow the widget-spec's *Container sizing & overflow* entry. This is the "dialog doesn't
+  fit its content" bug — catch it here.
+- **Consume the backend via the contract's types — don't re-guess the shape.** When a stage calls
+  the backend, use the **typed client / types generated from the hub's machine-checkable contract**
+  (per `docs/basics/15-api-reference.md`); if the project generates them, run the generator rather
+  than hand-writing an interface (a hand-written type is where `title: string` diverges from the
+  real `title: {en,id}` and crashes at render). Handle **every field as the contract types it** —
+  nullable, enum, and **localized objects rendered through the locale helper, never raw** (raw
+  render of `{en,id}` is the "Objects are not valid as a React child" crash). Test fixtures for this
+  stage **derive from the contract (or recorded real responses) with relevant, domain-realistic
+  values — never hand-authored or randomized/placeholder shapes** that can pass while reality fails.
+  For **authenticated** calls, follow `docs/basics/13-auth.md`'s token handling — attach/refresh via
+  the existing interceptor and handle 401 (refresh-and-retry, no loop); don't hand-roll a parallel
+  auth path. **Shared-entity stages implement exactly the cache wiring the plan named** — the
+  canonical query keys read and the invalidations/events fired, per `docs/basics/08-data-cache.md`'s
+  sync convention; a private key for an entity another feature owns is drift, not a choice.
+- **Integrated smoke for full-stack stages — boot both, hit it for real.** With layer-split stages
+  the seam is crossed **twice**, and both count: the **`data` stage** is where the real
+  API/DB/3rd-party call lands (drive the real request — a data stage that passes on unit tests alone
+  is exactly the hole this gate exists to close), and the **`presentation` stage** is where the real
+  response renders (drive the screen against it). When a stage crosses the frontend↔backend seam (a
+  new/changed endpoint, a screen that calls one), a green unit test is not enough — after it's
+  green, **boot the real backend + real frontend** per `docs/basics/09-environment.md`'s *Full-stack
+  run recipe* (FE pointed at the running BE) and exercise the stage's actual request through the
+  real HTTP stack **with relevant, domain-realistic data (never randomized/placeholder)**. It must
+  show **zero unexpected 4xx/5xx (catches 405/route/method drift), zero client/browser console
+  errors, and zero error-boundary/crash activations** — an error boundary hiding the crash behind a
+  fallback that *looks* fine still fails. If you can't boot both in-session (missing recipe, env
+  can't stand up), **STOP and say so** at the checkpoint — don't mark the stage passed on isolated
+  tests alone. **The smoke checks freshness, not just errors:** when the stage has a flow binding /
+  touches shared entities, also **mutate in the source** (create/update via the owner's real flow)
+  and confirm the consumer's view **updates per the TRD's decided freshness** — a smoke that never
+  changes the owner's data passes while "the consumer's list isn't synchronized" ships. This catches
+  the wiring/data-shape bug *at the stage that caused it*, not at the end. (The full feature-level
+  version is `do-testing`'s Boot & Smoke gate.)
+- **Apply the widget-spec Test IDs (client UI).** When implementing UI on Android/iOS/Web, set each
+  element's **exact Test ID** from the screen's widget-spec doc via that platform's native
+  attribute, and its content description as the accessibility label. If you add a UI element the
+  spec doesn't list, **add it to the widget spec** (with a convention-following ID) — don't ship an
+  unaddressable element. These IDs are the contract `do-testing` locates by; a missing/renamed ID
+  breaks QA's UI tests.
+- **Build each element as its specced type — don't substitute.** Implement every interactive element
+  as the **type** the widget spec declares (button, toggle, radio, checkbox, dropdown, …); the type
+  is intent, not cosmetic — a toggle built as a checkbox looks close but breaks the behavior. **Use
+  the canonical component the widget spec bound it to** (from `docs/basics/03-ui-architecture.md` →
+  component inventory) — never a hand-rolled look-alike; if the stage genuinely needs a **new
+  reusable** component, **register it in the inventory on create** (like assets). **Compose the
+  screen from its declared scaffold** — reuse the scaffold's **code component** when one exists
+  (rung 2 — reuse); if the pattern recurs across screens but no component exists, **propose
+  extracting one and ask first** (don't force the abstraction, don't hand-build the layout
+  differently per screen either). **Never swap in a different or "better" component on your own — if
+  you have a recommendation to deviate, ask the user first** (or raise it as an Open Decision back
+  to `do-grooming`); silently substituting is drift. `do-testing` asserts the rendered a11y role
+  matches the spec, so a mismatch will fail.
+- **Reuse lookup before writing any shared-ish logic (rung 2 — reuse — has an index).** Before
+  writing a helper, formatter, validator, base class, wrapper, or hook, **search
+  `docs/basics/19-code-inventory.md` first** (it catalogs reusable units project-wide, not just
+  core/common) — exact match → reuse; similar → adapt + update its row; none → write it and
+  **register it on create** (name · plain+engineer description · location · used-by). A duplicate of
+  a registered job is drift — if the inventory shows one already exists elsewhere, reuse or raise
+  it, never write a second. **Wire every boundary per `02-architecture.md` → Layer interaction &
+  wiring patterns** — interface/impl/binding placement, async and error types at the boundary, DTO
+  mapping at the data edge — the conformance review checks the pattern, not just the dependency
+  rule.
+- **Asset search flow, then register-on-create.** Before creating any asset, search in order,
+  stopping at the first hit: (1) **registry** `docs/basics/17-asset-registry.md` by name/tags; (2)
+  **assets module** — if no registry or no match, the asset-providing module/package located via
+  `docs/basics/03-ui-architecture.md`; (3) **ask the user** — whole-project scan or create new.
+  Exact → reuse; similar → adapt + re-validate with the user. Only when the outcome is genuinely
+  **create new**, create it *and* **register it** in `17-asset-registry.md` (name, description,
+  path, tags) — an unregistered new asset breaks the search-before-create loop and duplicates creep
+  back.
+- **Commit every approved stage automatically.** A stage maps naturally to a commit/PR — the moment
+  the user **approves** the stage, **commit its changes right away** with a conventional message (no
+  offer, no asking; approval *is* the go-ahead). Commit only — don't push unless the user asks.
+  Branch first if the project uses feature branches; if it commits straight to its working branch,
+  commit there. Never commit an *unapproved* stage — the approval gate still stands; auto-commit
+  fires only after it passes.
+- **Move the Jira ticket to In Progress when its work starts — only if the work is tracked in Jira.**
+  If the Jira phases were skipped and there are no ticket keys, **skip this rule entirely** (nothing
+  to update). When a stage begins and it *is* linked to a Jira key (written back by `do-uploading`),
+  transition that ticket to **In Progress** via the Atlassian MCP — use `getTransitionsForJiraIssue`
+  to find the board's actual transition name (boards differ), then `transitionJiraIssue`. Skip if
+  it's already In Progress or has no linked key; transition each ticket only once (when the first
+  stage touching it starts). Announce the transition; don't gate each one — running this skill is
+  the approval. If the transition fails, report it and continue coding (don't block implementation
+  on a status update).
 
 ## Flow — per stage
 
 For the next unfinished stage in the plan:
 
-1. **Frame** — restate the stage goal, its planned changes, and the tasks/AC it covers. Note any drift you already foresee from the real code. **If the stage is linked to Jira ticket(s), move them to In Progress** (per the rule above) and report it — otherwise skip (no Jira).
-2. **Red** — write the failing test(s) for this stage's acceptance criteria/behavior, in the packages the plan fixed. Run them; confirm they **fail for the right reason** (not a compile/setup error). For stages that can't be unit-tested, say so and use the plan's verify step instead.
-3. **Green** — write the *minimal* code to make the tests pass, climbing the ladder per decision (reuse existing, stdlib, native, dep, then new). Keep the diff scoped to the stage. Run the stage's tests **and the surrounding suite** — no regressions — plus the project build, until green. **A red test you did not cause is still named in the stage packet**: an unmentioned failure is a report falsified by omission. **Report results honestly** — never claim done on red.
-4. **Refactor** — clean up while staying green (ladder, never over-simplify away validation/error handling/edge cases the AC needs): clearer names, smaller functions, dead code out, comments a better name makes unnecessary deleted. Re-run to confirm still green. The doc/principle **auditing happens in step 5** — don't half-do it here and call it checked.
-5. **Conformance review (fresh eyes) — before verifying, before presenting.** Hand the **stage diff + the stage's plan/AC + the `docs/basics/` docs the diff touches** (plus the screen's **section-slicing doc** for UI stages) plus `../../principles.md` and this skill's **`conformance-reviewer.md`** to a **reviewer subagent** (no build reasoning) and run the three-part checklist from the rule above: **profile conformance · principles conformance · plan-AC-and-nothing-more** — and for UI stages, **case completeness: every section case implemented, driven by its declared source/trigger, with none silently dropped**. Then: **fix every objective violation in this stage and re-verify green** — each one **verified** at its cited file and line first, per verify-before-acting above; **STOP on any judgment/scope finding** — record it as an **Open Decision** and hand back to the user/`do-grooming` rather than resolving it yourself. Carry the verdict into the packet: which docs were checked, findings by kind, what you fixed, what you're asking about. If no subagent can run, run the identical checklist inline as an explicit self-review and say that's what happened — never skip the step.
-6. **Visual parity + content-fit (UI stages with a design ref)** — **what you compare depends on the stage's kind** (the plan's *Stage kind*): the dispatch for a `shell` / `section` / `assembly` stage, the content extremes, the section-slicing doc's Interactions (`X`) rows, and where each iteration is saved are in **`client-ui.md` §5 — read it now if you have not**. A `section` stage compares its own crops only — full-screen parity is **not** this stage's job (the screen is knowingly incomplete, so don't diff it and don't wave a failing diff through). Skip only for non-UI stages or when no design ref exists — **never** because rendering failed.
-7. **Integrated smoke (full-stack stages)** — if the stage crosses the FE↔BE seam, boot the real backend + real frontend (per the *Full-stack run recipe*) and drive the stage's real request through the running stack with relevant, domain-realistic data. Confirm zero unexpected 4xx/5xx, zero console errors, zero error-boundary trips. Skip only for stages that don't touch the seam; if both can't be booted in-session, stop and report (don't pass on isolated tests alone).
-8. **Present + ⏸ STOP** — present in the shared **step-summary format** (`principles.md`): answer the 5W+1H, one self-contained statement each (no naked references — every case/AC/token ID carries its plain essence inline) — **What** (plain + engineer phrase), **Why** (first, since this checkpoint asks for a decision), **Who**, **When**, **Where**, **How** (ending with what I need from you). The structured packet below is the **Details (for engineers)** section — not the opening:
-   - **Plan summary** — what this stage set out to do (goal + the AC/tasks it covers), so they review against intent.
-   - **Test cases** — each test written, what behavior/AC it asserts, and its result (pass). Call out anything *not* covered by a test and why (e.g. UI fell back to a manual check).
-   - **Changes summary** — what actually changed, per file/module (and any drift from the plan), then the diff itself.
-   - **Conformance review** — who reviewed (reviewer subagent, or inline self-review + why), **which `docs/basics/` docs were checked** against this diff, and the findings **by kind**: objective violations *fixed* (each one, and the re-verify result) · judgment/scope findings **raised as Open Decisions** (with the question the user has to answer) · anything deliberate **named and accepted**. Include the comment check here — **zero comments added** (machine directives only), and where a comment was tempting, the **name/constant/function that replaced it** (or the commit message that now carries the *why*). "Clean" is a valid verdict — but say *what was checked* to earn it, never just "clean".
-   - **Profile updates** — any `docs/basics/` doc this stage changed a recorded fact in (new endpoint → api-reference, migration → database, new env var → environment, new asset → asset-registry, new token / approved deviation → design-tokens, etc.), updated + re-stamped in the same change. "None" if the stage touched nothing the profile tracks.
-   - **Section cases (UI stages)** — the case-coverage table and its totals for **the cases this stage claims**; its shape is in **`client-ui.md` §5 — read it now if you have not**. "n/a" only for a **legacy screen this feature's grooming never touched** — a screen with a widget spec in this feature's directory but no section-slicing doc is an **unfinished spoke: STOP, back to `do-grooming`**, never build it caseless.
-   - **Visual parity (UI stages)** — what this slot reports (the final screenshot beside the design, the AI checklist + pixel-diff, iteration count, accepted platform deviations, full-scroll coverage, token findings) is in **`client-ui.md` §5 — read it now if you have not**; the static no-raw-literals result lives in *Conformance review*, not here. "n/a" for non-UI, or note if parity couldn't be rendered in-session.
-   - **Integrated smoke (full-stack stages)** — the real request driven through the booted stack, and the result: 4xx/5xx, console errors, error-boundary trips (all zero to pass). "n/a" for non-seam stages, or note if the stack couldn't be booted in-session.
+1. **Frame** — restate the stage goal, its planned changes, and the tasks/AC it covers. Note any
+   drift you already foresee from the real code. **If the stage is linked to Jira ticket(s), move
+   them to In Progress** (per the rule above) and report it — otherwise skip (no Jira).
+2. **Red** — write the failing test(s) for this stage's acceptance criteria/behavior, in the
+   packages the plan fixed. Run them; confirm they **fail for the right reason** (not a
+   compile/setup error). For stages that can't be unit-tested, say so and use the plan's verify step
+   instead.
+3. **Green** — write the *minimal* code to make the tests pass, climbing the ladder per decision
+   (reuse existing, stdlib, native, dep, then new). Keep the diff scoped to the stage. Run the
+   stage's tests **and the surrounding suite** — no regressions — plus the project build, until
+   green. **A red test you did not cause is still named in the stage packet**: an unmentioned
+   failure is a report falsified by omission. **Report results honestly** — never claim done on red.
+4. **Refactor** — clean up while staying green (ladder, never over-simplify away validation/error
+   handling/edge cases the AC needs): clearer names, smaller functions, dead code out, comments a
+   better name makes unnecessary deleted. Re-run to confirm still green. The doc/principle
+   **auditing happens in step 5** — don't half-do it here and call it checked.
+5. **Conformance review (fresh eyes) — before verifying, before presenting.** Hand the **stage diff +
+   the stage's plan/AC + the `docs/basics/` docs the diff touches** (plus the screen's
+   **section-slicing doc** for UI stages) plus `../../principles.md` and this skill's
+   **`conformance-reviewer.md`** to a **reviewer subagent** (no build reasoning) and run the
+   three-part checklist from the rule above: **profile conformance · principles conformance ·
+   plan-AC-and-nothing-more** — and for UI stages, **case completeness: every section case
+   implemented, driven by its declared source/trigger, with none silently dropped**. Then: **fix
+   every objective violation in this stage and re-verify green** — each one **verified** at its
+   cited file and line first, per verify-before-acting above; **STOP on any judgment/scope finding**
+   — record it as an **Open Decision** and hand back to the user/`do-grooming` rather than resolving
+   it yourself. Carry the verdict into the packet: which docs were checked, findings by kind, what
+   you fixed, what you're asking about. If no subagent can run, run the identical checklist inline
+   as an explicit self-review and say that's what happened — never skip the step.
+6. **Visual parity + content-fit (UI stages with a design ref)** — **what you compare depends on the
+   stage's kind** (the plan's *Stage kind*): the dispatch for a `shell` / `section` / `assembly`
+   stage, the content extremes, the section-slicing doc's Interactions (`X`) rows, and where each
+   iteration is saved are in **`client-ui.md` §5 — read it now if you have not**. A `section` stage
+   compares its own crops only — full-screen parity is **not** this stage's job (the screen is
+   knowingly incomplete, so don't diff it and don't wave a failing diff through). Skip only for
+   non-UI stages or when no design ref exists — **never** because rendering failed.
+7. **Integrated smoke (full-stack stages)** — if the stage crosses the FE↔BE seam, boot the real
+   backend + real frontend (per the *Full-stack run recipe*) and drive the stage's real request
+   through the running stack with relevant, domain-realistic data. Confirm zero unexpected 4xx/5xx,
+   zero console errors, zero error-boundary trips. Skip only for stages that don't touch the seam;
+   if both can't be booted in-session, stop and report (don't pass on isolated tests alone).
+8. **Present + ⏸ STOP** — present in the shared **step-summary format** (`principles.md`): answer
+   the 5W+1H, one self-contained statement each (no naked references — every case/AC/token ID
+   carries its plain essence inline) — **What** (plain + engineer phrase), **Why** (first, since
+   this checkpoint asks for a decision), **Who**, **When**, **Where**, **How** (ending with what I
+   need from you). The structured packet below is the **Details (for engineers)** section — not the
+   opening:
+   - **Plan summary** — what this stage set out to do (goal + the AC/tasks it covers), so they
+     review against intent.
+   - **Test cases** — each test written, what behavior/AC it asserts, and its result (pass). Call
+     out anything *not* covered by a test and why (e.g. UI fell back to a manual check).
+   - **Changes summary** — what actually changed, per file/module (and any drift from the plan),
+     then the diff itself.
+   - **Conformance review** — who reviewed (reviewer subagent, or inline self-review + why), **which
+     `docs/basics/` docs were checked** against this diff, and the findings **by kind**: objective
+     violations *fixed* (each one, and the re-verify result) · judgment/scope findings **raised as
+     Open Decisions** (with the question the user has to answer) · anything deliberate **named and
+     accepted**. Include the comment check here — **zero comments added** (machine directives only),
+     and where a comment was tempting, the **name/constant/function that replaced it** (or the
+     commit message that now carries the *why*). "Clean" is a valid verdict — but say *what was
+     checked* to earn it, never just "clean".
+   - **Profile updates** — any `docs/basics/` doc this stage changed a recorded fact in (new
+     endpoint → api-reference, migration → database, new env var → environment, new asset →
+     asset-registry, new token / approved deviation → design-tokens, etc.), updated + re-stamped in
+     the same change. "None" if the stage touched nothing the profile tracks.
+   - **Section cases (UI stages)** — the case-coverage table and its totals for **the cases this
+     stage claims**; its shape is in **`client-ui.md` §5 — read it now if you have not**. "n/a" only
+     for a **legacy screen this feature's grooming never touched** — a screen with a widget spec in
+     this feature's directory but no section-slicing doc is an **unfinished spoke: STOP, back to
+     `do-grooming`**, never build it caseless.
+   - **Visual parity (UI stages)** — what this slot reports (the final screenshot beside the design,
+     the AI checklist + pixel-diff, iteration count, accepted platform deviations, full-scroll
+     coverage, token findings) is in **`client-ui.md` §5 — read it now if you have not**; the static
+     no-raw-literals result lives in *Conformance review*, not here. "n/a" for non-UI, or note if
+     parity couldn't be rendered in-session.
+   - **Integrated smoke (full-stack stages)** — the real request driven through the booted stack,
+     and the result: 4xx/5xx, console errors, error-boundary trips (all zero to pass). "n/a" for
+     non-seam stages, or note if the stack couldn't be booted in-session.
    - **Verification** — the green test + build result.
-   Then ask: approve / request changes / stop here. Do not touch the next stage until they respond. **(Auto-run: nothing is asked — the packet is a report; record the verdict as `auto <date>` and proceed to the next stage in the same run.)**
-9. **On approval** — record the stage's **Checkpoint verdict** (`approved <date>` — or `auto <date>` in auto-run) and mark it done in `plan-<platform>.md` (resumable), **commit the stage's changes automatically** (conventional message; no push unless asked), and either continue to the next stage or stop if the user wants (honoring safe-stop).
+   Then ask: approve / request changes / stop here. Do not touch the next stage until they respond.
+   **(Auto-run: nothing is asked — the packet is a report; record the verdict as `auto <date>` and
+   proceed to the next stage in the same run.)**
+9. **On approval** — record the stage's **Checkpoint verdict** (`approved <date>` — or `auto <date>`
+   in auto-run) and mark it done in `plan-<platform>.md` (resumable), **commit the stage's changes
+   automatically** (conventional message; no push unless asked), and either continue to the next
+   stage or stop if the user wants (honoring safe-stop).
 
 ## After the last stage
 
-Confirm every task/AC the plan covered is implemented and verified, report what's done and anything deferred, and hand off to `do-testing` — the AC are its input.
+Confirm every task/AC the plan covered is implemented and verified, report what's done and anything
+deferred, and hand off to `do-testing` — the AC are its input.
