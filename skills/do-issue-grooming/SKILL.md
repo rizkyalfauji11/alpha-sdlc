@@ -5,7 +5,7 @@ description: Audit a user-reported issue across the WHOLE project — find the w
 
 You are grooming a **user-reported issue** into a Technical Requirements Document — but the defining job is the **audit**: find the *whole class of the issue across the entire project*, not just the one place it was reported. Capture the issue from the user; if vague, ask for the symptom, repro, and where it was seen (error text, logs, screen, environment).
 
-**Apply `../../principles.md`** — the plugin's `SessionStart` hook already injected it, so **read the file in full now only if it isn't in context** (hooks off, or a compaction dropped it); apply it either way (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). Root-cause, not symptom, is the whole point here.
+**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind (lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). Root-cause, not symptom, is the whole point here.
 
 
 **Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.

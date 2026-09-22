@@ -8,7 +8,7 @@ Identify the PRD/BRD source from the user's request (a URL, a file path). If non
 
 **Wrong skill for a project from zero.** If nothing is built yet and the ask is the **base** of a new app/service (framework scaffold, folder structure, architecture skeleton), that's `do-project-setup` in **greenfield mode** to decide the stack, then **`do-foundation-grooming`** for the base — come back here for the **first product feature**, once a real profile exists to ground in.
 
-**Apply `../../principles.md`** — the plugin's `SessionStart` hook already injected it, so **read the file in full now only if it isn't in context** (hooks off, or a compaction dropped it); apply it either way (lazy-senior-engineer mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). The rules below are grooming-specific additions.
+**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind (lazy-senior-engineer mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve). The rules below are grooming-specific additions.
 
 
 **Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.

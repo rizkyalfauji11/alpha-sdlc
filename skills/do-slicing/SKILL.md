@@ -9,7 +9,7 @@ You are converting an **approved TRD into a task-list document**, story-pointed.
 
 **Story Points is the only built-in scheme, deliberately** — it works on any Jira with no custom-field setup. If your org sizes work with a custom weighting field instead, keep using whatever skill implements it and skip this phase; this plugin stays standalone rather than depending on an org-specific one.
 
-**Apply `../../principles.md`** — the plugin's `SessionStart` hook already injected it, so **read the file in full now only if it isn't in context** (hooks off, or a compaction dropped it); apply it either way (lazy-senior mindset, never over-simplify, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary). Creating the doc is internal — the no-external-write gate matters most for the *upload* skill, not this one.
+**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind (lazy-senior mindset, never over-simplify, ground-in-real-code, ask-don't-assume, 2–3 best-practice options, living understanding summary). Creating the doc is internal — the no-external-write gate matters most for the *upload* skill, not this one.
 
 ## Source of tasks
 

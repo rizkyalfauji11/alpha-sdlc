@@ -58,7 +58,7 @@ You don't have to swallow the whole pipeline on day one. A working path: **setup
 
 ## Install
 
-Needs **`node` on your PATH** — the hooks are Node scripts using built-ins only, so there's no `npm install` and nothing is fetched. No Node? Everything still installs; the hooks fail open and simply don't enforce.
+Needs **`node` on your PATH** — the hooks are Node scripts using built-ins only, so there's no `npm install` and nothing is fetched. They carry a golden-case suite — `node tests/hooks.test.js`, same built-ins, no install — because a validator that quietly stops *detecting* degrades to exit 0 and stays invisible forever; a test fails instead. No Node? Everything still installs; the hooks fail open and simply don't enforce.
 
 ```
 /plugin marketplace add rizkyalfauji11/alpha-sdlc

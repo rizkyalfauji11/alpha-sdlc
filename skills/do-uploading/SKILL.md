@@ -7,7 +7,7 @@ description: Optional tracker phase. Upload a task-list document (produced by do
 
 You are uploading an already-written **task-list document to the org's tracker** (Jira or GitHub Issues — see Tracker routing below). This is the step `do-slicing` deliberately stops short of. Creating tracker items is an **external write** — the draft + human-approve discipline in `../../principles.md` is at its strongest here.
 
-**Apply `../../principles.md`** — the plugin's `SessionStart` hook already injected it, so **read the file in full now only if it isn't in context** (hooks off, or a compaction dropped it); apply it either way — especially **draft + human-approve before any external write**, and ask-don't-assume for the Epic and assignee.
+**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind — especially **draft + human-approve before any external write**, and ask-don't-assume for the Epic and assignee.
 
 ## Source
 

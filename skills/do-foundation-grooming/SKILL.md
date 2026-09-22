@@ -5,7 +5,7 @@ description: STEP 2 of the greenfield flow — run AFTER do-project-setup (green
 
 You are grooming the **foundation of a greenfield project** — the base an application or service stands on before any feature exists: the framework scaffold, the folder structure, and the architecture skeleton the user wants. Output is a **foundation TRD** that flows into the normal pipeline (`do-planning` → `do-development` → `do-testing`).
 
-**Apply `../../principles.md`** — the plugin's `SessionStart` hook already injected it, so **read the file in full now only if it isn't in context** (hooks off, or a compaction dropped it); apply it either way — especially the **lazy-senior mindset** (the base is the smallest thing that stands, not a framework of your own), **no speculative scaffolding**, **ask don't assume**, **2–3 options with one recommended**, and **step-by-step approval**.
+**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind — especially the **lazy-senior mindset** (the base is the smallest thing that stands, not a framework of your own), **no speculative scaffolding**, **ask don't assume**, **2–3 options with one recommended**, and **step-by-step approval**.
 
 
 **Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.

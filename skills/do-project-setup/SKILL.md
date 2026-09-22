@@ -5,7 +5,7 @@ description: Generate the project profile — the baseline "basics" docs (archit
 
 You are generating the **project profile** — the baseline reference every other skill grounds in, so grooming/planning/testing don't re-derive the same orientation each run. Output goes to **`./docs/basics/`**. Run once per repo to bootstrap; re-run in **refresh mode** to keep it current.
 
-**Apply `../../principles.md`** — the plugin's `SessionStart` hook already injected it, so **read the file in full now only if it isn't in context** (hooks off, or a compaction dropped it); apply it either way — especially: **ground in real code (never fabricate — mark anything you can't determine as `UNKNOWN — needs human input`, don't guess)**, draft + human-approve, and never over-simplify.
+**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind — especially: **ground in real code (never fabricate — mark anything you can't determine as `UNKNOWN — needs human input`, don't guess)**, draft + human-approve, and never over-simplify.
 
 
 **Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.
