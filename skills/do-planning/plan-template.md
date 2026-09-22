@@ -123,6 +123,8 @@ standard: agrees" — conflicts surfaced per the tiered rule>
   conformance are always checked.>
 - **Approved (plan gate):** <commit `<hash>` · approved <YYYY-MM-DD> — set by do-planning when this
   stage's draft passes its gate; `do-development` reads it before building the stage>
+- **Status:** <pending / done <YYYY-MM-DD> — set by `do-development` at step 9; this is what a
+  resumed run reads to find the first unfinished stage>
 - **Checkpoint verdict:** <pending — set by do-development when the built stage passes review:
   `approved <date>` or `auto <date>`; separate from *done*>
 - **⏸ Checkpoint — review here.** **Safe to stop after?** <yes — compiles & tests pass / no — leaves
@@ -143,6 +145,8 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 - **Conformance review — docs:** <…>
 - **Approved (plan gate):** <commit `<hash>` · approved <YYYY-MM-DD> — set by do-planning when this
   stage's draft passes its gate; `do-development` reads it before building the stage>
+- **Status:** <pending / done <YYYY-MM-DD> — set by `do-development` at step 9; this is what a
+  resumed run reads to find the first unfinished stage>
 - **Checkpoint verdict:** <pending — set by do-development when the built stage passes review:
   `approved <date>` or `auto <date>`; separate from *done*>
 - **⏸ Checkpoint — review here.** **Safe to stop after?** <…>

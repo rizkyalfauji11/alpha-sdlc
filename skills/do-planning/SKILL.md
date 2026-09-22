@@ -42,7 +42,8 @@ layout is ungrounded).
   stamp first (hub/spoke feature TRD) — missing, `NOT REVIEWED`, or older than the hub's last change
   → STOP** and send it back to `do-grooming` for the hub-alignment review; on an issue / tech-debt /
   foundation TRD the same check reads the hub's *Spokes* row instead (spelled `❌ not reviewed`
-  there), since those spokes carry no header table. Planning a spoke that disagrees with the hub
+  there) only for a **foundation** spoke, which is cut from *Per-platform sections* and has no header
+  table; issue and tech-debt spokes carry their own `Hub alignment` row and are read there. Planning a spoke that disagrees with the hub
   bakes the disagreement into stages, where it resurfaces as a contract/integration bug two phases
   later. **Check each per-screen artifact's own stamp the same way** (`widget-spec/<screen>.md`
   `Approved` · `section-slicing/<screen>.md` `Approved (screen)` + per-section) and **print the

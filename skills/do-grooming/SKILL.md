@@ -137,7 +137,7 @@ docs/development/<feature-name>/
   **Stamp the result.** The spoke header records `Hub alignment: reviewed <date> · hub rev <commit /
   hub's last approval date>`, and the hub's *Spokes* table records the same per spoke — those two
   segments only; each round appends its objective-violation count to the spoke's separate `Alignment
-  rounds` row instead — a spoke with no header table (foundation, issue, tech-debt) carries the
+  rounds` row instead — a **foundation** spoke, which has no header table of its own, carries the
   count in the hub's *Spokes* cell beside its stamp. **The hub moving makes every stamp stale** —
   when a hub section is edited after any spoke exists, re-run this review for each spoke and
   re-stamp. `do-planning` refuses to plan a spoke whose stamp is missing or older than the hub's

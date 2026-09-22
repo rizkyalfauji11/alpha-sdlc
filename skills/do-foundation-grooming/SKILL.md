@@ -81,7 +81,8 @@ must state what's decided-and-built versus written-but-not-yet-real.
     **Folder structure — the full tree, its own gate** (it's the deliverable; never bundled with
     anything else) · ③ Architecture skeleton (entry point, config, module boundaries,
     dependency-rule enforcement) · ④ Build/run/test harness commands · ⑤ Repo hygiene · ⑥ Acceptance
-    criteria · ⑦ Deliberate omissions & deferrals · ⑧ Open Decisions.
+    criteria · ⑦ Open Decisions. (The omissions register is hub-level — one per foundation, not per
+    spoke.)
   A section the project genuinely doesn't need is **still presented** — as "not applicable, here's
   why" — so skipping is the user's call, not a silent omission.
 - **Hub + spoke, same as every other TRD.** One **hub** (`docs/development/foundation/TRD.md`) for
@@ -127,9 +128,10 @@ must state what's decided-and-built versus written-but-not-yet-real.
   entity ownership and the §8-AC ↔ §9-slice pair (a base has no contract, flow, entities or slices)
   and say so in the verdict rather than reporting them passed. What's left is the highest-value
   part: the spoke's structure tree matches the hub's decided **architecture style** and repo
-  strategy · the harness commands match the hub's environment decisions · the **omissions registers
-  agree** across spokes (one platform quietly including auth while the other defers it is exactly
-  the divergence this catches) · both spokes' AC bind to the same conventions · Open Decisions sit
+  strategy · the harness commands match the hub's environment decisions · **each spoke's AC and
+  structure are consistent with the hub's single omissions register** (one platform quietly
+  including what the register defers is exactly the divergence this catches) · both spokes' AC
+  bind to the same conventions · Open Decisions sit
   at the right level. **The stamp lands in the hub's *Spokes* row alone** — a foundation spoke is
   cut from *Per-platform sections* and has no header table to carry one — and re-review every spoke
   when a hub decision changes.

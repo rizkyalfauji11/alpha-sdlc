@@ -23,23 +23,27 @@ and assignee.
   `docs/development/<feature-name>/task-list.md`. Confirm the path; if it doesn't exist, point the
   user to `do-slicing` first.
 - Parsing: tasks are `#### T<id> — <title>`, each carrying a **story-point value + rationale** and a
-  layer tag. **Check each part's `_Approved: <YYYY-MM-DD>_` stamp before uploading its tasks —
+  layer tag. **Check each part's `_Approved: commit `<hash>` · <YYYY-MM-DD>_` stamp before uploading its tasks — missing, or the part edited after that commit —
   missing → STOP** and send that part back to `do-slicing`; creating tracker items for tasks that
   never passed their review gate creates tracker items for work that never passed its gate (an
   explicit *proceed anyway* still overrides, with the gap recorded).
-
-## Required inputs — ask first
-
-1. **Jira project / board key** — e.g. `<PROJ>`; confirm which project the tasks belong in.
-2. **Epic key** — e.g. `<PROJ>-1234`. **Hard precondition:** ask for it up front and **verify it is
-   actually an Epic in that project** before creating anything. Never guess it from the feature
-   name.
-3. **Assignee** — who the tasks go to (or explicitly unassigned).
 
 ## Tracker routing
 
 Read the profile's **Org settings → Tracker** (`01-overview.md`). `Jira` → the Jira mechanics below.
 `GitHub Issues` → the GitHub mechanics below. `none` → this skill doesn't apply; say so.
+
+## Required inputs — ask first
+
+Ask only what the routed tracker needs.
+
+**Jira** — 1. **project / board key** (e.g. `<PROJ>`; confirm which project the tasks belong in) ·
+2. **Epic key** (e.g. `<PROJ>-1234`) — **hard precondition:** ask up front and **verify it is
+actually an Epic in that project** before creating anything; never guess it from the feature name ·
+3. **Assignee** (or explicitly unassigned).
+
+**GitHub Issues** — the **repo**, the **milestone** the tasks belong to (verify it exists), and the
+**assignee** (or explicitly unassigned).
 
 ## Jira mechanics
 

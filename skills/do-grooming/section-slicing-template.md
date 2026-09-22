@@ -125,8 +125,8 @@ from.>
 
 > Where a chosen option names a **mechanism**, the decided status also names **the test that will
 > prove it** — written downstream, never run here. **A mechanism amended twice stops being amended —
-> escalate to the user.**
+> escalate to the user.** (An amendment is any change to a decided row's chosen option or its proving test — count it in `amended <n>`.)
 
 | # | Gap / ambiguity | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
 |---|-----------------|---------------------------|--------|
-| D1 | <e.g. no design for the offline footer> | ★ <platform default per `04-ux-conventions`> / <design it> | pending / decided: <choice> · proven by <act → assert> / decided: auto ★<choice> (ratify) |
+| D1 | <e.g. no design for the offline footer> | ★ <platform default per `04-ux-conventions`> / <design it> | pending / decided: <choice> · proven by <act → assert> · amended <n> / decided: auto ★<choice> (ratify) |

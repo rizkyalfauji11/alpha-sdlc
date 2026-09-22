@@ -17,6 +17,9 @@ TDD.
 - The **Bugs found** table in `docs/development/<feature-name>/test-plan-<platform>.md` (from
   `do-testing`), and the user's triage (which bugs to fix / defer). If the report isn't there, run
   `do-testing` first.
+- **Or an issue-TRD** (from `do-issue-grooming`, small-fix route): its numbered AC plus its audit
+  sites — each affected site is a bug row, and its status is written back into the audit table. No
+  test-plan is required on that path.
 - The TRD (AC/design) + plan + the failing test(s) that exposed each bug.
 
 ## Rules
@@ -26,7 +29,8 @@ TDD.
   in severity order, but each presentation is a **report** (`Approved: auto <date>`), committed and
   continuing — then **hand back to `do-testing` automatically** after the last bug, looping the
   chain until re-test is green — questions along the way auto-decide their ★ recommendation
-  (recorded); only failed mandatory tooling, physically missing inputs, or an external write halt
+  (recorded); only failed mandatory tooling, physically missing inputs, an external write, or a fix
+  that has failed three times halt
   it. The chain ends with one consolidated report + the profile-reconcile recommendation.
 - **Reproduce first (regression test).** Before fixing, write/confirm a **failing test that
   reproduces the bug** (red) — derived from the AC it violates. Then fix until green. That test
@@ -67,9 +71,11 @@ TDD.
   implement it driven by the case's **declared source and trigger** in
   `section-slicing/<screen>.md`, render it against that case's **crop**, and check the **sibling
   sections/screens for the same missing case** (it's rarely one screen — a class, per
-  `do-issue-grooming`). If the case **isn't in the doc**, that's a grooming gap: **add the case +
-  its crop** (register-on-create) as part of the fix, so the next build and `do-testing` both see
-  it, and say you did.
+  `do-issue-grooming`). If the case **isn't in the doc**, that's a grooming gap, not a
+  fix: record it as an **Open Decision back to `do-grooming`** and do not author the case or
+  estimate its crop here — the crop is an approved, stamped spec input, and a guessed box is
+  the design invention this skill's own rules forbid. Fix what the doc does specify; the
+  missing case returns through grooming's gate.
 - **Visual bugs** — for UI parity bugs, re-run the visual-parity loop (render → compare → fix), save
   to `design/compared-ui/` — capture commands and the `<screen>-<platform>-v<N>.png` / `-diff.png`
   naming are in `../do-development/client-ui.md`, read it now if you have not; **never skip the
@@ -176,7 +182,7 @@ For each bug the user approved, in the report's order (severity first):
    honestly (no "fixed" on red).
 4. **Conformance review (fresh eyes) — before re-verifying, before presenting.** Hand the **fix diff +
    the bug entry (repro + violated AC) + the `docs/basics/` docs the diff touches** to a
-   **reviewer subagent** (not your diagnosis) and run the checklist from the rule above: **fix
+   **reviewer subagent** (the packet per the rule above, `../../principles.md` included, never your diagnosis) and run the checklist from the rule above: **fix
    quality (root cause, not symptom · the regression test really reproduces it · right layer ·
    siblings covered) · scope discipline (the fix and its test, nothing else) · profile + principles
    conformance**. Then: **fix every objective violation — verified at the cited file and line first

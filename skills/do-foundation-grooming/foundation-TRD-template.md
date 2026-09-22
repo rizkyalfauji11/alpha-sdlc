@@ -145,11 +145,11 @@ feature. Do not report the reduced check as the full gate.
 
 > Where a chosen option names a **mechanism**, the decided status also names **the test that will
 > prove it**
-> (specified, not run). **A mechanism amended twice stops being amended — escalate to the user.**
+> (specified, not run). **A mechanism amended twice stops being amended — escalate to the user** (an amendment is any change to a decided row's chosen option or its proving test; count it in `amended <n>`).
 
 | # | Decision needed | Options (recommended marked) | Status |
 |---|-----------------|------------------------------|--------|
-| D1 | <…> | <a / **b (recommended)** / c> | open / decided: <choice> · proven by <the `A<n>` above, or act → assert> |
+| D1 | <…> | <a / **b (recommended)** / c> | open / decided: <choice> · proven by <the `A<n>` above, or act → assert> · amended <n> |
 
 ## Hand-off
 

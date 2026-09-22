@@ -3,6 +3,7 @@
 | | |
 |---|---|
 | **Status** | Draft |
+| **Hub alignment** | <per spoke: `reviewed YYYY-MM-DD · hub rev <commit / hub's last approval date>` — or `NOT REVIEWED`> |
 | **Author** | <engineer> |
 | **Platforms** | <Backend / Android / iOS / Web — those affected> |
 | **Behavior change?** | <No — behavior-preserving / Yes — describe> |
@@ -113,9 +114,9 @@ slice is untestable work.
 - [ ] <slice> — AC: <AC-3, AC-4>
 
 ## Open Decisions
-_Status: <open / decided: <choice> · proven by <act → assert>>_
+_Status: <open / decided: <choice> · proven by <act → assert> · amended <n>>_
 
 <Gaps the grooming surfaced that need a human call (2–3 options, mark one — the ★ always the
 quality/world-standard option, never the cheapest). **Where the chosen option names a mechanism, the
 decision also names the test that will prove it** — specified, not run; a mechanism amended twice
-stops being amended — escalate to the user. Undecided items block the affected slice.>
+stops being amended — escalate to the user. Undecided items block the affected slice.> (An amendment is any change to a decided row's chosen option or its proving test — count it in `amended <n>`.)

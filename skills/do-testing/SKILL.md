@@ -99,7 +99,12 @@ level where it's cheapest and most stable.
    env: auth, permissions, feature flags, cross-service, perf/security basics, offline/recovery.
    **Calibrate to risk** — the *critical* journeys + key failure modes (a payment flow earns full
    E2E; a tooltip doesn't), not every permutation.
-5. **Boot & Smoke (integrated) — MANDATORY, non-skippable.** The gate that catches what every level
+5. **Boot & Smoke (integrated) — MANDATORY, non-skippable — but it REDUCES, it never skips.** On a
+   **foundation TRD** it reduces to: the harness commands run, the structure and dependency
+   assertions hold, the app boots, and its entry point answers. On a platform set with **no client**
+   it reduces to: the real service booted and its critical journeys driven through the real HTTP
+   stack. Name which reduction applied in the verdict — an unnamed reduction reads as a skip.
+   Otherwise, in full: The gate that catches what every level
    above misses because they run each side against its own mocks: the **real frontend and real
    backend booted together and wired the way the user actually runs the app** (per
    `docs/basics/09-environment.md`'s *Full-stack run recipe*: start each service, FE pointed at the

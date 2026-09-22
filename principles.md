@@ -182,7 +182,7 @@ missing acceptance criterion: a defect, not a detail.
   "stop and ask" / "⏸ STOP — wait for approval" instruction inside
   `do-development`/`do-testing`/`do-fixing` resolves to *take the ★ recommendation, record it,
   continue* — **including "stop the stage / hand back to grooming / surface and wait"
-  instructions**: the gap decides ★ in place and the chain keeps moving (the three halting cases
+  instructions**: the gap decides ★ in place and the chain keeps moving (the four halting cases
   excepted) — the skills' absolute wording governs gated mode and needs no per-line rewriting. An
   auto-decided Open Decision flips its row to `decided: auto ★<option>`; folding the decision into
   section prose happens at ratification (or it re-gates if you reverse it). Prefer the old behavior?
@@ -249,7 +249,7 @@ missing acceptance criterion: a defect, not a detail.
   instruction in any skill as a hard STOP, not a passing note. **The one carve-out is Auto-run
   mode** (above): there, questions that carry options are never asked in the first place — they
   auto-decide the ★ recommendation and are recorded for ratification — so this rule governs
-  questions actually ASKED (including auto-run's three halting cases), and those still block
+  questions actually ASKED (including auto-run's four halting cases), and those still block
   absolutely.
 - **Keep the project profile current (`docs/basics/`).** When your work changes something a profile
   doc records, **update that doc in the same change and re-stamp its commit** — so the profile the

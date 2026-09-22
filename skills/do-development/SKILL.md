@@ -12,7 +12,7 @@ checkpoint unattended — **unless the user explicitly opted into auto-run mode*
 <date>`, commits, and continues — through every stage and **onward into `do-testing`** when the last
 stage lands — while questions auto-answer with the ★ recommendation (recorded, per *Auto-run mode*)
 and the chain halts only where nothing can be decided: failed mandatory tooling, physically missing
-inputs, external writes.
+inputs, external writes, and a fix that has failed three times.
 
 **Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the
 INDEX of these rules, never their text, so the file is the only place they actually bind — now
@@ -39,7 +39,9 @@ file entirely.
 - **Input = the plan**, normally `docs/development/<feature-name>/plan-<platform>.md`, plus the TRD
   spoke + tasks it references. **Check a stage's `Approved (plan gate)` stamp before building it,
   starting at stage 1: missing, still the template placeholder, or recorded at a commit/date before
-  the plan's last change → STOP** and send it back to `do-planning` — the plan was never approved,
+  *this stage's own last edit* → STOP** — scoped to the stage block, never the whole file, since
+  step 9 rewrites the plan after every stage, so a file-wide test fails on every resumed run.
+  Send it back to `do-planning` — the plan was never approved,
   or was edited after approval (an explicit *proceed anyway* still overrides, with the gap recorded,
   per `principles.md`). **Before stage 1, also check the plan covers the TRD:** an AC in the TRD's
   numbered AC register that no stage's `Covers:` claims → **STOP** back to `do-planning` — that's
@@ -381,7 +383,8 @@ For the next unfinished stage in the plan:
    **(Auto-run: nothing is asked — the packet is a report; record the verdict as `auto <date>` and
    proceed to the next stage in the same run.)**
 9. **On approval** — record the stage's **Checkpoint verdict** (`approved <date>` — or `auto <date>`
-   in auto-run) and mark it done in `plan-<platform>.md` (resumable), **commit the stage's changes
+   in auto-run), set the stage's **`Status:` to `done <date>`** in `plan-<platform>.md` (that is what a
+   resumed run reads to find the first unfinished stage), **commit the stage's changes
    automatically** (conventional message; no push unless asked), and either continue to the next
    stage or stop if the user wants (honoring safe-stop).
 

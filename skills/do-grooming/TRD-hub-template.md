@@ -133,7 +133,7 @@ response, errors.>
 **Machine-checkable spec:** <required — path/link to the authoritative OpenAPI/Swagger (or shared
 schema/types) file, and which repo owns it. If none exists yet, that's a work slice.>
 
-**Contract delta (gated with this section):** <`../contract/openapi-delta.yaml` — the
+**Contract delta (gated with this section):** <`./contract/openapi-delta.yaml` — the
 machine-checkable fragment for every endpoint this feature adds/changes. **This fragment is what
 gets approved and what spokes derive typed clients + fixtures from**; the table below is the human
 summary, never a second source of truth. Development's `[contract]` stage merges this approved

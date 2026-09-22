@@ -112,7 +112,7 @@ sections that don't apply.
    (approve / edit / skip) → write to `./docs/basics/<file>.md` with the commit stamp → next doc.
    `12-security-compliance.md` needs explicit human sign-off. Seed `17-asset-registry.md` by
    scanning the actual asset directories. Seed `16-feature-map.md` from any existing
-   `docs/development/*/TRD.md` (each is a feature) plus the code's feature modules/routes — capture
+   `docs/development/*/TRD.md` (each **product-feature** TRD is a feature — skip `foundation/` and any TRD whose first line reads `# Issue TRD:` or `# Tech-Debt TRD:`) plus the code's feature modules/routes — capture
    their depends-on edges; if the app has no discernible features yet, start it minimal and note it.
    Seed `03-ui-architecture.md`'s **screen scaffolds** by scanning the real screens for recurring
    anatomy (header composition, body slicing ratios, dividers) — describe the patterns found, flag

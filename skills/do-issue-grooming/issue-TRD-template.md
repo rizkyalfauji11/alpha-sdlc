@@ -8,6 +8,7 @@
 | | |
 |---|---|
 | **Status** | Draft |
+| **Hub alignment** | <per spoke: `reviewed YYYY-MM-DD · hub rev <commit / hub's last approval date>` — or `NOT REVIEWED`> |
 | **Reported by** | <who / when> |
 | **Severity** | <blocker / major / minor> |
 | **Platforms affected** | <Backend / Android / iOS / Web> |
@@ -107,9 +108,9 @@ untestable work. Every audited site is covered or deferred as an Open Decision.
 - [ ] <slice> — AC: <AC-1, AC-3>
 
 ## Open Decisions
-_Status: <open / decided: <choice> · proven by <act → assert>>_
+_Status: <open / decided: <choice> · proven by <act → assert> · amended <n>>_
 
 <Gaps the audit surfaced that need a human call (2–3 options, mark one — the ★ always the
 quality/world-standard option, never the cheapest). **Where the chosen option names a mechanism, the
 decision also names the test that will prove it** — specified, not run; a mechanism amended twice
-stops being amended — escalate to the user. Undecided items block the affected slice.>
+stops being amended — escalate to the user. Undecided items block the affected slice.> (An amendment is any change to a decided row's chosen option or its proving test — count it in `amended <n>`.)

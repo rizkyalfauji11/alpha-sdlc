@@ -63,7 +63,10 @@ Fibonacci scale: 1, 2, 3, 5, 8, 13**, weighing **complexity + effort/volume + un
 ## Required inputs — ask first
 
 1. **Feature** — which `docs/development/<feature-name>/` TRD to slice. Confirm it's
-   approved/complete; if not, offer to run `do-grooming` first.
+   approved/complete; if not, offer to run the matching grooming skill first. **Check the spoke's
+   `Hub alignment` stamp the way `do-planning` does — missing, `NOT REVIEWED`, or older than the
+   hub's last change → STOP**: this branch ends in external writes, so an unreviewed spoke's
+   disagreement with its hub would be assigned to a human as tickets.
 2. **Scale** — confirm modified Fibonacci (1, 2, 3, 5, 8, 13) or the team's variant. Nothing else is
    needed to write the doc; no Jira access at this stage.
 

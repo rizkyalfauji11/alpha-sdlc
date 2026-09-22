@@ -79,9 +79,9 @@ blocker if it couldn't boot.
 > Every failure logged here first — **presented to the user before any fixing**. `do-testing`
 > does not fix; confirmed fixes go to `do-fixing`. Severity: blocker / major / minor / trivial.
 
-| # | Bug | Severity | Level | AC | Repro steps | Fix? (user) | Status |
-|---|-----|----------|-------|----|-----------  |-------------|--------|
-| B1 | <what's wrong> | major | UI (visual) | <AC ref> | <1. … 2. …> | yes / no / defer | open → (do-fixing) |
+| # | Bug | Severity | Level | AC | Repro steps | Fix? (user) | Attempts | Status |
+|---|-----|----------|-------|----|-------------|-------------|----------|--------|
+| B1 | <what's wrong> | major | UI (visual) | <AC ref> | <1. … 2. …> | yes / no / defer | <n> | open → (do-fixing) |
 
 ## Coverage summary
 
@@ -108,4 +108,4 @@ blocker if it couldn't boot.
 - **E2E scope (risk-calibrated):** <which critical journeys got E2E, and why others didn't>
 - **Uncovered AC (gaps):** <list, or "none">
 - **Manual-only (env unavailable / no automation possible):** <list + why, or "none">
-- **Failing tests (→ back to do-development):** <list, or "none">
+- **Failing tests (→ bugs, see the Bugs-found table below):** <list, or "none">

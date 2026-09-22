@@ -22,11 +22,11 @@
 > *decided*). Where a chosen option names a **mechanism**, the decided status also names **the test
 > that will prove it** — the hub's flow-binding idiom (hub §2) — which lands as a numbered AC in §8
 > and is written downstream, never run here. **A mechanism amended twice stops being amended —
-> escalate to the user.** **Build only *decided* scope** — never fill a gap by adding extra.
+> escalate to the user.** **Build only *decided* scope** — never fill a gap by adding extra. (An amendment is any change to a decided row's chosen option or its proving test — count it in `amended <n>`.)
 
 | # | Gap / ambiguity | Why it's a gap (what would otherwise be guessed) | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
 |---|-----------------|--------------------------------------------------|---------------------------|--------|
-| D1 | <what's unspecified> | <the scope that'd be invented if unanswered> | ★ <opt A> / <opt B> / <opt C> | pending / decided: <choice> · proven by <act → assert> / decided: auto ★<choice> (ratify) |
+| D1 | <what's unspecified> | <the scope that'd be invented if unanswered> | ★ <opt A> / <opt B> / <opt C> | pending / decided: <choice> · proven by <act → assert> · amended <n> / decided: auto ★<choice> (ratify) |
 
 ## 1. Scope (this platform)
 _Approved: <YYYY-MM-DD>_
