@@ -1,28 +1,79 @@
 # alpha-sdlc
 
-An SDLC pipeline for Claude Code — **groom → plan → build → test → fix** — as skills you drive from the terminal.
+An SDLC pipeline for Claude Code — **groom → plan → build → test → fix** — as skills you drive from
+the terminal.
 
-Your agent's tests pass and the feature is still broken: the client calls a method the route doesn't have, the backend returns `{en,id}` where the component renders a string. Every isolated test was green, because both sides mocked the same wrong assumption. This plugin doesn't call a feature done until it has booted your real frontend against your real backend and driven the actual journeys through the real HTTP stack.
+Your agent's tests pass and the feature is still broken: the client calls a method the route doesn't
+have, the backend returns `{en,id}` where the component renders a string. Every isolated test was
+green, because both sides mocked the same wrong assumption. This plugin doesn't call a feature done
+until it has booted your real frontend against your real backend and driven the actual journeys
+through the real HTTP stack.
 
 ## What it won't do
 
-**Continue without you.** Every document section, plan stage, and test result is a hard gate — unless you **explicitly opt into auto-run** for the build→test→fix chain, where gates become reports stamped `auto`, all bugs found get fixed in severity order, and questions answer themselves with the recommended option — always the quality one — each recorded and listed for your after-the-run ratification; it stops only when nothing can be decided (broken verification tooling, a missing input, an external write); grooming, planning, and project setup are never auto. Gates are presented as **5W+1H**: What (in plain words and engineer terms), Why (first, whenever you're asked to decide), Who, When, Where, How — each a self-contained statement, so you never have to open another document to understand the step in front of you; engineering detail below, then it stops. No "generate the whole document", no batched approvals, no default it proceeds on if you go quiet. You review one small change at a time instead of one enormous diff at the end.
+**Continue without you.** Every document section, plan stage, and test result is a hard gate —
+unless you **explicitly opt into auto-run** for the build→test→fix chain, where gates become reports
+stamped `auto`, all bugs found get fixed in severity order, and questions answer themselves with the
+recommended option — always the quality one — each recorded and listed for your after-the-run
+ratification; it stops only when nothing can be decided (broken verification tooling, a missing
+input, an external write); grooming, planning, and project setup are never auto. Gates are presented
+as **5W+1H**: What (in plain words and engineer terms), Why (first, whenever you're asked to
+decide), Who, When, Where, How — each a self-contained statement, so you never have to open another
+document to understand the step in front of you; engineering detail below, then it stops. No
+"generate the whole document", no batched approvals, no default it proceeds on if you go quiet. You
+review one small change at a time instead of one enormous diff at the end.
 
-**Claim a pass it didn't verify.** Done means the real stack booted with domain-realistic data and zero unexpected 4xx/5xx, console errors, or error-boundary trips — and for UI, the render compared against the design. What you get is a "done" you don't have to re-check by hand.
+**Claim a pass it didn't verify.** Done means the real stack booted with domain-realistic data and
+zero unexpected 4xx/5xx, console errors, or error-boundary trips — and for UI, the render compared
+against the design. What you get is a "done" you don't have to re-check by hand.
 
-**Fill in what the design left out.** A gap or ambiguity becomes an *Open Decision* with two or three options and one recommended — and the recommended one is **always the product-quality option per the world-wide standard, never the cheapest way out** (the cheap option is listed with its cost named; picking it is your explicit, recorded call). It lives in the requirements doc, blocking that slice until you choose. Nobody ships a plausible guess in your product's name.
+**Fill in what the design left out.** A gap or ambiguity becomes an *Open Decision* with two or
+three options and one recommended — and the recommended one is **always the product-quality option
+per the world-wide standard, never the cheapest way out** (the cheap option is listed with its cost
+named; picking it is your explicit, recorded call). It lives in the requirements doc, blocking that
+slice until you choose. Nobody ships a plausible guess in your product's name.
 
-**Build before looking for something to reuse.** Every change names which rung it stopped at on a seven-rung ladder — does this need to exist, is it already in the codebase, the stdlib, a platform feature, an installed dependency, one line — and only then, new code. Each decision also names the **world-wide standard** next to the rung: security-grade best practice overrides local reuse outright (no propagating the hand-rolled JWT parser because it was nearby), while style conflicts become options you decide. You end up with less code to own — none of it quietly behind the industry.
+**Build before looking for something to reuse.** Every change names which rung it stopped at on a
+seven-rung ladder — does this need to exist, is it already in the codebase, the stdlib, a platform
+feature, an installed dependency, one line — and only then, new code. Each decision also names the
+**world-wide standard** next to the rung: security-grade best practice overrides local reuse
+outright (no propagating the hand-rolled JWT parser because it was nearby), while style conflicts
+become options you decide. You end up with less code to own — none of it quietly behind the
+industry.
 
-One thing it does *to* your code: source ships with **zero comments** — configurable where law or libraries demand it: setup can allow **license headers** and **public-API doc-comments** (an org setting the hook reads); everything else stays banned. A rename, an extracted function, or a named constant does that job instead, and the *why* that can't fit in a name goes in the commit message, where it can't rot beside code that changed.
+One thing it does *to* your code: source ships with **zero comments** — configurable where law or
+libraries demand it: setup can allow **license headers** and **public-API doc-comments** (an org
+setting the hook reads); everything else stays banned. A rename, an extracted function, or a named
+constant does that job instead, and the *why* that can't fit in a name goes in the commit message,
+where it can't rot beside code that changed.
 
-None of that is prompt-deep. Hooks block the write when a decision names no rung, a secret lands in a doc, a comment lands in code, or a markdown table the next phase has to read stops parsing — a prompt can be forgotten mid-session, an exit code can't. The whole opinion is one file: [`principles.md`](./principles.md). If you disagree with it, you'll disagree with the plugin.
+None of that is prompt-deep. Hooks block the write when a decision names no rung, a secret lands in
+a doc, a comment lands in code, or a markdown table the next phase has to read stops parsing — a
+prompt can be forgotten mid-session, an exit code can't. The whole opinion is one file:
+[`principles.md`](./principles.md). If you disagree with it, you'll disagree with the plugin.
 
-That last one, `hooks/validate-doc-tables.js`, checks every `.md` write — **the plugin's own templates included** — rebuilding the post-edit document from disk first, so a one-row `Edit` is still judged against the real header. It blocks on four shapes: a header whose cell count differs from its `---` row (GFM then renders the whole block as literal pipe text), a body row with more or fewer cells than its header (extra cells are DROPPED, missing ones render EMPTY — which is how a *decided* item shows as an open one), a `|`-leading row that belongs to no table — its `---` row missing, or a blank line or prose cutting it off from its header, and an unclosed code fence — the one finding that blocks wherever it sits, because nothing below an unclosed fence can be checked. **What it does not do:** it judges table *shape* only, never what a cell means; other findings outside the region your edit touched are printed but never blocked, so you don't inherit a block for debt you didn't write; a table indented four spaces (inside a list item) or one inside a blockquote is skipped in silence; and a file it can't read is left unchecked rather than guessed at.
+That last one, `hooks/validate-doc-tables.js`, checks every `.md` write — **the plugin's own
+templates included** — rebuilding the post-edit document from disk first, so a one-row `Edit` is
+still judged against the real header. It blocks on four shapes: a header whose cell count differs
+from its `---` row (GFM then renders the whole block as literal pipe text), a body row with more or
+fewer cells than its header (extra cells are DROPPED, missing ones render EMPTY — which is how a
+*decided* item shows as an open one), a `|`-leading row that belongs to no table — its `---` row
+missing, or a blank line or prose cutting it off from its header, and an unclosed code fence — the
+one finding that blocks wherever it sits, because nothing below an unclosed fence can be checked.
+**What it does not do:** it judges table *shape* only, never what a cell means; other findings
+outside the region your edit touched are printed but never blocked, so you don't inherit a block for
+debt you didn't write; a table indented four spaces (inside a list item) or one inside a blockquote
+is skipped in silence; and a file it can't read is left unchecked rather than guessed at.
 
 ## The pipeline
 
-Teach it your repo once. `/do-project-setup` reads the project and writes a profile into `docs/basics/` — **lite tier** (8 core docs, the rest generated lazily when first needed) for teams that want to ship this week, **full** (all 20) when the org wants the whole contract up front — architecture, stack, domain model, API map, environment and the full-stack run recipe, conventions, design tokens, the tech-debt register. Every later skill grounds in those files instead of re-scanning and re-guessing each session. On an empty repo it flips modes and decides the stack *with* you, one gate per decision.
+Teach it your repo once. `/do-project-setup` reads the project and writes a profile into
+`docs/basics/` — **lite tier** (8 core docs, the rest generated lazily when first needed) for teams
+that want to ship this week, **full** (all 20) when the org wants the whole contract up front —
+architecture, stack, domain model, API map, environment and the full-stack run recipe, conventions,
+design tokens, the tech-debt register. Every later skill grounds in those files instead of
+re-scanning and re-guessing each session. On an empty repo it flips modes and decides the stack
+*with* you, one gate per decision.
 
 Then, per feature:
 
@@ -34,31 +85,61 @@ Then, per feature:
 | **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion. Verify-only: it reports every bug and fixes none |
 | **Fix** | `/do-fixing` | The bugs you triaged, one at a time, reproduce-first, root cause not symptom |
 
-If you track work in Jira or GitHub Issues, `/do-slicing` and `/do-uploading` turn an approved requirements doc into a story-pointed task list and create it sample-first in small batches (tracker chosen once, at setup). Skip both otherwise — nothing downstream depends on them.
+If you track work in Jira or GitHub Issues, `/do-slicing` and `/do-uploading` turn an approved
+requirements doc into a story-pointed task list and create it sample-first in small batches (tracker
+chosen once, at setup). Skip both otherwise — nothing downstream depends on them.
 
 ## Auto-run: build → test → fix without stopping
 
-Once the requirements and plan are approved, every decision is already yours — what's left is execution. Opt in explicitly:
+Once the requirements and plan are approved, every decision is already yours — what's left is
+execution. Opt in explicitly:
 
 ```
 /do-development run in auto mode until re-test is green
 ```
 
-and the **build → test → fix → re-test chain runs end-to-end**: each stage builds test-first, gets its fresh-eyes review and design-parity check, then its checkpoint lands as a **report** stamped `auto` instead of a question — straight into testing (environment boots and seeds itself; every test case recorded then run), the bug report flows into fixing (**all bugs, severity order, blockers first**), and back to re-test until green. Commits happen per stage and per fix, as always.
+and the **build → test → fix → re-test chain runs end-to-end**: each stage builds test-first, gets
+its fresh-eyes review and design-parity check, then its checkpoint lands as a **report** stamped
+`auto` instead of a question — straight into testing (environment boots and seeds itself; every test
+case recorded then run), the bug report flows into fixing (**all bugs, severity order, blockers
+first**), and back to re-test until green. Commits happen per stage and per fix, as always.
 
-**Questions answer themselves with the recommended option** — which is always the quality/world-standard one, never the cheapest — and every such decision is written where it lives (`decided: auto ★<option>`) **and** listed under **"Decisions taken for you"** at the top of the final report, for you to ratify after the run. Reject one and it re-gates as a named follow-up. Prefer questions to stop the run? Say `auto-run, ask on decisions`.
+**Questions answer themselves with the recommended option** — which is always the
+quality/world-standard one, never the cheapest — and every such decision is written where it lives
+(`decided: auto ★<option>`) **and** listed under **"Decisions taken for you"** at the top of the
+final report, for you to ratify after the run. Reject one and it re-gates as a named follow-up.
+Prefer questions to stop the run? Say `auto-run, ask on decisions`.
 
-Only three things halt the chain, because nothing can be decided: **verification tooling that fails** (a browser/emulator that won't boot is reported with its fix, never skipped), **an input that doesn't exist** (a design, test account, or seed access never provided), and **external writes** (git push, Jira — those always ask). Every verifier runs at full strength either way — what you trade is review-per-diff, not checks.
+Only four things halt the chain, because nothing can be decided: **verification tooling that fails**
+(a browser/emulator that won't boot is reported with its fix, never skipped), **an input that
+doesn't exist** (a design, test account, or seed access never provided), **external writes** (git
+push, Jira — those always ask), and **a fix that has failed three times** (the design is wrong, not
+the patch — it stops and asks). Every verifier runs at full strength either way — what you trade is
+review-per-diff, not checks.
 
-Auto-run never applies to project setup, grooming, or planning — those phases *decide*, so their gates always block; asking for auto there gets a polite one-line refusal. And an org can switch the whole mode off: **Org settings → Auto-run permitted: no** (regulated change management) makes every auto-run request politely declined, opt-in or not.
+Auto-run never applies to project setup, grooming, or planning — those phases *decide*, so their
+gates always block; asking for auto there gets a polite one-line refusal. And an org can switch the
+whole mode off: **Org settings → Auto-run permitted: no** (regulated change management) makes every
+auto-run request politely declined, opt-in or not.
 
 ## Adopting incrementally
 
-You don't have to swallow the whole pipeline on day one. A working path: **setup (lite) + grooming** first — the profile and requirements docs pay for themselves immediately; add **planning + development** when you trust the gates; **testing + fixing** complete the loop; **auto-run** last, once the gated runs have earned it. Missing-prerequisite stops accept an explicit "proceed anyway" — the gap is named and recorded, so partial adoption never fakes safety — except verification gates (parity, boot-and-smoke, tests), which either ran or the work isn't done. Org-wide knobs (tier, tracker, auto-run permitted, comment allowlist, plain-layer language) live in one place: the profile's **Org settings**, decided at setup.
+You don't have to swallow the whole pipeline on day one. A working path: **setup (lite) + grooming**
+first — the profile and requirements docs pay for themselves immediately; add **planning +
+development** when you trust the gates; **testing + fixing** complete the loop; **auto-run** last,
+once the gated runs have earned it. Missing-prerequisite stops accept an explicit "proceed anyway" —
+the gap is named and recorded, so partial adoption never fakes safety — except verification gates
+(parity, boot-and-smoke, tests), which either ran or the work isn't done. Org-wide knobs (tier,
+tracker, auto-run permitted, comment allowlist, plain-layer language) live in one place: the
+profile's **Org settings**, decided at setup.
 
 ## Install
 
-Needs **`node` on your PATH** — the hooks are Node scripts using built-ins only, so there's no `npm install` and nothing is fetched. No Node? Everything still installs; the hooks fail open and simply don't enforce.
+Needs **`node` on your PATH** — the hooks are Node scripts using built-ins only, so there's no `npm
+install` and nothing is fetched. They carry a golden-case suite — `node tests/hooks.test.js`, same
+built-ins, no install — because a validator that quietly stops *detecting* degrades to exit 0 and
+stays invisible forever; a test fails instead. No Node? Everything still installs; the hooks fail
+open and simply don't enforce.
 
 ```
 /plugin marketplace add rizkyalfauji11/alpha-sdlc
@@ -72,16 +153,34 @@ Needs **`node` on your PATH** — the hooks are Node scripts using built-ins onl
 /do-grooming          # point it at a PRD, a ticket, or a paragraph you typed
 ```
 
-Expect the first one to take a while and to ask about your architecture, your conventions, and anything the code doesn't state — it's writing the files every other skill reads, and a wrong fact in there propagates. You can stop after any gate and pick it up days later.
+Expect the first one to take a while and to ask about your architecture, your conventions, and
+anything the code doesn't state — it's writing the files every other skill reads, and a wrong fact
+in there propagates. You can stop after any gate and pick it up days later.
 
 ## Design parity, not "looks close"
 
-Coding from a screenshot and declaring it done is how built UI drifts from the design. Here the build doesn't pass until the comparison does:
+Coding from a screenshot and declaring it done is how built UI drifts from the design. Here the
+build doesn't pass until the comparison does:
 
-- **It renders and diffs.** When a UI stage goes green it boots the screen **where you can watch it** — headed browser or emulator/simulator window, headless only when there's no display — screenshots it, and compares against the design two ways — a structured visual checklist and a pixel diff — then fixes and re-renders until both pass. Findings name the value, not a vibe: *measured 12, `space.lg` is 16*, and a wrong token counts as a defect even when the pixel diff is inside tolerance. Playwright for web, real emulator and simulator for Android and iOS; it asks before installing a driver or booting a device.
-- **The whole screen, not the viewport.** Taller than the fold means the full scroll extent is captured (`fullPage`, or scroll-and-stitch on mobile) and compared section by section.
-- **Every state and every extreme, not just the happy one.** Loading, empty, error, offline, role and flag variants each compared against **their own cropped design** — because a full-screen mockup shows one state and would pass a screen whose other four were never built — plus the content extremes a mockup never shows: longest realistic text, largest font scale, smallest screen.
-- **When it can't measure, it stops.** A browser driver that won't launch or an emulator that won't boot is a blocker it reports with the fix, not a stage it waves through. Tolerance follows platform norms rather than forcing pixel-identity where iOS and Android disagree, and a deliberate platform deviation is flagged for you instead of "corrected" into a bug. Every iteration's screenshot and diff overlay stays on disk, gitignored, as the trail.
+- **It renders and diffs.** When a UI stage goes green it boots the screen **where you can watch
+  it** — headed browser or emulator/simulator window, headless only when there's no display —
+  screenshots it, and compares against the design two ways — a structured visual checklist and a
+  pixel diff — then fixes and re-renders until both pass. Findings name the value, not a vibe:
+  *measured 12, `space.lg` is 16*, and a wrong token counts as a defect even when the pixel diff is
+  inside tolerance. Playwright for web, real emulator and simulator for Android and iOS; it asks
+  before installing a driver or booting a device.
+- **The whole screen, not the viewport.** Taller than the fold means the full scroll extent is
+  captured (`fullPage`, or scroll-and-stitch on mobile) and compared section by section.
+- **Every state and every extreme, not just the happy one.** Loading, empty, error, offline, role
+  and flag variants each compared against **their own cropped design** — because a full-screen
+  mockup shows one state and would pass a screen whose other four were never built — plus the
+  content extremes a mockup never shows: longest realistic text, largest font scale, smallest
+  screen.
+- **When it can't measure, it stops.** A browser driver that won't launch or an emulator that won't
+  boot is a blocker it reports with the fix, not a stage it waves through. Tolerance follows
+  platform norms rather than forcing pixel-identity where iOS and Android disagree, and a deliberate
+  platform deviation is flagged for you instead of "corrected" into a bug. Every iteration's
+  screenshot and diff overlay stays on disk, gitignored, as the trail.
 
 ## What it writes into your repo
 
@@ -104,7 +203,8 @@ docs/development/<feature>/
   test-plan-<platform>.md     acceptance criterion → test → level → status
 ```
 
-Markdown, reviewable in a pull request. The work outlives the session: resume days later, or hand the feature to someone else with the reasoning already written down.
+Markdown, reviewable in a pull request. The work outlives the session: resume days later, or hand
+the feature to someone else with the reasoning already written down.
 
 ## Updating
 
@@ -115,10 +215,14 @@ Third-party marketplaces don't auto-update by default:
 /reload-plugins
 ```
 
-Prefer automatic: `/plugin` → *Marketplaces* → `alpha` → **Enable auto-update**. Rolling it out to a team? Add the marketplace with `"autoUpdate": true` under `extraKnownMarketplaces` in your project's `.claude/settings.json`, and everyone stays current.
+Prefer automatic: `/plugin` → *Marketplaces* → `alpha` → **Enable auto-update**. Rolling it out to a
+team? Add the marketplace with `"autoUpdate": true` under `extraKnownMarketplaces` in your project's
+`.claude/settings.json`, and everyone stays current.
 
 ## Roadmap
 
-A stand-alone regression/QA track that black-box tests the built app, then deployment and monitoring.
+A stand-alone regression/QA track that black-box tests the built app, then deployment and
+monitoring.
 
-Working on the plugin itself: `claude --plugin-dir /path/to/alpha-sdlc` loads it without the marketplace, `claude plugin validate .` checks the manifests.
+Working on the plugin itself: `claude --plugin-dir /path/to/alpha-sdlc` loads it without the
+marketplace, `claude plugin validate .` checks the manifests.

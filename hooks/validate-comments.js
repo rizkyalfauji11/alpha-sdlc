@@ -53,8 +53,56 @@ const MACHINE_DIRECTIVE = new RegExp(
   'i'
 );
 
-function maskStringLiterals(line) {
-  return line.replace(/(['"`])(?:\\.|(?!\1)[^\\])*\1?/g, (match) => match[0].repeat(match.length));
+const HEREDOC_LANGUAGES = ['sh', 'bash', 'zsh'];
+const HEREDOC_OPENER = /<<-?\s*(['"]?)([A-Za-z_][A-Za-z0-9_]*)\1/;
+
+function maskStringLiterals(sourceLines) {
+  const maskedLines = [];
+  let openTemplateLiteral = false;
+  let heredocTerminator = null;
+
+  for (const sourceLine of sourceLines) {
+    if (heredocTerminator !== null) {
+      if (sourceLine.trim() === heredocTerminator) {
+        heredocTerminator = null;
+        maskedLines.push(sourceLine);
+      } else {
+        maskedLines.push('x'.repeat(sourceLine.length));
+      }
+      continue;
+    }
+
+    let maskedLine = '';
+    let openQuote = openTemplateLiteral ? '`' : '';
+    let index = 0;
+    while (index < sourceLine.length) {
+      const character = sourceLine[index];
+      if (character === '\\' && index + 1 < sourceLine.length) {
+        maskedLine += openQuote ? openQuote + openQuote : sourceLine.slice(index, index + 2);
+        index += 2;
+        continue;
+      }
+      if (openQuote) {
+        maskedLine += character === openQuote ? character : openQuote;
+        if (character === openQuote) openQuote = '';
+        index++;
+        continue;
+      }
+      if (character === '"' || character === "'" || character === '`') openQuote = character;
+      maskedLine += character;
+      index++;
+    }
+
+    openTemplateLiteral = openQuote === '`';
+    maskedLines.push(maskedLine);
+
+    if (HEREDOC_LANGUAGES.includes(extension)) {
+      const heredocOpener = sourceLine.match(HEREDOC_OPENER);
+      if (heredocOpener) heredocTerminator = heredocOpener[2];
+    }
+  }
+
+  return maskedLines;
 }
 
 const REGEX_LITERAL_CAN_START_AFTER = /[=(,:[!&|?{};+\-*%~^<>]/;
@@ -71,15 +119,15 @@ function endOfRegexLiteral(line, startIndex) {
   return -1;
 }
 
-function findCommentStarts(line) {
-  let lastSignificantCharacter = '';
+function findCommentStarts(line, previousSignificantCharacter) {
+  let lastSignificantCharacter = previousSignificantCharacter;
   for (let index = 0; index < line.length; index++) {
     const character = line[index];
     if (character === '\\') { index++; continue; }
     if (character === '/') {
       const nextCharacter = line[index + 1];
-      if (nextCharacter === '/') return { lineComment: index, blockComment: -1 };
-      if (nextCharacter === '*') return { lineComment: -1, blockComment: index };
+      if (nextCharacter === '/') return { lineComment: index, blockComment: -1, lastSignificantCharacter };
+      if (nextCharacter === '*') return { lineComment: -1, blockComment: index, lastSignificantCharacter };
       if (lastSignificantCharacter === '' || REGEX_LITERAL_CAN_START_AFTER.test(lastSignificantCharacter)) {
         const regexEnd = endOfRegexLiteral(line, index);
         if (regexEnd !== -1) { index = regexEnd; lastSignificantCharacter = '/'; continue; }
@@ -87,10 +135,10 @@ function findCommentStarts(line) {
     }
     if (!/\s/.test(character)) lastSignificantCharacter = character;
   }
-  return { lineComment: -1, blockComment: -1 };
+  return { lineComment: -1, blockComment: -1, lastSignificantCharacter };
 }
 
-const maskedLines = lines.map(maskStringLiterals);
+const maskedLines = maskStringLiterals(lines);
 const findings = [];
 
 function record(rawText, lineNumber) {
@@ -105,11 +153,14 @@ function record(rawText, lineNumber) {
   });
 }
 
+let significantCharacterCarry = '';
+
 maskedLines.forEach((maskedLine, index) => {
   const rawLine = lines[index];
   const lineNumber = index + 1;
 
-  const { lineComment, blockComment } = findCommentStarts(maskedLine);
+  const { lineComment, blockComment, lastSignificantCharacter } = findCommentStarts(maskedLine, significantCharacterCarry);
+  significantCharacterCarry = lastSignificantCharacter;
   if (lineComment !== -1) record(rawLine.slice(lineComment), lineNumber);
   if (blockComment !== -1) record(rawLine.slice(blockComment), lineNumber);
 

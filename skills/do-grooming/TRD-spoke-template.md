@@ -16,11 +16,17 @@
 
 ## Open Decisions
 
-> Gaps where the design/PRD is silent or ambiguous. The AI records them here and **recommends — it does not decide or build them.** Resolve (or explicitly defer) each before the affected slice is built. Decide → update the design → re-groom the item (it folds into the section below, status → *decided*). Where a chosen option names a **mechanism**, the decided status also names **the test that will prove it** — the hub's flow-binding idiom (hub §2) — which lands as a numbered AC in §8 and is written downstream, never run here. **A mechanism amended twice stops being amended — escalate to the user.** **Build only *decided* scope** — never fill a gap by adding extra.
+> Gaps where the design/PRD is silent or ambiguous. The AI records them here and **recommends — it
+> does not decide or build them.** Resolve (or explicitly defer) each before the affected slice is
+> built. Decide → update the design → re-groom the item (it folds into the section below, status →
+> *decided*). Where a chosen option names a **mechanism**, the decided status also names **the test
+> that will prove it** — the hub's flow-binding idiom (hub §2) — which lands as a numbered AC in §8
+> and is written downstream, never run here. **A mechanism amended twice stops being amended —
+> escalate to the user.** **Build only *decided* scope** — never fill a gap by adding extra. (An amendment is any change to a decided row's chosen option or its proving test — count it in `amended <n>`.)
 
 | # | Gap / ambiguity | Why it's a gap (what would otherwise be guessed) | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
 |---|-----------------|--------------------------------------------------|---------------------------|--------|
-| D1 | <what's unspecified> | <the scope that'd be invented if unanswered> | ★ <opt A> / <opt B> / <opt C> | pending / decided: <choice> · proven by <act → assert> / decided: auto ★<choice> (ratify) |
+| D1 | <what's unspecified> | <the scope that'd be invented if unanswered> | ★ <opt A> / <opt B> / <opt C> | pending / decided: <choice> · proven by <act → assert> · amended <n> / decided: auto ★<choice> (ratify) |
 
 ## 1. Scope (this platform)
 _Approved: <YYYY-MM-DD>_
@@ -30,10 +36,15 @@ _Approved: <YYYY-MM-DD>_
 ## 2. Design
 _Approved: <YYYY-MM-DD>_
 
-<Clients (Android/iOS/Web): screens, navigation, state management, components — each screen's elements bound to the **canonical components** in `docs/basics/03-ui-architecture.md` → component inventory (name them; no match → ask, register-on-create).
+<Clients (Android/iOS/Web): screens, navigation, state management, components — each screen's
+elements bound to the **canonical components** in `docs/basics/03-ui-architecture.md` → component
+inventory (name them; no match → ask, register-on-create).
 Backend: services, modules, internal design.>
 
-**Approach (ladder rung · world-wide standard):** <required — name the rung AND the industry-standard way today, e.g. "rung 2: reuse existing `ScannerActivity` · standard: agrees" — a conflict is surfaced per the tiered rule (security-grade standard overrides; style conflicts become options)>
+**Approach (ladder rung · world-wide standard):** <required — name the rung AND the
+industry-standard way today, e.g. "rung 2: reuse existing `ScannerActivity` · standard: agrees" — a
+conflict is surfaced per the tiered rule (security-grade standard overrides; style conflicts become
+options)>
 
 
 ```mermaid
@@ -41,7 +52,8 @@ graph TD
   A --> B
 ```
 
-**Multi-step flows** *(only if the feature has a stepped flow / wizard — grounded in `docs/basics/04-ux-conventions.md` → Multi-step / wizard flows; deviation → Open Decision)*
+**Multi-step flows** *(only if the feature has a stepped flow / wizard — grounded in
+`docs/basics/04-ux-conventions.md` → Multi-step / wizard flows; deviation → Open Decision)*
 
 | Flow: <name> | Decision |
 |--------------|----------|
@@ -55,9 +67,14 @@ graph TD
 ## 3. Assets
 _Approved: <YYYY-MM-DD>_
 
-<Icons, images, drawables, SF Symbols, SVGs, fonts, colors this platform needs. For each asset climb the asset ladder (checked against the real project): **exact match exists → reuse it**; **no exact but a similar one exists → reuse/adapt it (name it)**; **none → create new**. Only "create new" rows become work slices.>
+<Icons, images, drawables, SF Symbols, SVGs, fonts, colors this platform needs. For each asset climb
+the asset ladder (checked against the real project): **exact match exists → reuse it**; **no exact
+but a similar one exists → reuse/adapt it (name it)**; **none → create new**. Only "create new" rows
+become work slices.>
 
-> ⚠️ Every **adapt / similar-match** row needs **user re-validation** — "similar enough" is a judgment call (wrong size/state/brand variant). The *Why it fits* note and the *Re-validated?* flag must be filled before the asset is treated as resolved.
+> ⚠️ Every **adapt / similar-match** row needs **user re-validation** — "similar enough" is a
+> judgment call (wrong size/state/brand variant). The *Why it fits* note and the *Re-validated?*
+> flag must be filled before the asset is treated as resolved.
 
 | Asset needed | Exact match? | Closest similar (path) | Decision | Why it fits (for adapt) | Re-validated? | Where it lives |
 |--------------|--------------|------------------------|----------|-------------------------|---------------|----------------|
@@ -66,8 +83,11 @@ _Approved: <YYYY-MM-DD>_
 ## 4. Data / persistence
 _Approved: <YYYY-MM-DD>_
 
-<Clients: local models, caching, offline storage (Room / CoreData / IndexedDB) — shared server data follows `docs/basics/08-data-cache.md` → *Shared server-state sync* (canonical query keys, mutation→invalidation, real-time events); never a private copy of an entity another feature owns.
-Backend: DB schema and migrations — every FK's on-delete action implements the **decided edge** in the hub's Entities-touched / `06-domain-model.md` (mismatch = contradiction, per `07-database.md`).>
+<Clients: local models, caching, offline storage (Room / CoreData / IndexedDB) — shared server data
+follows `docs/basics/08-data-cache.md` → *Shared server-state sync* (canonical query keys,
+mutation→invalidation, real-time events); never a private copy of an entity another feature owns.
+Backend: DB schema and migrations — every FK's on-delete action implements the **decided edge** in
+the hub's Entities-touched / `06-domain-model.md` (mismatch = contradiction, per `07-database.md`).>
 
 ```mermaid
 erDiagram
@@ -104,7 +124,8 @@ _Approved: <YYYY-MM-DD>_
 ## 6. Release considerations
 _Approved: <YYYY-MM-DD>_
 
-<Clients: min OS/SDK version, permissions, store submission, forced update, feature-flag gating, backward compatibility with old app versions.
+<Clients: min OS/SDK version, permissions, store submission, forced update, feature-flag gating,
+backward compatibility with old app versions.
 Backend: deploy steps, migration ordering, rollback.>
 
 ## 7. Risks / dependencies (this platform)
@@ -119,10 +140,13 @@ _Approved: <YYYY-MM-DD>_
 > **The canonical, numbered AC registry for this platform** — the single list every later phase keys
 > on: `do-slicing` tasks carry these IDs, `do-planning` stages declare `Covers: AC-3, AC-7`,
 > `do-development` writes each stage's failing test from them, `do-testing`'s coverage table proves
-> each one at a level, and gate presentations cite them with their essence (`AC-3 — an archived parent
+> each one at a level, and gate presentations cite them with their essence (`AC-3 — an archived
+> parent
 > shows "unavailable"`). **IDs are stable — never renumbered once approved** (a retired AC keeps its
-> row, struck through with a note). One sentence per AC, **assertable** (an observable behavior, not a
-> vibe). **Source makes the hub's rules enumerated, not implied:** every hub decision that touches this
+> row, struck through with a note). One sentence per AC, **assertable** (an observable behavior, not
+> a
+> vibe). **Source makes the hub's rules enumerated, not implied:** every hub decision that touches
+> this
 > platform — each integrity cell (visibility · on-delete · freshness), each feature-flow step, each
 > flow-binding — lands here as its own numbered AC (that's what hub-alignment check #8 verifies
 > mechanically), alongside slice-specific and per-step (wizard) AC.

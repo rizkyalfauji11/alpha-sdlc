@@ -10,16 +10,20 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 | **Profile** | [architecture](../../basics/02-architecture.md) · [tech-stack](../../basics/05-tech-stack.md) · [environment](../../basics/09-environment.md) · [conventions](../../basics/10-conventions.md) · [git](../../basics/11-git-management.md) |
 | **Spokes** | <TRD-backend.md · TRD-web.md · … — each with its **hub alignment** stamp: `✅ reviewed YYYY-MM-DD · hub rev <hash/date>` / ⚠️ stale / ❌ not reviewed. Editing a hub section makes every ✅ stale.> |
 
-> **Scaffolding only.** This TRD covers the project scaffold, folder structure, architecture skeleton,
+> **Scaffolding only.** This TRD covers the project scaffold, folder structure, architecture
+> skeleton,
 > and build/run/test harness. **No features** — no auth, no schema, no screens, no business logic.
 > The first product feature is groomed with `do-grooming` **after** the base lands.
-> **Stack decisions live in `docs/basics/`** (decided by `do-project-setup` in greenfield mode) — this
+> **Stack decisions live in `docs/basics/`** (decided by `do-project-setup` in greenfield mode) —
+> this
 > document **binds to them by link and never re-decides them**.
 
 ## Intent & constraints
 _Approved: <YYYY-MM-DD>_
 
-<What the product/service is, at the thinnest useful level — enough to justify the stack, not a PRD. Known hard constraints: target platforms/versions, org standards, must-use infrastructure, compliance the base must not preclude.>
+<What the product/service is, at the thinnest useful level — enough to justify the stack, not a PRD.
+Known hard constraints: target platforms/versions, org standards, must-use infrastructure,
+compliance the base must not preclude.>
 
 ## Shared decisions (hub-level)
 _Approved: <YYYY-MM-DD>_
@@ -69,7 +73,8 @@ _Approved: <YYYY-MM-DD>_
 ### Architecture skeleton
 _Approved: <YYYY-MM-DD>_
 
-> Empty-but-real: what code actually exists when the base is done. **No placeholder classes "for later"** — if nothing needs it yet, it goes in *Deliberate omissions* instead.
+> Empty-but-real: what code actually exists when the base is done. **No placeholder classes "for
+> later"** — if nothing needs it yet, it goes in *Deliberate omissions* instead.
 
 | Piece | What exists at base | Notes |
 |-------|--------------------|-------|
@@ -89,12 +94,14 @@ _Approved: <YYYY-MM-DD>_
 | **Test** | <…> | runs the suite (empty is fine at base) |
 | **Lint / format** | <…> | passes |
 
-<These are the commands that get recorded in `05-tech-stack.md` and `09-environment.md`'s run recipe.>
+<These are the commands that get recorded in `05-tech-stack.md` and `09-environment.md`'s run
+recipe.>
 
 ### Repo hygiene
 _Approved: <YYYY-MM-DD>_
 
-<`.gitignore` (framework defaults + `design/compared-ui/`), README stub, editor/format config, commit-convention setup, branch protection if applicable — per `11-git-management.md`.>
+<`.gitignore` (framework defaults + `design/compared-ui/`), README stub, editor/format config,
+commit-convention setup, branch protection if applicable — per `11-git-management.md`.>
 
 ### Acceptance criteria (mechanically checkable)
 _Approved: <YYYY-MM-DD>_
@@ -116,8 +123,10 @@ _Approved: <YYYY-MM-DD>_
 _Approved: <YYYY-MM-DD>_
 
 > What the base intentionally does **not** include, and when each gets decided. This is what keeps a
-> **prescriptive** profile honest: the docs may describe an intended design, but only what's listed as
-> built is real. Anything here that someone tries to add during the base is scope creep → say no, and
+> **prescriptive** profile honest: the docs may describe an intended design, but only what's listed
+> as
+> built is real. Anything here that someone tries to add during the base is scope creep → say no,
+> and
 > route it to `do-grooming` as the first feature.
 
 | Not in the base | Why | Decided/built when |
@@ -128,20 +137,29 @@ _Approved: <YYYY-MM-DD>_
 | <error taxonomy / logging strategy> | <…> | <…> |
 | <design system / tokens> | <no designs yet> | <first UI feature → `18-design-tokens.md`> |
 
-**What the base cannot prove:** with no end-to-end slice, the integrated **Boot & Smoke gate reduces to "the app boots and its entry point answers"** — the real FE↔BE data gate begins at the first feature. Do not report the reduced check as the full gate.
+**What the base cannot prove:** with no end-to-end slice, the integrated **Boot & Smoke gate reduces
+to "the app boots and its entry point answers"** — the real FE↔BE data gate begins at the first
+feature. Do not report the reduced check as the full gate.
 
 ## Open Decisions
 
-> Where a chosen option names a **mechanism**, the decided status also names **the test that will prove it**
-> (specified, not run). **A mechanism amended twice stops being amended — escalate to the user.**
+> Where a chosen option names a **mechanism**, the decided status also names **the test that will
+> prove it**
+> (specified, not run). **A mechanism amended twice stops being amended — escalate to the user** (an amendment is any change to a decided row's chosen option or its proving test; count it in `amended <n>`).
 
 | # | Decision needed | Options (recommended marked) | Status |
 |---|-----------------|------------------------------|--------|
-| D1 | <…> | <a / **b (recommended)** / c> | open / decided: <choice> · proven by <the `A<n>` above, or act → assert> |
+| D1 | <…> | <a / **b (recommended)** / c> | open / decided: <choice> · proven by <the `A<n>` above, or act → assert> · amended <n> |
 
 ## Hand-off
 
-- **`do-planning`** — scaffolding stages, `Layer: n/a (scaffolding)`: init → structure → skeleton → harness → hygiene. **Each stage claims its AC by ID (`Covers: A1, A4`) — never restating the criterion's prose**; every AC above is claimed by ≥ 1 stage, and every stage claims ≥ 1 AC.
-- **`do-development`** — TDD mostly doesn't apply; verify per stage by the real check (command runs · tree matches · dependency rule holds). The conformance review checks the built tree against *Folder structure*.
+- **`do-planning`** — scaffolding stages, `Layer: n/a (scaffolding)`: init → structure → skeleton →
+  harness → hygiene. **Each stage claims its AC by ID (`Covers: A1, A4`) — never restating the
+  criterion's prose**; every AC above is claimed by ≥ 1 stage, and every stage claims ≥ 1 AC.
+- **`do-development`** — TDD mostly doesn't apply; verify per stage by the real check (command runs
+  · tree matches · dependency rule holds). The conformance review checks the built tree against
+  *Folder structure*.
 - **`do-testing`** — the AC table above, plus the reduced boot check, reported honestly.
-- **Then `do-project-setup` in refresh mode** — re-stamp the prescriptive `docs/basics/` docs against the real commit, flag anywhere the built base diverged from what was decided. **Only then** does `do-grooming` groom the first product feature.
+- **Then `do-project-setup` in refresh mode** — re-stamp the prescriptive `docs/basics/` docs
+  against the real commit, flag anywhere the built base diverged from what was decided. **Only
+  then** does `do-grooming` groom the first product feature.
