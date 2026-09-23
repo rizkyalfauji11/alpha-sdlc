@@ -122,9 +122,12 @@ docs/development/<feature-name>/
   **Findings resolve by direction, and the direction matters:**
   - **Spoke is wrong** → fix the spoke, re-present the affected section for approval (it's a
     decision change, so it re-gates).
-  - **Hub is wrong** (the spoke exposed a real hub error) → **fix it in the hub**, with the user's
-    approval — then **re-run alignment for every other existing spoke**, because a hub change
-    invalidates their stamps. Never patch a spoke to match a hub you know is wrong.
+  - **Hub is wrong** (the spoke exposed a real hub error) → **fix it in the hub, once for all
+    spokes — never spoke by spoke.** If other existing spokes are awaiting alignment, run theirs
+    against the current hub first and gather every hub-wrong finding; take them to the user as
+    **one** hub change, fix the hub once, then re-run alignment once per spoke (scoped, per *The hub
+    moving* below). A hub fixed after each spoke's review re-stales the spokes already re-stamped,
+    so rounds multiply — spokes × hub edits. Never patch a spoke to match a hub you know is wrong.
   - **Deliberate divergence** (this platform genuinely must differ) → it's an **Open Decision**, and
     once decided it's recorded **in the hub** as a platform exception, so the next spoke and
     `do-development` both see it. Silent divergence is never acceptable.
@@ -138,13 +141,19 @@ docs/development/<feature-name>/
   hub's last approval date>`, and the hub's *Spokes* table records the same per spoke — those two
   segments only; each round appends its objective-violation count to the spoke's separate `Alignment
   rounds` row instead — a **foundation** spoke, which has no header table of its own, carries the
-  count in the hub's *Spokes* cell beside its stamp. **The hub moving makes every stamp stale** —
-  when a hub section is edited after any spoke exists, re-run this review for each spoke and
-  re-stamp. `do-planning` refuses to plan a spoke whose stamp is missing or older than the hub's
-  last change. **The exit is never a dirty stamp** — the stamp keeps meaning *aligned*, so it lands
-  only on a clean pass; a user who chooses to proceed anyway is taking `principles.md`'s recorded
-  override at that downstream STOP, with the gap named and recorded there — the spoke is still not
-  stamped.
+  count in the hub's *Spokes* cell beside its stamp. **The hub moving makes every stamp stale — and
+  the re-review is scoped to what moved.** When a hub section is edited after any spoke exists,
+  re-run this review for each spoke and re-stamp, handing the reviewer the hub diff since that
+  spoke's stamp and only the checklist items the changed sections feed: §1 context or §4 system
+  design → 2 · §2 dependencies and entities → 4, 5, 8 · §3 feature flow → 7, 8 · §5 contract → 1, 2
+  · §6 cross-cutting → 6 · §7 change manifest and release ordering → 3, 9 — plus 10 always, and 11
+  when two or more spokes exist. A hub edit that adds, removes, or renumbers a section gets the full
+  checklist. The reviewer names the items it ran; an item it judges the change also reaches, it
+  runs and says why. `do-planning` refuses to plan a spoke whose stamp is missing or older than the
+  hub's last change. **The exit is never a dirty stamp** — the stamp keeps meaning *aligned*, so it
+  lands only on a clean pass; a user who chooses to proceed anyway is taking `principles.md`'s
+  recorded override at that downstream STOP, with the gap named and recorded there — the spoke is
+  still not stamped.
 - **One approval gate per section.** Never write a section's prose to the TRD file until the user
   approves that section's *decisions*.
 - The gate is on the **decisions**, not the wording. After approval, expanding to prose is
@@ -338,6 +347,8 @@ docs/development/<feature-name>/
 > **why it matters** (never omitted when a question is asked) · options ★ · context only where it
 > adds something · engineer detail last — so a product owner and an engineer both follow each
 > section.
+> The plain layer is in the org's language and follows its guide in `../../plain-language/`
+> when one exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
 
 ### Step 0 — Read inputs and propose the outline (GATE 0)
 
@@ -451,9 +462,10 @@ through). Then run the **hub-alignment review** (per the rule above) before call
    output contract from the *Hub-alignment review* rule above (**measured** or **inferred** per
    finding, working tree left exactly as found, author verifies before acting).
 2. **Resolve by direction** — spoke wrong → fix the spoke and **re-gate the affected section**; hub
-   wrong → fix the **hub** with the user's approval, then **re-run alignment for every other
-   spoke**; deliberate divergence → **Open Decision**, and once decided record it in the **hub** as
-   a platform exception.
+   wrong → gather the hub-wrong findings of every spoke awaiting alignment first, then fix the
+   **hub** once with the user's approval and **re-run alignment once per spoke, scoped to the
+   sections that moved** (per the rule above); deliberate divergence → **Open Decision**, and once
+   decided record it in the **hub** as a platform exception.
 3. **Present the verdict and STOP** — what was checked, findings by direction, what you fixed, what
    needs the user's decision. A spoke with unresolved objective misalignment is **not done**, and
    nothing downstream should plan against it.
@@ -463,8 +475,9 @@ through). Then run the **hub-alignment review** (per the rule above) before call
    spoke's `Alignment rounds` row.
 
 **When the hub changes later, every spoke's stamp is stale.** Editing a hub section while spokes
-exist means re-running this review per spoke and re-stamping — announce that at the hub edit, don't
-leave it for someone to discover in development. If no subagent can run, run the identical checklist
-inline and say so; never skip the gate.
+exist means re-running this review per spoke — scoped to the checklist items the changed sections
+feed — and re-stamping; announce that at the hub edit, don't leave it for someone to discover in
+development. If no subagent can run, run the identical checklist inline and say so; never skip the
+gate.
 
 Then tell the user the TRD is complete and should be reviewed as a PR.

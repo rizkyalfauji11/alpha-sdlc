@@ -145,6 +145,8 @@ must state what's decided-and-built versus written-but-not-yet-real.
 > phase · step · status) · **bottom line** (what happened + what I need from you) · **why it
 > matters** (never omitted when a question is asked) · options ★ · context only where it adds
 > something · engineer detail last.
+> The plain layer is in the org's language and follows its guide in `../../plain-language/`
+> when one exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
 
 1. **Confirm the mode and the profile.** State plainly: this is greenfield foundation grooming,
    scaffolding only, and the stack decisions come from `docs/basics/` (name the docs and the

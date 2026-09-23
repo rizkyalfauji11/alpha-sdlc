@@ -252,7 +252,18 @@ missing acceptance criterion: a defect, not a detail.
   split what a dash or nested parenthesis would join. A quoted passage in another language is
   retold in the reader's language; the original quote goes in the Details. Engineering terms the
   team already says aloud in English (commit, branch, deploy, test, endpoint) stay; the plugin's own
-  vocabulary (gate, spoke, rung, scope) is translated or glossed on first use.
+  vocabulary (gate, spoke, rung, scope) is translated or glossed on first use. **Section headings
+  are in that language too** — the English names above are this file's labels, not the words the
+  reader sees. Code names (functions, packages, interfaces, commands) stay out of the bottom line
+  and the why; say what they do there, and name them in the Details.
+
+  **A language guide binds when one exists.** `plain-language/<code>.md` at the plugin root (e.g.
+  `id.md` for Bahasa Indonesia) carries that language's headings, glossary, and before/after
+  examples; the `SessionStart` hook injects it when the Org settings name the language, and it binds
+  the plain layer in **every phase** — its glossary wins over a translation improvised on the spot.
+  Before setup has decided the language, present in the language the user writes in. A `Stop` hook
+  reads each step summary as a non-engineer would and sends back for one rewrite any whose plain
+  layer fails — the rule is enforced, not only stated.
 
   Each skill's specific review packet slots its detail into the Details section — the wrapper is
   identical everywhere so anyone can follow any step.
@@ -378,6 +389,14 @@ missing acceptance criterion: a defect, not a detail.
   case) are fixed in the same unit of work; **judgment or scope findings** (invented behavior, scope
   beyond the plan, a deviation from a decided convention) are a hard STOP → Open Decision, because
   self-approving a scope change defeats the gate.
+
+  **The fixes are reviewed too — rounds converge, or they stop.** Fixing a finding is new work by
+  the same author, so it goes back to the reviewer: the next round is handed the previous round's
+  findings and the change since that round, confirms each finding is closed, and reviews the change
+  for new ones — a deviation introduced while fixing is a judgment finding like any other. Repeat
+  until a round is clean. Each round records its **objective-violation count** (inferred findings
+  are questions, never counted); **flat or rising across three rounds is a STOP** — escalate to the
+  user with the trend instead of launching another round.
 - **Diagrams target the oldest renderer in the toolchain — Mermaid 9.x is the floor.** Docs get read
   in IDE previews, wikis and GitHub, which lag the Mermaid release by years, and a diagram that
   throws `syntax error in graph` is worse than no diagram. So use only **`graph TD`/`graph LR`,

@@ -6,6 +6,10 @@ const path = require('path');
 const pluginRoot = path.resolve(process.env.CLAUDE_PLUGIN_ROOT || path.join(__dirname, '..'));
 const principlesPath = path.join(pluginRoot, 'principles.md');
 
+let payload = {};
+try { payload = JSON.parse(fs.readFileSync(0, 'utf8')); } catch {}
+const projectRoot = payload.cwd || process.cwd();
+
 let principles;
 try {
   principles = fs.readFileSync(principlesPath, 'utf8');
@@ -53,10 +57,45 @@ const additionalContext = [
   'run time, so it is never stale — but it is never the rule either. Read the file.',
 ].join('\n');
 
+const LANGUAGE_NAMES = { id: /indonesia/i };
+
+function readOrEmpty(filePath) {
+  try { return fs.readFileSync(filePath, 'utf8'); } catch { return ''; }
+}
+
+function plainLanguageCode() {
+  try {
+    const settings = JSON.parse(readOrEmpty(path.join(projectRoot, 'docs/basics/.alpha-sdlc.json')));
+    if (typeof settings.plainLanguage === 'string') return settings.plainLanguage.trim().toLowerCase();
+  } catch {}
+  const overview = readOrEmpty(path.join(projectRoot, 'docs/basics/01-overview.md'));
+  const settingRow = overview.split('\n').find((line) => /\*\*Plain-language layer\*\*/.test(line)) || '';
+  const settingValue = settingRow.split('|')[2] || '';
+  return Object.keys(LANGUAGE_NAMES).find((code) => LANGUAGE_NAMES[code].test(settingValue)) || '';
+}
+
+const languageCode = plainLanguageCode();
+const languageGuidePath = /^[a-z]{2,3}$/.test(languageCode)
+  ? path.join(pluginRoot, 'plain-language', languageCode + '.md')
+  : '';
+const languageGuide = languageGuidePath ? readOrEmpty(languageGuidePath).trim() : '';
+
+const contextWithGuide = languageGuide
+  ? [
+      additionalContext,
+      '',
+      'This project presents the plain layer of every step summary in the language below. The guide',
+      'binds that layer in every phase; its glossary and examples win over improvisation. Source: ' +
+        languageGuidePath,
+      '',
+      languageGuide,
+    ].join('\n')
+  : additionalContext;
+
 process.stdout.write(JSON.stringify({
   hookSpecificOutput: {
     hookEventName: 'SessionStart',
-    additionalContext,
+    additionalContext: contextWithGuide,
   },
 }));
 process.exit(0);

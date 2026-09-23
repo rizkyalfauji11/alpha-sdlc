@@ -165,6 +165,8 @@ layout is ungrounded).
 > (development · phase · step · status) · **bottom line** (what happened + what I need from you) ·
 > **why it matters** (never omitted when a question is asked) · options ★ · context only where it
 > adds something · engineer detail last.
+> The plain layer is in the org's language and follows its guide in `../../plain-language/`
+> when one exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
 
 1. Read the TRD spoke + tasks, scan the real code paths the work touches, and **summarize the
    implementation scope** for the user to confirm. **Read the hub's *Feature dependencies* and

@@ -190,7 +190,55 @@ blocks(
   editPayload(fenceFixture, 'const x = 1;\n```\n', 'const x = 1;\n'),
 );
 
+const INJECT = 'inject-principles.js';
+const GUIDE_MARKER = 'Panduan bahasa sederhana';
+
+function projectFixture(name, files) {
+  const projectRoot = path.join(fixtureDirectory, name);
+  for (const [relativePath, content] of Object.entries(files)) {
+    fs.mkdirSync(path.dirname(path.join(projectRoot, relativePath)), { recursive: true });
+    fs.writeFileSync(path.join(projectRoot, relativePath), content);
+  }
+  fs.mkdirSync(projectRoot, { recursive: true });
+  return projectRoot;
+}
+
+function injectedContext(projectRoot) {
+  const result = spawnSync(process.execPath, [path.join(hooksDirectory, INJECT)], {
+    input: JSON.stringify({ cwd: projectRoot }),
+    encoding: 'utf8',
+  });
+  try { return JSON.parse(result.stdout).hookSpecificOutput.additionalContext; } catch { return ''; }
+}
+
+const overviewRow = (value) => `| **Plain-language layer** | ${value} |\n`;
+const contextCases = [
+  { name: 'injects the Indonesian guide when the machine mirror says id', expectGuide: true,
+    projectRoot: projectFixture('id-json', { 'docs/basics/.alpha-sdlc.json': '{"plainLanguage":"id"}' }) },
+  { name: 'injects the Indonesian guide from the overview row when the mirror has no key', expectGuide: true,
+    projectRoot: projectFixture('id-overview', { 'docs/basics/01-overview.md': overviewRow('Bahasa Indonesia') }) },
+  { name: 'injects no guide for an English plain layer', expectGuide: false,
+    projectRoot: projectFixture('en-json', { 'docs/basics/.alpha-sdlc.json': '{"plainLanguage":"en"}' }) },
+  { name: 'injects no guide for a project without a profile', expectGuide: false,
+    projectRoot: projectFixture('no-profile', {}) },
+  { name: 'ignores a plainLanguage value that is not a language code', expectGuide: false,
+    projectRoot: projectFixture('traversal', { 'docs/basics/.alpha-sdlc.json': '{"plainLanguage":"../principles"}' }) },
+];
+
 let failed = 0;
+for (const contextCase of contextCases) {
+  const context = injectedContext(contextCase.projectRoot);
+  const hasIndex = context.includes('INDEX of the shared principles');
+  const hasGuide = context.includes(GUIDE_MARKER);
+  if (hasIndex && hasGuide === contextCase.expectGuide) {
+    process.stdout.write(`  ok   ${INJECT}  ${contextCase.name}\n`);
+  } else {
+    failed++;
+    process.stdout.write(`  FAIL ${INJECT}  ${contextCase.name}\n`);
+    process.stdout.write(`       index present: ${hasIndex}, guide present: ${hasGuide}\n`);
+  }
+}
+
 for (const testCase of cases) {
   const { exitCode, stderr } = runHook(testCase.hook, testCase.payload);
   const verb = testCase.expected === 2 ? 'must block' : 'must pass';
@@ -206,5 +254,6 @@ for (const testCase of cases) {
 
 fs.rmSync(fixtureDirectory, { recursive: true, force: true });
 
-process.stdout.write(`\n${cases.length - failed}/${cases.length} passed\n`);
+const total = cases.length + contextCases.length;
+process.stdout.write(`\n${total - failed}/${total} passed\n`);
 process.exit(failed ? 1 : 0);
