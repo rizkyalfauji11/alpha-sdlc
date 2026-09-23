@@ -212,7 +212,9 @@ For each bug the user approved, in the report's order (severity first):
    it. Ask: approve / change / stop. Do not touch the next bug until they respond. **(Auto-run:
    nothing is asked — report, stamp `auto`, commit, next bug immediately.)**
 7. **On approval** — mark the bug **fixed** in the test-plan *Bugs found* table, **commit the fix
-   automatically** (conventional message; no push unless asked), continue or stop.
+   automatically** (conventional message; no push unless asked) **by explicit path**, never
+   `git add -A` — a parallel session on another platform may share the tree (per `principles.md` →
+   *Parallel work*) — continue or stop.
 
 ## After the last bug
 

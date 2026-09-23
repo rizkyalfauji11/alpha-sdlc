@@ -130,6 +130,27 @@ gates always block; asking for auto there gets a polite one-line refusal. And an
 whole mode off: **Org settings → Auto-run permitted: no** (regulated change management) makes every
 auto-run request politely declined, opt-in or not.
 
+## Parallel work: behind the gate, never past it
+
+Gates stay one at a time. What runs in parallel is the AI work the next gate would otherwise wait
+for, so you spend less time watching it think:
+
+- **Platforms in parallel sessions.** Once the hub's API contract is approved, open one terminal per
+  platform — `/do-grooming` a spoke, `/do-planning`, `/do-development`, `/do-testing`, `/do-fixing`
+  — and run them at the same time. They share the contract, not each other's work. Each session
+  owns its own spoke, plan, test plan and code. Shared docs (the hub, `docs/basics/`) change only by
+  a targeted edit that is committed at once, commits name their paths (never `git add -A`), and
+  only one session boots the full stack at a time.
+- **Setup scans by area at once** — up to four read-only subagents, one per platform, module,
+  database or CI/CD area — and drafts the next *factual* profile doc while you review the current
+  one.
+- **Grooming gathers the next section's code facts while you review this one**, and after a hub
+  fix it re-reviews every spoke at once.
+
+Subagents only read and report; only the main agent writes what a gate approved. Anything prepared
+ahead is redone if your decision at the current gate changed what it was built on, and nothing that
+is a decision is ever drafted ahead of the decision before it.
+
 ## Adopting incrementally
 
 You don't have to swallow the whole pipeline on day one. A working path: **setup (lite) + grooming**

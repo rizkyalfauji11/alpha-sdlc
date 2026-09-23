@@ -181,6 +181,9 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
 
 ## Source & output
 
+- **Platforms can be tested in parallel sessions** — each owns its `test-plan-<platform>.md`; only
+  one session boots the full stack at a time, and Boot & Smoke drives the running stack rather than
+  starting a second one (per `principles.md` → *Parallel work*).
 - **Inputs:** the implemented feature, the TRD (hub API contract + spoke AC — the primary source),
   the plan, and the tasks / Jira keys if the Jira phases were run.
 - **Test code is code — zero comments, names carry the case.** The same rules bind here as anywhere

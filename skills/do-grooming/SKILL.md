@@ -55,6 +55,9 @@ docs/development/<feature-name>/
 - **The hub is the single source of truth.** The API contract, system design, and cross-cutting
   decisions live there once. Spokes **link** to the hub — never copy the contract into a spoke, or
   it drifts.
+- **Once the hub contract is approved, spokes can be groomed in parallel sessions** — one per
+  platform, each owning its `TRD-<platform>.md`; the hub changes only through the gather-then-fix-
+  once rule below (per `principles.md` → *Parallel work*).
 - **The hub is groomed first — hard gate, no spoke without an approved hub contract.** A spoke
   depends on the hub's **API contract** (it derives its typed client + fixtures from that
   machine-checkable contract), so a spoke **cannot** be groomed until the hub exists **and its
@@ -126,8 +129,10 @@ docs/development/<feature-name>/
     spokes — never spoke by spoke.** If other existing spokes are awaiting alignment, run theirs
     against the current hub first and gather every hub-wrong finding; take them to the user as
     **one** hub change, fix the hub once, then re-run alignment once per spoke (scoped, per *The hub
-    moving* below). A hub fixed after each spoke's review re-stales the spokes already re-stamped,
-    so rounds multiply — spokes × hub edits. Never patch a spoke to match a hub you know is wrong.
+    moving* below). The spokes are independent, so their reviews run **in parallel** — one reviewer
+    subagent per spoke, launched in one message; the stamps are written after every review is back.
+    A hub fixed after each spoke's review re-stales the spokes already re-stamped, so rounds
+    multiply — spokes × hub edits. Never patch a spoke to match a hub you know is wrong.
   - **Deliberate divergence** (this platform genuinely must differ) → it's an **Open Decision**, and
     once decided it's recorded **in the hub** as a platform exception, so the next spoke and
     `do-development` both see it. Silent divergence is never acceptable.
@@ -408,7 +413,11 @@ For each approved section, in order:
    tiered rule). For design sections, the proposal includes the Mermaid diagram.
 4. **Approve**: ask the user — approve as-is / approve with edits / regenerate with feedback. Apply
    their edits to the decisions — the edited version is what gets written and fed forward. One
-   section at a time; never offer to approve the rest in a batch.
+   section at a time; never offer to approve the rest in a batch. **While the user reviews, gather
+   the next section's facts:** a background read-only subagent collects what the next section
+   needs from the code — the modules, schema, endpoints and conventions it touches, with
+   `file:line` — and drafts nothing, because the next section's decisions build on this one's. Use
+   its report at the next step 1, re-checked against what this gate approved.
 5. **Write**: expand the approved decisions into prose (+ Mermaid) and append the section to the TRD
    file, following the template's structure. No second approval. **Stamp the section with its
    approval date** — add `_Approved: YYYY-MM-DD_` right under the section heading, using today's

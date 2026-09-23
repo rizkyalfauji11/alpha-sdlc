@@ -37,6 +37,9 @@ layout is ungrounded).
 
 ## Source & output
 
+- **Platforms can be planned in parallel sessions** once the hub's contract is approved — each owns
+  its `plan-<platform>.md`; a shared doc changes only by targeted Edit, committed at once (per
+  `principles.md` → *Parallel work*).
 - **Inputs:** the feature's approved TRD (`docs/development/<feature-name>/` hub + the relevant
   spoke) — its **work slices + AC are the source of work**. **Check the spoke's `Hub alignment`
   stamp first (hub/spoke feature TRD) — missing, `NOT REVIEWED`, or older than the hub's last change

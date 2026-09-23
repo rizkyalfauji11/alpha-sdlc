@@ -397,6 +397,28 @@ missing acceptance criterion: a defect, not a detail.
   until a round is clean. Each round records its **objective-violation count** (inferred findings
   are questions, never counted); **flat or rising across three rounds is a STOP** — escalate to the
   user with the trend instead of launching another round.
+- **Parallel work fills the time behind a gate — it never runs past one.** Gates stay one at a time;
+  what runs in parallel is AI work the next gate would otherwise wait for.
+  1. **Subagents read and report; only the main agent writes gated artifacts.** A subagent returns
+     facts or a draft as text. TRDs, plans, test plans and `docs/basics/` are written by the main
+     agent after the gate, so two writers never touch one file.
+  2. **Prepared ahead, discarded when its ground moves.** Work prepared for the next gate — a fact
+     sweep, a draft of a factual doc — records the approved inputs it read; if the decision at the
+     current gate changes any of them, redo it instead of presenting it. Only facts read from code
+     are drafted ahead. A decision never is: it waits for the decision before it.
+  3. **At most four subagents at once**, each handed only what it needs — every one reloads the
+     principles and the profile, so width costs tokens.
+  4. **Platforms run in parallel sessions.** Once the hub's API contract is approved, each
+     platform's spoke grooming, planning, development, testing and fixing can run in its own
+     session at the same time — they share the contract, not each other's work. Each session owns
+     its platform's files (spoke, plan, test plan, code). Shared files — the hub, `docs/basics/`,
+     root configs — change only through a targeted Edit of the exact section, re-read from disk
+     first and committed at once; an Edit that no longer matches means the other session changed it
+     — re-read and re-apply, never overwrite. **Commit by explicit path**, never `git add -A` or
+     `commit -a`, which would sweep in the other session's unfinished work. A hub change still goes
+     through grooming's gather-then-fix-once rule. Only one session boots the full stack at a time;
+     the other waits or drives the running one. A stage that needs the other platform's half before
+     it is built stops and reports, as the integrated smoke already requires.
 - **Diagrams target the oldest renderer in the toolchain — Mermaid 9.x is the floor.** Docs get read
   in IDE previews, wikis and GitHub, which lag the Mermaid release by years, and a diagram that
   throws `syntax error in graph` is worse than no diagram. So use only **`graph TD`/`graph LR`,
