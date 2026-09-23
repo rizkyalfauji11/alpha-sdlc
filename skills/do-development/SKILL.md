@@ -285,7 +285,14 @@ file entirely.
   offer, no asking; approval *is* the go-ahead). Commit only — don't push unless the user asks.
   Branch first if the project uses feature branches; if it commits straight to its working branch,
   commit there. Never commit an *unapproved* stage — the approval gate still stands; auto-commit
-  fires only after it passes.
+  fires only after it passes. **Commit the stage's own paths by name** — never `git add -A` or
+  `commit -a`: another platform's session may be running in the same tree (per `principles.md` →
+  *Parallel work*).
+- **Platforms can run in parallel sessions.** Once the plans are approved, backend, web and any
+  other platform can each run `do-development` in its own session at the same time — each owns its
+  plan and code; shared docs change by targeted Edit and are committed at once; one session boots
+  the full stack at a time; a seam stage whose other half isn't built stops and reports (per
+  `principles.md` → *Parallel work*).
 - **Move the Jira ticket to In Progress when its work starts — only if the work is tracked in Jira.**
   If the Jira phases were skipped and there are no ticket keys, **skip this rule entirely** (nothing
   to update). When a stage begins and it *is* linked to a Jira key (written back by `do-uploading`),

@@ -110,28 +110,40 @@ sections that don't apply.
    **Org settings** block — including the **profile tier** (lite/full). Present the applicable doc
    list (minus lazy docs under lite) and get the user to confirm before drafting. **If the scan
    finds no real source, say so and switch to greenfield mode** (below) — confirm that with the user
-   before deciding anything.
+   before deciding anything. **Fan the scan out:** split the repo by area — each platform or module,
+   the database, CI/CD, assets — across up to four read-only subagents in one message, each
+   returning facts with `file:line` evidence; merge their reports and present one picture (per
+   `principles.md` → *Parallel work*). Full-scan coverage is unchanged — the areas together cover
+   every module.
 2. **Per doc, in order:** scan the relevant real sources → draft the doc (mark `UNKNOWN` where
    undetermined; point to authoritative files for volatile detail) → **present for approval**
    (approve / edit / skip) → write to `./docs/basics/<file>.md` with the commit stamp → next doc.
-   `12-security-compliance.md` needs explicit human sign-off. Seed `17-asset-registry.md` by
-   scanning the actual asset directories. Seed `16-feature-map.md` from any existing
-   `docs/development/*/TRD.md` (each **product-feature** TRD is a feature — skip `foundation/` and any TRD whose first line reads `# Issue TRD:` or `# Tech-Debt TRD:`) plus the code's feature modules/routes — capture
-   their depends-on edges; if the app has no discernible features yet, start it minimal and note it.
-   Seed `03-ui-architecture.md`'s **screen scaffolds** by scanning the real screens for recurring
-   anatomy (header composition, body slicing ratios, dividers) — describe the patterns found, flag
-   screens that contradict each other, and establish the intended scaffold with the user where none
-   is consistent. Seed its **Test-ID conventions** by sweeping every locator attribute in the
-   codebase (`android:id`/`testTag` · `accessibilityIdentifier` · `data-testid`) and reading the
-   style off the histogram: one consistent style → **describe** it; **mixed styles → contradiction**
-   — show the histogram, the user canonicalizes (new IDs follow the canon; shipped IDs are never
-   renamed — record the old style as an accepted deviation + a `TD-<n>` row if migration is wanted);
-   none found → **establish** with the user (★ plugin default `<feature>_<screen>_<element>`,
-   snake_case). Register shared-element canonical IDs from the components every feature touches.
-   Seed `18-design-tokens.md` by extracting the **real values in use** — read the theme/tokens
-   file(s) first, then sweep the actual screen/component code for spacing, font size/weight/family,
-   color, border-thickness, radius and icon-size values, and **mirror names *and* values** (per
-   platform: dp/sp · pt · rem/px). Where the same purpose has **contradictory values** (body text at
+   `12-security-compliance.md` needs explicit human sign-off. **Draft the next doc while this one
+   is reviewed:** when the next doc is factual — read from code, not decided (`07-database`,
+   `09-environment`, `14-cicd-deployment`, `15-api-reference`, `17-asset-registry`,
+   `19-code-inventory`, and the like) — hand it to a background subagent as soon as this doc is
+   presented; it returns the draft as text and writes nothing. Before presenting it, check it
+   against what this gate approved and redo it if an input moved. A doc that records decisions is
+   never drafted ahead. Greenfield mode drafts nothing ahead — every step there is a decision. Seed
+   `17-asset-registry.md` by scanning the actual asset directories. Seed `16-feature-map.md` from
+   any existing `docs/development/*/TRD.md` (each **product-feature** TRD is a feature — skip
+   `foundation/` and any TRD whose first line reads `# Issue TRD:` or `# Tech-Debt TRD:`) plus the
+   code's feature modules/routes — capture their depends-on edges; if the app has no discernible
+   features yet, start it minimal and note it. Seed `03-ui-architecture.md`'s **screen scaffolds**
+   by scanning the real screens for recurring anatomy (header composition, body slicing ratios,
+   dividers) — describe the patterns found, flag screens that contradict each other, and establish
+   the intended scaffold with the user where none is consistent. Seed its **Test-ID conventions** by
+   sweeping every locator attribute in the codebase (`android:id`/`testTag` ·
+   `accessibilityIdentifier` · `data-testid`) and reading the style off the histogram: one
+   consistent style → **describe** it; **mixed styles → contradiction** — show the histogram, the
+   user canonicalizes (new IDs follow the canon; shipped IDs are never renamed — record the old
+   style as an accepted deviation + a `TD-<n>` row if migration is wanted); none found →
+   **establish** with the user (★ plugin default `<feature>_<screen>_<element>`, snake_case).
+   Register shared-element canonical IDs from the components every feature touches. Seed
+   `18-design-tokens.md` by extracting the **real values in use** — read the theme/tokens file(s)
+   first, then sweep the actual screen/component code for spacing, font size/weight/family, color,
+   border-thickness, radius and icon-size values, and **mirror names *and* values** (per platform:
+   dp/sp · pt · rem/px). Where the same purpose has **contradictory values** (body text at
    13/14/15sp across screens), do **not** pick silently: fill the *Contradictions found* table with
    the value histogram and **ask the user to canonicalize**, noting that migrating existing screens
    is `do-tech-debt-grooming` work, not a feature-time rewrite. A value that exists only in Figma is
