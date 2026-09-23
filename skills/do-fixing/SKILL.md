@@ -188,8 +188,11 @@ For each bug the user approved, in the report's order (severity first):
    siblings covered) · scope discipline (the fix and its test, nothing else) · profile + principles
    conformance**. Then: **fix every objective violation — verified at the cited file and line first
    — as part of this bug and re-verify**; **STOP on any judgment/scope finding** — Open Decision to
-   `do-grooming`, or `do-issue-grooming` for a project-wide class. Carry the verdict into the
-   packet. No subagent available → identical checklist inline, and say so.
+   `do-grooming`, or `do-issue-grooming` for a project-wide class. **Then send the fixes back for
+   another round** — the previous findings plus the change since that round — until a round is
+   clean, per `principles.md` → *The fixes are reviewed too*. Carry the verdict into the packet,
+   with the objective-violation count per round. No subagent available → identical checklist
+   inline, and say so.
 5. **Re-verify** — re-run the bug's original failing check *and* the surrounding suite (no
    regressions). Visual bugs → re-run parity. **Boot & Smoke / integration bugs → re-boot the real
    stack and re-drive the journey** (not just an isolated test). **Shared-entity/contract/cache
@@ -198,16 +201,16 @@ For each bug the user approved, in the report's order (severity first):
 6. **Present + ⏸ STOP** — present in the shared **step-summary format** (`principles.md`): header
    (development · phase · step · status), then the **bottom line** (what was fixed + what I need
    from you), **why it matters**, and only the context the header and bottom line haven't given —
-   one self-contained statement each (no naked references) — then the following as **Details (for
-   engineers)**: the root cause, the fix (diff), the now-passing regression test, the
-   re-verify result, **Profile updates** (any `docs/basics/` doc this fix changed a recorded fact
-   in, updated + re-stamped — or "None"), and the **Conformance review** — who reviewed (subagent,
-   or inline + why), which docs were checked, and findings by kind: objective violations *fixed* ·
-   judgment/scope findings **raised** (Open Decision, or routed to `do-issue-grooming`) · the
-   sibling call-sites confirmed covered · comments justified with no provenance. "Clean" is valid —
-   say what was checked to earn it. Ask: approve / change / stop. Do not touch the next bug until
-   they respond. **(Auto-run: nothing is asked — report, stamp `auto`, commit, next bug
-   immediately.)**
+   one self-contained statement each (no naked references), in the org's language per its guide in
+   `../../plain-language/` when one exists — then the following as **Details (for engineers)**: the
+   root cause, the fix (diff), the now-passing regression test, the re-verify result, **Profile
+   updates** (any `docs/basics/` doc this fix changed a recorded fact in, updated + re-stamped — or
+   "None"), and the **Conformance review** — who reviewed (subagent, or inline + why), which docs
+   were checked, and findings by kind: objective violations *fixed* · judgment/scope findings
+   **raised** (Open Decision, or routed to `do-issue-grooming`) · the sibling call-sites confirmed
+   covered · comments justified with no provenance. "Clean" is valid — say what was checked to earn
+   it. Ask: approve / change / stop. Do not touch the next bug until they respond. **(Auto-run:
+   nothing is asked — report, stamp `auto`, commit, next bug immediately.)**
 7. **On approval** — mark the bug **fixed** in the test-plan *Bugs found* table, **commit the fix
    automatically** (conventional message; no push unless asked), continue or stop.
 

@@ -326,9 +326,12 @@ For the next unfinished stage in the plan:
    every objective violation in this stage and re-verify green** — each one **verified** at its
    cited file and line first, per verify-before-acting above; **STOP on any judgment/scope finding**
    — record it as an **Open Decision** and hand back to the user/`do-grooming` rather than resolving
-   it yourself. Carry the verdict into the packet: which docs were checked, findings by kind, what
-   you fixed, what you're asking about. If no subagent can run, run the identical checklist inline
-   as an explicit self-review and say that's what happened — never skip the step.
+   it yourself. **Then send the fixes back for another round** — the previous findings plus the
+   change since that round — until a round is clean, per `principles.md` → *The fixes are reviewed
+   too*. Carry the verdict into the packet: which docs were checked, findings by kind, what you
+   fixed, the objective-violation count per round, what you're asking about. If no subagent can
+   run, run the identical checklist inline as an explicit self-review and say that's what happened
+   — never skip the step.
 6. **Visual parity + content-fit (UI stages with a design ref)** — **what you compare depends on the
    stage's kind** (the plan's *Stage kind*): the dispatch for a `shell` / `section` / `assembly`
    stage, the content extremes, the section-slicing doc's Interactions (`X`) rows, and where each
@@ -344,8 +347,9 @@ For the next unfinished stage in the plan:
 8. **Present + ⏸ STOP** — present in the shared **step-summary format** (`principles.md`): the
    **bottom line** first (what this stage built + what I need from you), then **why it matters**,
    then only the context the header and bottom line haven't given — one self-contained statement
-   each (no naked references — every case/AC/token ID carries its plain essence inline). The
-   structured packet below is the **Details (for engineers)** section — not the opening:
+   each (no naked references — every case/AC/token ID carries its plain essence inline), in the
+   org's language per its guide in `../../plain-language/` when one exists. The structured packet
+   below is the **Details (for engineers)** section — not the opening:
    - **Plan summary** — what this stage set out to do (goal + the AC/tasks it covers), so they
      review against intent.
    - **Test cases** — each test written, what behavior/AC it asserts, and its result (pass). Call

@@ -51,7 +51,13 @@ where it can't rot beside code that changed.
 
 None of that is prompt-deep. Hooks block the write when a decision names no rung, a secret lands in
 a doc, a comment lands in code, or a markdown table the next phase has to read stops parsing — a
-prompt can be forgotten mid-session, an exit code can't. The whole opinion is one file:
+prompt can be forgotten mid-session, an exit code can't. The same holds for how it talks to you: a
+step summary whose plain layer a non-engineer couldn't follow — no bottom line, code names or bare
+`file:line` pointers in the explanation, an English quote or a word-for-word translation in a
+summary written in your language — is sent back for one rewrite before it counts as presented. In
+Bahasa Indonesia the plain layer also follows [`plain-language/id.md`](./plain-language/id.md), a
+fixed glossary with real before/after examples, injected into every session whose Org settings pick
+that language. The whole opinion is one file:
 [`principles.md`](./principles.md). If you disagree with it, you'll disagree with the plugin.
 
 That last one, `hooks/validate-doc-tables.js`, checks every `.md` write — **the plugin's own
@@ -84,7 +90,7 @@ Then, per feature:
 | **Groom** | `/do-grooming` | PRD/BRD → requirements doc, one approval per section. Variants: `/do-tech-debt-grooming` for behavior-preserving work, `/do-issue-grooming` which audits the whole issue *class* across the project rather than the symptom you hit, `/do-foundation-grooming` for a new project's scaffold |
 | **Plan** | `/do-planning` | Small independently reviewable stages, split by the layers your repo actually has — contract → domain → data → presentation, or just UI vs data-integration; it won't impose layering it doesn't find. UI splits again by section |
 | **Build** | `/do-development` | One stage at a time, test-first. Each diff is audited by a fresh-eyes reviewer holding your profile docs but not the reasoning that produced the code — then it stops for you |
-| **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion. Verify-only: it reports every bug and fixes none |
+| **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion, and the tests themselves reviewed by fresh eyes before coverage is reported. Verify-only: it reports every bug and fixes none |
 | **Fix** | `/do-fixing` | The bugs you triaged, one at a time, reproduce-first, root cause not symptom |
 
 If you track work in Jira or GitHub Issues, `/do-slicing` and `/do-uploading` turn an approved
@@ -152,12 +158,21 @@ phase with `/model` and `/effort`; the recommendation:
 | Uploading | `haiku` | `low` | Mechanical tracker calls, sample-first |
 
 The one pinned piece is the **fresh-eyes reviewer** (`agents/sdlc-reviewer.md` — **Opus, high
-effort**, no Write/Edit tools) behind the conformance review in development and fixing and the
-hub-alignment review in grooming. It runs start-to-finish in one shot, so the pin holds, and a
-review is the last check before your gate. An org that needs another model sets
+effort**, no Write/Edit tools) behind the conformance review in development and fixing, the test
+review in testing, and the hub-alignment review in grooming. It runs start-to-finish in one shot,
+so the pin holds, and a review is the last check before your gate. Fixes made on its findings go
+back to it — round after round until one is clean, and a count that stops falling for three rounds
+stops the loop and comes to you. An org that needs another model sets
 `CLAUDE_CODE_SUBAGENT_MODEL=<model>` **with** `CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1` — without the
 force flag the agent's own pin wins, and with it every subagent in the session moves, not only this
 one.
+
+The plain-language check on step summaries is a `Stop` prompt hook judged by **Sonnet**
+(`claude-sonnet-5`, set in `hooks/hooks.json`). Haiku was tried first and misread which part of a
+summary was the engineer detail, so it rejected good summaries and passed bad ones. The judge adds a
+few seconds to the end of each answer. A rejected summary is rewritten once, and in the terminal
+you see both versions, the rewrite last. If the judge's model is unavailable, the hook fails open
+and the summary is shown unchecked.
 
 ## Install
 

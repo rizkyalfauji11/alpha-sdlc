@@ -49,7 +49,9 @@ for auto mode here, decline in one line ("this phase decides — gates apply; au
   language; engineer detail stays technical) · tracker (none/Jira/GitHub Issues — routes
   `do-uploading`) · comment allowlist (license header / public-API doc-comments — legal/library
   needs). **Write the machine mirror `docs/basics/.alpha-sdlc.json`** (keys: `allowLicenseHeader`,
-  `allowPublicApiDocstrings`) so the hooks can read it, and stamp the **plugin version**.
+  `allowPublicApiDocstrings`, `plainLanguage` — the plain layer's ISO 639-1 code, e.g. `id`, `en`)
+  so the hooks can read it, and stamp the **plugin version**. Refresh mode adds `plainLanguage` to a
+  mirror written before the key existed.
 - **Point, don't copy volatile detail.** Dependency versions, full DB DDL, pipeline YAML, env values
   → summarize + link the authoritative file. Cache the slow-changing orientation (architecture,
   conventions, base-URL matrix).
@@ -100,6 +102,8 @@ sections that don't apply.
 > (development · phase · step · status) · **bottom line** (what happened + what I need from you) ·
 > **why it matters** (never omitted when a question is asked) · options ★ · context only where it
 > adds something · engineer detail last.
+> The plain layer is in the org's language and follows its guide in `../../plain-language/`
+> when one exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
 
 1. **Full scan & confirm.** Scan the **entire** project (per the full-scan rule — every module, not
    a sample) to identify the repo type/platform and which docs apply (applicability), then gate the

@@ -76,6 +76,8 @@ Fibonacci scale: 1, 2, 3, 5, 8, 13**, weighing **complexity + effort/volume + un
 > (development · phase · step · status) · **bottom line** (what happened + what I need from you) ·
 > **why it matters** (never omitted when a question is asked) · options ★ · context only where it
 > adds something · engineer detail last.
+> The plain layer is in the org's language and follows its guide in `../../plain-language/`
+> when one exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
 
 A **part** = one phase group (or one platform spoke's slices). Build the document incrementally, one
 part at a time:

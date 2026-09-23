@@ -196,11 +196,13 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
 
 ## Flow
 
-> Present every gate below (plan, per-test approval, coverage + bug report) in the shared
-> **step-summary format** (`principles.md`): header (development · phase · step · status) ·
+> Present every gate below (plan, per-test approval, test review, coverage + bug report) in the
+> shared **step-summary format** (`principles.md`): header (development · phase · step · status) ·
 > **bottom line** (what happened + what I need from you) · **why it matters** (never omitted when a
 > question is asked) · options ★ · context only where it adds something · engineer detail (coverage
 > tables, failures) last.
+> The plain layer is in the org's language and follows its guide in `../../plain-language/`
+> when one exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
 
 1. **Plan & confirm.** Read the AC + API contract + implemented code, detect the existing test
    framework/fixtures, and lay out the test plan as a **pyramid** — map every AC to the **right
@@ -224,7 +226,31 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
    run it all at once; the user approves each created test before it runs — one test at a time,
    never "approve & run the rest". **(Auto-run: each written case records `Approved: auto <date>`
    and runs immediately — one at a time, no batching, no asking.)**
-3. **Coverage + bug report.** Confirm every AC maps to at least one passing test at the right level;
+3. **Test review (fresh eyes) — before the coverage report.** The tests are the proof the feature
+   is done, and their author is the worst judge of whether they prove it. Hand the **test diff +
+   the test-plan doc + the TRD's numbered AC register + the hub API contract + the `docs/basics/`
+   docs the tests touch + `../../principles.md`** to the **reviewer subagent**
+   (`alpha-sdlc:sdlc-reviewer`) — not your testing reasoning — with this checklist:
+   1. **AC fidelity** — each test asserts the behavior of the AC it claims, not a symptom string or
+      a bare status code: remove that behavior and the test fails.
+   2. **Coverage honesty** — every AC in the register is claimed by at least one test at the right
+      level, no AC is covered only by a test that doesn't assert it, and every level marked manual
+      says why.
+   3. **No test theater** — no assertion that cannot fail, no mock of the unit under test, no
+      Integration/E2E test that mocks the API it exists to exercise, no test of a trivial getter.
+   4. **Not over-simplified** — the negative, edge, auth and empty/error cases the AC needs are
+      there.
+   5. **Recorded = real** — each status in the test-plan matches an actual run (the reviewer re-runs
+      what it doubts); UI tests locate by widget-spec Test IDs, never brittle text or xpath.
+
+   Fix every objective violation in the tests — a changed test goes back through step 2 (re-approve,
+   re-run) — and send the fixes back for another round until one is clean, per `principles.md` →
+   *The fixes are reviewed too*. A finding that questions the AC itself is not a testing fix — it
+   goes back to grooming as an **Open Decision**. The review never fixes product code: a test that
+   fails for a real bug is a bug for the report, not a finding. No subagent available → identical
+   checklist inline, and say so. **(Auto-run: re-approvals record `Approved: auto <date>`, a
+   judgment finding auto-decides its ★ resolution — recorded — and the chain continues.)**
+4. **Coverage + bug report.** Confirm every AC maps to at least one passing test at the right level;
    show the **pyramid coverage** (API / UI / Integration / E2E) **and the Boot & Smoke result** (the
    critical journeys run against the real assembled app, with 4xx/5xx · console errors ·
    error-boundary trips all zero). **Flag any uncovered AC or level 1–4 marked manual** explicitly.
