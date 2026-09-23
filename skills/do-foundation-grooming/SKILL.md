@@ -142,9 +142,9 @@ must state what's decided-and-built versus written-but-not-yet-real.
 ## Flow — section → review → write
 
 > Present every gate in the shared **step-summary format** (`principles.md`): header (development ·
-> phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads whenever a question
-> is asked) · **Who** · **When** · **Where** · **How** (ends with what I need from you) · engineer
-> detail last.
+> phase · step · status) · **bottom line** (what happened + what I need from you) · **why it
+> matters** (never omitted when a question is asked) · options ★ · context only where it adds
+> something · engineer detail last.
 
 1. **Confirm the mode and the profile.** State plainly: this is greenfield foundation grooming,
    scaffolding only, and the stack decisions come from `docs/basics/` (name the docs and the

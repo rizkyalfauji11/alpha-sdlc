@@ -341,12 +341,11 @@ For the next unfinished stage in the plan:
    through the running stack with relevant, domain-realistic data. Confirm zero unexpected 4xx/5xx,
    zero console errors, zero error-boundary trips. Skip only for stages that don't touch the seam;
    if both can't be booted in-session, stop and report (don't pass on isolated tests alone).
-8. **Present + ⏸ STOP** — present in the shared **step-summary format** (`principles.md`): answer
-   the 5W+1H, one self-contained statement each (no naked references — every case/AC/token ID
-   carries its plain essence inline) — **What** (plain + engineer phrase), **Why** (first, since
-   this checkpoint asks for a decision), **Who**, **When**, **Where**, **How** (ending with what I
-   need from you). The structured packet below is the **Details (for engineers)** section — not the
-   opening:
+8. **Present + ⏸ STOP** — present in the shared **step-summary format** (`principles.md`): the
+   **bottom line** first (what this stage built + what I need from you), then **why it matters**,
+   then only the context the header and bottom line haven't given — one self-contained statement
+   each (no naked references — every case/AC/token ID carries its plain essence inline). The
+   structured packet below is the **Details (for engineers)** section — not the opening:
    - **Plan summary** — what this stage set out to do (goal + the AC/tasks it covers), so they
      review against intent.
    - **Test cases** — each test written, what behavior/AC it asserts, and its result (pass). Call

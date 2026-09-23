@@ -156,7 +156,7 @@ missing acceptance criterion: a defect, not a detail.
   approvals", "jalankan penuh") — never inferred, never a default, **and declined outright when the
   profile's Org settings say `Auto-run permitted: no`** (regulated change management outranks the
   request) — the **`do-development` → `do-testing` → `do-fixing` → re-test chain runs end-to-end
-  without approval gates**: every gate still emits its full 5W+1H packet as a **report** (the trail
+  without approval gates**: every gate still emits its full packet as a **report** (the trail
   is not thinner, only non-blocking), stamps are written **`Approved: auto <date>`** — never
   disguised as human approval — commits happen per stage/fix as usual, all bugs found are fixed in
   severity order, and the chain loops until re-test is green. The opt-in **pre-authorizes local
@@ -189,7 +189,7 @@ missing acceptance criterion: a defect, not a detail.
   Say "auto-run, ask on decisions" — then questions stop the chain as before. At the end: one
   consolidated chain report + the profile-reconcile recommendation. Hooks block regardless of mode —
   they are the floor that doesn't move.
-- **Present every step as 5W+1H, plain-first, for everyone (shared step-summary format).** At every
+- **Present every step bottom line first, for everyone (shared step-summary format).** At every
   gate/checkpoint where you present work for review, presenting the **plain layer in the org's
   language** when the profile's Org settings name one (engineer detail stays technical), open with a
   **header line** that always names **which development is running and which phase**: development
@@ -197,48 +197,65 @@ missing acceptance criterion: a defect, not a detail.
   when the phase is per-platform, e.g. `web spoke`) · phase · step · progress (e.g.
   "`recipe-management` · Development (web) · Stage 2 of 4") + an at-a-glance status: ✅ done · ⏸
   needs your review · ⚠️ blocked — so the user always knows what is being built and where in the
-  pipeline they are, even returning days later or running two features in parallel — then answer the
-  six questions, **one self-contained statement each — as long as self-containedness needs, as short
-  as redundancy allows** (brevity trims *repetition*, never *meaning*; the W's are a completeness
-  checklist, not an essay invitation; a trivial answer stays one clause but is **never silently
-  skipped**), then the engineering detail below — *layering, not dumbing down*:
-  1. **What** — the part in a **generic phrase a non-engineer knows** *plus* the engineer phrase,
-     side by side (e.g. "the list of transactions now loads real data — engineer: `body.list`
-     section, query wiring, cases C1–C4").
-  2. **Why** — why this part exists / every reason that matters, kept plain. **Why is the most
-     important W: whenever the step asks the user a question (a gate decision, an Open Decision, any
-     'which option?'), Why moves to the top** — the reader must know why it matters before weighing
-     options; and in option lists, each option carries its own one-line why.
-  3. **Who** — every user and entity the part touches (roles that see/use it, the features/systems
-     that own or consume its data, who acts on it next), with the context that makes it land.
-  4. **When** — when it's called and used (the trigger/moment in the app or pipeline), and when this
-     step ran (what unblocked it), with the context that aids understanding.
-  5. **Where** — where the part is: position in the pipeline *and* its concrete location
-     (file/layer/screen/doc).
-  6. **How** — how it's implemented or resolved (incl. the rung · world-wide standard line), ending
-     with **what I need from you** — the decision in plain words (approve / request changes / stop).
-  7. **Details (for engineers)** — the technical evidence (diff, test output, files, coverage,
+  pipeline they are, even returning days later or running two features in parallel. Then the
+  sections below, in this order — *layering, not dumbing down*:
+  1. **Bottom line** — one or two plain sentences: what this step produced or found, as a **generic
+     phrase a non-engineer knows** *plus* the engineer phrase side by side (e.g. "the list of
+     transactions now loads real data — engineer: `body.list` section, query wiring, cases C1–C4"),
+     and **what I need from you** — the decision in plain words (approve / request changes / stop /
+     pick an option). A reader who stops here knows what happened and what is being asked.
+  2. **Why it matters** — every reason that matters, kept plain. **Never omitted when the step asks
+     the user a question** (a gate decision, an Open Decision, any "which option?") — the reader
+     must know why it matters before weighing options. On a routine approval with nothing to decide
+     it can be one clause.
+  3. **Options** — only when a question is asked: each option carries its own one-line why and the
+     recommended one is marked ★.
+  4. **Context** — only what the header and bottom line have not already said, written as prose,
+     not as labels: who it touches (roles that see/use it, the features/systems that own or consume
+     its data, who acts on it next) · when it runs (the trigger in the app or pipeline, and what
+     unblocked this step) · where it lives (file/layer/screen/doc) · how it was built or resolved
+     (incl. the rung · world-wide standard line).
+  5. **Details (for engineers)** — the technical evidence (diff, test output, files, coverage,
      screenshots) demoted to the end.
+
+  **5W+1H is the completeness check, not the layout.** Before presenting, confirm all six are
+  answered somewhere above — **What** and the ask in the bottom line, **Why** in its section,
+  **Who · When · Where · How** in the context or the header. An answer the header or the bottom line
+  already gives is not repeated under its own heading, and a trivial one folds into a clause — but
+  one that carries information is **never silently dropped**. Brevity trims *repetition*, never
+  *meaning*: each statement stays self-contained, as long as that needs and as short as redundancy
+  allows.
 
   **No naked references — the running step must be understandable alone (presentations only).**
   Every ID or pointer named in a presentation — a case (`C1`), an acceptance criterion (`AC-3`), a
-  section (`body.list`), a token (`space.lg`), a hub section (§5), a ladder rung (`rung 2`) —
-  carries its **plain essence inline**: not *"built cases C1–C4 per the slicing doc"* or *"rung 2"*
-  but *"rung 2 (reuse)"* and *"handles all four states — **loading** (placeholder rows, `C1`),
-  **loaded** (the real list, `C2`), **empty** ('nothing yet' + a button, `C3`), **error** (message +
-  retry, `C4`)"*. The reader **never needs to open another document to understand the running
-  step**; the ID stays as the engineer's pointer, never as the only information. The same holds for
-  **question options** — each option restates enough context to be chosen without scrolling back.
-  **Scope: presentations only.** Persistent documents (TRDs, specs, plans) keep the
-  **link-don't-copy** rule for owned truths — a doc restating another doc's contract forks it and
-  drifts; a presentation is regenerated from the current docs each time, so inlining there cannot
-  drift.
+  section (`body.list`), a token (`space.lg`), a hub section (§5), a ladder rung (`rung 2`), a file
+  and line (`openapi.yaml:1216`), a quoted passage — carries its **plain essence inline**: not
+  *"built cases C1–C4 per the slicing doc"* or *"rung 2"* but *"rung 2 (reuse)"* and *"handles all
+  four states — **loading** (placeholder rows, `C1`), **loaded** (the real list, `C2`), **empty**
+  ('nothing yet' + a button, `C3`), **error** (message + retry, `C4`)"*. The reader **never needs to
+  open another document to understand the running step**; the ID stays as the engineer's pointer,
+  never as the only information. The same holds for **question options** — each option restates
+  enough context to be chosen without scrolling back. **Scope: presentations only.** Persistent
+  documents (TRDs, specs, plans) keep the **link-don't-copy** rule for owned truths — a doc
+  restating another doc's contract forks it and drifts; a presentation is regenerated from the
+  current docs each time, so inlining there cannot drift.
 
   **Jargon rule:** expand acronyms on first use (TRD = technical requirements doc, AC = acceptance
   criteria, a11y = accessibility), prefer plain words, never lead with internal shorthand — and
-  never show an ID without its essence (the no-naked-references rule above). Each skill's specific
-  review packet slots its detail into the Details section — the 5W+1H wrapper is identical
-  everywhere so anyone can follow any step.
+  never show an ID without its essence (the no-naked-references rule above).
+
+  **Write the plain layer natively, not in translation.** When it is in a language other than
+  English, phrase it the way a native writer of that language would — its own sentence order, its
+  own way of marking time, its own words — never English grammar in translated words, and never an
+  English idiom rendered word for word ("the gate this review exists to hold" becomes what it means:
+  the review is there so scope isn't widened without the user's approval). One idea per sentence;
+  split what a dash or nested parenthesis would join. A quoted passage in another language is
+  retold in the reader's language; the original quote goes in the Details. Engineering terms the
+  team already says aloud in English (commit, branch, deploy, test, endpoint) stay; the plugin's own
+  vocabulary (gate, spoke, rung, scope) is translated or glossed on first use.
+
+  Each skill's specific review packet slots its detail into the Details section — the wrapper is
+  identical everywhere so anyone can follow any step.
 - **When you ask, wait for the answer — no timeout, no auto-continue.** Every question and every
   approval gate blocks on the user's response. Never proceed on a default, an assumption, or after
   any delay; there is no time limit on the user. The next step depends entirely on their answer — if

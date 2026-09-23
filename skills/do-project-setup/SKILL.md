@@ -45,7 +45,7 @@ for auto mode here, decline in one line ("this phase decides — gates apply; au
   contract day one.
 - **Org settings — decided once, honored everywhere.** Gate the `01-overview` **Org settings** block
   at setup: profile tier · auto-run permitted (a "no" makes every auto-run request politely declined
-  — regulated change management) · plain-language layer (the 5W+1H plain layer is presented in this
+  — regulated change management) · plain-language layer (every step summary's plain layer is in this
   language; engineer detail stays technical) · tracker (none/Jira/GitHub Issues — routes
   `do-uploading`) · comment allowlist (license header / public-API doc-comments — legal/library
   needs). **Write the machine mirror `docs/basics/.alpha-sdlc.json`** (keys: `allowLicenseHeader`,
@@ -97,9 +97,9 @@ sections that don't apply.
 ## Flow
 
 > Present every gate below in the shared **step-summary format** (`principles.md`): header
-> (development · phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads
-> whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need
-> from you) · engineer detail last.
+> (development · phase · step · status) · **bottom line** (what happened + what I need from you) ·
+> **why it matters** (never omitted when a question is asked) · options ★ · context only where it
+> adds something · engineer detail last.
 
 1. **Full scan & confirm.** Scan the **entire** project (per the full-scan rule — every module, not
    a sample) to identify the repo type/platform and which docs apply (applicability), then gate the
