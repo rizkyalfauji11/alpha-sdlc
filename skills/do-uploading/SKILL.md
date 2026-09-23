@@ -94,8 +94,8 @@ failure.**
 ## After upload
 
 Report in the shared **step-summary format** (`principles.md`) — header (development · phase · step
-· status), then the 5W+1H one self-contained statement each (no naked references) — **What** (plain +
-engineer), **Why**, **Who**, **When**, **Where**, **How** (ending with what I need from you) —
-engineer detail last — covering: the Epic the tasks were linked under, the created keys + links,
+· status), then the **bottom line** (what was created + what I need from you), and only the context
+the header and bottom line haven't given — one self-contained statement each (no naked references)
+— engineer detail last — covering: the Epic the tasks were linked under, the created keys + links,
 total count, the field ids actually used (so the next run is reproducible), and anything skipped or
 flagged. Then confirm the TRD and task-list doc were updated with the new keys.

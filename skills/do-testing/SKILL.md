@@ -197,10 +197,10 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
 ## Flow
 
 > Present every gate below (plan, per-test approval, coverage + bug report) in the shared
-> **step-summary format** (`principles.md`): header (development · phase · step · status) · **What**
-> (plain + engineer phrase) · **Why** (leads whenever a question is asked) · **Who** · **When** ·
-> **Where** · **How** (ends with what I need from you) · engineer detail (coverage tables, failures)
-> last.
+> **step-summary format** (`principles.md`): header (development · phase · step · status) ·
+> **bottom line** (what happened + what I need from you) · **why it matters** (never omitted when a
+> question is asked) · options ★ · context only where it adds something · engineer detail (coverage
+> tables, failures) last.
 
 1. **Plan & confirm.** Read the AC + API contract + implemented code, detect the existing test
    framework/fixtures, and lay out the test plan as a **pyramid** — map every AC to the **right

@@ -196,10 +196,10 @@ For each bug the user approved, in the report's order (severity first):
    fixes → also re-run every consuming feature's flow-binding tests** (per the cross-feature impact
    rule).
 6. **Present + ⏸ STOP** — present in the shared **step-summary format** (`principles.md`): header
-   (development · phase · step · status), then the 5W+1H one self-contained statement each (no naked
-   references) — **What** (plain + engineer phrase), **Why** (first: this gate asks for a decision),
-   **Who**, **When**, **Where**, **How** (ending with what I need from you) — then the following as
-   **Details (for engineers)**: the root cause, the fix (diff), the now-passing regression test, the
+   (development · phase · step · status), then the **bottom line** (what was fixed + what I need
+   from you), **why it matters**, and only the context the header and bottom line haven't given —
+   one self-contained statement each (no naked references) — then the following as **Details (for
+   engineers)**: the root cause, the fix (diff), the now-passing regression test, the
    re-verify result, **Profile updates** (any `docs/basics/` doc this fix changed a recorded fact
    in, updated + re-stamped — or "None"), and the **Conformance review** — who reviewed (subagent,
    or inline + why), which docs were checked, and findings by kind: objective violations *fixed* ·

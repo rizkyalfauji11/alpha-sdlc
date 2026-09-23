@@ -166,7 +166,7 @@ docs/development/<feature-name>/
   form** — the OpenAPI/schema fragment for every new/changed endpoint, saved to
   `docs/development/<feature-name>/contract/` (e.g. `openapi-delta.yaml`) and **gated with the
   section**: what the user approves IS the machine-checkable shape, not only the summary table (the
-  table stays as the human 5W+1H view; the fragment is the truth spokes derive typed
+  table stays as the human-readable view; the fragment is the truth spokes derive typed
   clients/fixtures from). Label every delta entry by **change kind** in the §5 table's **Notes**
   column: **ADDS** an optional field, **OPENS** a *request* enum, or fixes a **DESCRIPTION** — safe
   to merge ahead of the code that serves it; **TIGHTENS** (a new `required` member, a new route, a
@@ -334,9 +334,10 @@ docs/development/<feature-name>/
 ## Flow
 
 > Present every gate below in the shared **step-summary format** (`principles.md`): header
-> (development · phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads
-> whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need
-> from you) · engineer detail last — so a product owner and an engineer both follow each section.
+> (development · phase · step · status) · **bottom line** (what happened + what I need from you) ·
+> **why it matters** (never omitted when a question is asked) · options ★ · context only where it
+> adds something · engineer detail last — so a product owner and an engineer both follow each
+> section.
 
 ### Step 0 — Read inputs and propose the outline (GATE 0)
 

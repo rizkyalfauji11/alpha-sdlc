@@ -16,12 +16,14 @@ unless you **explicitly opt into auto-run** for the build→test→fix chain, wh
 stamped `auto`, all bugs found get fixed in severity order, and questions answer themselves with the
 recommended option — always the quality one — each recorded and listed for your after-the-run
 ratification; it stops only when nothing can be decided (broken verification tooling, a missing
-input, an external write); grooming, planning, and project setup are never auto. Gates are presented
-as **5W+1H**: What (in plain words and engineer terms), Why (first, whenever you're asked to
-decide), Who, When, Where, How — each a self-contained statement, so you never have to open another
-document to understand the step in front of you; engineering detail below, then it stops. No
-"generate the whole document", no batched approvals, no default it proceeds on if you go quiet. You
-review one small change at a time instead of one enormous diff at the end.
+input, an external write); grooming, planning, and project setup are never auto. Every gate opens
+with the **bottom line** — what happened, in plain words and engineer terms, and what it needs from
+you — then why it matters (always, when you're asked to decide), then only the context that isn't
+obvious; 5W+1H is the checklist each summary is held to, not six headings to wade through. Each
+statement stands alone, so you never have to open another document to understand the step in front
+of you; engineering detail below, then it stops. No "generate the whole document", no batched
+approvals, no default it proceeds on if you go quiet. You review one small change at a time instead
+of one enormous diff at the end.
 
 **Claim a pass it didn't verify.** Done means the real stack booted with domain-realistic data and
 zero unexpected 4xx/5xx, console errors, or error-boundary trips — and for UI, the render compared

@@ -73,9 +73,9 @@ Fibonacci scale: 1, 2, 3, 5, 8, 13**, weighing **complexity + effort/volume + un
 ## Flow — part → review → write
 
 > Present every review gate below in the shared **step-summary format** (`principles.md`): header
-> (development · phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads
-> whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need
-> from you) · engineer detail last.
+> (development · phase · step · status) · **bottom line** (what happened + what I need from you) ·
+> **why it matters** (never omitted when a question is asked) · options ★ · context only where it
+> adds something · engineer detail last.
 
 A **part** = one phase group (or one platform spoke's slices). Build the document incrementally, one
 part at a time:

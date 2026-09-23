@@ -72,9 +72,9 @@ baseline of the cases you can reach and record what stays uncovered. Instead:
 ## Flow
 
 > Present every gate below in the shared **step-summary format** (`principles.md`): header
-> (development · phase · step · status) · **What** (plain + engineer phrase) · **Why** (leads
-> whenever a question is asked) · **Who** · **When** · **Where** · **How** (ends with what I need
-> from you) · engineer detail last.
+> (development · phase · step · status) · **bottom line** (what happened + what I need from you) ·
+> **why it matters** (never omitted when a question is asked) · options ★ · context only where it
+> adds something · engineer detail last.
 
 ### GATE 0 — Understand and justify (before any design)
 
