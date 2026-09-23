@@ -86,21 +86,21 @@ file entirely.
   layout the plan fixed. The ladder governs build-vs-reuse.
 - **Conformance review before verifying — fresh eyes on the diff, never the author's.** Every stage
   gets reviewed against the profile, the principles, and its own plan **before** the visual/smoke
-  verification and **before** it's presented (flow step 5). Run it with a **reviewer subagent**
-  handed only the **stage diff + the stage's plan/AC + `../../principles.md` + the `docs/basics/`
-  docs the diff touches** — the principles are in the packet because the principles-conformance
-  check audits against them, and a reviewer asked to check a document it was never given checks
-  nothing — deliberately *not* your build reasoning, because the context that made a decision is the
-  worst context for auditing it ("I wrote it, so it looks right"). Every finding is labeled
-  **measured** or **inferred** — measured names the file and line, the command, test or grep that
-  produced it, and **which copy was read** (committed `HEAD` or the working tree, and which files
-  were already modified when the review started); **inferred is a question, not a defect.** The
-  reviewer **leaves the working tree exactly as it found it.** And the author **verifies before
-  acting** — open the cited file at the cited line before editing anything on a report's authority:
-  a review that is wrong in one finding is not wrong in all of them, and acting on the wrong one
-  costs a whole round. The reviewer also gets **`conformance-reviewer.md`** (this skill's directory)
-  — the three-part checklist it works from: profile conformance · principles conformance · plan/AC
-  conformance.
+  verification and **before** it's presented (flow step 5). Run it with the **reviewer subagent**
+  (`alpha-sdlc:sdlc-reviewer`) handed only the **stage diff + the stage's plan/AC +
+  `../../principles.md` + the `docs/basics/` docs the diff touches** — the principles are in the
+  packet because the principles-conformance check audits against them, and a reviewer asked to check
+  a document it was never given checks nothing — deliberately *not* your build reasoning, because
+  the context that made a decision is the worst context for auditing it ("I wrote it, so it looks
+  right"). Every finding is labeled **measured** or **inferred** — measured names the file and line,
+  the command, test or grep that produced it, and **which copy was read** (committed `HEAD` or the
+  working tree, and which files were already modified when the review started); **inferred is a
+  question, not a defect.** The reviewer **leaves the working tree exactly as it found it.** And the
+  author **verifies before acting** — open the cited file at the cited line before editing anything
+  on a report's authority: a review that is wrong in one finding is not wrong in all of them, and
+  acting on the wrong one costs a whole round. The reviewer also gets **`conformance-reviewer.md`**
+  (this skill's directory) — the three-part checklist it works from: profile conformance ·
+  principles conformance · plan/AC conformance.
 
   **Findings split by kind.** An **objective violation** → fix it in this stage and re-verify green
   (wrong layer · raw literal instead of a token · swallowed/missing error log · hand-written type
@@ -319,8 +319,8 @@ For the next unfinished stage in the plan:
 5. **Conformance review (fresh eyes) — before verifying, before presenting.** Hand the **stage diff +
    the stage's plan/AC + the `docs/basics/` docs the diff touches** (plus the screen's
    **section-slicing doc** for UI stages) plus `../../principles.md` and this skill's
-   **`conformance-reviewer.md`** to a **reviewer subagent** (no build reasoning) and run the
-   three-part checklist from the rule above: **profile conformance · principles conformance ·
+   **`conformance-reviewer.md`** to the **`sdlc-reviewer`** subagent (no build reasoning) and run
+   the three-part checklist from the rule above: **profile conformance · principles conformance ·
    plan-AC-and-nothing-more** — and for UI stages, **case completeness: every section case
    implemented, driven by its declared source/trigger, with none silently dropped**. Then: **fix
    every objective violation in this stage and re-verify green** — each one **verified** at its

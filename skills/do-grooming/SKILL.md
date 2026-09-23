@@ -74,15 +74,15 @@ docs/development/<feature-name>/
 - **Hub-alignment review — every spoke, before it's done, and again whenever the hub moves.** The
   hub is the single source of truth; a spoke that quietly disagrees with it is the drift the
   hub/spoke split exists to prevent, and it surfaces as a bug three phases later. So a spoke is
-  **not complete** until it passes an alignment review against the hub. Run it with a **reviewer
-  subagent** handed the **hub, the spoke, and the profile docs both reference** — not your grooming
-  reasoning. Every finding is labeled **measured** or **inferred** — measured names the file and
-  line, the command, test or grep that produced it, and **which copy was read** (committed `HEAD` or
-  the working tree, and which files were already modified when the review started); **inferred is a
-  question, not a defect.** The reviewer **leaves the working tree exactly as it found it.** And the
-  author **verifies before acting** — open the cited file at the cited line before editing anything
-  on a report's authority: a review that is wrong in one finding is not wrong in all of them, and
-  acting on the wrong one costs a whole round. The checklist:
+  **not complete** until it passes an alignment review against the hub. Run it with the **reviewer
+  subagent** (`alpha-sdlc:sdlc-reviewer`) handed the **hub, the spoke, and the profile docs both
+  reference** — not your grooming reasoning. Every finding is labeled **measured** or **inferred** —
+  measured names the file and line, the command, test or grep that produced it, and **which copy was
+  read** (committed `HEAD` or the working tree, and which files were already modified when the
+  review started); **inferred is a question, not a defect.** The reviewer **leaves the working tree
+  exactly as it found it.** And the author **verifies before acting** — open the cited file at the
+  cited line before editing anything on a report's authority: a review that is wrong in one finding
+  is not wrong in all of them, and acting on the wrong one costs a whole round. The checklist:
   1. **Contract fidelity** — every endpoint/field the spoke consumes or exposes exists in the hub's
      §5 contract with the **same method, path, shape, nullability, enum values, and localized-object
      typing**; the spoke **links** the contract and never copies it; typed client/fixtures derive
@@ -441,14 +441,14 @@ missing either doc → **STOP, back to Step 3** — do not run the review, do no
 complete (this is the hole where a run that drifts after the widget-spec gates used to sail
 through). Then run the **hub-alignment review** (per the rule above) before calling it complete:
 
-1. Hand the **hub + this spoke + the profile docs they reference** to a reviewer subagent (fresh
-   eyes — not your grooming context) and run the 11-point checklist: contract fidelity · no
-   divergent restatement · manifest ↔ slices both ways · entities & ownership · dependencies + flow
-   bindings with freshness · cross-cutting · feature flow covered · hub rules enumerated as numbered
-   AC (every AC claimed by ≥ 1 slice, every slice claiming ≥ 1 AC) · sequencing · Open Decisions
-   placed correctly · cross-spoke consistency — handing it the reviewer output contract from the
-   *Hub-alignment review* rule above (**measured** or **inferred** per finding, working tree left
-   exactly as found, author verifies before acting).
+1. Hand the **hub + this spoke + the profile docs they reference** to the **`sdlc-reviewer`**
+   subagent (fresh eyes — not your grooming context) and run the 11-point checklist: contract
+   fidelity · no divergent restatement · manifest ↔ slices both ways · entities & ownership ·
+   dependencies + flow bindings with freshness · cross-cutting · feature flow covered · hub rules
+   enumerated as numbered AC (every AC claimed by ≥ 1 slice, every slice claiming ≥ 1 AC) ·
+   sequencing · Open Decisions placed correctly · cross-spoke consistency — handing it the reviewer
+   output contract from the *Hub-alignment review* rule above (**measured** or **inferred** per
+   finding, working tree left exactly as found, author verifies before acting).
 2. **Resolve by direction** — spoke wrong → fix the spoke and **re-gate the affected section**; hub
    wrong → fix the **hub** with the user's approval, then **re-run alignment for every other
    spoke**; deliberate divergence → **Open Decision**, and once decided record it in the **hub** as

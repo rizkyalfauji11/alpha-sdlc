@@ -133,6 +133,30 @@ the gap is named and recorded, so partial adoption never fakes safety — except
 tracker, auto-run permitted, comment allowlist, plain-layer language) live in one place: the
 profile's **Org settings**, decided at setup.
 
+## Models and effort
+
+The phases run on **your session's model** — the plugin pins none of them. A skill's `model` field
+holds for one turn only, so on a skill that stops at a gate every section it drafted after your
+first approval would run on your model anyway, and the pin would only claim otherwise. Pick per
+phase with `/model` and `/effort`; the recommendation:
+
+| Phase | `/model` | `/effort` | Why |
+|---|---|---|---|
+| Setup | `opus` greenfield · `sonnet` existing repo | `high` | Greenfield decides the stack; an existing repo is mostly read and described |
+| Grooming (all four) · Planning | `opus` | `high` | These phases decide — a wrong call here costs every phase after it |
+| Development · Testing | `sonnet` | `high` | Executes a plan already decided and approved |
+| Fixing | `opus` | `high` | Root cause across callers, not the one path the report named |
+| Slicing | `sonnet` | `medium` | Structured decomposition of an approved TRD |
+| Uploading | `haiku` | `low` | Mechanical tracker calls, sample-first |
+
+The one pinned piece is the **fresh-eyes reviewer** (`agents/sdlc-reviewer.md` — **Opus, high
+effort**, no Write/Edit tools) behind the conformance review in development and fixing and the
+hub-alignment review in grooming. It runs start-to-finish in one shot, so the pin holds, and a
+review is the last check before your gate. An org that needs another model sets
+`CLAUDE_CODE_SUBAGENT_MODEL=<model>` **with** `CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1` — without the
+force flag the agent's own pin wins, and with it every subagent in the session moves, not only this
+one.
+
 ## Install
 
 Needs **`node` on your PATH** — the hooks are Node scripts using built-ins only, so there's no `npm
