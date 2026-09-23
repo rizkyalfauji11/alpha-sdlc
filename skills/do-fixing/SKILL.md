@@ -101,19 +101,19 @@ TDD.
   **destructive direction** (delete/archive in the owner → consumer behaves per the edge).
 - **Conformance review before re-verifying — fresh eyes on the fix, never the fixer's.** Every fix
   is reviewed against the profile, the principles, and the bug report **before** re-verification and
-  **before** it's presented (flow step 4). Run it with a **reviewer subagent** handed only the **fix
-  diff + the bug entry (repro + the AC it violates) + `../../principles.md` + the `docs/basics/`
-  docs the diff touches** — the principles are in the packet because the review audits against them,
-  and a reviewer asked to check a document it was never given checks nothing — not your diagnosis,
-  because the reasoning that produced a fix is the worst reasoning to audit it with. Every finding
-  is labeled **measured** or **inferred** — measured names the file and line, the command, test or
-  grep that produced it, and **which copy was read** (committed `HEAD` or the working tree, and
-  which files were already modified when the review started); **inferred is a question, not a
-  defect.** The reviewer **leaves the working tree exactly as it found it.** And the author
-  **verifies before acting** — open the cited file at the cited line before editing anything on a
-  report's authority: a review that is wrong in one finding is not wrong in all of them, and acting
-  on the wrong one costs a whole round. The checklist is the same three parts as `do-development`'s,
-  re-aimed at what actually goes wrong in fixing:
+  **before** it's presented (flow step 4). Run it with the **reviewer subagent**
+  (`alpha-sdlc:sdlc-reviewer`) handed only the **fix diff + the bug entry (repro + the AC it
+  violates) + `../../principles.md` + the `docs/basics/` docs the diff touches** — the principles
+  are in the packet because the review audits against them, and a reviewer asked to check a document
+  it was never given checks nothing — not your diagnosis, because the reasoning that produced a fix
+  is the worst reasoning to audit it with. Every finding is labeled **measured** or **inferred** —
+  measured names the file and line, the command, test or grep that produced it, and **which copy was
+  read** (committed `HEAD` or the working tree, and which files were already modified when the
+  review started); **inferred is a question, not a defect.** The reviewer **leaves the working tree
+  exactly as it found it.** And the author **verifies before acting** — open the cited file at the
+  cited line before editing anything on a report's authority: a review that is wrong in one finding
+  is not wrong in all of them, and acting on the wrong one costs a whole round. The checklist is the
+  same three parts as `do-development`'s, re-aimed at what actually goes wrong in fixing:
   1. **Fix quality** — **root cause, not symptom**: the fix lands at the **shared source** every
      caller routes through, not on the one path the report named (the reviewer greps the sibling
      call-sites and says whether they're covered) · the **regression test genuinely reproduces the
@@ -181,8 +181,9 @@ For each bug the user approved, in the report's order (severity first):
 3. **Fix** — root-cause fix, minimal, climbing the ladder; run tests + build until green. Report
    honestly (no "fixed" on red).
 4. **Conformance review (fresh eyes) — before re-verifying, before presenting.** Hand the **fix diff +
-   the bug entry (repro + violated AC) + the `docs/basics/` docs the diff touches** to a
-   **reviewer subagent** (the packet per the rule above, `../../principles.md` included, never your diagnosis) and run the checklist from the rule above: **fix
+   the bug entry (repro + violated AC) + the `docs/basics/` docs the diff touches** to the
+   **`sdlc-reviewer`** subagent (the packet per the rule above, `../../principles.md` included,
+   never your diagnosis) and run the checklist from the rule above: **fix
    quality (root cause, not symptom · the regression test really reproduces it · right layer ·
    siblings covered) · scope discipline (the fix and its test, nothing else) · profile + principles
    conformance**. Then: **fix every objective violation — verified at the cited file and line first
