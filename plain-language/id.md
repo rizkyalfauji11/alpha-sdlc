@@ -23,6 +23,10 @@ Pakai judul ini, dalam urutan ini: **Intinya** · **Kenapa penting** · **Piliha
 - Rujukan (file dan baris, nomor bagian, ID) selalu disertai isinya dalam kalimat yang sama.
 - Kutipan bahasa Inggris diceritakan ulang dalam bahasa Indonesia. Kutipan aslinya masuk ke Detail.
 - Kalau pembaca diminta memilih, tulis pilihannya dan tandai rekomendasi dengan ★.
+- **Laporan yang tidak meminta keputusan itu pendek:** Intinya ditambah satu paragraf pendek, paling
+  banyak sekitar enam kalimat untuk seluruh lapisan bahasa sederhana. Sisanya masuk ke Detail.
+  Panjang tulisan tidak menambah kejujuran; yang dibutuhkan pembaca adalah apa yang terjadi, dan
+  apakah ada yang menunggu mereka.
 
 ## Istilah baku
 
@@ -46,6 +50,12 @@ server, database, review, PR.
 | repo-wide | di seluruh repo |
 | artefak otoritatif | dokumen acuan yang sudah disetujui |
 | merge maknanya | menggabungkan isinya |
+| slice, work slice | bagian pekerjaan |
+| fresh eyes, fresh-eyes review | review independen |
+| reviewer subagent | reviewer independen |
+| resisted the temptation | saya sengaja tidak … |
+| overclaim, klaim berlebih | mengklaim lebih dari yang sudah dicek |
+| round (review) | putaran review |
 
 ## Contoh
 
