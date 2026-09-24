@@ -149,7 +149,11 @@ _Approved: <YYYY-MM-DD>_
 > this
 > platform — each integrity cell (visibility · on-delete · freshness), each feature-flow step, each
 > flow-binding — lands here as its own numbered AC (that's what hub-alignment check #8 verifies
-> mechanically), alongside slice-specific and per-step (wizard) AC.
+> mechanically), alongside slice-specific and per-step (wizard) AC. **Behavior only:** a
+> profile-doc registration or other bookkeeping (a row in the asset registry, the code inventory,
+> the design tokens) is not an AC — it is the plan's and the stage packet's checklist. **Every
+> Source names its anchor** — a hub section, or an approved decision of this spoke that itself cites
+> one; an AC with no anchor is a scope proposal, not a row.
 
 | ID | Acceptance criterion (assertable, one sentence) | Source |
 |----|--------------------------------------------------|--------|

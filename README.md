@@ -14,7 +14,8 @@ through the real HTTP stack.
 **Continue without you.** Every document section, plan stage, and test result is a hard gate —
 unless you **explicitly opt into auto-run** for the build→test→fix chain, where gates become reports
 stamped `auto`, all bugs found get fixed in severity order, and questions answer themselves with the
-recommended option — always the quality one — each recorded and listed for your after-the-run
+recommended option — the quality one, and for a question of scope the hub's boundary — each
+recorded and listed for your after-the-run
 ratification; it stops only when nothing can be decided (broken verification tooling, a missing
 input, an external write); grooming, planning, and project setup are never auto. Every gate opens
 with the **bottom line** — what happened, in plain words and engineer terms, and what it needs from
@@ -90,7 +91,7 @@ Then, per feature:
 
 | | | |
 |---|---|---|
-| **Groom** | `/do-grooming` | PRD/BRD → requirements doc, one approval per section. The shared hub is reviewed by fresh eyes and the repo's own contract checks before any platform spoke starts, so spokes don't discover its errors one at a time. Variants: `/do-tech-debt-grooming` for behavior-preserving work, `/do-issue-grooming` which audits the whole issue *class* across the project rather than the symptom you hit, `/do-foundation-grooming` for a new project's scaffold |
+| **Groom** | `/do-grooming` | PRD/BRD → requirements doc, one approval per section. The shared hub is reviewed by fresh eyes and the repo's own contract checks before any platform spoke starts, so spokes don't discover its errors one at a time. Every criterion, case or decision a spoke adds names the hub sentence that requires it — anything else is asked as a scope question whose default is *not in this feature* — and each gate shows how much the spoke grew since it was last approved. Variants: `/do-tech-debt-grooming` for behavior-preserving work, `/do-issue-grooming` which audits the whole issue *class* across the project rather than the symptom you hit, `/do-foundation-grooming` for a new project's scaffold |
 | **Plan** | `/do-planning` | Small independently reviewable stages, split by the layers your repo actually has — contract → domain → data → presentation, or just UI vs data-integration; it won't impose layering it doesn't find. UI splits again by section |
 | **Build** | `/do-development` | One stage at a time, test-first. Each diff is audited by a fresh-eyes reviewer holding your profile docs but not the reasoning that produced the code — then it stops for you |
 | **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion, and the tests themselves reviewed by fresh eyes before coverage is reported. Verify-only: it reports every bug and fixes none |
@@ -116,17 +117,19 @@ case recorded then run), the bug report flows into fixing (**all bugs, severity 
 first**), and back to re-test until green. Commits happen per stage and per fix, as always.
 
 **Questions answer themselves with the recommended option** — which is always the
-quality/world-standard one, never the cheapest — and every such decision is written where it lives
-(`decided: auto ★<option>`) **and** listed under **"Decisions taken for you"** at the top of the
-final report, for you to ratify after the run. Reject one and it re-gates as a named follow-up.
-Prefer questions to stop the run? Say `auto-run, ask on decisions`.
+quality/world-standard one, never the cheapest; for a question of scope (*should this feature also
+do X?*) it is the hub's boundary, so an unattended run never widens the feature — and every such
+decision is written where it lives (`decided: auto ★<option>`) **and** listed under **"Decisions
+taken for you"** at the top of the final report, for you to ratify after the run. Reject one and it
+re-gates as a named follow-up. Prefer questions to stop the run? Say `auto-run, ask on decisions`.
 
-Only four things halt the chain, because nothing can be decided: **verification tooling that fails**
+Only five things halt the chain, because nothing can be decided: **verification tooling that fails**
 (a browser/emulator that won't boot is reported with its fix, never skipped), **an input that
 doesn't exist** (a design, test account, or seed access never provided), **external writes** (git
-push, Jira — those always ask), and **a fix that has failed three times** (the design is wrong, not
-the patch — it stops and asks). Every verifier runs at full strength either way — what you trade is
-review-per-diff, not checks.
+push, Jira — those always ask), **a fix that has failed three times** (the design is wrong, not the
+patch — it stops and asks), and **a change the hub would need** (a hub edit re-stales every
+platform's spoke, so it goes back to grooming instead). Every verifier runs at full strength either
+way — what you trade is review-per-diff, not checks.
 
 Auto-run never applies to project setup, grooming, or planning — those phases *decide*, so their
 gates always block; asking for auto there gets a polite one-line refusal. And an org can switch the

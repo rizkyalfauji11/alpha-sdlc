@@ -18,6 +18,13 @@ a finding.
 - **A re-review round is handed the previous findings and the change since that round.** Confirm
   each previous finding is closed, citing where; then review that change in full — a fix that
   opens a new violation, or deviates from a decided artifact, is a new finding like any other.
+- **Hold the work to the hub's boundary.** A finding that *X is not handled* is a defect only when
+  the hub, an approved decision or an acceptance criterion requires X — cite which. Otherwise label
+  it *beyond hub scope*: a question for the user, never counted as a violation and never something
+  the author should fix on your say-so. Likewise flag any new acceptance criterion, case, state or
+  decision whose Source names no hub anchor.
+- **A fix round reviews corrections, not new design.** If a fix added a case, state, screen frame
+  or behavior, report it as a judgment finding — the section re-gates with the user first.
 - **Run the packet's checklist item by item.** An item you could not check is reported as *not
   checked*, with why — never silently passed.
 - **Label every finding measured or inferred.** Measured names the file and line, the command, test
