@@ -55,16 +55,22 @@ docs/development/<feature-name>/
 - **The hub is the single source of truth.** The API contract, system design, and cross-cutting
   decisions live there once. Spokes **link** to the hub — never copy the contract into a spoke, or
   it drifts.
-- **Once the hub contract is approved, spokes can be groomed in parallel sessions** — one per
-  platform, each owning its `TRD-<platform>.md`; the hub changes only through the gather-then-fix-
-  once rule below (per `principles.md` → *Parallel work*).
+- **The hub is reviewed before any spoke is groomed** — Step 2a below. Spokes are not the hub's
+  reviewers: every hub defect a spoke finds re-stales every other spoke, so the hub's own errors are
+  caught once, up front, while nothing depends on it yet.
+- **Groom the spoke that owns the contract and the data first** — normally backend — because the
+  schema, its foreign keys and the contract's real form surface there; client spokes follow. Spokes
+  may also be groomed in parallel sessions, one per platform, each owning its `TRD-<platform>.md`
+  (per `principles.md` → *Parallel work*) — but then **no spoke is stamped until every spoke in
+  scope has finished its first alignment round**, so the hub-wrong findings of all of them are
+  gathered and fixed once. A stamp given early is the one the next spoke's hub fix breaks.
 - **The hub is groomed first — hard gate, no spoke without an approved hub contract.** A spoke
   depends on the hub's **API contract** (it derives its typed client + fixtures from that
-  machine-checkable contract), so a spoke **cannot** be groomed until the hub exists **and its
-  API-contract section is approved**. If a user asks to groom a spoke and there's no hub — or a hub
-  exists but its API-contract section isn't approved yet — **STOP and groom the hub (through at
-  least the approved API contract) first.** Never start a spoke on a missing or unapproved contract;
-  that's exactly how spokes drift and produce the 405 / wrong-shape bugs.
+  machine-checkable contract), so a spoke **cannot** be groomed until the hub exists, **its
+  API-contract section is approved, and its Hub review row is ✅** (Step 2a). If a user asks to
+  groom a spoke and there's no hub — or its contract isn't approved, or the hub review hasn't passed
+  — **STOP and finish the hub and its review first.** Never start a spoke on a missing, unapproved
+  or unreviewed hub; that's exactly how spokes drift and produce the 405 / wrong-shape bugs.
 - Templates (in this skill's directory): `TRD-hub-template.md` for the hub, `TRD-spoke-template.md`
   for each spoke. Read the relevant one first.
 
@@ -126,13 +132,17 @@ docs/development/<feature-name>/
   - **Spoke is wrong** → fix the spoke, re-present the affected section for approval (it's a
     decision change, so it re-gates).
   - **Hub is wrong** (the spoke exposed a real hub error) → **fix it in the hub, once for all
-    spokes — never spoke by spoke.** If other existing spokes are awaiting alignment, run theirs
-    against the current hub first and gather every hub-wrong finding; take them to the user as
-    **one** hub change, fix the hub once, then re-run alignment once per spoke (scoped, per *The hub
-    moving* below). The spokes are independent, so their reviews run **in parallel** — one reviewer
-    subagent per spoke, launched in one message; the stamps are written after every review is back.
-    A hub fixed after each spoke's review re-stales the spokes already re-stamped, so rounds
-    multiply — spokes × hub edits. Never patch a spoke to match a hub you know is wrong.
+    spokes — never spoke by spoke — and only on a yes to the hub change itself.** Present it as its
+    own decision, never folded into "apply all recommendations": the hub sections it moves, the
+    spokes whose stamps it stales, and the re-review each of them then needs. A blanket approval —
+    "all recommendations", "continue" — covers spoke fixes only. If other existing spokes are
+    awaiting alignment, run theirs against the current hub first and gather every hub-wrong finding;
+    take them to the user as **one** hub change, fix the hub once, then re-run alignment once per
+    spoke (scoped, per *The hub moving* below). The spokes are independent, so their reviews run
+    **in parallel** — one reviewer subagent per spoke, launched in one message; the stamps are
+    written after every review is back. A hub fixed after each spoke's review re-stales the spokes
+    already re-stamped, so rounds multiply — spokes × hub edits. Never patch a spoke to match a hub
+    you know is wrong.
   - **Deliberate divergence** (this platform genuinely must differ) → it's an **Open Decision**, and
     once decided it's recorded **in the hub** as a platform exception, so the next spoke and
     `do-development` both see it. Silent divergence is never acceptable.
@@ -436,6 +446,33 @@ The last section is **structured** (it feeds downstream ticket-slicing and monit
 
 When grooming a spoke, also update the hub's **Spokes** field to link the new spoke — and when it
 lives in a sibling repository, its `Repo` cell names that repo (same repo is the default: a dash).
+
+### Step 2a — Hub review (hub only) — the gate before any spoke
+
+Once the hub's last section is written, hand the **hub, its contract delta, and the profile docs it
+references** to the **reviewer subagent** (`alpha-sdlc:sdlc-reviewer` — not your grooming context)
+with this checklist:
+
+1. **The contract passes the repo's own checks** — run the contract validation the profile records
+   (`15-api-reference.md` / `10-conventions.md`, e.g. the contract test) against the delta. A form
+   the checker cannot read — `nullable: true` in an OpenAPI 3.1 file whose checker reads only
+   `type` — is an objective violation, because it is invisible downstream.
+2. **Entities complete** — every table the design reads or writes, and every foreign key on those
+   tables, has its row in §2 *Entities touched*, with owner and on-delete **read from the
+   migrations**, not only the entities the PRD names.
+3. **One statement per fact** — §2 freshness, §3 flow steps, §4 design, §5 contract and every table
+   agree with each other and with their prose.
+4. **Every flow step is served** — each system action in §3 maps to a contract endpoint or a stated
+   client-only behavior.
+5. **No spoke has to decide a hub matter** — anything a spoke would need decided to make the hub
+   true is decided here or listed as a hub Open Decision.
+6. **It renders** — tables parse and diagrams meet the Mermaid 9.x floor.
+
+Fix objective violations and send the fixes back for another round (`principles.md` → *The fixes
+are reviewed too*); judgment findings are the user's decision. On a clean pass stamp the hub's
+**Hub review** row (`reviewed <date> · rev <commit>` plus its round counts), and only then offer the
+first spoke. Present the verdict and STOP. If no subagent can run, run the identical checklist
+inline and say so.
 
 ### Step 3 — Per-screen artifacts (client spokes only)
 

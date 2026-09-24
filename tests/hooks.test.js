@@ -190,6 +190,28 @@ blocks(
   editPayload(fenceFixture, 'const x = 1;\n```\n', 'const x = 1;\n'),
 );
 
+const BASH_DOCS = 'validate-bash-doc-writes.js';
+const bashPayload = (command, cwd) => ({ tool_name: 'Bash', cwd: cwd || '/repo', tool_input: { command } });
+
+blocks(BASH_DOCS, 'a heredoc redirect into a TRD', bashPayload("cat > docs/development/x/TRD.md <<'EOF'\nhi\nEOF"));
+blocks(BASH_DOCS, 'an append redirect into an absolute docs path', bashPayload('echo x >> /abs/repo/docs/development/f/TRD.md'));
+blocks(BASH_DOCS, 'sed -i on a profile doc', bashPayload("sed -i '' 's/a/b/' docs/basics/07-database.md"));
+blocks(BASH_DOCS, 'perl -pi on a profile doc', bashPayload("perl -pi -e 's/a/b/' docs/basics/16-feature-map.md"));
+blocks(BASH_DOCS, 'tee into a doc', bashPayload('printf x | tee docs/basics/a.md'));
+blocks(BASH_DOCS, 'a python heredoc that writes the hub', bashPayload("python3 - <<'PY'\nfrom pathlib import Path\nPath('docs/development/run-terminal/TRD.md').write_text('x')\nPY"));
+blocks(BASH_DOCS, 'a copy from scratch onto a profile doc', bashPayload('cp "/tmp/scratch/02-architecture.md" docs/basics/02-architecture.md'));
+blocks(BASH_DOCS, 'a relative write after cd into a docs directory', bashPayload("cd /repo/docs/development/feature && cat >> TRD.md <<'EOF'\n## 2\nEOF"));
+blocks(BASH_DOCS, 'a relative write when the session cwd is inside docs', bashPayload('echo x >> TRD-web.md', '/repo/docs/development/feature'));
+
+passes(BASH_DOCS, 'reading a doc with cat', bashPayload('cat docs/development/x/TRD.md'));
+passes(BASH_DOCS, 'grepping profile docs', bashPayload('grep -n foo docs/basics/*.md'));
+passes(BASH_DOCS, 'copying a doc out to scratch', bashPayload('cp docs/basics/07-database.md /tmp/scratch/before.md'));
+passes(BASH_DOCS, 'git checkout of a doc', bashPayload('git checkout -- docs/development/x/TRD.md'));
+passes(BASH_DOCS, 'git add and commit of a doc', bashPayload('git add docs/development/x/TRD.md && git commit -m "docs: x"'));
+passes(BASH_DOCS, 'a python read of a doc', bashPayload(`python3 -c "print(open('docs/a.md').read())"`));
+passes(BASH_DOCS, 'a write outside docs', bashPayload('echo hi > /tmp/out.txt'));
+passes(BASH_DOCS, 'a write to scratch that only reads docs', bashPayload("cat docs/basics/01-overview.md > /tmp/scratch/copy.md"));
+
 const INJECT = 'inject-principles.js';
 const GUIDE_MARKER = 'Panduan bahasa sederhana';
 

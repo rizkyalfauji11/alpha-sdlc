@@ -123,6 +123,8 @@ must state what's decided-and-built versus written-but-not-yet-real.
   may be groomed by different people. The hub carries anything they must agree on (repo strategy —
   monorepo vs separate repos, the API contract format, shared conventions), and that agreement is a
   **hub gate** before either spoke is groomed.
+- **The hub review opens the spokes** (`do-grooming` → Step 2a) — minus the contract, entity and
+  flow points a scaffold has nothing to check, said so in the verdict.
 - **Hub-alignment review closes every spoke** (see `do-grooming` → *Hub-alignment review*), **minus
   the points a scaffold has nothing to check** — skip contract fidelity, feature-flow coverage,
   entity ownership and the §8-AC ↔ §9-slice pair (a base has no contract, flow, entities or slices)

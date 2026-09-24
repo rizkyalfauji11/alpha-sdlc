@@ -35,21 +35,22 @@ their answer: recommend setting up first; proceed without it only if the user ex
 Same engine (gated section-by-section TRD, hub/spokes, ladder, Mermaid, flows into `do-slicing`) —
 **including the hub-alignment review**: every spoke passes it before it's complete, gets stamped on
 both sides, and is re-reviewed whenever a hub section changes (see `do-grooming` → *Hub-alignment
-review*). **Read that checklist by what it checks, not by its section numbers — a tech-debt TRD
-numbers its sections differently:** its AC registry is §6 and its slices are §8, so the AC ↔ slice
-point reads "every §6 AC claimed by ≥ 1 §8 slice and back"; **contract fidelity and feature-flow
-coverage apply only when the refactor touches a contract or a user flow** — skip them otherwise and
-say so in the verdict rather than reporting them passed. Different framing: **no product evolution,
-new-feature possibilities, Figma, or business AC — and this skill authors no widget spec or section
-slicing** (it isn't designing UI). **But when the target *is* UI** — extracting a component,
-migrating a screen's toolkit, splitting a god-view — the screen's existing
-**`section-slicing/<screen>.md` is the behavior-preserving contract**: every case it lists must
-still render identically after the refactor, so bind the TRD's *Regression safety* section to that
-case list (case → how it's proven unchanged) and treat the case crops as the before-picture. **If
-the screen has no section-slicing doc, say so and call it a risk** — a UI refactor without an
-enumerated case list is how a variant nobody remembered disappears; offer to have `do-grooming`
-slice the screen first (recommended for anything beyond a rename), or fall back to a screenshot
-baseline of the cases you can reach and record what stays uncovered. Instead:
+review*) — and the hub passes the **hub review** before the first spoke (`do-grooming` → Step 2a).
+**Read that checklist by what it checks, not by its section numbers — a tech-debt TRD numbers its
+sections differently:** its AC registry is §6 and its slices are §8, so the AC ↔ slice point reads
+"every §6 AC claimed by ≥ 1 §8 slice and back"; **contract fidelity and feature-flow coverage apply
+only when the refactor touches a contract or a user flow** — skip them otherwise and say so in the
+verdict rather than reporting them passed. Different framing: **no product evolution, new-feature
+possibilities, Figma, or business AC — and this skill authors no widget spec or section slicing**
+(it isn't designing UI). **But when the target *is* UI** — extracting a component, migrating a
+screen's toolkit, splitting a god-view — the screen's existing **`section-slicing/<screen>.md` is
+the behavior-preserving contract**: every case it lists must still render identically after the
+refactor, so bind the TRD's *Regression safety* section to that case list (case → how it's proven
+unchanged) and treat the case crops as the before-picture. **If the screen has no section-slicing
+doc, say so and call it a risk** — a UI refactor without an enumerated case list is how a variant
+nobody remembered disappears; offer to have `do-grooming` slice the screen first (recommended for
+anything beyond a rename), or fall back to a screenshot baseline of the cases you can reach and
+record what stays uncovered. Instead:
 
 - **Behavior-preserving by default.** The success criterion is usually "behaves identically,
   measurably better." Any *intended* behavior change must be called out explicitly.

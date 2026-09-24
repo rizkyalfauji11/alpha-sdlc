@@ -380,6 +380,17 @@ missing acceptance criterion: a defect, not a detail.
   right; it's done when the grep is clean. **A note saying "corrected" is not a correction** — make
   the edit in the same pass. When the corrected fact was a **decided** one, the correction re-gates
   (step-by-step approval, above).
+- **A document states the current truth; the history of a correction goes in the commit message.**
+  No *"this read X until Y"*, no struck-through old value, no *"⚠️ corrected at round 4"*, no *"this
+  is the second time"* — a reader needs what is true now, and a reviewer re-audits every such note
+  as new text, so each one breeds findings and rounds. The commit that makes the correction says
+  what was wrong, why, and where else it was fixed. What stays in the document is what is still a
+  fact: an Open Decision's options and outcome, a `decided: auto ★` record awaiting ratification, a
+  live *Contradictions* row, a platform exception, the stamps and round counts.
+- **Gated documents are written with the Edit or Write tool, never through Bash.** The doc hooks —
+  table shape, ladder rung, secrets — run only on those tools; a `sed -i`, a heredoc or a script
+  that writes a `docs/**.md` skips every one of them. A `PreToolUse` hook on Bash blocks such a
+  write. Reading, grepping, copying a doc out, and git commands stay free.
 - **Every change is reviewed before it's presented — fresh eyes, not the author's.** A stage's diff,
   or a fix, is audited against the **profile docs it touches, these principles, and its own
   plan/AC** *before* verification and *before* it reaches the user — ideally by a reviewer with the

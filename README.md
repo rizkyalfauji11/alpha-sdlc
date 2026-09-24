@@ -51,7 +51,10 @@ where it can't rot beside code that changed.
 
 None of that is prompt-deep. Hooks block the write when a decision names no rung, a secret lands in
 a doc, a comment lands in code, or a markdown table the next phase has to read stops parsing — a
-prompt can be forgotten mid-session, an exit code can't. The same holds for how it talks to you: a
+prompt can be forgotten mid-session, an exit code can't. And because those hooks watch the Edit and
+Write tools, a doc written through Bash — a `sed -i`, a heredoc, an inline script — is blocked and
+sent back through them; replayed against 7,688 real Bash calls from one project, that closed over
+3,000 doc writes the hooks had never seen. The same holds for how it talks to you: a
 step summary whose plain layer a non-engineer couldn't follow — no bottom line, code names or bare
 `file:line` pointers in the explanation, an English quote or a word-for-word translation in a
 summary written in your language — is sent back for one rewrite before it counts as presented. In
@@ -87,7 +90,7 @@ Then, per feature:
 
 | | | |
 |---|---|---|
-| **Groom** | `/do-grooming` | PRD/BRD → requirements doc, one approval per section. Variants: `/do-tech-debt-grooming` for behavior-preserving work, `/do-issue-grooming` which audits the whole issue *class* across the project rather than the symptom you hit, `/do-foundation-grooming` for a new project's scaffold |
+| **Groom** | `/do-grooming` | PRD/BRD → requirements doc, one approval per section. The shared hub is reviewed by fresh eyes and the repo's own contract checks before any platform spoke starts, so spokes don't discover its errors one at a time. Variants: `/do-tech-debt-grooming` for behavior-preserving work, `/do-issue-grooming` which audits the whole issue *class* across the project rather than the symptom you hit, `/do-foundation-grooming` for a new project's scaffold |
 | **Plan** | `/do-planning` | Small independently reviewable stages, split by the layers your repo actually has — contract → domain → data → presentation, or just UI vs data-integration; it won't impose layering it doesn't find. UI splits again by section |
 | **Build** | `/do-development` | One stage at a time, test-first. Each diff is audited by a fresh-eyes reviewer holding your profile docs but not the reasoning that produced the code — then it stops for you |
 | **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion, and the tests themselves reviewed by fresh eyes before coverage is reported. Verify-only: it reports every bug and fixes none |
