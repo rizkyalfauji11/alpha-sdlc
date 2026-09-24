@@ -57,7 +57,8 @@ note the audit is ungrounded and may be incomplete).
   platforms (e.g. a 405 spans backend + web). Slugify the issue to a short name (e.g.
   `localized-render-crash`). Use `issue-TRD-template.md` in this skill's directory. One approval
   gate per section. **Spokes pass the hub-alignment review before they're complete** (and get
-  re-reviewed whenever a hub section changes) — see `do-grooming` → *Hub-alignment review*, **read
+  re-reviewed whenever a hub section changes), and the hub passes the **hub review** before the
+  first spoke (`do-grooming` → Step 2a) — see `do-grooming` → *Hub-alignment review*, **read
   by what it checks, not by its section numbers** (an issue TRD's AC registry is §4 and its slices
   sit in §6's change manifest); for a cross-platform issue that's what keeps the backend's and the
   web's account of the same root cause from diverging.

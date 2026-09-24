@@ -11,6 +11,7 @@
 | **Author** | <engineer> |
 | **Platforms in scope** | <Backend / Android / iOS / Web> |
 | **Spokes** | <see the *Spokes & alignment* table below> |
+| **Hub review** | <✅ reviewed YYYY-MM-DD · rev `<hash>` · rounds `n · n` — or ❌ not reviewed. No spoke is groomed before ✅> |
 | **PRD/BRD** | <link to source> |
 | **Figma** | <link, if any> |
 | **Date** | <YYYY-MM-DD> |
