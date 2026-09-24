@@ -224,7 +224,8 @@ missing acceptance criterion: a defect, not a detail.
   already gives is not repeated under its own heading, and a trivial one folds into a clause — but
   one that carries information is **never silently dropped**. Brevity trims *repetition*, never
   *meaning*: each statement stays self-contained, as long as that needs and as short as redundancy
-  allows.
+  allows. **A report that asks nothing is short:** the bottom line and one short paragraph — about
+  six sentences for the whole plain layer — with the rest in the Details.
 
   **No naked references — the running step must be understandable alone (presentations only).**
   Every ID or pointer named in a presentation — a case (`C1`), an acceptance criterion (`AC-3`), a
