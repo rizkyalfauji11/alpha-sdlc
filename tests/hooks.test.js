@@ -247,6 +247,58 @@ const contextCases = [
     projectRoot: projectFixture('traversal', { 'docs/basics/.alpha-sdlc.json': '{"plainLanguage":"../principles"}' }) },
 ];
 
+const COVERAGE = path.join(__dirname, '..', 'scripts', 'check-coverage.js');
+const spokeWith = (slices) =>
+  '# Spoke\n\n## 8. Acceptance criteria\n\n| ID | AC | Source |\n|---|---|---|\n' +
+  '| AC-1 | one | hub §2 |\n| AC-2 | two | hub §3 |\n| AC-3 | three | hub §5 |\n\n' +
+  '## 9. Work slices\n\n' + slices + '\n';
+const planWith = (stages) => '# Plan\n\n## Stages\n\n' + stages + '\n';
+const TWO_SLICES = '| Slice | What | AC |\n|---|---|---|\n| **W1** | a | `AC-1` `AC-2` |\n| **W2** | b | `AC-3` |';
+
+function coverageRun(name, spoke, plan, extraArguments, extraFiles) {
+  const featureDirectory = projectFixture('coverage-' + name, {
+    'TRD-web.md': spoke,
+    'plan-web.md': plan,
+    ...(extraFiles || {}),
+  });
+  const extras = (extraArguments || []).map((argument) => argument.replace('{dir}', featureDirectory));
+  return spawnSync(process.execPath, [COVERAGE, featureDirectory, 'web', ...extras], { encoding: 'utf8' }).status;
+}
+
+const coverageCases = [
+  { name: 'every criterion claimed inside its own slice is clean', expected: 0,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`') },
+  { name: 'a criterion no stage claims is reported', expected: 1,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`') },
+  { name: 'a stage claiming another slice\'s criterion without a Moved in record is reported', expected: 1,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2` · `AC-3`') },
+  { name: 'the same claim with a Moved in record is clean', expected: 0,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2` · `AC-3`\n- **Moved in:** `AC-3` from `W2` — provable only here') },
+  { name: 'a claim of a criterion missing from the register is reported', expected: 1,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3` · `AC-9`') },
+  { name: 'a list-style slice with an AC range is read in full', expected: 0,
+    spoke: spokeWith('- [ ] **`BE1`** — everything — **AC:** `AC-1` … `AC-3`'),
+    plan: planWith('### Stage 1 — [api] `BE1` — all\n- **Covers:** `AC-1` · `AC-2` · `AC-3`') },
+  { name: 'amendment prose after the warning mark is not read as a claim', expected: 0,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2` ⚠️ `AC-3` moves to Stage 2\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`') },
+  { name: 'a new test titled with a criterion its stage does not cover is reported', expected: 1,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`'),
+    extraArguments: ['--stage', '1', '--tests', '{dir}/a.test.ts'],
+    extraFiles: { 'a.test.ts': "it('AC-3 shows the band', () => {});\n" } },
+  { name: 'a new test titled with its own stage\'s criterion is clean', expected: 0,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`'),
+    extraArguments: ['--stage', '1', '--tests', '{dir}/a.test.ts'],
+    extraFiles: { 'a.test.ts': "it('AC-1 keeps the list', () => {});\n" } },
+];
+
 let failed = 0;
 for (const contextCase of contextCases) {
   const context = injectedContext(contextCase.projectRoot);
@@ -258,6 +310,18 @@ for (const contextCase of contextCases) {
     failed++;
     process.stdout.write(`  FAIL ${INJECT}  ${contextCase.name}\n`);
     process.stdout.write(`       index present: ${hasIndex}, guide present: ${hasGuide}\n`);
+  }
+}
+
+for (const coverageCase of coverageCases) {
+  const exitCode = coverageRun(coverageCase.name.replace(/\W+/g, '-'), coverageCase.spoke, coverageCase.plan,
+    coverageCase.extraArguments, coverageCase.extraFiles);
+  if (exitCode === coverageCase.expected) {
+    process.stdout.write(`  ok   check-coverage.js  ${coverageCase.name}\n`);
+  } else {
+    failed++;
+    process.stdout.write(`  FAIL check-coverage.js  ${coverageCase.name}\n`);
+    process.stdout.write(`       expected exit ${coverageCase.expected}, got ${exitCode}\n`);
   }
 }
 
@@ -276,6 +340,6 @@ for (const testCase of cases) {
 
 fs.rmSync(fixtureDirectory, { recursive: true, force: true });
 
-const total = cases.length + contextCases.length;
+const total = cases.length + contextCases.length + coverageCases.length;
 process.stdout.write(`\n${total - failed}/${total} passed\n`);
 process.exit(failed ? 1 : 0);

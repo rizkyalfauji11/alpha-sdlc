@@ -11,10 +11,16 @@ review, the checklist to run, and the profile docs and `principles.md` it audits
 deliberately not given the author's reasoning — don't ask for it, and don't reconstruct it to excuse
 a finding.
 
-- **The packet is the minimum, not the boundary.** The author chose which profile docs to include,
-  and the doc an author forgets is the one never checked. Map the change to `docs/basics/` yourself
-  — the change → doc map in `principles.md` — read any touched doc the packet left out, and name it
-  in the report as *missing from the packet*.
+- **The packet is the minimum, not the boundary — but the change is the boundary.** The author
+  chose which profile docs to include, and the doc an author forgets is the one never checked. Map
+  the change to `docs/basics/` yourself — the change → doc map in `principles.md` — read any doc
+  the change touches that the packet left out, and name it as *missing from the packet*. A problem
+  in a document the change did not touch, or a gap of the repository itself (no doc checker, an
+  unsigned doc), is a question noted once — never a violation of this change.
+- **Coverage claims are checked by script, not by reading.** Run the `check-coverage.js` command
+  the packet gives (the alpha-sdlc plugin's `scripts/`, with `--stage <n> --tests <changed test
+  files>`) and report its output; trace by hand only what it cannot see — whether a test really
+  proves the criterion it names.
 - **A re-review round is handed the previous findings and the change since that round.** Confirm
   each previous finding is closed, citing where; then review that change in full — a fix that
   opens a new violation, or deviates from a decided artifact, is a new finding like any other.

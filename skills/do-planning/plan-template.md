@@ -78,10 +78,15 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 > once**
 > (3 screens over 1 repository = domain + data + one presentation stage per screen).
 
-### Stage 1 — [<layer>] <goal>
+### Stage 1 — [<layer>] `<slice id>` — <goal>
 - **Covers:** <task IDs / Jira keys / the TRD's numbered AC IDs (e.g. `AC-3, AC-7` — the spoke's §8
   registry on a hub/spoke feature; `A1`…`A6` on a foundation TRD) / the contract-delta entries this
-  stage merges (the `TIGHTENS`/`REMOVES` ones held back from the `[contract]` stage)>
+  stage merges (the `TIGHTENS`/`REMOVES` ones held back from the `[contract]` stage). Each AC is
+  provable in this stage — its test is named under *Test first*>
+- **Moved in:** <only when this stage claims an AC that §9 gives another slice: `AC-n` from
+`<slice>`
+  — why it is provable only here · who decided and when. `scripts/check-coverage.js` fails a
+  cross-slice claim without this line>
 - **Layer:** <contract / domain / data / presentation — or UI / data-integration if the project
   isn't layered. The diff **stays inside this layer**: business logic doesn't land in a ViewModel, a
   presentation stage doesn't reach into data. `do-development`'s conformance review checks the diff
@@ -133,7 +138,7 @@ standard: agrees" — conflicts surfaced per the tiered rule>
   is *not* safe** — green but visually broken (e.g. "no: 2 of 4 sections built; screen is broken
   until Stage 9 assembly").>
 
-### Stage 2 — [<layer>] <goal>
+### Stage 2 — [<layer>] `<slice id>` — <goal>
 - **Covers:** <…>
 - **Layer:** <…>
 - **Stage kind (UI presentation):** <shell / section / assembly — or `n/a`>
@@ -157,7 +162,8 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 
 - **Order / dependencies:** <which stage must precede which, and why>
 - **Safe stop points:** <list the checkpoints where the codebase is in a working/shippable state>
-- **Uncovered tasks / AC:** <derived from the TRD's numbered AC register against the stages'
-  `Covers:` — any AC (incl. each **integrity AC**: visibility · on-delete · freshness), task,
-  **feature-flow step**, or **flow binding** not yet mapped to a stage — or "none">
+- **Uncovered tasks / AC:** <the output of `node ../../scripts/check-coverage.js
+  docs/development/<feature-name> <platform>` pasted as it prints — never a hand-written table. Then
+  any **feature-flow step** or **flow binding** not yet mapped to a stage, which the checker cannot
+  see — or "none">
 

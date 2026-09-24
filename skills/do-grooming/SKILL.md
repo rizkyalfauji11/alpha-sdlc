@@ -451,7 +451,9 @@ The last section is **structured** (it feeds downstream ticket-slicing and monit
 - **Hub** → Change manifest: repos/modules per platform (with links to spokes), cross-platform
   release ordering, shared dependencies/risks, and a work-slice summary tagged by platform.
 - **Spoke** → two structured finals: **§8 Acceptance criteria** — the canonical numbered registry
-  (stable `AC-<n>` IDs, one assertable sentence each, **observable behavior only**, Source column
+  (stable `AC-<n>` IDs, one assertable sentence each, **observable behavior only**, **one behavior
+  provable inside one work slice** — an AC whose clauses need two slices' code is two ACs, split
+  here rather than halved later in the plan, Source column
   enumerating every hub rule/flow step/binding that touches this platform) — then **§9 Work
   slices**, each claiming its AC by ID (never restating the prose). Mirror the summary line up into
   the hub's manifest.
