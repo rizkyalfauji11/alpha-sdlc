@@ -220,6 +220,8 @@ For each bug the user approved, in the report's order (severity first):
 
 Report what was fixed, what was deferred, and any bug that turned out to be a design gap (now an
 Open Decision). Hand back to **`do-testing`** to re-run and confirm the fixes hold and nothing
-regressed — the test → fix → re-test loop closes here. Once re-testing is green, the feature's SDLC
+regressed — the test → fix → re-test loop closes here. **(Auto-run: hand back in the same turn,
+without stopping; when the chain reaches the marker's `until`, set `.alpha-sdlc/auto-run.json`'s
+`status` to `done` before the final report.)** Once re-testing is green, the feature's SDLC
 ends with the **profile reconcile** — run `do-project-setup` in refresh mode so `docs/basics/`
 reflects everything built and fixed (see `do-testing`).

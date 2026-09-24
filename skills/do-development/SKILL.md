@@ -12,7 +12,10 @@ checkpoint unattended — **unless the user explicitly opted into auto-run mode*
 <date>`, commits, and continues — through every stage and **onward into `do-testing`** when the last
 stage lands — while questions auto-answer with the ★ recommendation (recorded, per *Auto-run mode*)
 and the chain halts only where nothing can be decided: failed mandatory tooling, physically missing
-inputs, external writes, a fix that has failed three times, and a change the hub would need.
+inputs, external writes, a fix that has failed three times, and a change the hub would need. **On
+opt-in, write `.alpha-sdlc/auto-run.json`** (`principles.md` → *The opt-in is written down*): a
+`Stop` hook then keeps the turn going through every checkpoint, and the chain stops only by setting
+that file's `status` to `halted` (with the reason) or `done`.
 
 **Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the
 INDEX of these rules, never their text, so the file is the only place they actually bind — now
@@ -330,8 +333,9 @@ For the next unfinished stage in the plan:
    **`conformance-reviewer.md`** — plus the output of `node ../../scripts/check-coverage.js
    docs/development/<feature-name> <platform> --stage <n> --tests <the test files this stage
    changed>` and the command itself, so the reviewer re-runs it rather than tracing claims by hand —
-   to the **`sdlc-reviewer`** subagent (no build reasoning) and run the three-part checklist from
-   the rule above: **profile conformance · principles conformance ·
+   to the **`sdlc-reviewer`** subagent (no build reasoning; **in auto-run, in the foreground** — a
+   reviewer left running in the background ends the turn) and run the three-part checklist from the
+   rule above: **profile conformance · principles conformance ·
    plan-AC-and-nothing-more** — and for UI stages, **case completeness: every section case
    implemented, driven by its declared source/trigger, with none silently dropped**. Then: **fix
    every objective violation in this stage and re-verify green** — each one **verified** at its
@@ -398,7 +402,8 @@ For the next unfinished stage in the plan:
    - **Verification** — the green test + build result.
    Then ask: approve / request changes / stop here. Do not touch the next stage until they respond.
    **(Auto-run: nothing is asked — the packet is a report; record the verdict as `auto <date>` and
-   proceed to the next stage in the same run.)**
+   proceed to the next stage in the same turn. Presenting the report is not the end of the turn: the
+   next tool call follows it. After the last stage, go straight into `do-testing`.)**
 9. **On approval** — record the stage's **Checkpoint verdict** (`approved <date>` — or `auto <date>`
    in auto-run), set the stage's **`Status:` to `done <date>`** in `plan-<platform>.md` (that is what a
    resumed run reads to find the first unfinished stage), **commit the stage's changes

@@ -200,6 +200,21 @@ missing acceptance criterion: a defect, not a detail.
   old behavior? Say "auto-run, ask on decisions" — then questions stop the chain as before. At the
   end: one consolidated chain report + the profile-reconcile recommendation. Hooks block regardless
   of mode — they are the floor that doesn't move.
+
+  **The opt-in is written down, so it outlives the turn.** On opt-in, write
+  `.alpha-sdlc/auto-run.json` in the session's working directory — `{"feature", "platform",
+  "until", "status": "running", "started"}`, with `until` the end the user asked for (re-test green,
+  the profile reconcile) — and add `.alpha-sdlc/` to `.gitignore`; it is never committed. The
+  opt-in then holds for the whole chain: a later short reply — *"pilih (a)"*, *"lanjut"* — does not
+  cancel it. A `Stop` hook reads the file and refuses to let the turn end while `status` is
+  `running`. **A stage report is not a stop, and neither is waiting for a reviewer:** emit the
+  report and keep going in the same turn, and run the reviewer in the foreground so its answer
+  arrives inside the turn. A judgment finding — in a fix round too — auto-decides ★ and is recorded;
+  it never waits for the user. The chain stops only through the file: **before** presenting one of
+  the five halting cases, set `"status": "halted"` and a `"reason"`; when `until` is reached, set
+  `"status": "done"`; when the user says to stop auto-run, set `"stopped"`. A resumed chain sets
+  `running` again. If a stop is attempted with no tool run since the hook's last push, the hook lets
+  it through — a stuck chain surfaces instead of looping.
 - **Present every step bottom line first, for everyone (shared step-summary format).** At every
   gate/checkpoint where you present work for review, presenting the **plain layer in the org's
   language** when the profile's Org settings name one (engineer detail stays technical), open with a
@@ -419,7 +434,8 @@ missing acceptance criterion: a defect, not a detail.
   for new ones — a deviation introduced while fixing is a judgment finding like any other. Repeat
   until a round is clean. **A fix round only corrects.** A fix that adds a case, state, screen frame
   or behavior **of the product** is not a correction but a judgment finding: the affected section
-  re-gates with the user, and the round waits for it. Moving an acceptance criterion's claim from
+  re-gates with the user, and the round waits for it (auto-run: it auto-decides ★, is recorded, and
+  the round continues). Moving an acceptance criterion's claim from
   one stage to another is bookkeeping, not product design — a plan amendment recorded with a *Moved
   in* line (auto-run: decided ★ and recorded; gated: asked at the checkpoint), never a finding that
   holds the round. **Before each round, sweep and check:** grep every site of each fact the fixes

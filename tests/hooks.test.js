@@ -212,6 +212,27 @@ passes(BASH_DOCS, 'a python read of a doc', bashPayload(`python3 -c "print(open(
 passes(BASH_DOCS, 'a write outside docs', bashPayload('echo hi > /tmp/out.txt'));
 passes(BASH_DOCS, 'a write to scratch that only reads docs', bashPayload("cat docs/basics/01-overview.md > /tmp/scratch/copy.md"));
 
+const AUTO_RUN = 'continue-auto-run.js';
+function autoRunPayload(name, marker, transcript) {
+  const files = {};
+  if (marker !== undefined) files['.alpha-sdlc/auto-run.json'] = typeof marker === 'string' ? marker : JSON.stringify(marker);
+  if (transcript !== undefined) files['transcript.jsonl'] = transcript;
+  const projectRoot = projectFixture('auto-run-' + name, files);
+  return { hook_event_name: 'Stop', cwd: projectRoot, transcript_path: path.join(projectRoot, 'transcript.jsonl') };
+}
+const TOOL_LINE = '{"type":"assistant","message":{"content":[{"type":"tool_use","id":"t1","name":"Edit"}]}}\n';
+const TEXT_LINE = '{"type":"assistant","message":{"content":[{"type":"text","text":"Stage 4 done."}]}}\n';
+
+passes(AUTO_RUN, 'no marker lets the session stop', autoRunPayload('none'));
+blocks(AUTO_RUN, 'a running chain blocks its first stop', autoRunPayload('first', { feature: 'f', platform: 'web', status: 'running' }, TEXT_LINE));
+passes(AUTO_RUN, 'a halted chain lets the session stop', autoRunPayload('halted', { status: 'halted', reason: 'no design' }, TEXT_LINE));
+passes(AUTO_RUN, 'a finished chain lets the session stop', autoRunPayload('done', { status: 'done' }, TEXT_LINE));
+passes(AUTO_RUN, 'an unreadable marker fails open', autoRunPayload('broken', '{not json', TEXT_LINE));
+blocks(AUTO_RUN, 'a running chain that used a tool since the last push blocks again',
+  autoRunPayload('progress', { status: 'running', lastBlock: { transcriptSize: TEXT_LINE.length } }, TEXT_LINE + TOOL_LINE + TEXT_LINE));
+passes(AUTO_RUN, 'a running chain with no tool since the last push is let go',
+  autoRunPayload('stalled', { status: 'running', lastBlock: { transcriptSize: TOOL_LINE.length } }, TOOL_LINE + TEXT_LINE));
+
 const INJECT = 'inject-principles.js';
 const GUIDE_MARKER = 'Panduan bahasa sederhana';
 

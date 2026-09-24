@@ -261,7 +261,10 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
    not covered (say so with the blocker + fix). Then present the **consolidated *Bugs found*
    report** — every bug with severity · level · repro · AC — and let the user triage. **Fix nothing
    here**; confirmed fixes hand off to **`do-fixing`**. **(Auto-run: the report is emitted, every
-   bug routes to `do-fixing` in severity order, and the chain continues.)**
+   bug routes to `do-fixing` in severity order, and the chain continues in the same turn — the
+   report is not a stop. When re-test is green and that is the marker's `until`, set
+   `.alpha-sdlc/auto-run.json`'s `status` to `done`; if `until` is the profile reconcile, run it
+   first.)**
 
 When there are no bugs, every AC is covered, **and Boot & Smoke has actually passed against the real
 assembled app**, report the result and the coverage doc; the feature is ready for the deployment

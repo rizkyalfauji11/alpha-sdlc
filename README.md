@@ -123,6 +123,13 @@ decision is written where it lives (`decided: auto ★<option>`) **and** listed 
 taken for you"** at the top of the final report, for you to ratify after the run. Reject one and it
 re-gates as a named follow-up. Prefer questions to stop the run? Say `auto-run, ask on decisions`.
 
+The opt-in is written to `.alpha-sdlc/auto-run.json` (git-ignored), so it holds for the whole chain
+— a later *"pilih (a)"* doesn't cancel it — and a `Stop` hook refuses to end the turn while that
+file says `running`. A stage report is not a stop, and a reviewer runs in the foreground instead of
+parking the turn. The chain ends only by writing `halted` (with its reason) or `done` into that
+file; a stop attempted with no tool run since the last push is let through, so a stuck run surfaces
+instead of looping.
+
 Only five things halt the chain, because nothing can be decided: **verification tooling that fails**
 (a browser/emulator that won't boot is reported with its fix, never skipped), **an input that
 doesn't exist** (a design, test account, or seed access never provided), **external writes** (git
