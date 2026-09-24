@@ -33,14 +33,18 @@ Pakai judul ini, dalam urutan ini: **Intinya** · **Kenapa penting** · **Piliha
 Boleh dipakai apa adanya: commit, branch, push, merge, deploy, build, test, bug, endpoint, API,
 server, database, review, PR.
 
-| Jangan tulis | Tulis |
+Pakai istilah di tabel ini **persis seperti tertulis**, dan jangan mengarang padanan lain (misalnya
+"syarat kelulusan" untuk kriteria penerimaan). Kalau kolom kanan memberi penjelasan untuk kemunculan
+pertama, tulis penjelasan itu sekali di ringkasan, lalu cukup istilahnya.
+
+| Jangan tulis (salah) | Tulis (benar) |
 |---|---|
 | hijau / merah (hasil test) | lolos / gagal |
 | mendarat (dari *lands*) | selesai, masuk |
 | stage | tahap |
 | gate, checkpoint | titik persetujuan |
 | scope | cakupan pekerjaan |
-| AC, acceptance criteria | kriteria penerimaan |
+| AC, acceptance criteria | kriteria penerimaan — saat pertama muncul: *kriteria penerimaan (syarat fitur dianggap selesai)* |
 | hub | dokumen induk (TRD bersama semua platform) |
 | spoke | dokumen platform (TRD satu platform) |
 | delta | file perubahan kontrak API |
@@ -56,6 +60,8 @@ server, database, review, PR.
 | resisted the temptation | saya sengaja tidak … |
 | overclaim, klaim berlebih | mengklaim lebih dari yang sudah dicek |
 | round (review) | putaran review |
+| *"persis X yang Y ada untuk mencegah(nya)"* (dari *"exactly the X that Y exists to prevent"*) | *"Y dibuat justru untuk mencegah X"* |
+| *"bukan tambahan sopan santun"* (dari *"not a courtesy"*) | *"bukan tambahan opsional"* |
 
 ## Contoh
 

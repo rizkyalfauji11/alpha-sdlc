@@ -194,12 +194,13 @@ stops the loop and comes to you. An org that needs another model sets
 force flag the agent's own pin wins, and with it every subagent in the session moves, not only this
 one.
 
-The plain-language check on step summaries is a `Stop` prompt hook judged by **Sonnet**
-(`claude-sonnet-5`, set in `hooks/hooks.json`). Haiku was tried first and misread which part of a
-summary was the engineer detail, so it rejected good summaries and passed bad ones. The judge adds a
-few seconds to the end of each answer. A rejected summary is rewritten once, and in the terminal
-you see both versions, the rewrite last. If the judge's model is unavailable, the hook fails open
-and the summary is shown unchecked.
+The plain-language check on step summaries is a `Stop` prompt hook judged by **Opus**
+(`claude-opus-5-5`, set in `hooks/hooks.json`). The evaluator writes its verdict before its reason,
+so a weaker judge decides first and reasons after. Haiku misread where the engineer detail began.
+Sonnet passed a word-for-word translation while its own reason called it a failure. The judge adds
+roughly ten seconds to the end of each step summary; ordinary chat is waved through. A rejected
+summary is rewritten once, and in the terminal you see both versions, the rewrite last. If the
+judge's model is unavailable, the hook fails open and the summary is shown unchecked.
 
 ## Install
 
