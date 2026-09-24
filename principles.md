@@ -418,16 +418,27 @@ missing acceptance criterion: a defect, not a detail.
   findings and the change since that round, confirms each finding is closed, and reviews the change
   for new ones — a deviation introduced while fixing is a judgment finding like any other. Repeat
   until a round is clean. **A fix round only corrects.** A fix that adds a case, state, screen frame
-  or behavior is not a correction but a judgment finding: the affected section re-gates with the
-  user, and the round waits for it. **Before each round, sweep and check:** grep every site of each
-  fact the fixes changed and fix them together (per *Correct every site*), run the repo's own doc
-  checks, and put their output in the packet — a repo with no doc checker records that once as a
-  tech-debt row. **A missing thing is a defect only when something requires it:** a finding that
+  or behavior **of the product** is not a correction but a judgment finding: the affected section
+  re-gates with the user, and the round waits for it. Moving an acceptance criterion's claim from
+  one stage to another is bookkeeping, not product design — a plan amendment recorded with a *Moved
+  in* line (auto-run: decided ★ and recorded; gated: asked at the checkpoint), never a finding that
+  holds the round. **Before each round, sweep and check:** grep every site of each fact the fixes
+  changed and fix them together (per *Correct every site*), run the repo's own doc checks and the
+  plugin's coverage checker (`scripts/check-coverage.js`), and put their output in the packet. **A
+  missing thing is a defect only when something requires it:** a finding that
   *X is not handled* counts only when the hub, an approved decision or an acceptance criterion
   requires X; otherwise it is labelled *beyond hub scope*, asked as a question, never counted and
-  never auto-fixed. Each round records its **objective-violation count** (inferred findings
-  are questions, never counted); **flat or rising across three rounds is a STOP** — escalate to the
-  user with the trend instead of launching another round.
+  never auto-fixed. **A stage's review covers the stage:** its diff and the documents that diff
+  changes. A finding in a document the stage did not touch, or a gap of the repository itself — no
+  doc checker, an unsigned profile doc — is not the stage's violation: it is noted once as a
+  question, and repository gaps are recorded by `do-project-setup` in the tech-debt register, never
+  charged to a stage. **A round of bookkeeping alone closes without another round:** once the code
+  and tests are verified clean and every remaining finding is bookkeeping in documents — coverage
+  claims, labels, cross-references — the author fixes them, runs the coverage checker and the doc
+  checks to green, and closes the stage with their output in the packet. A reviewer round is for
+  what a script cannot check. Each round records its **objective-violation count** (inferred
+  findings are questions, never counted); **flat or rising across three rounds is a STOP** —
+  escalate to the user with the trend instead of launching another round.
 - **Parallel work fills the time behind a gate — it never runs past one.** Gates stay one at a time;
   what runs in parallel is AI work the next gate would otherwise wait for.
   1. **Subagents read and report; only the main agent writes gated artifacts.** A subagent returns

@@ -153,7 +153,9 @@ sections that don't apply.
    commands — and where no screenshot-baseline tool exists, record that limitation instead of
    inventing a gate. Seed `20-tech-debt-register.md` by harvesting every debt the other docs just
    flagged (contradictions in `18`/`06`, duplicates in `19`, omissions, smells the full scan
-   surfaced) into `TD-<n>` rows — open, with origin + ceiling. Seed `19-code-inventory.md` with a
+   surfaced) into `TD-<n>` rows — open, with origin + ceiling — and, when the repo has no command
+   that checks its own docs (links, tables, cross-references), one row saying so: recorded here,
+   once, so no stage's review is charged with it. Seed `19-code-inventory.md` with a
    **full-project sweep for reusable units — every module, never just core/common** (helpers,
    extensions, base classes, wrappers, hooks, validators): register each (plain+engineer description
    · location · used-by), and put **the same job implemented more than once** into its Duplicates

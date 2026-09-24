@@ -327,8 +327,11 @@ For the next unfinished stage in the plan:
 5. **Conformance review (fresh eyes) — before verifying, before presenting.** Hand the **stage diff +
    the stage's plan/AC + the `docs/basics/` docs the diff touches** (plus the screen's
    **section-slicing doc** for UI stages) plus `../../principles.md` and this skill's
-   **`conformance-reviewer.md`** to the **`sdlc-reviewer`** subagent (no build reasoning) and run
-   the three-part checklist from the rule above: **profile conformance · principles conformance ·
+   **`conformance-reviewer.md`** — plus the output of `node ../../scripts/check-coverage.js
+   docs/development/<feature-name> <platform> --stage <n> --tests <the test files this stage
+   changed>` and the command itself, so the reviewer re-runs it rather than tracing claims by hand —
+   to the **`sdlc-reviewer`** subagent (no build reasoning) and run the three-part checklist from
+   the rule above: **profile conformance · principles conformance ·
    plan-AC-and-nothing-more** — and for UI stages, **case completeness: every section case
    implemented, driven by its declared source/trigger, with none silently dropped**. Then: **fix
    every objective violation in this stage and re-verify green** — each one **verified** at its
@@ -336,10 +339,13 @@ For the next unfinished stage in the plan:
    — record it as an **Open Decision** and hand back to the user/`do-grooming` rather than resolving
    it yourself. **Then send the fixes back for another round** — the previous findings plus the
    change since that round — until a round is clean, per `principles.md` → *The fixes are reviewed
-   too*. Carry the verdict into the packet: which docs were checked, findings by kind, what you
-   fixed, the objective-violation count per round, what you're asking about. If no subagent can
-   run, run the identical checklist inline as an explicit self-review and say that's what happened
-   — never skip the step.
+   too*; **except when every remaining finding is bookkeeping** (coverage claims, test labels,
+   cross-references) and the code and tests are already verified: fix them, run the coverage
+   checker and the doc checks to green, and close the stage with that output — no further round.
+   Carry the verdict into the packet: which docs were checked, findings by kind, what you fixed, the
+   objective-violation count per round, what you're asking about. If no subagent can run, run the
+   identical checklist inline as an explicit self-review and say that's what happened — never skip
+   the step.
 6. **Visual parity + content-fit (UI stages with a design ref)** — **what you compare depends on the
    stage's kind** (the plan's *Stage kind*): the dispatch for a `shell` / `section` / `assembly`
    stage, the content extremes, the section-slicing doc's Interactions (`X`) rows, and where each

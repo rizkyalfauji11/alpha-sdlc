@@ -151,7 +151,16 @@ layout is ungrounded).
   asserted:** read the TRD's numbered AC register (the spoke's §8, or its equivalent in an issue /
   tech-debt / foundation TRD) against the union of the stages' `Covers:` — every AC is claimed by
   **≥ 1** stage and every stage claims **≥ 1** AC, and every work slice lands in some stage. An
-  unclaimed AC is unbuilt scope; an AC-less stage is untestable work.
+  unclaimed AC is unbuilt scope; an AC-less stage is untestable work. **Derived means computed:**
+  run `node ../../scripts/check-coverage.js docs/development/<feature-name> <platform>` and paste
+  its output into *Sequencing & stop points* — never a hand-written coverage table or prose that
+  restates the `Covers:` lines, because a second copy is the one that drifts. Each stage heading
+  names its slice (`` `W4a` `` for a stage of `W4`); a stage that claims an AC §9 gives another
+  slice carries a **`Moved in:`** line naming it, its source slice and why — the checker fails a
+  cross-slice claim without one. **Every AC a stage claims is provable in that stage:** its *Test
+  first* names the test that proves it here. An AC whose proof needs a later stage's code moves to
+  that stage **now**, at planning, with its *Moved in* line — never split or moved during
+  development.
 - **Detail the *shape* of the change, not the code.** A stage must be reviewable before it's built:
   give per-file change intent, new/changed signatures · data shapes · endpoints · props, and
   pseudocode/notes for genuinely tricky logic (races, money caps, retries, edge cases). **When a
