@@ -106,7 +106,14 @@ missing acceptance criterion: a defect, not a detail.
   options (mark one — always the quality/world-standard option, per the recommendation rule below),
   and **let the user decide** — never resolve it by inventing extra behavior/UI/scope (that's the
   over-delivery failure). Undecided gaps block the affected slice until decided (then re-groomed).
-  Building beyond the spec is as wrong as building below it.
+  Building beyond the spec is as wrong as building below it. **Every addition carries its anchor.**
+  A new acceptance criterion, case, state, screen frame or decision cites the hub sentence — or the
+  approved spoke decision — that requires it, by section and quote. No anchor → it is a **scope
+  proposal**, not a fix: it goes to the user as its own question, and its ★ is the boundary — *not
+  in this feature, recorded as a follow-up* — unless an in-scope behavior needs it to be correct,
+  safe or complete (the error, empty or refusal state of an action the hub already has). The
+  quality rule below decides *how* to build what is in scope; it never decides *whether* to widen
+  it.
 - **Validate every choice against the real code — valid, relevant, compatible, current.** When you
   pick a library, dependency, tech-stack element, pattern, API, or approach, confirm four things
   before proposing it: (1) **valid** — it actually exists and is used correctly (never a
@@ -130,7 +137,9 @@ missing acceptance criterion: a defect, not a detail.
   trade** (a named simplification with its ceiling, or an Open Decision note) — never a silent
   default. This does not contradict the ladder: laziness trims **scope and moving parts**, never
   correctness or quality — the smallest option that still meets the standard is the recommendation;
-  an option below the standard isn't "lazier", it's broken later.
+  an option below the standard isn't "lazier", it's broken later. **A question of scope is not a
+  question of quality:** for *should this feature also do X?*, the ★ is the hub's boundary (per
+  *Build only what's specified*), and adding X is the listed alternative.
 - **Keep a living understanding summary.** After reading any input, summarize your understanding and
   ask the user to confirm. When they correct it, or you read something new, or an open question is
   answered, re-check the sources and re-summarize the delta, then re-confirm. Don't move forward on
@@ -150,7 +159,7 @@ missing acceptance criterion: a defect, not a detail.
   re-gates**, and downstream skills treat a missing/stale stamp as not-approved. The **one
   exception** to blocking gates is **Auto-run mode** (above) — explicit opt-in, execution phases
   only, where gates become recorded reports stamped `auto` and questions auto-decide the ★
-  recommendation (only the three nothing-to-decide cases halt).
+  recommendation (only the halting cases listed there stop it).
 - **Auto-run mode — the one explicit exception to step-by-step approval (execution phases only).**
   When the user **explicitly opts in per invocation** ("run in auto mode", "full run without
   approvals", "jalankan penuh") — never inferred, never a default, **and declined outright when the
@@ -170,25 +179,27 @@ missing acceptance criterion: a defect, not a detail.
   judgment/scope finding · every ask-first rule · a stale input stamp → re-gate with the recommended
   resolution · an evidenced cross-feature class → fix now, audit recommended) is **auto-decided by
   taking the ★ recommendation** — safe because ★ is always the quality/world-standard option, never
-  the cheap one. Every auto-decision is **recorded where the decision lives** (`decided: auto
+  the cheap one, and for a scope question ★ is the hub's boundary, so auto-deciding never widens a
+  feature. Every auto-decision is **recorded where the decision lives** (`decided: auto
   ★<option> · <date>` in the Open Decisions row / the artifact) **and collected in a "Decisions
   taken for you" section at the top of the chain report** — ratify-after replaces approve-before,
-  and reversing one is a named follow-up, never archaeology. **Only four things still halt the
+  and reversing one is a named follow-up, never archaeology. **Only five things still halt the
   chain, because nothing can be decided:** a mandatory check whose tooling fails (render/boot —
   verification is never faked), an input that physically doesn't exist (a design/crop/test
-  account/seed access never provided), and external writes (git push, Jira, deploys), and a fix that
-  has failed re-verification three times (the design is wrong, not the patch — `do-fixing` stops and
-  asks). **Interpretive rule for the chain skills:** during auto-run, every "ask the user first" /
-  "stop and ask" / "⏸ STOP — wait for approval" instruction inside
-  `do-development`/`do-testing`/`do-fixing` resolves to *take the ★ recommendation, record it,
-  continue* — **including "stop the stage / hand back to grooming / surface and wait"
-  instructions**: the gap decides ★ in place and the chain keeps moving (the four halting cases
-  excepted) — the skills' absolute wording governs gated mode and needs no per-line rewriting. An
-  auto-decided Open Decision flips its row to `decided: auto ★<option>`; folding the decision into
-  section prose happens at ratification (or it re-gates if you reverse it). Prefer the old behavior?
-  Say "auto-run, ask on decisions" — then questions stop the chain as before. At the end: one
-  consolidated chain report + the profile-reconcile recommendation. Hooks block regardless of mode —
-  they are the floor that doesn't move.
+  account/seed access never provided), external writes (git push, Jira, deploys), a fix that has
+  failed re-verification three times (the design is wrong, not the patch — `do-fixing` stops and
+  asks), and **a change the hub would need** — auto-run never edits the hub, because a hub edit
+  re-stales every spoke and belongs to grooming's gather-then-fix-once rule. **Interpretive rule for
+  the chain skills:** during auto-run, every "ask the user first" / "stop and ask" / "⏸ STOP — wait
+  for approval" instruction inside `do-development`/`do-testing`/`do-fixing` resolves to *take the ★
+  recommendation, record it, continue* — **including "stop the stage / hand back to grooming /
+  surface and wait" instructions**: the gap decides ★ in place and the chain keeps moving (the five
+  halting cases excepted) — the skills' absolute wording governs gated mode and needs no per-line
+  rewriting. An auto-decided Open Decision flips its row to `decided: auto ★<option>`; folding the
+  decision into section prose happens at ratification (or it re-gates if you reverse it). Prefer the
+  old behavior? Say "auto-run, ask on decisions" — then questions stop the chain as before. At the
+  end: one consolidated chain report + the profile-reconcile recommendation. Hooks block regardless
+  of mode — they are the floor that doesn't move.
 - **Present every step bottom line first, for everyone (shared step-summary format).** At every
   gate/checkpoint where you present work for review, presenting the **plain layer in the org's
   language** when the profile's Org settings name one (engineer detail stays technical), open with a
@@ -278,7 +289,7 @@ missing acceptance criterion: a defect, not a detail.
   instruction in any skill as a hard STOP, not a passing note. **The one carve-out is Auto-run
   mode** (above): there, questions that carry options are never asked in the first place — they
   auto-decide the ★ recommendation and are recorded for ratification — so this rule governs
-  questions actually ASKED (including auto-run's four halting cases), and those still block
+  questions actually ASKED (including auto-run's five halting cases), and those still block
   absolutely.
 - **Keep the project profile current (`docs/basics/`).** When your work changes something a profile
   doc records, **update that doc in the same change and re-stamp its commit** — so the profile the
@@ -406,7 +417,15 @@ missing acceptance criterion: a defect, not a detail.
   the same author, so it goes back to the reviewer: the next round is handed the previous round's
   findings and the change since that round, confirms each finding is closed, and reviews the change
   for new ones — a deviation introduced while fixing is a judgment finding like any other. Repeat
-  until a round is clean. Each round records its **objective-violation count** (inferred findings
+  until a round is clean. **A fix round only corrects.** A fix that adds a case, state, screen frame
+  or behavior is not a correction but a judgment finding: the affected section re-gates with the
+  user, and the round waits for it. **Before each round, sweep and check:** grep every site of each
+  fact the fixes changed and fix them together (per *Correct every site*), run the repo's own doc
+  checks, and put their output in the packet — a repo with no doc checker records that once as a
+  tech-debt row. **A missing thing is a defect only when something requires it:** a finding that
+  *X is not handled* counts only when the hub, an approved decision or an acceptance criterion
+  requires X; otherwise it is labelled *beyond hub scope*, asked as a question, never counted and
+  never auto-fixed. Each round records its **objective-violation count** (inferred findings
   are questions, never counted); **flat or rising across three rounds is a STOP** — escalate to the
   user with the trend instead of launching another round.
 - **Parallel work fills the time behind a gate — it never runs past one.** Gates stay one at a time;

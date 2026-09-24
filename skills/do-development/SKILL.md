@@ -12,7 +12,7 @@ checkpoint unattended — **unless the user explicitly opted into auto-run mode*
 <date>`, commits, and continues — through every stage and **onward into `do-testing`** when the last
 stage lands — while questions auto-answer with the ★ recommendation (recorded, per *Auto-run mode*)
 and the chain halts only where nothing can be decided: failed mandatory tooling, physically missing
-inputs, external writes, and a fix that has failed three times.
+inputs, external writes, a fix that has failed three times, and a change the hub would need.
 
 **Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the
 INDEX of these rules, never their text, so the file is the only place they actually bind — now
@@ -81,7 +81,8 @@ file entirely.
   for the user to decide. Never invent behavior/UI/scope to fill it (that's the over-delivery bug).
   **(Auto-run: the gap auto-decides its ★ recommendation on the spot — record `decided: auto
   ★<option>` in the spoke's Open Decisions and keep building per it; no mid-chain hand-back to
-  grooming.)**
+  grooming — unless answering it would change the hub: auto-run never edits the hub, so that gap
+  halts the chain and asks.)**
 - **Follow the codebase, not your taste.** Match existing conventions, naming, and the package
   layout the plan fixed. The ladder governs build-vs-reuse.
 - **Conformance review before verifying — fresh eyes on the diff, never the author's.** Every stage

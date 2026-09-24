@@ -29,9 +29,9 @@ TDD.
   in severity order, but each presentation is a **report** (`Approved: auto <date>`), committed and
   continuing — then **hand back to `do-testing` automatically** after the last bug, looping the
   chain until re-test is green — questions along the way auto-decide their ★ recommendation
-  (recorded); only failed mandatory tooling, physically missing inputs, an external write, or a fix
-  that has failed three times halt
-  it. The chain ends with one consolidated report + the profile-reconcile recommendation.
+  (recorded); only failed mandatory tooling, physically missing inputs, an external write, a fix
+  that has failed three times, or a change the hub would need halt it. The chain ends with one
+  consolidated report + the profile-reconcile recommendation.
 - **Reproduce first (regression test).** Before fixing, write/confirm a **failing test that
   reproduces the bug** (red) — derived from the AC it violates. Then fix until green. That test
   stays as a regression guard.

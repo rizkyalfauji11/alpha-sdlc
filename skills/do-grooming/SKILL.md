@@ -76,6 +76,13 @@ docs/development/<feature-name>/
 
 ## Rules
 
+- **Stay inside the hub, and show the growth.** Every AC, case, state, screen frame and Open
+  Decision a spoke adds cites its hub anchor (`principles.md` → *Build only what's specified*); one
+  without an anchor is asked as a scope question whose ★ is *not in this feature, recorded as a
+  follow-up*. Every gate after the spoke's first approval, and every alignment verdict, carries one
+  line of growth against the last approved version — AC, Open Decisions, cases and frames, then and
+  now, with the additions split into behavior and bookkeeping — so a widening is seen at the gate,
+  not discovered three phases later.
 - **Output path**: hub → `docs/development/<feature-name>/TRD.md`; spoke →
   `docs/development/<feature-name>/TRD-<platform>.md` (slugify feature name to kebab-case; create
   the dir if needed; append if the file exists). The file being groomed IS the state — if
@@ -114,11 +121,15 @@ docs/development/<feature-name>/
      this platform participates in is present in the spoke (as a screen/step or a work slice), and
      the spoke adds no step the flow doesn't have. A hub journey step no spoke implements is the gap
      this catches.
-  8. **Hub rules enumerated as numbered AC** — every hub decision touching this platform (each
-     integrity cell — visibility · on-delete · freshness — each feature-flow step, each flow
-     binding) appears as **its own numbered row in the spoke's §8 Acceptance criteria** with the hub
-     decision named in its Source column — a mechanical lookup, not "the spirit was carried". And
-     every AC is claimed by ≥ 1 slice (§9), every slice claims ≥ 1 AC.
+  8. **Hub rules enumerated as numbered AC** — every hub decision about **behavior** touching this
+     platform (each integrity cell — visibility · on-delete · freshness — each feature-flow step,
+     each flow binding) appears as **its own numbered row in the spoke's §8 Acceptance criteria**
+     with the hub decision named in its Source column — a mechanical lookup, not "the spirit was
+     carried". Hub **process** rules — register-on-create, profile-doc updates — are **not** AC;
+     they are the plan's and stage packet's checklist (`principles.md` → *Keep the project profile
+     current*). Every AC's Source names its hub anchor (or an approved spoke decision that cites
+     one); an AC without one is a *beyond hub scope* question, not a row. And every AC is claimed by
+     ≥ 1 slice (§9), every slice claims ≥ 1 AC.
   9. **Sequencing** — the spoke's release considerations don't contradict the hub's release
      ordering.
   10. **Open Decisions placed correctly** — a **pending hub decision blocks** the spoke sections
@@ -440,9 +451,10 @@ The last section is **structured** (it feeds downstream ticket-slicing and monit
 - **Hub** → Change manifest: repos/modules per platform (with links to spokes), cross-platform
   release ordering, shared dependencies/risks, and a work-slice summary tagged by platform.
 - **Spoke** → two structured finals: **§8 Acceptance criteria** — the canonical numbered registry
-  (stable `AC-<n>` IDs, one assertable sentence each, Source column enumerating every hub rule/flow
-  step/binding that touches this platform) — then **§9 Work slices**, each claiming its AC by ID
-  (never restating the prose). Mirror the summary line up into the hub's manifest.
+  (stable `AC-<n>` IDs, one assertable sentence each, **observable behavior only**, Source column
+  enumerating every hub rule/flow step/binding that touches this platform) — then **§9 Work
+  slices**, each claiming its AC by ID (never restating the prose). Mirror the summary line up into
+  the hub's manifest.
 
 When grooming a spoke, also update the hub's **Spokes** field to link the new spoke — and when it
 lives in a sibling repository, its `Repo` cell names that repo (same repo is the default: a dash).
@@ -497,7 +509,10 @@ per-screen artifacts complete:** every screen in the spoke has BOTH `widget-spec
 `section-slicing/<screen>.md` with the slicing doc's *Coverage checklist* fully checked. Any screen
 missing either doc → **STOP, back to Step 3** — do not run the review, do not call the spoke
 complete (this is the hole where a run that drifts after the widget-spec gates used to sail
-through). Then run the **hub-alignment review** (per the rule above) before calling it complete:
+through). **The artifacts are frozen once the review starts:** a new screen frame, crop, case or
+state during alignment is a design change, not a fix — it goes back to its Step 3 gate first, and
+the rounds resume on the approved result. Alignment rounds check a finished design; they don't
+grow one. Then run the **hub-alignment review** (per the rule above) before calling it complete:
 
 1. Hand the **hub + this spoke + the profile docs they reference** to the **`sdlc-reviewer`**
    subagent (fresh eyes — not your grooming context) and run the 11-point checklist: contract
