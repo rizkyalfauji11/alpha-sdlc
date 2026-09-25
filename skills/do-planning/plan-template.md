@@ -83,6 +83,8 @@ standard: agrees" — conflicts surfaced per the tiered rule>
   registry on a hub/spoke feature; `A1`…`A6` on a foundation TRD) / the contract-delta entries this
   stage merges (the `TIGHTENS`/`REMOVES` ones held back from the `[contract]` stage). Each AC is
   provable in this stage — its test is named under *Test first*>
+- **Built with:** <only when this stage lands in the same change as another: `Stage N` — each of
+  them names the others, and each keeps its own review round and checkpoint verdict>
 - **Moved in:** <only when this stage claims an AC that §9 gives another slice: `AC-n` from
 `<slice>`
   — why it is provable only here · who decided and when. `scripts/check-coverage.js` fails a

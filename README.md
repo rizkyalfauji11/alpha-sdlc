@@ -127,7 +127,9 @@ The opt-in is written to `.alpha-sdlc/auto-run.json` (git-ignored), so it holds 
 — a later *"pilih (a)"* doesn't cancel it — and a `Stop` hook refuses to end the turn while that
 file says `running`. A stage report is not a stop, and a reviewer runs in the foreground instead of
 parking the turn. The chain ends only by writing `halted` (with its reason) or `done` into that
-file; a stop attempted with no tool run since the last push is let through, so a stuck run surfaces
+file — and `done` is refused while `scripts/check-feature-done.js` reads a blocked Boot & Smoke, an
+uncovered AC or an unclosed bug in the test plan, the same check a feature's profile reconcile waits
+on; a stop attempted with no tool run since the last push is let through, so a stuck run surfaces
 instead of looping.
 
 Only five things halt the chain, because nothing can be decided: **verification tooling that fails**

@@ -43,7 +43,11 @@ TDD.
   is a halting case: the chain loops until re-test is green, and nothing else terminates it.
 - **Scope discipline.** Fix *only* the bug. No opportunistic refactors or added scope (that's the
   over-delivery trap). If the bug reveals a design gap, that's an **Open Decision → back to
-  `do-grooming`**, not something you invent a fix for. **A bug from `do-testing` is fixed HERE, by
+  `do-grooming`**, not something you invent a fix for. **A fix that needs a new or changed endpoint
+  or contract field, or code in another platform's repository, is a design gap by definition** —
+  the hub and that platform's spoke are where it gets decided, and a route built from inside a fix
+  has no spoke, no plan and no stage review behind it. Stop and route it to grooming; in auto-run it
+  is the *change the hub would need* halting case. **A bug from `do-testing` is fixed HERE, by
   default — escalation to `do-issue-grooming` is the evidenced exception, and it never blocks the
   fix.** The routing test, in order:
   1. **Same-feature siblings** → fixed here at the shared source (the root-cause rule — always was).
@@ -124,9 +128,11 @@ TDD.
      wearing a fix's clothes) · **same-feature siblings fixed here; a project-wide class flagged for
      `do-issue-grooming`** rather than quietly left behind.
   2. **Scope discipline** — the diff contains the root-cause fix **and its regression test, and
-     nothing else**. No opportunistic refactor, no drive-by rename, no "while I was in there". This
-     is the review's sharpest job in fixing: a fix diff is where scope creep is easiest to justify
-     and hardest to spot.
+     nothing else**. A diff that adds or changes an endpoint or a contract field, or changes code in
+     another platform's repository, is not a fix but a **design gap** — a judgment finding that
+     stops (below), whatever the bug report called it. No opportunistic refactor, no drive-by
+     rename, no "while I was in there". This is the review's sharpest job in fixing: a fix diff is
+     where scope creep is easiest to justify and hardest to spot.
   3. **Profile + principles conformance** — per doc the diff touches: layer/dependency rule
      (`02-architecture`) · error handling & logging, no swallowed catch (`10-conventions`) · **a
      style bug fixed at the token, never with a literal** (`18-design-tokens`) · canonical query

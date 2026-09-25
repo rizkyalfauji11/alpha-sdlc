@@ -165,6 +165,25 @@ for (const id of [...register].sort((a, b) => a - b)) {
   if (!claimedBy.has(id)) problems.push(`AC-${id} is claimed by no stage`);
 }
 
+const builtWith = new Map();
+for (const stage of stages) {
+  const partners = [...bulletText(stage.block, 'Built with').matchAll(/Stages?\s+(\d+)/g)].map((match) => Number(match[1]));
+  builtWith.set(stage.number, new Set(partners.filter((number) => number !== stage.number)));
+  const status = bulletText(stage.block, 'Status');
+  const verdict = bulletText(stage.block, 'Checkpoint verdict').replace(/^.*?\*\*Checkpoint verdict:?\*\*/, '');
+  if (/\bdone\b/i.test(status) && (!verdict.trim() || /pending|</i.test(verdict))) {
+    problems.push(`Stage ${stage.number} is done but carries no checkpoint verdict of its own`);
+  }
+}
+for (const [number, partners] of builtWith) {
+  for (const partner of partners) {
+    if (!builtWith.has(partner)) problems.push(`Stage ${number} says it was built with Stage ${partner}, which does not exist`);
+    else if (!builtWith.get(partner).has(number)) {
+      problems.push(`Stage ${number} says it was built with Stage ${partner}, but Stage ${partner} does not say so back`);
+    }
+  }
+}
+
 if (options.stage !== null) {
   const stage = stages.find((candidate) => candidate.number === options.stage);
   if (!stage) fail(`no Stage ${options.stage} in ${planPath}`);

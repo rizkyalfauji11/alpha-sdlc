@@ -11,7 +11,27 @@ const markerPath = path.join(projectRoot, '.alpha-sdlc', 'auto-run.json');
 
 let marker;
 try { marker = JSON.parse(fs.readFileSync(markerPath, 'utf8')); } catch { process.exit(0); }
-if (!marker || marker.status !== 'running') process.exit(0);
+if (!marker) process.exit(0);
+
+const recordedReason = Object.entries(marker).some(
+  ([key, value]) => /reason/i.test(key) && typeof value === 'string' && value.trim(),
+);
+
+let refusedDone = null;
+let haltWithoutReason = false;
+if (marker.status === 'halted') {
+  if (recordedReason) process.exit(0);
+  haltWithoutReason = true;
+} else if (marker.status === 'done') {
+  if (!marker.featureDir || !marker.platform) process.exit(0);
+  let featureStatus;
+  try { ({ featureStatus } = require(path.join(__dirname, '..', 'scripts', 'check-feature-done.js'))); } catch { process.exit(0); }
+  const verdict = featureStatus(path.resolve(projectRoot, marker.featureDir), marker.platform);
+  if (!verdict.readable || verdict.done) process.exit(0);
+  refusedDone = verdict.reasons;
+} else if (marker.status !== 'running') {
+  process.exit(0);
+}
 
 const TOOL_USE = '"type":"tool_use"';
 
@@ -53,6 +73,22 @@ if (!madeProgress) {
 }
 
 const scope = [marker.feature, marker.platform].filter(Boolean).join(' · ');
+if (haltWithoutReason) {
+  process.stderr.write(
+    'alpha-sdlc auto-run is "halted" with no reason recorded. Write why the chain stopped — which ' +
+    'halting case, and what would let it continue — into "reason" in .alpha-sdlc/auto-run.json, then stop.\n',
+  );
+  process.exit(2);
+}
+if (refusedDone) {
+  process.stderr.write(
+    'alpha-sdlc auto-run: "status": "done" is refused' + (scope ? ' for ' + scope : '') +
+    ' — the feature is not done: ' + refusedDone.join('; ') + '. ' +
+    'A verification gate is never waived. Re-drive what failed until it passes and record it in the ' +
+    'test plan, then set "done"; if it cannot pass in this run, set "status": "halted" and write why into "reason".\n',
+  );
+  process.exit(2);
+}
 process.stderr.write(
   'alpha-sdlc auto-run is still running' + (scope ? ' for ' + scope : '') +
   (marker.until ? ' (until: ' + marker.until + ')' : '') + '. ' +

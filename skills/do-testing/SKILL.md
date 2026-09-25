@@ -268,11 +268,14 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
 
 When there are no bugs, every AC is covered, **and Boot & Smoke has actually passed against the real
 assembled app**, report the result and the coverage doc; the feature is ready for the deployment
-phase. **Then reconcile the profile — run `do-project-setup` in refresh mode** so `docs/basics/`
-reflects what was built (new endpoints → `api-reference`, new screens → `ui-architecture`, the
-feature itself + its deps → `feature-map`, any new convention → `conventions`/`ux-conventions`, new
-token handling → `auth`) before the next feature grooms against it. When there are bugs, hand the
-triaged list to `do-fixing` — **always `do-fixing`, never `do-issue-grooming` directly**: a testing
-bug is in-pipeline work, and any class escalation happens from inside `do-fixing` only with found
-cross-feature evidence (and never instead of the fix). Do the profile reconcile after the fixes land
-and re-testing is green.
+phase. **Confirm it mechanically first:** `node ../../scripts/check-feature-done.js
+docs/development/<feature-name> <platform>` must exit 0 — it reads the test plan's Boot & Smoke and
+AC-covered lines and every bug's status, so a blocked journey or a fix not re-verified cannot be
+called done. **Then reconcile the profile — run `do-project-setup` in refresh mode** so
+`docs/basics/` reflects what was built (new endpoints → `api-reference`, new screens →
+`ui-architecture`, the feature itself + its deps → `feature-map`, any new convention →
+`conventions`/`ux-conventions`, new token handling → `auth`) before the next feature grooms against
+it. When there are bugs, hand the triaged list to `do-fixing` — **always `do-fixing`, never
+`do-issue-grooming` directly**: a testing bug is in-pipeline work, and any class escalation happens
+from inside `do-fixing` only with found cross-feature evidence (and never instead of the fix). Do
+the profile reconcile after the fixes land and re-testing is green.
