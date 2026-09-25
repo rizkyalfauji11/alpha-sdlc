@@ -226,12 +226,38 @@ const TEXT_LINE = '{"type":"assistant","message":{"content":[{"type":"text","tex
 passes(AUTO_RUN, 'no marker lets the session stop', autoRunPayload('none'));
 blocks(AUTO_RUN, 'a running chain blocks its first stop', autoRunPayload('first', { feature: 'f', platform: 'web', status: 'running' }, TEXT_LINE));
 passes(AUTO_RUN, 'a halted chain lets the session stop', autoRunPayload('halted', { status: 'halted', reason: 'no design' }, TEXT_LINE));
+blocks(AUTO_RUN, 'a halted chain with no reason recorded is sent back once for one',
+  autoRunPayload('halted-silent', { status: 'halted' }, TEXT_LINE + TOOL_LINE));
+passes(AUTO_RUN, 'a halted chain whose reason sits under another reason key is accepted',
+  autoRunPayload('halted-other-key', { status: 'halted', haltedReason: 'daemon not installed' }, TEXT_LINE));
 passes(AUTO_RUN, 'a finished chain lets the session stop', autoRunPayload('done', { status: 'done' }, TEXT_LINE));
 passes(AUTO_RUN, 'an unreadable marker fails open', autoRunPayload('broken', '{not json', TEXT_LINE));
 blocks(AUTO_RUN, 'a running chain that used a tool since the last push blocks again',
   autoRunPayload('progress', { status: 'running', lastBlock: { transcriptSize: TEXT_LINE.length } }, TEXT_LINE + TOOL_LINE + TEXT_LINE));
 passes(AUTO_RUN, 'a running chain with no tool since the last push is let go',
   autoRunPayload('stalled', { status: 'running', lastBlock: { transcriptSize: TOOL_LINE.length } }, TOOL_LINE + TEXT_LINE));
+
+function autoRunPayloadWith(name, marker, files) {
+  const projectRoot = projectFixture('auto-run-' + name, {
+    '.alpha-sdlc/auto-run.json': JSON.stringify(marker),
+    'transcript.jsonl': TEXT_LINE + TOOL_LINE,
+    ...files,
+  });
+  return { hook_event_name: 'Stop', cwd: projectRoot, transcript_path: path.join(projectRoot, 'transcript.jsonl') };
+}
+
+const testPlan = ({ bug = '**fixed** 2026-09-24', covered = '**3 of 3** covered and passing', smoke = '**pass** — all three journeys' } = {}) =>
+  '# Test plan\n\n## Bugs found\n\n| # | Bug | Status |\n|---|---|---|\n| B1 | a bug | ' + bug + ' |\n\n' +
+  '## Coverage summary\n\n- **AC covered:** ' + covered + '\n' + (smoke === null ? '' : '- **Boot & Smoke (integrated):** ' + smoke + '\n');
+
+blocks(AUTO_RUN, 'a done chain whose test plan still has Boot & Smoke blocked is refused',
+  autoRunPayloadWith('done-blocked', { status: 'done', feature: 'f', platform: 'web', featureDir: 'feature' },
+    { 'feature/test-plan-web.md': testPlan({ smoke: '**2 of 3 critical journeys pass; journey 3 is BLOCKED** — mandatory' }) }));
+passes(AUTO_RUN, 'a done chain whose test plan passed is let stop',
+  autoRunPayloadWith('done-green', { status: 'done', feature: 'f', platform: 'web', featureDir: 'feature' },
+    { 'feature/test-plan-web.md': testPlan() }));
+passes(AUTO_RUN, 'a done chain that names no feature directory is let stop',
+  autoRunPayloadWith('done-unnamed', { status: 'done' }, {}));
 
 const INJECT = 'inject-principles.js';
 const GUIDE_MARKER = 'Panduan bahasa sederhana';
@@ -313,11 +339,34 @@ const coverageCases = [
     plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`'),
     extraArguments: ['--stage', '1', '--tests', '{dir}/a.test.ts'],
     extraFiles: { 'a.test.ts': "it('AC-3 shows the band', () => {});\n" } },
+  { name: 'stages built together that record it on both sides are clean', expected: 0,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n- **Built with:** Stage 2\n- **Status:** done 2026-09-25\n- **Checkpoint verdict:** auto 2026-09-25\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`\n- **Built with:** Stage 1\n- **Status:** done 2026-09-25\n- **Checkpoint verdict:** auto 2026-09-25') },
+  { name: 'a one-sided built-with record is reported', expected: 1,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n- **Built with:** Stage 2\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`') },
+  { name: 'a done stage without its own checkpoint verdict is reported', expected: 1,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n- **Status:** done 2026-09-25\n- **Checkpoint verdict:** pending\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`') },
   { name: 'a new test titled with its own stage\'s criterion is clean', expected: 0,
     spoke: spokeWith(TWO_SLICES),
     plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`'),
     extraArguments: ['--stage', '1', '--tests', '{dir}/a.test.ts'],
     extraFiles: { 'a.test.ts': "it('AC-1 keeps the list', () => {});\n" } },
+];
+
+const FEATURE_DONE = path.join(__dirname, '..', 'scripts', 'check-feature-done.js');
+function featureDoneRun(name, plan) {
+  const featureDirectory = projectFixture('feature-done-' + name, plan === null ? {} : { 'test-plan-web.md': plan });
+  return spawnSync(process.execPath, [FEATURE_DONE, featureDirectory, 'web'], { encoding: 'utf8' }).status;
+}
+const featureDoneCases = [
+  { name: 'a green test plan is done', expected: 0, plan: testPlan() },
+  { name: 'Boot & Smoke blocked is not done', expected: 1, plan: testPlan({ smoke: '**2 of 3 critical journeys pass; journey 3 is BLOCKED** — mandatory' }) },
+  { name: 'a bug fixed but not re-verified is not done', expected: 1, plan: testPlan({ bug: '**fixed 2026-09-25, NOT re-verified at the level that found it** — both sites now address it' }) },
+  { name: 'a struck-through old failure does not count against a green line', expected: 0, plan: testPlan({ covered: '~~**3 of 3 · 2 passing, 1 failing**~~ **3 of 3 covered and passing** — re-tested' }) },
+  { name: 'a test plan without a Boot & Smoke summary is not done', expected: 1, plan: testPlan({ smoke: null }) },
+  { name: 'a missing test plan is unreadable', expected: 2, plan: null },
 ];
 
 let failed = 0;
@@ -346,6 +395,17 @@ for (const coverageCase of coverageCases) {
   }
 }
 
+for (const featureDoneCase of featureDoneCases) {
+  const exitCode = featureDoneRun(featureDoneCase.name.replace(/\W+/g, '-'), featureDoneCase.plan);
+  if (exitCode === featureDoneCase.expected) {
+    process.stdout.write(`  ok   check-feature-done.js  ${featureDoneCase.name}\n`);
+  } else {
+    failed++;
+    process.stdout.write(`  FAIL check-feature-done.js  ${featureDoneCase.name}\n`);
+    process.stdout.write(`       expected exit ${featureDoneCase.expected}, got ${exitCode}\n`);
+  }
+}
+
 for (const testCase of cases) {
   const { exitCode, stderr } = runHook(testCase.hook, testCase.payload);
   const verb = testCase.expected === 2 ? 'must block' : 'must pass';
@@ -361,6 +421,6 @@ for (const testCase of cases) {
 
 fs.rmSync(fixtureDirectory, { recursive: true, force: true });
 
-const total = cases.length + contextCases.length + coverageCases.length;
+const total = cases.length + contextCases.length + coverageCases.length + featureDoneCases.length;
 process.stdout.write(`\n${total - failed}/${total} passed\n`);
 process.exit(failed ? 1 : 0);

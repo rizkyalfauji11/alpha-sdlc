@@ -188,10 +188,11 @@ missing acceptance criterion: a defect, not a detail.
   verification is never faked), an input that physically doesn't exist (a design/crop/test
   account/seed access never provided), external writes (git push, Jira, deploys), a fix that has
   failed re-verification three times (the design is wrong, not the patch — `do-fixing` stops and
-  asks), and **a change the hub would need** — auto-run never edits the hub, because a hub edit
-  re-stales every spoke and belongs to grooming's gather-then-fix-once rule. **Interpretive rule for
-  the chain skills:** during auto-run, every "ask the user first" / "stop and ask" / "⏸ STOP — wait
-  for approval" instruction inside `do-development`/`do-testing`/`do-fixing` resolves to *take the ★
+  asks), and **a change the hub would need** — a new or changed endpoint or contract field, or code
+  in another platform's repository — auto-run never edits the hub, because a hub edit re-stales
+  every spoke and belongs to grooming's gather-then-fix-once rule. **Interpretive rule for the chain
+  skills:** during auto-run, every "ask the user first" / "stop and ask" / "⏸ STOP — wait for
+  approval" instruction inside `do-development`/`do-testing`/`do-fixing` resolves to *take the ★
   recommendation, record it, continue* — **including "stop the stage / hand back to grooming /
   surface and wait" instructions**: the gap decides ★ in place and the chain keeps moving (the five
   halting cases excepted) — the skills' absolute wording governs gated mode and needs no per-line
@@ -203,8 +204,9 @@ missing acceptance criterion: a defect, not a detail.
 
   **The opt-in is written down, so it outlives the turn.** On opt-in, write
   `.alpha-sdlc/auto-run.json` in the session's working directory — `{"feature", "platform",
-  "until", "status": "running", "started"}`, with `until` the end the user asked for (re-test green,
-  the profile reconcile) — and add `.alpha-sdlc/` to `.gitignore`; it is never committed. The
+  "featureDir", "until", "status": "running", "started"}`, with `featureDir` the path to
+  `docs/development/<feature-name>` and `until` the end the user asked for (re-test green, the
+  profile reconcile) — and add `.alpha-sdlc/` to `.gitignore`; it is never committed. The
   opt-in then holds for the whole chain: a later short reply — *"pilih (a)"*, *"lanjut"* — does not
   cancel it. A `Stop` hook reads the file and refuses to let the turn end while `status` is
   `running`. **A stage report is not a stop, and neither is waiting for a reviewer:** emit the
@@ -212,7 +214,9 @@ missing acceptance criterion: a defect, not a detail.
   arrives inside the turn. A judgment finding — in a fix round too — auto-decides ★ and is recorded;
   it never waits for the user. The chain stops only through the file: **before** presenting one of
   the five halting cases, set `"status": "halted"` and a `"reason"`; when `until` is reached, set
-  `"status": "done"`; when the user says to stop auto-run, set `"stopped"`. A resumed chain sets
+  `"status": "done"` — which the hook refuses while `scripts/check-feature-done.js` finds Boot &
+  Smoke not passed, an AC not covered and passing, or a bug not closed, because a verification gate
+  is never waived; when the user says to stop auto-run, set `"stopped"`. A resumed chain sets
   `running` again. If a stop is attempted with no tool run since the hook's last push, the hook lets
   it through — a stuck chain surfaces instead of looping.
 - **Present every step bottom line first, for everyone (shared step-summary format).** At every

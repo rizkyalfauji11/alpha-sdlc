@@ -67,6 +67,11 @@ file entirely.
   **the command runs (build/run/test/lint), the created tree matches the foundation TRD's structure
   section, and the dependency rule holds** — and the conformance review checks the built tree
   against that structure, which is what makes base drift catchable on day one.
+- **Stages built together are recorded, and each still gets its own review.** When two or more
+  stages land in one change — auto-run building a band of small UI stages at once — each of their
+  plan blocks carries **`Built with:`** naming the others, and each stage still gets its own
+  conformance review round and its own checkpoint verdict. `scripts/check-coverage.js` fails a
+  one-sided record and a done stage without its own verdict.
 - **One stage at a time. Hard stop at each ⏸ checkpoint.** Implement the current stage, verify it,
   present it, and **wait for approval** before the next stage. "Approved stage 1" is not approval
   for stage 2. **(Auto-run: the checkpoint emits as a report — stamp `Checkpoint verdict: auto

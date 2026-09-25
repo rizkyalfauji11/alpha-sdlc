@@ -259,6 +259,14 @@ that.
 
 ## Refresh / reconcile mode
 
+**A feature's reconcile waits for the feature to be done.** When refresh runs as the end of a
+feature's SDLC (after `do-testing`), first run `node ../../scripts/check-feature-done.js
+docs/development/<feature-name> <platform>` for every platform the feature built. Anything but exit
+0 — Boot & Smoke not passed, an AC not covered and passing, a bug not closed — is a **STOP**: report
+the reasons and send the feature back to `do-testing` / `do-fixing`. A verification gate is never
+waived, so an explicit *proceed anyway* does not open this one. A refresh that is not a feature's
+reconcile (the profile has simply aged) runs as before.
+
 **Profile migration first:** compare the profile's recorded **plugin version** (Org settings)
 against the running plugin; if older, diff the current template set + each template's section
 headings against the existing docs — **missing docs/sections are migration candidates, offered one
