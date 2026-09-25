@@ -325,7 +325,16 @@ missing acceptance criterion: a defect, not a detail.
   → `ux-conventions` (register-on-create); pipeline/release change → `cicd-deployment`; new
   auth/PII/encryption handling → `security-compliance` (observed only, re-flag for sign-off);
   structural/layering change → `architecture` or `conventions`; branching/PR/merge/release-process
-  change → `git-management`. **"If needed" is literal** — only touch a doc when the change alters a
+  change → `git-management`. **Deregister on delete, too:** a unit, asset, token, endpoint or
+  component the change removes leaves its row with it — `code-inventory`, `asset-registry`,
+  `design-tokens`, `api-reference`, `ui-architecture`, and the `feature-map` edge — because a row
+  naming what is gone is a false fact the next phase grounds in. **What the change makes unused
+  goes with it:** when a change replaces a behavior, the old path, its tests and its rows are
+  deleted in the same change, or in a later stage named for it — never left beside the new one.
+  Dead code the change did *not* make dead is not this change's to delete: it goes in
+  `tech-debt-register` for `do-tech-debt-grooming`, because deleting it here is scope nobody
+  decided. `scripts/find-orphans.js` finds candidates (`--diff <base>`) and stale rows
+  (`--registry`). **"If needed" is literal** — only touch a doc when the change alters a
   fact it records; don't churn docs for changes they don't track (e.g. a dependency version bump
   that only lives in the manifest). Announce profile updates so they're visible at the phase's
   review. This is the counterpart to `do-project-setup`'s refresh mode. **And when a feature's SDLC

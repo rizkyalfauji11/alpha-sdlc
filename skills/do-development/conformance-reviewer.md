@@ -36,7 +36,11 @@
    (lint/type/coverage pragmas, build tags, shebang) are allowed, and **names carry the meaning**
    (unit/currency in the name, named constant instead of a magic number, named predicate instead of
    an explained branch) · **profile currency** — a changed recorded fact has its doc updated *and*
-   re-stamped in the same change.
+   re-stamped in the same change · **nothing left orphaned** — run the packet's `find-orphans.js
+   --diff` command: a unit that lost its last production caller in this diff, or a path the stage
+   replaced, is deleted with its tests, and every profile row naming something the diff removed is
+   deregistered (a *measured* stale row is a violation; an *inferred* candidate is a question). Dead
+   code this diff did not make dead is not deleted here — it is a tech-debt row.
 
 3. **Plan/AC conformance** — the stage did what the plan said, the AC it claims are genuinely
    covered by the tests written, and **nothing extra rode along**.

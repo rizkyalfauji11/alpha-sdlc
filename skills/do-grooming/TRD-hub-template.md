@@ -172,6 +172,10 @@ _Approved: <YYYY-MM-DD>_
 **Dependencies & risks (cross-platform)**
 - <item>
 
+**Retires** (what this change makes obsolete — deleting is scope too, so it is decided here)
+- <the code path, endpoint, component, test, profile row, token, asset or flag that goes, per
+  platform, and the slice that removes it — or "nothing">
+
 **Work slice summary** (details live in each spoke)
 - [ ] [BE] <slice>
 - [ ] [Android] <slice>

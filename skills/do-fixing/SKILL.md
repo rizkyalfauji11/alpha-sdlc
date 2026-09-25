@@ -130,9 +130,11 @@ TDD.
   2. **Scope discipline** — the diff contains the root-cause fix **and its regression test, and
      nothing else**. A diff that adds or changes an endpoint or a contract field, or changes code in
      another platform's repository, is not a fix but a **design gap** — a judgment finding that
-     stops (below), whatever the bug report called it. No opportunistic refactor, no drive-by
-     rename, no "while I was in there". This is the review's sharpest job in fixing: a fix diff is
-     where scope creep is easiest to justify and hardest to spot.
+     stops (below), whatever the bug report called it. A fix that replaces a path deletes the old
+     one with its tests and profile rows (`principles.md` → *Deregister on delete*). No
+     opportunistic refactor, no drive-by rename, no "while I was in there". This is the review's
+     sharpest job in fixing: a fix diff is where scope creep is easiest to justify and hardest to
+     spot.
   3. **Profile + principles conformance** — per doc the diff touches: layer/dependency rule
      (`02-architecture`) · error handling & logging, no swallowed catch (`10-conventions`) · **a
      style bug fixed at the token, never with a literal** (`18-design-tokens`) · canonical query
