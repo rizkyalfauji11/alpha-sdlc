@@ -83,8 +83,10 @@ for auto mode here, decline in one line ("this phase decides — gates apply; au
     entry per person — `label` their name, `why` their role, `trade` the prior sign-off note when
     there is one; `evidence.caption` says where the names came from (e.g. *"From the three log
     calls' authors"*) and `evidence.groups[]` holds one row per gap; `actions[]` carries *Pick
-    someone* and *Change*; and `blocks: []`, because the run carries on.
-- **Every question setup raises follows three rules** — each is something only the producer can do,
+    someone* and *Change*; `blocks: []`, because the run carries on; and `notes` says where each
+    gap stands — e.g. `{ label: "Standing", text: "One is with <name> · the other has nobody
+    named" }` — with names under the same candidate rule.
+- **Every question setup raises follows five rules** — each is something only the producer can do,
   because the reader renders what it is given:
   1. **It carries evidence.** Show what the reader needs to answer without guessing — the value
      histogram, the conflicting rows, the both-ways list, the gap and its source lines. In the
@@ -97,6 +99,22 @@ for auto mode here, decline in one line ("this phase decides — gates apply; au
   3. **A refusal needs a reason; an acceptance does not.** An option or action that skips,
      declines or refuses carries `requiresReason: true`; every other one leaves it false. Skipping
      a document is the only answer that leaves nothing behind to read, so the reason is the record.
+  4. **It says when it was asked — as an instant, never a phrase.** `askedAt` is an RFC 3339
+     timestamp read from the clock (`date -u +%Y-%m-%dT%H:%M:%SZ`), never estimated and never
+     *"2 days"*: a phrase is computed when the report is written and is wrong an hour later, while
+     the consumer renders the age from the instant and keeps it current. Set it **once, when the
+     question is first raised**, and carry it unchanged in every later report of the same question
+     (same `id`) — a timestamp refreshed on each report resets the age to zero and hides the only
+     signal that a question is going stale.
+  5. **What the reader should simply see, and nothing the app must act on, goes in `notes`** — an
+     array of `{ label, text, engineer? }` blocks, the step summary's shape, rendered in order. Fill
+     it on every question, and on a document row wherever something is worth saying that no field
+     carries; never fill it with filler. Sorting, colour, blocking and requiring a reason stay in
+     their typed fields, because the app cannot act on a string it does not understand.
+
+  `notes` and `askedAt` are optional in the setup-run schema: when the consumer's schema lacks
+  them, they are simply not emitted. This adds to the report; every existing field is filled
+  exactly as before.
 
 ## The docs (`./docs/basics/`)
 
