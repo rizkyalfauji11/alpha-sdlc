@@ -337,7 +337,8 @@ For the next unfinished stage in the plan:
    **section-slicing doc** for UI stages) plus `../../principles.md` and this skill's
    **`conformance-reviewer.md`** — plus the output of `node ../../scripts/check-coverage.js
    docs/development/<feature-name> <platform> --stage <n> --tests <the test files this stage
-   changed>` and the command itself, so the reviewer re-runs it rather than tracing claims by hand —
+   changed>` and of `node ../../scripts/find-orphans.js <repo-root> --diff <the stage's base
+   commit>`, with both commands, so the reviewer re-runs them rather than tracing claims by hand —
    to the **`sdlc-reviewer`** subagent (no build reasoning; **in auto-run, in the foreground** — a
    reviewer left running in the background ends the turn) and run the three-part checklist from the
    rule above: **profile conformance · principles conformance ·

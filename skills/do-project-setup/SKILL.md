@@ -267,6 +267,12 @@ the reasons and send the feature back to `do-testing` / `do-fixing`. A verificat
 waived, so an explicit *proceed anyway* does not open this one. A refresh that is not a feature's
 reconcile (the profile has simply aged) runs as before.
 
+**Every refresh looks for rows naming what is gone.** Run `node ../../scripts/find-orphans.js
+<repo-root> --registry`: each *measured* line is a `19-code-inventory` or `18-design-tokens` row
+naming a unit or token the source no longer has. Offer their removal with the doc they sit in (the
+same one-doc-at-a-time gate), and check `17-asset-registry` and `03-ui-architecture` the same way
+by hand. Registering on create was always the rule; this is the other half.
+
 **Profile migration first:** compare the profile's recorded **plugin version** (Org settings)
 against the running plugin; if older, diff the current template set + each template's section
 headings against the existing docs — **missing docs/sections are migration candidates, offered one

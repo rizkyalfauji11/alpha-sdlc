@@ -449,7 +449,9 @@ For each approved section, in order:
 The last section is **structured** (it feeds downstream ticket-slicing and monitoring):
 
 - **Hub** → Change manifest: repos/modules per platform (with links to spokes), cross-platform
-  release ordering, shared dependencies/risks, and a work-slice summary tagged by platform.
+  release ordering, shared dependencies/risks, **what the change retires** (the old path, endpoint,
+  component, tests, rows, tokens or flags it makes obsolete, and the slice that removes each — or
+  "nothing"), and a work-slice summary tagged by platform.
 - **Spoke** → two structured finals: **§8 Acceptance criteria** — the canonical numbered registry
   (stable `AC-<n>` IDs, one assertable sentence each, **observable behavior only**, **one behavior
   provable inside one work slice** — an AC whose clauses need two slices' code is two ACs, split

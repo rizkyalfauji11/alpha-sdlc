@@ -369,6 +369,39 @@ const featureDoneCases = [
   { name: 'a missing test plan is unreadable', expected: 2, plan: null },
 ];
 
+const FIND_ORPHANS = path.join(__dirname, '..', 'scripts', 'find-orphans.js');
+function gitRepoFixture(name, before, after) {
+  const root = projectFixture('orphans-' + name, before);
+  const run = (...args) => spawnSync('git', ['-C', root, ...args], { encoding: 'utf8' });
+  run('init', '-q');
+  run('-c', 'user.email=t@t', '-c', 'user.name=t', 'add', '-A');
+  run('-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '-m', 'before');
+  for (const [relativePath, content] of Object.entries(after || {})) {
+    const target = path.join(root, relativePath);
+    if (content === null) fs.rmSync(target, { force: true });
+    else { fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, content); }
+  }
+  return root;
+}
+const inventoryNaming = (name) => '# Inventory\n\n| Unit | What | Where |\n|---|---|---|\n| `' + name + '` | a unit | `a.ts` |\n';
+const orphanCases = [
+  { name: 'a removed export still registered is reported', expected: 1, mode: ['--diff', 'HEAD'],
+    before: { 'src/a.ts': 'export function oldPath() { return 1 }\n', 'docs/basics/19-code-inventory.md': inventoryNaming('oldPath') },
+    after: { 'src/a.ts': 'export function newPath() { return 2 }\n' } },
+  { name: 'a removed export already deregistered is clean', expected: 0, mode: ['--diff', 'HEAD'],
+    before: { 'src/a.ts': 'export function oldPath() { return 1 }\n', 'docs/basics/19-code-inventory.md': inventoryNaming('oldPath') },
+    after: { 'src/a.ts': 'export function newPath() { return 2 }\n', 'docs/basics/19-code-inventory.md': inventoryNaming('newPath') } },
+  { name: 'a type moved to another file is not a removal', expected: 0, mode: ['--diff', 'HEAD'],
+    before: { 'src/a.ts': 'export type Where = 1\n', 'docs/basics/19-code-inventory.md': inventoryNaming('Where') },
+    after: { 'src/a.ts': 'export const nothing = 0\n', 'src/b.ts': 'export type Where = 1\n' } },
+  { name: 'a registry row naming a unit that is gone is reported', expected: 1, mode: ['--registry'],
+    before: { 'src/a.ts': 'export const present = 1\n', 'docs/basics/19-code-inventory.md': inventoryNaming('vanished') } },
+  { name: 'a registry row naming a present unit is clean', expected: 0, mode: ['--registry'],
+    before: { 'src/a.ts': 'export const present = 1\n', 'docs/basics/19-code-inventory.md': inventoryNaming('present') } },
+  { name: 'a listed token no stylesheet defines is reported', expected: 1, mode: ['--registry'],
+    before: { 'src/tokens.css': ':root { --space-1: 4px; }\n', 'docs/basics/18-design-tokens.md': '# Tokens\n\n| Token | Value |\n|---|---|\n| `--space-1` | 4 |\n| `--gone-token` | 8 |\n' } },
+];
+
 let failed = 0;
 for (const contextCase of contextCases) {
   const context = injectedContext(contextCase.projectRoot);
@@ -406,6 +439,18 @@ for (const featureDoneCase of featureDoneCases) {
   }
 }
 
+for (const orphanCase of orphanCases) {
+  const root = gitRepoFixture(orphanCase.name.replace(/\W+/g, '-'), orphanCase.before, orphanCase.after);
+  const exitCode = spawnSync(process.execPath, [FIND_ORPHANS, root, ...orphanCase.mode], { encoding: 'utf8' }).status;
+  if (exitCode === orphanCase.expected) {
+    process.stdout.write(`  ok   find-orphans.js  ${orphanCase.name}\n`);
+  } else {
+    failed++;
+    process.stdout.write(`  FAIL find-orphans.js  ${orphanCase.name}\n`);
+    process.stdout.write(`       expected exit ${orphanCase.expected}, got ${exitCode}\n`);
+  }
+}
+
 for (const testCase of cases) {
   const { exitCode, stderr } = runHook(testCase.hook, testCase.payload);
   const verb = testCase.expected === 2 ? 'must block' : 'must pass';
@@ -421,6 +466,7 @@ for (const testCase of cases) {
 
 fs.rmSync(fixtureDirectory, { recursive: true, force: true });
 
-const total = cases.length + contextCases.length + coverageCases.length + featureDoneCases.length;
+const total = cases.length + contextCases.length + coverageCases.length + featureDoneCases.length +
+  orphanCases.length;
 process.stdout.write(`\n${total - failed}/${total} passed\n`);
 process.exit(failed ? 1 : 0);
