@@ -63,8 +63,19 @@ human**; otherwise "GAP — needs compliance confirmation".>
 
 ## Gaps (needs human input)
 
-- <unconfirmed item → who should confirm>
+> Each gap stays here until a human closes it, and each is also raised as a question naming who
+> must answer. Candidates come only from this repository: the authors of the lines that raised the
+> gap (git history), and whoever signed this doc before. Names only, never an email. No candidate
+> readable → `UNKNOWN — needs human input`, said plainly, never guessed.
+
+| Gap | Raised by (file:line) | Candidates (name · role · prior sign-off) | Where the names came from |
+|-----|-----------------------|-------------------------------------------|---------------------------|
+| <e.g. how long audit logs are kept> | <`internal/audit/log.go:42`> | <name · role · "signed 12 before" — or `UNKNOWN — needs human input`> | <e.g. git blame of the three log calls> |
 
 ## Sign-off
+
+> Until this line is filled by the person who signs, the doc sits at *needs sign-off*; the rest of
+> the profile carries on without it. This line is also where the next setup reads a prior sign-off
+> from, when it proposes candidates.
 
 - **Reviewed by:** <name / security function> · **Date:** <YYYY-MM-DD>

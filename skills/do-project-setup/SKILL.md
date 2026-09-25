@@ -65,7 +65,38 @@ for auto mode here, decline in one line ("this phase decides — gates apply; au
   stamp on a doc whose code doesn't exist is a false claim that it was read.
 - **12-security-compliance.md is stricter:** document only *observed* controls; never assert a
   compliance status you can't verify; flag every unconfirmed item as a gap for a human/security to
-  fill; require an explicit human sign-off before writing it.
+  fill; require an explicit human sign-off before writing it. **And ask who must answer.** When an
+  item cannot be confirmed from the code, it stays a recorded gap *and* becomes a question that
+  proposes the people who can close it — a gap nobody is asked about is a gap nobody closes:
+  - **Candidates come only from this repository** — the authors of the very lines that raised the
+    gap, read from git history (`git blame` / `git log` on those lines), and whoever signed a
+    previous `12-security-compliance.md`, read from that file's history. **Names only, never an
+    email.** Never invent a colleague, and never carry a name over from another project.
+  - **Proposing nobody is a valid outcome.** When the repository shows no candidate, ask the
+    question with no candidates and say plainly that no name could be read from the repository —
+    the name itself is `UNKNOWN — needs human input`, never a guess.
+  - **The run does not wait on it.** The other documents carry on while this one sits at *needs
+    sign-off*; the gaps stay in the doc's *Gaps* section with their candidates, and the doc is still
+    not written without the explicit human sign-off. This adds the asking; it removes no strictness.
+  - **Reported through the setup-run schema** (when the consumer passes one as `--json-schema`),
+    the question travels inside the existing shapes, with the schema unchanged: one `options[]`
+    entry per person — `label` their name, `why` their role, `trade` the prior sign-off note when
+    there is one; `evidence.caption` says where the names came from (e.g. *"From the three log
+    calls' authors"*) and `evidence.groups[]` holds one row per gap; `actions[]` carries *Pick
+    someone* and *Change*; and `blocks: []`, because the run carries on.
+- **Every question setup raises follows three rules** — each is something only the producer can do,
+  because the reader renders what it is given:
+  1. **It carries evidence.** Show what the reader needs to answer without guessing — the value
+     histogram, the conflicting rows, the both-ways list, the gap and its source lines. In the
+     setup-run schema that is `evidence`, **on every question**: the consumer renders nothing when
+     it is absent, so an evidence-less question looks exactly like a well-grounded one. When there
+     is genuinely nothing to show, say so in the evidence caption instead of omitting the block.
+  2. **It offers a way out that is not an answer** — an option to decline to decide: assign it to
+     someone, ask the two teams, write it themselves. Forcing a binary choice out of someone who
+     does not know is how a wrong rule reaches twenty documents.
+  3. **A refusal needs a reason; an acceptance does not.** An option or action that skips,
+     declines or refuses carries `requiresReason: true`; every other one leaves it false. Skipping
+     a document is the only answer that leaves nothing behind to read, so the reason is the record.
 
 ## The docs (`./docs/basics/`)
 
