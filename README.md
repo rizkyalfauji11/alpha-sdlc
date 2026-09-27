@@ -58,10 +58,11 @@ sent back through them; replayed against 7,688 real Bash calls from one project,
 3,000 doc writes the hooks had never seen. The same holds for how it talks to you: a
 step summary whose plain layer a non-engineer couldn't follow — no bottom line, code names or bare
 `file:line` pointers in the explanation, an English quote or a word-for-word translation in a
-summary written in your language — is sent back for one rewrite before it counts as presented. In
-Bahasa Indonesia the plain layer also follows [`plain-language/id.md`](./plain-language/id.md), a
-fixed glossary with real before/after examples, injected into every session whose Org settings pick
-that language. The whole opinion is one file:
+summary written in your language — is sent back for one rewrite before it counts as presented. Every
+summary ends with what happens next and who does it — after a review too — so no report leaves you
+guessing whether something waits on you. In Bahasa Indonesia the plain layer also follows
+[`plain-language/id.md`](./plain-language/id.md), a fixed glossary with real before/after examples,
+injected into every session whose Org settings pick that language. The whole opinion is one file:
 [`principles.md`](./principles.md). If you disagree with it, you'll disagree with the plugin.
 
 That last one, `hooks/validate-doc-tables.js`, checks every `.md` write — **the plugin's own

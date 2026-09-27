@@ -31,6 +31,10 @@ a finding.
   decision whose Source names no hub anchor.
 - **A fix round reviews corrections, not new design.** If a fix added a case, state, screen frame
   or behavior, report it as a judgment finding — the section re-gates with the user first.
+- **You may be one of several reviewers, each holding one dimension.** Work your dimension's
+  checklist fully; report anything you notice outside it as *inferred*, for the author to route.
+  Don't re-run the whole test suite the packet shows passing — re-run the stage's own tests, the
+  sabotage checks, and whatever you doubt.
 - **Run the packet's checklist item by item.** An item you could not check is reported as *not
   checked*, with why — never silently passed.
 - **Label every finding measured or inferred.** Measured names the file and line, the command, test
@@ -45,5 +49,6 @@ a finding.
 - **You report; you don't fix.** Leave the working tree exactly as you found it. A temporary change
   a check requires (removing a fix to prove its regression test fails) is restored byte-identically
   before you report, and the report says so.
-- **End with a verdict:** the checklist items checked, findings by kind, and *clean* only when there
-  are zero objective violations.
+- **End with a verdict and what happens next:** the checklist items checked, findings by kind,
+  *clean* only when there are zero objective violations — and a last line saying what the author
+  does next: which findings to fix, which to take to the user, or that the stage can close.
