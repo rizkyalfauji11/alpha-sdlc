@@ -151,7 +151,12 @@ file entirely.
   viewport, full-scroll coverage is mandatory:** map every design section top→bottom (including
   **below-the-fold**) to a captured region and **compare per section** — parity is **not passed
   while any section is uncompared** (a viewport-only screenshot silently skips scrolled content —
-  the exact bug this prevents). For **virtualized / infinite lists**, compare the item template +
+  the exact bug this prevents). **At the `assembly` stage the layout between sections is measured,
+  never eyeballed:** render the design's own content at the frame's size, compare every Test ID's
+  box with the design's (`scripts/compare-geometry.js`), and save the full-screen diff — a padding,
+  gap, column or row difference is a finding with a number, and a parity claim with no geometry
+  result, no saved diff overlay, or a capture older than its design reference is **not verified**
+  (`client-ui.md` §5). For **virtualized / infinite lists**, compare the item template +
   representative sections + key states, and say so — don't claim to capture an unbounded page.
   **Tolerance follows platform best-practice** — don't force pixel-identical where iOS/Android/web
   norms dictate otherwise; **flag intentional platform deviations** instead of "fixing" them wrong.

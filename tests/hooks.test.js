@@ -402,6 +402,78 @@ const orphanCases = [
     before: { 'src/tokens.css': ':root { --space-1: 4px; }\n', 'docs/basics/18-design-tokens.md': '# Tokens\n\n| Token | Value |\n|---|---|\n| `--space-1` | 4 |\n| `--gone-token` | 8 |\n' } },
 ];
 
+const PARITY_TRAIL = path.join(__dirname, '..', 'scripts', 'check-parity-trail.js');
+const HOUR = 3600 * 1000;
+function parityTrailRun(name, files, ages, extraArguments) {
+  const featureDirectory = projectFixture('parity-' + name, files);
+  for (const [relativePath, hoursAgo] of Object.entries(ages || {})) {
+    const when = new Date(Date.now() - hoursAgo * HOUR);
+    fs.utimesSync(path.join(featureDirectory, relativePath), when, when);
+  }
+  return spawnSync(process.execPath, [PARITY_TRAIL, featureDirectory, 'web', ...(extraArguments || [])], { encoding: 'utf8' }).status;
+}
+const TRAIL = 'design/compared-ui/';
+const assemblyPlan = '# Plan\n\n### Stage 4 — [presentation] `run` assembly\n';
+const completeTrail = {
+  'design/run.png': 'png', 'design/sections/run/hdr.png': 'png', 'plan-web.md': assemblyPlan,
+  [TRAIL + 'run-web-v2.png']: 'png', [TRAIL + 'run-web-v2-diff.png']: 'png',
+  [TRAIL + 'run.hdr-web-v1.png']: 'png', [TRAIL + 'run.hdr-web-v1-diff.png']: 'png',
+};
+const olderReferences = { 'design/run.png': 5, 'design/sections/run/hdr.png': 5 };
+const parityTrailCases = [
+  { name: 'every capture with its diff and newer than its reference is clean', expected: 0,
+    files: completeTrail, ages: olderReferences, extraArguments: ['--screen', 'run'] },
+  { name: 'a capture without its diff overlay is reported', expected: 1,
+    files: { ...completeTrail, [TRAIL + 'run.hdr-web-v2.png']: 'png' }, ages: olderReferences },
+  { name: 'a design reference changed after the capture is reported as stale', expected: 1,
+    files: completeTrail, ages: { [TRAIL + 'run-web-v2.png']: 5, 'design/sections/run/hdr.png': 5 } },
+  { name: 'an assembly screen without a full-screen reference is reported', expected: 1,
+    files: { ...completeTrail, 'plan-web.md': assemblyPlan + '\n### Stage 9 — [presentation] `gate` assembly\n' },
+    ages: olderReferences },
+  { name: 'a screen checked on its own needs a full-screen capture', expected: 1,
+    files: { ...completeTrail, [TRAIL + 'run-web-v2.png']: undefined, [TRAIL + 'run-web-v2-diff.png']: undefined },
+    ages: olderReferences, extraArguments: ['--screen', 'run'] },
+  { name: 'a capture that does not name its screen is reported', expected: 1,
+    files: { ...completeTrail, 'design/sections/run/hdr--C2.png': 'png', [TRAIL + 'hdr--C2-web-v1.png']: 'png', [TRAIL + 'hdr--C2-web-v1-diff.png']: 'png' },
+    ages: { ...olderReferences, 'design/sections/run/hdr--C2.png': 5 } },
+];
+for (const parityCase of parityTrailCases) {
+  for (const [relativePath, content] of Object.entries(parityCase.files)) if (content === undefined) delete parityCase.files[relativePath];
+}
+
+const COMPARE_GEOMETRY = path.join(__dirname, '..', 'scripts', 'compare-geometry.js');
+function geometryRun(name, design, app, extraArguments) {
+  const directory = projectFixture('geometry-' + name, {
+    'design.json': JSON.stringify({ boxes: design }),
+    'app.json': JSON.stringify({ boxes: app }),
+    'tokens.css': ':root { --space-4: 16px; --space-6: 24px; --space-8: 32px; }\n',
+  });
+  const extras = (extraArguments || []).map((argument) => argument.replace('{dir}', directory));
+  const result = spawnSync(process.execPath, [COMPARE_GEOMETRY, path.join(directory, 'design.json'), path.join(directory, 'app.json'), ...extras], { encoding: 'utf8' });
+  return { exitCode: result.status, stdout: result.stdout };
+}
+const runScreen = {
+  page: [0, 0, 1768, 1020], header: [32, 32, 1704, 64], list: [32, 120, 1100, 880],
+  rowA: [48, 136, 1068, 88], rowB: [48, 232, 1068, 88], rail: [1156, 120, 580, 400],
+};
+const shifted = (boxes, id, change) => ({ ...boxes, [id]: boxes[id].map((value, index) => value + (change[index] || 0)) });
+const geometryCases = [
+  { name: 'the same layout is clean', expected: 0, design: runScreen, app: runScreen },
+  { name: 'a one-pixel rendering difference stays inside the tolerance', expected: 0,
+    design: runScreen, app: shifted(runScreen, 'header', [1, 0, -1, 0]) },
+  { name: 'a header sitting 30px lower is reported with its inset and token', expected: 1,
+    design: runScreen, app: shifted(runScreen, 'header', [0, 30, 0, 0]),
+    extraArguments: ['--tokens', '{dir}/tokens.css'], output: /header inside page: inset top 62 \(no px token\) vs 32 \(--space-8\)/ },
+  { name: 'a shorter row is reported as a height and gap difference', expected: 1,
+    design: runScreen, app: shifted(runScreen, 'rowA', [0, 0, 0, -36]), output: /rowA: height 52 vs 88.*\n[\s\S]*rowA → rowB: gap below 44 vs 8/ },
+  { name: 'a rail stacked under the list instead of beside it is reported as a column change', expected: 1,
+    design: runScreen, app: { ...runScreen, rail: [32, 1010, 580, 400], page: [0, 0, 1768, 1500] },
+    output: /page: 1 column\(s\) of children in the app vs 2 in the design/ },
+  { name: 'an element the design has and the app does not render is reported', expected: 1,
+    design: runScreen, app: Object.fromEntries(Object.entries(runScreen).filter(([id]) => id !== 'rail')),
+    output: /rail: in the design, not rendered by the app/ },
+];
+
 let failed = 0;
 for (const contextCase of contextCases) {
   const context = injectedContext(contextCase.projectRoot);
@@ -451,6 +523,28 @@ for (const orphanCase of orphanCases) {
   }
 }
 
+for (const parityCase of parityTrailCases) {
+  const exitCode = parityTrailRun(parityCase.name.replace(/\W+/g, '-'), parityCase.files, parityCase.ages, parityCase.extraArguments);
+  if (exitCode === parityCase.expected) {
+    process.stdout.write(`  ok   check-parity-trail.js  ${parityCase.name}\n`);
+  } else {
+    failed++;
+    process.stdout.write(`  FAIL check-parity-trail.js  ${parityCase.name}\n`);
+    process.stdout.write(`       expected exit ${parityCase.expected}, got ${exitCode}\n`);
+  }
+}
+
+for (const geometryCase of geometryCases) {
+  const { exitCode, stdout } = geometryRun(geometryCase.name.replace(/\W+/g, '-'), geometryCase.design, geometryCase.app, geometryCase.extraArguments);
+  if (exitCode === geometryCase.expected && (!geometryCase.output || geometryCase.output.test(stdout))) {
+    process.stdout.write(`  ok   compare-geometry.js  ${geometryCase.name}\n`);
+  } else {
+    failed++;
+    process.stdout.write(`  FAIL compare-geometry.js  ${geometryCase.name}\n`);
+    process.stdout.write(`       expected exit ${geometryCase.expected}, got ${exitCode}\n${stdout.replace(/^/gm, '       ')}`);
+  }
+}
+
 for (const testCase of cases) {
   const { exitCode, stderr } = runHook(testCase.hook, testCase.payload);
   const verb = testCase.expected === 2 ? 'must block' : 'must pass';
@@ -467,6 +561,6 @@ for (const testCase of cases) {
 fs.rmSync(fixtureDirectory, { recursive: true, force: true });
 
 const total = cases.length + contextCases.length + coverageCases.length + featureDoneCases.length +
-  orphanCases.length;
+  orphanCases.length + parityTrailCases.length + geometryCases.length;
 process.stdout.write(`\n${total - failed}/${total} passed\n`);
 process.exit(failed ? 1 : 0);

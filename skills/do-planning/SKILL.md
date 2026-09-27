@@ -207,7 +207,11 @@ layout is ungrounded).
    Carry the refs **at the grain grooming captured them — per step and per state, not one row per
    screen**: a wizard gets a ref row per step, and each specced state (empty/loading/error/extremes)
    keeps its ref or its explicit "flagged / platform-default" marker — dropping state refs here is
-   how dev's parity loop only ever compares the main screen.
+   how dev's parity loop only ever compares the main screen. **Every screen with an assembly stage
+   has a full-frame row with the frame's size** — the assembly renders at that size with a fixture
+   holding the frame's own content, and compares the layout between sections against it. A screen
+   with crops but no full frame → **STOP, back to `do-grooming`** to export it; never plan an
+   assembly with nothing whole to compare against.
    `do-development` reads these to run the visual-parity loop, so they must be in place before UI
    stages. **Present the summary, then STOP and wait for confirmation** before the architecture
    layout (don't plan on a stale or unconfirmed understanding).

@@ -250,6 +250,13 @@ build doesn't pass until the comparison does:
   before installing a driver or booting a device.
 - **The whole screen, not the viewport.** Taller than the fold means the full scroll extent is
   captured (`fullPage`, or scroll-and-stitch on mobile) and compared section by section.
+- **The layout between sections, measured.** Section crops prove each section's inside; they can't
+  see a header sitting 30px low or rows 36px short. So the finished screen is rendered with the
+  design's own content at the design frame's size, and the box of every Test ID is compared with
+  the design's — position, size, padding inside its container, gap to its neighbour, column count
+  — as numbers mapped to tokens (`scripts/compare-geometry.js`, boxes collected by
+  `scripts/collect-boxes.mjs` from an HTML canvas or the running web app, or from the device's own
+  UI dump on Android and iOS).
 - **Every state and every extreme, not just the happy one.** Loading, empty, error, offline, role
   and flag variants each compared against **their own cropped design** — because a full-screen
   mockup shows one state and would pass a screen whose other four were never built — plus the
@@ -259,7 +266,9 @@ build doesn't pass until the comparison does:
   boot is a blocker it reports with the fix, not a stage it waves through. Tolerance follows
   platform norms rather than forcing pixel-identity where iOS and Android disagree, and a deliberate
   platform deviation is flagged for you instead of "corrected" into a bug. Every iteration's
-  screenshot and diff overlay stays on disk, gitignored, as the trail.
+  screenshot and diff overlay stays on disk, gitignored, as the trail — and
+  `scripts/check-parity-trail.js` refuses a parity claim whose capture has no diff overlay, or is
+  older than a design that was re-groomed since.
 
 ## What it writes into your repo
 

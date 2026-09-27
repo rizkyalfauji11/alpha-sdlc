@@ -220,7 +220,13 @@ docs/development/<feature-name>/
   **each step**, and each specced state (empty / loading / error / largest-content) either has a
   design ref or is **explicitly flagged** (Open Decision, or "platform default per
   `04-ux-conventions`") — an unreferenced state is where built UI silently diverges on "specific
-  tests". `do-planning` reads these forward into its *Design references* for the visual-parity loop
+  tests". **Every screen keeps its full frame, not only its crops** — the whole screen at the size
+  the app renders, with that size recorded: the crops show each section's inside, and only the full
+  frame shows the layout between sections, which is what `do-development`'s assembly compares.
+  **An HTML design canvas carries the widget-spec Test IDs on its elements** (`id` or
+  `data-testid`, written in when the widget spec is approved), so its boxes are measured rather
+  than estimated — and a section's crop box is then that section's measured box, not one typed by
+  eye. `do-planning` reads these forward into its *Design references* for the visual-parity loop
   — it should not re-ask for anything grooming already captured.
 - **Create a widget spec per screen (client spoke grooming).** For Android/iOS/Web features, write
   one **widget-spec doc per screen** at `docs/development/<feature-name>/widget-spec/<screen>.md`
