@@ -343,7 +343,13 @@ For the next unfinished stage in the plan:
    reviewer left running in the background ends the turn) and run the three-part checklist from the
    rule above: **profile conformance · principles conformance ·
    plan-AC-and-nothing-more** — and for UI stages, **case completeness: every section case
-   implemented, driven by its declared source/trigger, with none silently dropped**. Then: **fix
+   implemented, driven by its declared source/trigger, with none silently dropped**. **Three
+   dimensions, one reviewer each** (`principles.md` → *Reviews run as parallel dimensions*): (a)
+   profile and design system — checklist part 1; (b) principles and test quality — part 2, with the
+   sabotage checks; (c) plan/AC and the mechanical checks — part 3, with the coverage and orphan
+   scripts. The light tier runs all three in one reviewer when the stage measures small and
+   low-risk. The packet carries your verification commands with their exit codes and summary lines,
+   so no reviewer re-runs the whole suite. Then: **fix
    every objective violation in this stage and re-verify green** — each one **verified** at its
    cited file and line first, per verify-before-acting above; **STOP on any judgment/scope finding**
    — record it as an **Open Decision** and hand back to the user/`do-grooming` rather than resolving
@@ -373,7 +379,9 @@ For the next unfinished stage in the plan:
    then only the context the header and bottom line haven't given — one self-contained statement
    each (no naked references — every case/AC/token ID carries its plain essence inline), in the
    org's language per its guide in `../../plain-language/` when one exists. The structured packet
-   below is the **Details (for engineers)** section — not the opening:
+   below is the **Details (for engineers)** section — not the opening — and the report **ends with
+   what happens next** (`principles.md` → *Next*): the next stage and whether it starts now, or what
+   the review's verdict leaves to fix or to decide:
    - **Plan summary** — what this stage set out to do (goal + the AC/tasks it covers), so they
      review against intent.
    - **Test cases** — each test written, what behavior/AC it asserts, and its result (pass). Call

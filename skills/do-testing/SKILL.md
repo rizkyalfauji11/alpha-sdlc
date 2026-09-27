@@ -203,7 +203,7 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
 > shared **step-summary format** (`principles.md`): header (development · phase · step · status) ·
 > **bottom line** (what happened + what I need from you) · **why it matters** (never omitted when a
 > question is asked) · options ★ · context only where it adds something · engineer detail (coverage
-> tables, failures) last.
+> tables, failures) · **what happens next** as the last paragraph.
 > The plain layer is in the org's language and follows its guide in `../../plain-language/`
 > when one exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
 
@@ -245,6 +245,11 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
       there.
    5. **Recorded = real** — each status in the test-plan matches an actual run (the reviewer re-runs
       what it doubts); UI tests locate by widget-spec Test IDs, never brittle text or xpath.
+
+   Two dimensions, one reviewer each (`principles.md` → *Reviews run as parallel dimensions*): (a)
+   items 1, 2 and 5 — what the tests prove, against the AC register and the recorded results, with
+   `check-coverage.js`; (b) items 3 and 4 — test theater and over-simplification. The packet
+   carries the suite's run output, so neither reviewer re-runs all of it.
 
    Fix every objective violation in the tests — a changed test goes back through step 2 (re-approve,
    re-run) — and send the fixes back for another round until one is clean, per `principles.md` →

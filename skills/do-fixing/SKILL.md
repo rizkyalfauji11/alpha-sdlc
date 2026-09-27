@@ -194,7 +194,9 @@ For each bug the user approved, in the report's order (severity first):
    never your diagnosis) and run the checklist from the rule above: **fix
    quality (root cause, not symptom · the regression test really reproduces it · right layer ·
    siblings covered) · scope discipline (the fix and its test, nothing else) · profile + principles
-   conformance**. Then: **fix every objective violation — verified at the cited file and line first
+   conformance** — those three parts are the review's three dimensions, one reviewer each, or one
+   reviewer for all three on the light tier (`principles.md` → *Reviews run as parallel
+   dimensions*). Then: **fix every objective violation — verified at the cited file and line first
    — as part of this bug and re-verify**; **STOP on any judgment/scope finding** — Open Decision to
    `do-grooming`, or `do-issue-grooming` for a project-wide class. **Then send the fixes back for
    another round** — the previous findings plus the change since that round — until a round is
@@ -217,8 +219,10 @@ For each bug the user approved, in the report's order (severity first):
    were checked, and findings by kind: objective violations *fixed* · judgment/scope findings
    **raised** (Open Decision, or routed to `do-issue-grooming`) · the sibling call-sites confirmed
    covered · comments justified with no provenance. "Clean" is valid — say what was checked to earn
-   it. Ask: approve / change / stop. Do not touch the next bug until they respond. **(Auto-run:
-   nothing is asked — report, stamp `auto`, commit, next bug immediately.)**
+   it. The report's **last paragraph says what happens next** (`principles.md` → *Next*): the next
+   bug, the re-test, or what the review left to fix or decide. Ask: approve / change / stop. Do not
+   touch the next bug until they respond. **(Auto-run: nothing is asked — report, stamp `auto`,
+   commit, next bug immediately.)**
 7. **On approval** — mark the bug **fixed** in the test-plan *Bugs found* table, **commit the fix
    automatically** (conventional message; no push unless asked) **by explicit path**, never
    `git add -A` — a parallel session on another platform may share the tree (per `principles.md` →

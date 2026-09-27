@@ -7,7 +7,11 @@ engineer* boleh tetap teknis.
 ## Judul bagian
 
 Pakai judul ini, dalam urutan ini: **Intinya** · **Kenapa penting** · **Pilihan** · **Konteks** ·
-**Detail untuk engineer**. Judul yang tidak dipakai boleh dilewati.
+**Detail untuk engineer** · **Selanjutnya**. Judul yang tidak dipakai boleh dilewati, kecuali
+**Selanjutnya**: bagian ini selalu ada dan selalu paling akhir. Isinya apa yang terjadi berikutnya
+dan siapa yang melakukannya, misalnya *"Saya lanjut ke tahap 5 sekarang"*, *"Review menemukan dua
+hal; saya perbaiki lalu review ulang bagian test saja"*, atau *"Saya menunggu jawaban Anda soal
+pilihan di atas"*.
 
 ## Cara menulis
 

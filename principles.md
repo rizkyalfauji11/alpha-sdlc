@@ -246,7 +246,12 @@ missing acceptance criterion: a defect, not a detail.
      unblocked this step) · where it lives (file/layer/screen/doc) · how it was built or resolved
      (incl. the rung · world-wide standard line).
   5. **Details (for engineers)** — the technical evidence (diff, test output, files, coverage,
-     screenshots) demoted to the end.
+     screenshots) demoted near the end.
+  6. **Next** — **always the last paragraph**, in plain words: what happens next and who does it.
+     After a gate: what the user's answer unlocks. After a review: what its verdict means — a fix
+     round on which dimensions, the stage closing, or a decision the user owes. In auto-run: what
+     the chain does next, continuing now. At a halt: what would let it continue. A report that ends
+     without it leaves the reader to guess whether anything is waiting on them.
 
   **5W+1H is the completeness check, not the layout.** Before presenting, confirm all six are
   answered somewhere above — **What** and the ask in the bottom line, **Why** in its section,
@@ -465,9 +470,27 @@ missing acceptance criterion: a defect, not a detail.
   and tests are verified clean and every remaining finding is bookkeeping in documents — coverage
   claims, labels, cross-references — the author fixes them, runs the coverage checker and the doc
   checks to green, and closes the stage with their output in the packet. A reviewer round is for
-  what a script cannot check. Each round records its **objective-violation count** (inferred
-  findings are questions, never counted); **flat or rising across three rounds is a STOP** —
-  escalate to the user with the trend instead of launching another round.
+  what a script cannot check.
+
+  **Reviews run as parallel dimensions, sized by risk.** Each skill's review names its dimensions.
+  - **Full tier:** every dimension is its own reviewer subagent, launched together in one message,
+    each handed the whole packet but only its dimension's checklist; anything it notices outside its
+    dimension it reports as inferred. The author merges the reports — the same file:line counts
+    once — into one verdict and one objective-violation count.
+  - **Light tier:** one reviewer runs every dimension, with `model: sonnet`, when the stage is small
+    and low-risk **by measure, not by the author's say-so**: at most 150 changed production lines,
+    no contract, schema or migration file, no file handling auth, tokens or PII (per
+    `12-security-compliance` and `13-auth`), and no UI section.
+  - **A fix round re-runs only the dimensions that had findings**, plus the mechanical one.
+  - **The whole suite is not run twice.** The packet carries the author's verification commands with
+    their exit codes and summary lines; the reviewer re-runs the stage's own tests, the sabotage
+    checks, and anything it doubts.
+  - **A stalled reviewer is not waited on.** One that returns nothing within 15 minutes is launched
+    once more; if it stalls again, its dimension runs inline and the report says so.
+
+  **Every round counts.** Each round records its **objective-violation count** (inferred findings
+  are questions, never counted); **flat or rising across three rounds is a STOP** — escalate to the
+  user with the trend instead of launching another round.
 - **Parallel work fills the time behind a gate — it never runs past one.** Gates stay one at a time;
   what runs in parallel is AI work the next gate would otherwise wait for.
   1. **Subagents read and report; only the main agent writes gated artifacts.** A subagent returns

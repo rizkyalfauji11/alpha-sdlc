@@ -371,10 +371,10 @@ docs/development/<feature-name>/
 > Present every gate below in the shared **step-summary format** (`principles.md`): header
 > (development · phase · step · status) · **bottom line** (what happened + what I need from you) ·
 > **why it matters** (never omitted when a question is asked) · options ★ · context only where it
-> adds something · engineer detail last — so a product owner and an engineer both follow each
-> section.
-> The plain layer is in the org's language and follows its guide in `../../plain-language/`
-> when one exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
+> adds something · engineer detail · **what happens next** as the last paragraph — so a product
+> owner and an engineer both follow each section. The plain layer is in the org's language and
+> follows its guide in `../../plain-language/` when one exists (`id.md` for Bahasa Indonesia) — at
+> every gate, in every phase.
 
 ### Step 0 — Read inputs and propose the outline (GATE 0)
 
@@ -525,7 +525,11 @@ grow one. Then run the **hub-alignment review** (per the rule above) before call
    enumerated as numbered AC (every AC claimed by ≥ 1 slice, every slice claiming ≥ 1 AC) ·
    sequencing · Open Decisions placed correctly · cross-spoke consistency — handing it the reviewer
    output contract from the *Hub-alignment review* rule above (**measured** or **inferred** per
-   finding, working tree left exactly as found, author verifies before acting).
+   finding, working tree left exactly as found, author verifies before acting). **Three
+   dimensions, one reviewer each**, launched together (`principles.md` → *Reviews run as parallel
+   dimensions*): (a) contract and data — points 1, 2, 4 and 6; (b) flow and coverage — points 3, 5,
+   7, 8 and 9; (c) decisions and siblings — points 10 and 11. A re-run after a fix, or a scoped
+   re-review after a hub change, launches only the dimensions whose points are in play.
 2. **Resolve by direction** — spoke wrong → fix the spoke and **re-gate the affected section**; hub
    wrong → gather the hub-wrong findings of every spoke awaiting alignment first, then fix the
    **hub** once with the user's approval and **re-run alignment once per spoke, scoped to the
