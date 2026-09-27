@@ -83,8 +83,10 @@ TDD.
 - **Visual bugs** — for UI parity bugs, re-run the visual-parity loop (render → compare → fix), save
   to `design/compared-ui/` — capture commands and the `<screen>-<platform>-v<N>.png` / `-diff.png`
   naming are in `../do-development/client-ui.md`, read it now if you have not; **never skip the
-  comparison** — if tooling fails, stop, report + fix it. **Fix a style bug at the token, never with
-  a literal:** the correction is the right token name from `docs/basics/18-design-tokens.md` (per
+  comparison** — if tooling fails, stop, report + fix it. A **layout** bug (padding, gap, position,
+  column or row) is verified by the geometry comparison (`client-ui.md` §5): the
+  `compare-geometry.js` output before and after the fix is its evidence, not a second look. **Fix a
+  style bug at the token, never with a literal:** the correction is the right token name from `docs/basics/18-design-tokens.md` (per
   the screen's widget-spec *Style bindings*) — nudging a raw value until it *looks* right re-creates
   the exact drift class the bug came from. If the same wrong value appears on sibling screens, say
   so: that's a **class**, and patching only the reported screen leaves the app inconsistent

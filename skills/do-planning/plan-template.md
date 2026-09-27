@@ -13,21 +13,19 @@
 
 ## Design references *(UI platforms)*
 
-> The design each screen must match 1:1 (within platform-best-practice tolerance).
-> Figma → paste the frame link; image → commit it to
-> `docs/development/<feature-name>/design/<screen>.png`.
-> **One row per screen, per flow step, and per specced state** — carry everything grooming captured;
-> a state with no ref carries its explicit marker (Open Decision / platform default per
-> `04-ux-conventions`).
-> **The reference is what to build, not where the numbers come from:** spacing, type, color and
-> border
-> **values come from the screen's widget-spec *Style bindings* → `docs/basics/18-design-tokens.md`**
-> —
-> never measured off the image.
+> The design each screen must match 1:1 (within platform-best-practice tolerance). Figma → paste
+> the frame link; image → commit it to `docs/development/<feature-name>/design/<screen>.png`.
+> **One row per screen, per flow step, and per specced state** — carry everything grooming
+> captured; a state with no ref carries its explicit marker (Open Decision / platform default per
+> `04-ux-conventions`). **The reference is what to build, not where the numbers come from:**
+> spacing, type, color and border **values come from the screen's widget-spec *Style bindings* →
+> `docs/basics/18-design-tokens.md`** — never measured off the image. The assembly does measure
+> the design's boxes, to find where the layout differs; the fix still comes from the token, never
+> from the measured number.
 
 | Screen / step / state | Design (Figma link / image path) | Specific needs |
 |-----------------------|----------------------------------|----------------|
-| <screen> | `docs/development/<feature-name>/design/<screen>.png` *or* `<figma-frame-url>` | <breakpoints, motion, dark mode — spacing/type by **token name**, e.g. edge `space.lg`> |
+| <screen> — full frame | `docs/development/<feature-name>/design/<screen>.png` *or* `<figma-frame-url>` | <frame size, e.g. `1768×1020` · the content it shows (e.g. 20 documents, 3 waiting) — the assembly's fixture mirrors it · breakpoints, motion, dark mode — spacing/type by **token name**, e.g. edge `space.lg`> |
 | <flow step 2 of 3> | <ref> | |
 | <screen · empty state> | <ref — or "flagged: platform default"> | |
 
@@ -112,8 +110,9 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 - **Design ref (UI stages):** which screen + design (from *Design references* above) and the states
   to match — the parity target for this stage. `n/a` for non-UI stages.
 - **Stage kind (UI presentation):** <`shell` (scaffold + route + screen state + empty slots) ·
-  `section` · `assembly` (full screen + interactions) — from the *Screen stage map* above. `n/a` for
-  non-UI stages.>
+  `section` · `assembly` (full screen + interactions; rendered with the design-content fixture at
+  the frame's size, box geometry measured) — from the *Screen stage map* above. `n/a` for non-UI
+  stages.>
 - **Section(s) + element scope (UI section stages):** <the section ID(s) this stage builds (e.g.
   `body.list` + `body.list.item`) and the widget-spec rows whose `Section` column matches — that's
   this stage's element scope.>

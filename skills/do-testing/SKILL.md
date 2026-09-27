@@ -36,7 +36,12 @@ level where it's cheapest and most stable.
      load lazy content first) and **compare per section**: every design section incl. below-the-fold
      must be covered — an **uncovered / below-the-fold section is a bug**, never a silent pass.
      Virtualized/infinite lists → compare the item template + representative sections. Save actual +
-     diff to `design/compared-ui/`.
+     diff to `design/compared-ui/`. **The full screen also runs the layout pass**
+     (`../do-development/client-ui.md` §5 — the design's own content at the frame's size, every Test
+     ID's box against the design's via `scripts/compare-geometry.js`): a padding, gap, column or row
+     difference beyond tolerance is a bug with its numbers. Development's parity is not reused when
+     `scripts/check-parity-trail.js` calls it stale — a design changed after the capture is
+     compared again.
    - **View composition + type** — element presence, hierarchy, arrangement, layout, **and each
      element's type: assert its rendered a11y role matches the widget spec** (`switch` / `radio` /
      `checkbox` / `button` / …) — machine-checkable and non-flaky. Also assert any behavior the type

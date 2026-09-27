@@ -5,7 +5,7 @@
 | **Screen** | <screen / page name> |
 | **Platforms** | <Android / iOS / Web — those in scope> |
 | **TRD** | [spoke](../TRD-<platform>.md) |
-| **Design** | <Figma frame link *or* `../design/<screen>.png` — the design this screen must match> |
+| **Design** | <Figma frame link *or* `../design/<screen>.png` — the full frame this screen must match, and its size (e.g. `1768×1020`); an HTML canvas also names the file and the frame's selector — its elements carry the Test IDs below> |
 | **Scaffold · slicing** | <which scaffold from `docs/basics/03-ui-architecture.md` → *Screen scaffolds* this screen instantiates, + its body slicing — e.g. `feature-page · 1:2:1`. Deviation from the scaffold → Open Decision; a new pattern → ask, then register it there.> |
 | **Approved** | <commit `<hash>` · approved <YYYY-MM-DD> — set when this screen's gate passes; an edit after that **commit** makes it stale → re-approve (a bare date can't decide a same-day edit)> |
 | **Date** | <YYYY-MM-DD> |
@@ -26,6 +26,9 @@
 > (e.g. a toggle built as a checkbox) breaks the behavior. Put any behavior the type implies (e.g.
 > "exactly one selected") in *Notes* so it becomes testable AC; `do-testing` asserts the rendered
 > a11y role matches the type.
+> **Asserted includes the containers that own a padding** — each section's container and each card
+> whose inner spacing the design sets. The assembly's layout pass measures a padding only between
+> two tagged boxes, so an untagged card is a padding nobody checks.
 
 ## Elements
 
@@ -34,6 +37,7 @@
 | <Scan button> | `ftr.actions` | Button | `qris_widget_scan_button` | "Scan QRIS to pay" | default / pressed / disabled | deep-links to scanner |
 | <Status toggle> | `hdr` | Switch | `qris_widget_status_toggle` | "Notifications on" | on / off / disabled | flips immediately, no submit |
 | <Balance text> | `body.summary` | Text | `qris_widget_balance_text` | "Active balance" | masked / revealed | masked by default |
+| <Balance card> | `body.summary` | Container | `qris_widget_balance_card` | "Balance" | — | its inner padding is measured at assembly |
 
 > **Section** is the region ID from
 > [`../section-slicing/<screen>.md`](../section-slicing/<screen>.md) — the

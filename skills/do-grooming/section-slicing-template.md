@@ -120,6 +120,10 @@ from.>
 - [ ] Every section's **Cases** table is filled — its rows are that section's only case count; an
   empty one means unenumerated, not zero cases.
 - [ ] Interactions table filled (or explicitly "none interact").
+- [ ] The **full frame** exists — `../design/<screen>.png` or the Figma frame — at the size the app
+  renders, recorded in the widget spec's *Design* field: crops show each section's inside, only the
+  full frame shows the layout between them. An HTML canvas carries this screen's Test IDs on its
+  elements, so the assembly measures its boxes instead of estimating them.
 
 ## Open Decisions
 
