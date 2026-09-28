@@ -225,6 +225,25 @@ open and simply don't enforce.
 /plugin install alpha-sdlc@alpha
 ```
 
+### The mobile driver loads only where there is a mobile app
+
+The plugin declares one MCP server, `mobile-mcp`, which drives a real Android or iOS app — install,
+launch, read the accessibility tree, tap, swipe, screenshot, pull logs and crash reports. It is what
+makes the Boot & Smoke gate executable on a device instead of aspirational.
+
+It does **not** start everywhere. `scripts/mobile-mcp-gate.js` runs first, looks at the project it
+was opened in, and hands over to `npx @mobilenext/mobile-mcp@1.0.5` only when it finds an
+`AndroidManifest.xml`, a `pubspec.yaml` that declares `flutter:`, an `.xcodeproj`/`.xcworkspace`, or
+a `Podfile` within three directory levels — skipping `node_modules`, `build`, `Pods` and the like.
+In every other repo it stays dormant: it answers the protocol, offers zero tools, and fetches
+nothing. Measured on this machine, the dormant path costs 43–85 ms at session start.
+
+Override it when the guess is wrong: `ALPHA_SDLC_MOBILE=1` forces the driver on, `=0` forces it off.
+You can also toggle the server in `/mcp` without uninstalling the plugin.
+
+So the "nothing is fetched" above holds for the hooks, and for every repo the gate finds no mobile
+app in. A mobile repo fetches the driver on first use, once per version.
+
 ## First run
 
 ```
