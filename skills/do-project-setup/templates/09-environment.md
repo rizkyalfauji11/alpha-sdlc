@@ -53,6 +53,29 @@ with no display. One row per surface in scope.
 | <Android> | <e.g. `emulator -avd <name>` — no `-no-window` — then the instrumented-test command> | <add `-no-window`> |
 | <iOS> | <e.g. `open -a Simulator`, then `xcodebuild test -destination '<…>'`> | <none — the Simulator needs a display; mark those levels manual> |
 
+**Mobile app under test.** A booted emulator is not a running app. Record how the build under test
+gets **onto** the device and **into** the foreground, because Boot & Smoke drives the installed app,
+not the IDE's run button. Name the artifact, not a person's habit.
+
+| | Android | iOS |
+|---|---|---|
+| **Artifact** | <path to the `.apk`, and the command that produces it> | <path to the `.app`/`.ipa`, and the command that produces it> |
+| **App id** | <`applicationId`, incl. the debug suffix if the build sets one> | <bundle identifier> |
+| **Install** | <`<sdk>/platform-tools/adb install -r <apk>`> | <`xcrun simctl install booted <app>`> |
+| **Launch** | <`adb shell monkey -p <appId> -c android.intent.category.LAUNCHER 1`, or the driver's launch tool> | <`xcrun simctl launch booted <bundleId>`> |
+| **Ready-check** | <the app is the foreground app — not merely installed> | <same> |
+| **Logs** | <`adb logcat`, and the tag/filter that isolates this app> | <`xcrun simctl spawn booted log stream`, and its predicate> |
+
+> **Tool paths are recorded, not assumed.** `adb`, `emulator` and `xcrun` are frequently absent from
+> `PATH` even where the SDK is installed. Write the **absolute** path here once
+> (e.g. `~/Library/Android/sdk/platform-tools/adb`) so no phase re-derives it or fails on a shell
+> that never sourced the SDK's profile.
+
+> **Driver.** When the `mobile-mcp` server is active (the plugin starts it in any repo that holds a
+> mobile app — see the README), its tools do the install, launch, element read, tap, screenshot,
+> log and crash collection, and the commands above are the fallback for a machine without it. State
+> which one this project uses, so a reader knows what a phase will actually run.
+
 **Frontend → backend wiring:** <which env var / config points the FE at the running BE, per env —
 e.g. `VITE_API_BASE_URL` in `.env.development`. This is the seam that produces 405 / CORS / base-URL
 bugs when wrong.>

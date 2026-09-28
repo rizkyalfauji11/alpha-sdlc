@@ -387,6 +387,20 @@ missing acceptance criterion: a defect, not a detail.
   run. **No display** (CI, SSH, a headless box) → fall back to headless and **name it in the step
   report** — a recorded GAP, not a silent downgrade: the measurement is unchanged, only the watching
   is lost.
+- **A driven app is addressed by identity, never by position.** When a phase drives the real app
+  rather than watching it, every tap, type and assertion targets an element by its **declared
+  identifier** — `data-testid` on web, `resource-id` on Android (`android:id`, Compose `testTag`
+  through `testTagsAsResourceId`, Flutter `Semantics(identifier:)`), `accessibilityIdentifier` on
+  iOS — read from the accessibility tree the platform already publishes. A coordinate tap is not a
+  cheaper way to do the same thing: it passes whenever *something* sits at those pixels, so it keeps
+  passing after the element it meant to press moves, is renamed, or is removed — the exact failure a
+  gate exists to catch. **So a driver that falls back to coordinates, OCR or a vision model is
+  reporting a defect, not solving one**: the screen it could not read has no identifiers, and the
+  fix is to add them, in the code, where the project's own UI tests need them too. Where a tap by
+  position is genuinely unavoidable — a canvas, a map, a signature pad — it is **named in the step
+  report with the reason**, never used silently, and it never carries the assertion: assert on
+  something addressable that the tap causes. A run whose passes rest on unreported coordinate taps
+  is not evidence, and a suite of them is a gate that cannot fail.
 - **Component fidelity — build exactly the component the design specifies, every element no matter how small.**
   The design's choice of element is intent, not decoration: match its **type and the behavior that
   type implies**, and never substitute something that merely looks close (a toggle built as a

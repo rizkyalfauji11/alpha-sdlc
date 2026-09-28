@@ -108,7 +108,16 @@ level where it's cheapest and most stable.
    **foundation TRD** it reduces to: the harness commands run, the structure and dependency
    assertions hold, the app boots, and its entry point answers. On a platform set with **no client**
    it reduces to: the real service booted and its critical journeys driven through the real HTTP
-   stack. Name which reduction applied in the verdict — an unnamed reduction reads as a skip.
+   stack. On a **mobile client** (Android or iOS) it does not reduce — it **translates**: the build
+   under test is installed on a real emulator, simulator or device and launched into the foreground
+   (per `09-environment.md`'s *Mobile app under test*), the journeys are driven through the app's
+   own UI against the real backend, and the three web failure signals map one-for-one — a
+   **browser console error** becomes an **error or fatal line in the device log attributable to the
+   app under test**, a **failed network request** stays itself, and an **error-boundary activation**
+   becomes a **crash report**, which is stronger evidence, not weaker: a process that died leaves a
+   record a screenshot never shows. Collect the log for the whole run and the crash list **after**
+   it, and attach both — a journey that "passed" while the log carried a fatal is a failed gate that
+   nobody read. Name which reduction applied in the verdict — an unnamed reduction reads as a skip.
    Otherwise, in full: The gate that catches what every level
    above misses because they run each side against its own mocks: the **real frontend and real
    backend booted together and wired the way the user actually runs the app** (per
