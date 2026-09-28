@@ -249,8 +249,12 @@ file entirely.
   real HTTP stack **with relevant, domain-realistic data (never randomized/placeholder)**. It must
   show **zero unexpected 4xx/5xx (catches 405/route/method drift), zero client/browser console
   errors, and zero error-boundary/crash activations** — an error boundary hiding the crash behind a
-  fallback that *looks* fine still fails. If you can't boot both in-session (missing recipe, env
-  can't stand up), **STOP and say so** at the checkpoint — don't mark the stage passed on isolated
+  fallback that *looks* fine still fails. **On a mobile client the three signals translate rather
+  than reduce** (the mapping and the collection rule are `do-testing`'s, under Boot & Smoke): the
+  build under test is installed and foregrounded per `09-environment.md`'s *Mobile app under test*,
+  a console error becomes an error or fatal line in the device log attributable to the app, and an
+  error-boundary activation becomes a crash report. If you can't boot both in-session (missing
+  recipe, env can't stand up), **STOP and say so** at the checkpoint — don't mark the stage passed on isolated
   tests alone. **The smoke checks freshness, not just errors:** when the stage has a flow binding /
   touches shared entities, also **mutate in the source** (create/update via the owner's real flow)
   and confirm the consumer's view **updates per the TRD's decided freshness** — a smoke that never

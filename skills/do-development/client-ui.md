@@ -135,3 +135,11 @@
   node's `resource-id` and `bounds`, divided by the density (`adb shell wm density` ÷ 160) into dp.
   **iOS**: the UI test writes `element.frame` (points) for each `accessibilityIdentifier`. On a
   scroll-and-stitch capture, add each anchor's scroll offset so every box is page-relative.
+  **Either platform, when the `mobile-mcp` server is active**: one read of the accessibility tree
+  returns every element with its identifier and box, which spares iOS a UI test written only to dump
+  frames — the asymmetry that made iOS the expensive side. **Convert before you compare, and prove
+  the conversion once**: the driver reports device pixels while the comparison is in dp (Android) or
+  points (iOS), so divide by the density and **check one element whose size the design states** —
+  a 48dp control that lands at 48 confirms the factor, and a mismatch means the units are not what
+  you assumed. Recording that check in the packet costs a line and turns every later box into
+  evidence rather than a guess.
