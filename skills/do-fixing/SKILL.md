@@ -109,7 +109,10 @@ TDD.
   is reviewed against the profile, the principles, and the bug report **before** re-verification and
   **before** it's presented (flow step 4). Run it with the **reviewer subagent**
   (`alpha-sdlc:sdlc-reviewer`) handed only the **fix diff + the bug entry (repro + the AC it
-  violates) + `../../principles.md` + the `docs/basics/` docs the diff touches** — the principles
+  violates) + the principles sections this diff can violate + the feature's `review-charter.md`**
+  (falling back to the `docs/basics/` docs the diff touches when there is no charter, or its
+  recorded profile commit has moved) — the same packet economies as `do-development`, from
+  `principles.md` → *Reviews run as parallel dimensions* — the principles
   are in the packet because the review audits against them, and a reviewer asked to check a document
   it was never given checks nothing — not your diagnosis, because the reasoning that produced a fix
   is the worst reasoning to audit it with. Every finding is labeled **measured** or **inferred** —
@@ -191,8 +194,9 @@ For each bug the user approved, in the report's order (severity first):
 3. **Fix** — root-cause fix, minimal, climbing the ladder; run tests + build until green. Report
    honestly (no "fixed" on red).
 4. **Conformance review (fresh eyes) — before re-verifying, before presenting.** Hand the **fix diff +
-   the bug entry (repro + violated AC) + the `docs/basics/` docs the diff touches** to the
-   **`sdlc-reviewer`** subagent (the packet per the rule above, `../../principles.md` included,
+   the bug entry (repro + violated AC) + the feature's `review-charter.md`, or the `docs/basics/`
+   docs the diff touches when there is none** to the
+   **`sdlc-reviewer`** subagent (the packet per the rule above, the applicable principles sections included,
    never your diagnosis) and run the checklist from the rule above: **fix
    quality (root cause, not symptom · the regression test really reproduces it · right layer ·
    siblings covered) · scope discipline (the fix and its test, nothing else) · profile + principles

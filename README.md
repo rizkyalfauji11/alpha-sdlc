@@ -98,6 +98,22 @@ Then, per feature:
 | **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion, and the tests themselves reviewed by fresh eyes before coverage is reported. Verify-only: it reports every bug and fixes none |
 | **Fix** | `/do-fixing` | The bugs you triaged, one at a time, reproduce-first, root cause not symptom |
 
+### Proof costs something, so it is chosen, not assumed
+
+Every stage names the rung of the **verification ladder** it stops at — compiler, unit test,
+instrumented test on the runner your repo already has, or a run a person watches — and from the
+instrumented rung up it must say **what the rung below cannot see**. The argument is owed for
+climbing, never for declining: a plan that reasons carefully each time it *skips* an expensive
+check and orders one in silence only ratchets upward, which is how a nineteen-stage feature ends up
+scheduling thirty device sessions its design never asked for.
+
+Review is sized the same way. The rules and the profile are the same size whether a diff is four
+lines or four hundred, so a reviewer is handed a **charter distilled once per feature** instead of
+the profile docs again, only the principles sections the diff **can** break, and the output of the
+mechanical checks already run — and a stage that cannot change reachable production behaviour skips
+the reviewer entirely. Reachability decides that, never appearance: deleting a call site is never
+in that band.
+
 If you track work in Jira or GitHub Issues, `/do-slicing` and `/do-uploading` turn an approved
 requirements doc into a story-pointed task list and create it sample-first in small batches (tracker
 chosen once, at setup). Skip both otherwise — nothing downstream depends on them.

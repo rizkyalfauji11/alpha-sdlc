@@ -245,8 +245,9 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
    and runs immediately — one at a time, no batching, no asking.)**
 3. **Test review (fresh eyes) — before the coverage report.** The tests are the proof the feature
    is done, and their author is the worst judge of whether they prove it. Hand the **test diff +
-   the test-plan doc + the TRD's numbered AC register + the hub API contract + the `docs/basics/`
-   docs the tests touch + `../../principles.md`** to the **reviewer subagent**
+   the test-plan doc + the TRD's numbered AC register + the hub API contract + the feature's
+   `review-charter.md` (or the `docs/basics/` docs the tests touch when there is none) + the
+   principles sections these tests can violate** to the **reviewer subagent**
    (`alpha-sdlc:sdlc-reviewer`) — not your testing reasoning — with this checklist:
    1. **AC fidelity** — each test asserts the behavior of the AC it claims, not a symptom string or
       a bare status code: remove that behavior and the test fails.

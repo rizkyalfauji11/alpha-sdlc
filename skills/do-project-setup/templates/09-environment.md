@@ -53,6 +53,25 @@ with no display. One row per surface in scope.
 | <Android> | <e.g. `emulator -avd <name>` — no `-no-window` — then the instrumented-test command> | <add `-no-window`> |
 | <iOS> | <e.g. `open -a Simulator`, then `xcodebuild test -destination '<…>'`> | <none — the Simulator needs a display; mark those levels manual> |
 
+**Verification instruments this repo already has.** Planning climbs the verification ladder
+(`principles.md`) and stops at the first rung that can fail for the right reason — but it can only
+reach for a rung it knows exists. Record every instrument that is **already configured and paid
+for**, so a plan does not schedule a watched human session for something a runner would do
+unattended. One row per instrument; write `none` where there is none, because an honest absence is
+what justifies climbing.
+
+| Instrument | Where it is configured | What it runs | How to invoke it |
+|------------|------------------------|--------------|------------------|
+| <unit tests> | <e.g. `gradle-scripts/base_kotlin.gradle`> | <JVM tests per module> | <e.g. `./gradlew :<mod>:testDevUnitTest`> |
+| <instrumented tests> | <e.g. `gradle-scripts/android_test_setup.gradle`, applied to N modules> | <on-device/emulator tests, orchestrator> | <e.g. `./gradlew :<mod>:connectedDevAndroidTest`> |
+| <cloud device farm> | <e.g. `.circleci/config.yml` job `run_instrumented_test`> | <which modules, which device models> | <the CI job name, or the CLI it wraps> |
+| <screenshot / visual baseline> | <…> | <…> | <…> |
+
+> **A configured instrument nobody knows about is the same as none.** One real plan scheduled twelve
+> watched device sessions while a cloud device-farm job sat wired and unused in the repository,
+> because this table did not exist. Check `.github/`, `.circleci/`, `fastlane/`, the Gradle script
+> directory and every `src/androidTest` before writing `none`.
+
 **Mobile app under test.** A booted emulator is not a running app. Record how the build under test
 gets **onto** the device and **into** the foreground, because Boot & Smoke drives the installed app,
 not the IDE's run button. Name the artifact, not a person's habit.

@@ -60,11 +60,33 @@ layout is ungrounded).
 - **Development is per-platform** → write one plan per platform:
   `docs/development/<feature-name>/plan-<platform>.md`. Use `plan-template.md` in this skill's
   directory.
+- **Also write the review charter**, once, beside the plan:
+  `docs/development/<feature-name>/review-charter.md`. It distils from `docs/basics/` only what this
+  feature's reviewers must hold — the layers and the dependency rule this feature crosses, the seams
+  it touches, who owns each entity it reads or writes, the conventions its code must follow, the
+  house values its UI must use — and it carries the **profile commit it was built from**. Every
+  stage's reviewer is then handed the charter plus its diff instead of the profile documents again.
+  Without it twenty stages re-read the same unchanged documents twenty times, which is where
+  per-stage review cost actually goes: the rules and the profile are the same size whether the diff
+  is four lines or four hundred. Rebuild the charter when the profile commit moves; a charter whose
+  recorded commit is behind is stale and says so.
 
 ## What makes a good stage (the core rule)
 
 - **Small enough to review in one sitting** — roughly one concern / one coherent diff. If a stage
   would be a huge change, split it. Prefer many small stages over few big ones.
+- **Every stage declares its seam and its rung — neither may be blank.** *Crosses the FE↔BE seam*
+  is `yes` when the stage adds, changes or **removes** a call the app really makes, or renders a
+  real response; `do-development` reads that line instead of re-deciding per stage, where guessing
+  safely means running the expensive thing. *Verify — rung* names the verification-ladder rung
+  (`principles.md`) and, **from rung 3 up, what the rung below cannot see**. Two failures this
+  closes, both observed: a `[data]` stage that deleted a live, untested endpoint shipped on unit
+  tests alone because nothing in its block mentioned runtime at all — silence read as exemption;
+  and a plan that argued its case twice for *declining* a device run and never once for ordering
+  twelve of them, which is a ratchet that only turns upward. **Before writing a rung 3 or 4 proof,
+  read `09-environment.md` for the instruments this repo already has** — a CI instrumented job or a
+  cloud device farm makes rung 3 nearly free, and reaching past a configured, paid-for runner to a
+  watched human session is choosing the costly proof by oversight.
 - **One stage per architecture layer the slice touches — never one stage spanning layers.** A screen
   is not a stage; it's a **contract → domain → data → presentation** sequence. Read the repo's real
   layers from `docs/basics/02-architecture.md` and use *its* names:

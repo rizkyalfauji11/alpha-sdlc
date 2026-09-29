@@ -96,10 +96,22 @@ file entirely.
 - **Conformance review before verifying — fresh eyes on the diff, never the author's.** Every stage
   gets reviewed against the profile, the principles, and its own plan **before** the visual/smoke
   verification and **before** it's presented (flow step 5). Run it with the **reviewer subagent**
-  (`alpha-sdlc:sdlc-reviewer`) handed only the **stage diff + the stage's plan/AC +
-  `../../principles.md` + the `docs/basics/` docs the diff touches** — the principles are in the
-  packet because the principles-conformance check audits against them, and a reviewer asked to check
-  a document it was never given checks nothing — deliberately *not* your build reasoning, because
+  (`alpha-sdlc:sdlc-reviewer`) handed only the **stage diff + the stage's plan/AC + the feature's
+  `review-charter.md` + the principles sections this diff can actually violate** — the principles
+  are in the packet because the principles-conformance check audits against them, and a reviewer
+  asked to check a document it was never given checks nothing. **Three economies, all from
+  `principles.md` → *Reviews run as parallel dimensions*, and none of them cuts rigor:** the charter
+  replaces re-reading `docs/basics/` every stage (it was distilled once at planning, and carries the
+  profile commit it was built from — rebuild it if that moved, and fall back to the docs themselves
+  if there is no charter); the principles are **narrowed to what this diff can break**, with the
+  packet naming which sections were withheld and on what test, because a reviewer cannot find a
+  violation of a rule the change is incapable of breaking; and the **mechanical checks run first**
+  — the repo's doc checks, `scripts/check-coverage.js`, `scripts/find-orphans.js`, the raw-literal
+  command the token doc records — with their output in the packet and those dimensions marked
+  settled. A stage whose diff **cannot change reachable production behaviour** (docs, tests,
+  formatting, a version string, a pure move) skips the reviewer entirely and closes on those scripts
+  — but **reachability decides that, never appearance**: a deleted call site or a removed dependency
+  is never in that band. The packet is deliberately *not* your build reasoning, because
   the context that made a decision is the worst context for auditing it ("I wrote it, so it looks
   right"). Every finding is labeled **measured** or **inferred** — measured names the file and line,
   the command, test or grep that produced it, and **which copy was read** (committed `HEAD` or the
@@ -242,8 +254,16 @@ file entirely.
   the seam is crossed **twice**, and both count: the **`data` stage** is where the real
   API/DB/3rd-party call lands (drive the real request — a data stage that passes on unit tests alone
   is exactly the hole this gate exists to close), and the **`presentation` stage** is where the real
-  response renders (drive the screen against it). When a stage crosses the frontend↔backend seam (a
-  new/changed endpoint, a screen that calls one), a green unit test is not enough — after it's
+  response renders (drive the screen against it). The stage's own **Crosses the FE↔BE seam** line
+  decides this — read it, don't re-derive it; the plan settled it where the architecture was being
+  thought about rather than here, where guessing safely means running the expensive thing. It reads
+  `yes` when the stage adds, changes **or removes** a call the app really makes, or renders a real
+  response. **Removal counts, and this is the case that gets missed:** deleting a call site looks
+  mechanical, and a deletion whose path had **no test coverage** is proven by nothing at all — a
+  `[data]` stage shipped exactly that way, dropping a live endpoint the plan had assumed was dead,
+  on unit tests that all forced the other branch. An uncovered deleted path is a `yes` even when the
+  plan's line says otherwise; say so at the checkpoint. When it is `yes`, a green unit test is not
+  enough — after it's
   green, **boot the real backend + real frontend** per `docs/basics/09-environment.md`'s *Full-stack
   run recipe* (FE pointed at the running BE) and exercise the stage's actual request through the
   real HTTP stack **with relevant, domain-realistic data (never randomized/placeholder)**. It must
@@ -342,8 +362,10 @@ For the next unfinished stage in the plan:
    better name makes unnecessary deleted. Re-run to confirm still green. The doc/principle
    **auditing happens in step 5** — don't half-do it here and call it checked.
 5. **Conformance review (fresh eyes) — before verifying, before presenting.** Hand the **stage diff +
-   the stage's plan/AC + the `docs/basics/` docs the diff touches** (plus the screen's
-   **section-slicing doc** for UI stages) plus `../../principles.md` and this skill's
+   the stage's plan/AC + the feature's `review-charter.md`** (falling back to the `docs/basics/`
+   docs the diff touches when no charter exists, or when its recorded profile commit has moved)
+   (plus the screen's
+   **section-slicing doc** for UI stages) plus **the principles sections this diff can violate** and this skill's
    **`conformance-reviewer.md`** — plus the output of `node ../../scripts/check-coverage.js
    docs/development/<feature-name> <platform> --stage <n> --tests <the test files this stage
    changed>` and of `node ../../scripts/find-orphans.js <repo-root> --diff <the stage's base

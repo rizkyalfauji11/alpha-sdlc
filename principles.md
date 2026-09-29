@@ -401,6 +401,27 @@ missing acceptance criterion: a defect, not a detail.
   report with the reason**, never used silently, and it never carries the assertion: assert on
   something addressable that the tap causes. A run whose passes rest on unreported coordinate taps
   is not evidence, and a suite of them is a gate that cannot fail.
+- **The verification ladder — climb it for every proof, and name the rung.** The code ladder decides
+  how much you build; this one decides how much you spend proving it. Stop at the first rung that
+  can **fail for the right reason**:
+  1. **The compiler** — a deleted symbol that is still referenced, a signature nothing satisfies.
+  2. **A unit test** — logic, branching, mapping, ordering, anything expressible against a double.
+  3. **An instrumented test on the project's own runner** — layout measurement, lifecycle, real
+     framework behaviour, run on whatever device farm or CI runner `09-environment.md` records.
+  4. **A run a person watches** — for what only a human notices: it feels wrong, it flickers, the
+     journey is confusing, a number on screen is implausible.
+
+  **Naming the rung is mandatory, and the expensive rung carries the argument.** Every stage's proof
+  states its rung and, from rung 3 up, **what the rung below cannot see** — "a measure pass at real
+  density", "class-load across a dynamic-feature boundary", "StrictMode on a real Looper". A rung
+  claimed without that sentence is over-spending nobody agreed to. The asymmetry is the trap this
+  rule exists to close: it is natural to justify *declining* an expensive check and to order one in
+  silence, which ratchets a plan upward until a twenty-stage feature schedules thirty device
+  sessions the design never asked for. **Justify the climb, not the refusal.**
+  **And the ladder reads the project, not a habit:** rung 3 is only expensive where nobody built it,
+  so `09-environment.md` records the instruments this repo actually has — a CI instrumented job, a
+  cloud device farm, a screenshot runner — and a plan that reaches for rung 4 while rung 3 sits
+  configured and paid for is choosing the costly proof by oversight.
 - **Component fidelity — build exactly the component the design specifies, every element no matter how small.**
   The design's choice of element is intent, not decoration: match its **type and the behavior that
   type implies**, and never substitute something that merely looks close (a toggle built as a
@@ -451,7 +472,8 @@ missing acceptance criterion: a defect, not a detail.
   that writes a `docs/**.md` skips every one of them. A `PreToolUse` hook on Bash blocks such a
   write. Reading, grepping, copying a doc out, and git commands stay free.
 - **Every change is reviewed before it's presented — fresh eyes, not the author's.** A stage's diff,
-  or a fix, is audited against the **profile docs it touches, these principles, and its own
+  or a fix, is audited against the **profile docs it touches — through the feature's review charter
+  where one exists — these principles, and its own
   plan/AC** *before* verification and *before* it reaches the user — ideally by a reviewer with the
   diff and the docs but **not** the reasoning that produced it, because the context that made a
   decision is the worst context for auditing it. **Objective violations** (wrong layer, raw literal,
@@ -495,6 +517,34 @@ missing acceptance criterion: a defect, not a detail.
     and low-risk **by measure, not by the author's say-so**: at most 150 changed production lines,
     no contract, schema or migration file, no file handling auth, tokens or PII (per
     `12-security-compliance` and `13-auth`), and no UI section.
+  - **Script-only band — no reviewer agent at all.** A stage whose diff **cannot change reachable
+    production behaviour** — documentation, tests, formatting, a version string, a pure move with no
+    edit — closes on the scripts and hooks alone: the repo's own checks, the coverage checker, the
+    orphan sweep and the stage's own suite, with their output in the packet. A reviewer reading six
+    hundred lines of principles adds nothing to a change that cannot violate them. **Reachability
+    decides the band, never appearance:** deleting a call site, removing a dependency, or changing a
+    condition stays out of it however small the diff — a deletion that looks mechanical is exactly
+    how a live, untested endpoint leaves an app.
+  - **The packet carries only what the diff can violate.** A reviewer is handed the principles
+    **sections the diff can actually break**, not all of them, derived from what the diff touches —
+    a data-layer change with no UI file cannot violate the design-token, component-fidelity,
+    container-clipping, visual-parity or diagram rules, and a reviewer cannot find a violation of a
+    rule the change is incapable of breaking. The packet says which sections were withheld and on
+    what test, so a wrong narrowing is visible rather than silent. Review cost is otherwise
+    **constant per stage** — the rules and the profile are the same size whether the diff is four
+    lines or four hundred — which is what makes a twenty-stage plan expensive for no added safety.
+  - **The profile is distilled once per development, not re-derived per stage.** `do-planning`
+    writes a **review charter** beside the plan — the conventions, seams, entity ownership and
+    house values this feature's reviewers must hold, drawn from `docs/basics/` — and every stage's
+    reviewer is handed the charter plus its diff instead of the profile docs again. The charter
+    records the **profile commit it was built from** and is rebuilt when that moves, so a stale
+    charter is a detectable state rather than a silent one. Twenty stages otherwise re-read the
+    same unchanged documents twenty times.
+  - **What a script decides never reaches a reviewer.** Run the mechanical checks **first** — the
+    repo's doc checks, `scripts/check-coverage.js`, `scripts/find-orphans.js`, the raw-literal
+    enforcement command the token doc records, the hooks — put their output in the packet, and tell
+    the reviewer those dimensions are settled. Reviewer attention is for what no script can decide;
+    spending it on what one already did is the cost that makes people skip review entirely.
   - **A fix round re-runs only the dimensions that had findings**, plus the mechanical one.
   - **The whole suite is not run twice.** The packet carries the author's verification commands with
     their exit codes and summary lines; the reviewer re-runs the stage's own tests, the sabotage

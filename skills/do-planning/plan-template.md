@@ -124,7 +124,17 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 - **Test first (TDD red):** the failing test(s) that prove this stage, derived from the AC — what
   they assert. If the stage can't be unit-tested (native widget render, pure UI), say so and give
   the manual/observed check instead.
-- **Verify:** <how to confirm green — run the test(s) + build/observe>
+- **Crosses the FE↔BE seam:** <yes / no — yes when the stage adds, changes or **removes** a call the
+  app really makes, or renders a real response. Never left blank: silence here has been read
+  downstream as an exemption, and a `[data]` stage that deleted a live, untested endpoint shipped on
+  unit tests alone because this line did not exist.>
+- **Verify — instrument:** <the literal commands that confirm this stage green>
+- **Verify — rung:** <the verification-ladder rung (`principles.md`), number + name: `rung 1
+  (compiler)` · `rung 2 (unit test)` · `rung 3 (instrumented, on the runner `09-environment.md`
+  records)` · `rung 4 (a person watches)`. **From rung 3 up, state in the same line what the rung
+  below cannot see** — "a measure pass at real density", "class-load across a dynamic-feature
+  boundary". A rung claimed with no such sentence is over-spend nobody agreed to, and the argument
+  is owed for climbing, never for declining.>
 - **Conformance review — docs this stage must be checked against:** <the `docs/basics/` docs the
   stage's changes touch, e.g. `02-architecture` (layer placement) · `10-conventions` (error
   handling/logging) · `08-data-cache` (query keys + invalidation) · `18-design-tokens` (zero raw
@@ -150,7 +160,9 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 - **Files / modules:** <…>
 - **Approach:** <…>
 - **Changes:** <…>
-- **Verify:** <…>
+- **Crosses the FE↔BE seam:** <yes / no — never blank>
+- **Verify — instrument:** <…>
+- **Verify — rung:** <rung + what the rung below cannot see, from rung 3 up>
 - **Conformance review — docs:** <…>
 - **Approved (plan gate):** <commit `<hash>` · approved <YYYY-MM-DD> — set by do-planning when this
   stage's draft passes its gate; `do-development` reads it before building the stage>
