@@ -158,9 +158,14 @@ docs/development/<feature-name>/
     once decided it's recorded **in the hub** as a platform exception, so the next spoke and
     `do-development` both see it. Silent divergence is never acceptable.
 
-  **Rounds converge, or they stop.** Each round records its **objective-violation count** (per
-  `principles.md`); **flat or rising across three rounds is a STOP** — escalate to the user with the
-  trend instead of launching another round. A finding **only a code change can close is not a
+  **Rounds converge, or they stop — and the first one aims to be the only one.** Every finding
+  names its **closing proof** where a command can give one — the contract checker, the repo's doc
+  checks, `validate-doc-tables.js`, the AC ↔ slice lookup — and the author closes on that output
+  instead of handing the fixes back; a finding no command can close is labelled **needs-eyes** by
+  the reviewer that raised it, and those are what a next round is for (`principles.md` → *One
+  round, closed by proof*). Each round records its **objective-violation count** and its
+  **needs-eyes count** (per `principles.md`); **flat or rising across three rounds is a STOP** —
+  escalate to the user with the trend instead of launching another round. A finding **only a code change can close is not a
   grooming finding** — record it as a numbered AC (§8) and hand it to `do-development`.
 
   **Stamp the result.** The spoke header records `Hub alignment: reviewed <date> · hub rev <commit /
@@ -555,12 +560,20 @@ grow one. Then run the **hub-alignment review** (per the rule above) before call
    dimensions, one reviewer each**, launched together (`principles.md` → *Reviews run as parallel
    dimensions*): (a) contract and data — points 1, 2, 4 and 6; (b) flow and coverage — points 3, 5,
    7, 8 and 9; (c) decisions and siblings — points 10 and 11. A re-run after a fix, or a scoped
-   re-review after a hub change, launches only the dimensions whose points are in play.
+   re-review after a hub change, launches only the dimensions whose points are in play. Record which
+   checklist points — and so which spoke sections — each dimension owned, and **before fixing
+   anything, run the completeness critic** over the merged findings, that map and the spoke: a
+   screen, slice or AC row no dimension opened is the gap one round cannot afford (`principles.md`
+   → *Reviews run as parallel dimensions*).
 2. **Resolve by direction** — spoke wrong → fix the spoke and **re-gate the affected section**; hub
    wrong → gather the hub-wrong findings of every spoke awaiting alignment first, then fix the
    **hub** once with the user's approval and **re-run alignment once per spoke, scoped to the
    sections that moved** (per the rule above); deliberate divergence → **Open Decision**, and once
-   decided record it in the **hub** as a platform exception.
+   decided record it in the **hub** as a platform exception. **Close on each finding's closing
+   proof** where one exists — the contract checker for point 1, the AC ↔ slice lookup for point 8,
+   the doc checks for the rest — and send back only what came back **needs-eyes**. Alignment is
+   largely a reading judgment, so needs-eyes is common here and is exactly what a round is for; what
+   it must never be is the easy answer for a point a script can settle.
 3. **Present the verdict and STOP** — what was checked, findings by direction, what you fixed, what
    needs the user's decision. A spoke with unresolved objective misalignment is **not done**, and
    nothing downstream should plan against it.
