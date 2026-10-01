@@ -94,7 +94,7 @@ Then, per feature:
 |---|---|---|
 | **Groom** | `/do-grooming` | PRD/BRD → requirements doc, one approval per section. The shared hub is reviewed by fresh eyes and the repo's own contract checks before any platform spoke starts, so spokes don't discover its errors one at a time. Every criterion, case or decision a spoke adds names the hub sentence that requires it — anything else is asked as a scope question whose default is *not in this feature* — and each gate shows how much the spoke grew since it was last approved. Variants: `/do-tech-debt-grooming` for behavior-preserving work, `/do-issue-grooming` which audits the whole issue *class* across the project rather than the symptom you hit, `/do-foundation-grooming` for a new project's scaffold |
 | **Plan** | `/do-planning` | Small independently reviewable stages, split by the layers your repo actually has — contract → domain → data → presentation, or just UI vs data-integration; it won't impose layering it doesn't find. UI splits again by section |
-| **Build** | `/do-development` | One stage at a time, test-first. Each diff is audited by a fresh-eyes reviewer holding your profile docs but not the reasoning that produced the code — then it stops for you. Which criterion each stage proves is checked by a script (`scripts/check-coverage.js`), not by rounds of reading, and a round whose only findings are bookkeeping closes on that script going green. What a change makes obsolete — the old path, its tests, its profile rows — goes with it (`scripts/find-orphans.js`); dead code it didn't cause becomes a tech-debt row, not a drive-by deletion |
+| **Build** | `/do-development` | One stage at a time, test-first. Each diff is audited by a fresh-eyes reviewer holding your profile docs but not the reasoning that produced the code — then it stops for you. Which criterion each stage proves is checked by a script (`scripts/check-coverage.js`), not by rounds of reading, and the review aims to be **one round**: every finding is reported with the command that will prove its fix landed, so the stage closes on those outputs instead of handing the fixes back to a reviewer. What a change makes obsolete — the old path, its tests, its profile rows — goes with it (`scripts/find-orphans.js`); dead code it didn't cause becomes a tech-debt row, not a drive-by deletion |
 | **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion, and the tests themselves reviewed by fresh eyes before coverage is reported. Verify-only: it reports every bug and fixes none |
 | **Fix** | `/do-fixing` | The bugs you triaged, one at a time, reproduce-first, root cause not symptom |
 
@@ -210,12 +210,17 @@ phase with `/model` and `/effort`; the recommendation:
 | Slicing | `sonnet` | `medium` | Structured decomposition of an approved TRD |
 | Uploading | `haiku` | `low` | Mechanical tracker calls, sample-first |
 
-The one pinned piece is the **fresh-eyes reviewer** (`agents/sdlc-reviewer.md` — **Opus, high
+The one pinned piece is the **fresh-eyes reviewer** (`agents/sdlc-reviewer.md` — **Opus, max
 effort**, no Write/Edit tools) behind the conformance review in development and fixing, the test
 review in testing, and the hub-alignment review in grooming. It runs start-to-finish in one shot,
-so the pin holds, and a review is the last check before your gate. Fixes made on its findings go
-back to it — round after round until one is clean, and a count that stops falling for three rounds
-stops the loop and comes to you. An org that needs another model sets
+so the pin holds, and a review is the last check before your gate. It is pinned high **because the
+round is meant to be the only one**: each finding is reported with the literal command whose output
+shows its fix landed, the dimensions declare which changed file each of them owned, and a
+completeness critic reads the reports before anything is fixed to name what nobody looked at. The
+stage then closes on those command outputs. A second round is owed only when a reviewer says in
+advance that a finding's closure **no command can show**, when a fix adds product behaviour, or
+when a named proof will not go green — and a count that stops falling for three rounds stops the
+loop and comes to you. An org that needs another model sets
 `CLAUDE_CODE_SUBAGENT_MODEL=<model>` **with** `CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1` — without the
 force flag the agent's own pin wins, and with it every subagent in the session moves, not only this
 one.

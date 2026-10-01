@@ -482,17 +482,37 @@ missing acceptance criterion: a defect, not a detail.
   beyond the plan, a deviation from a decided convention) are a hard STOP → Open Decision, because
   self-approving a scope change defeats the gate.
 
-  **The fixes are reviewed too — rounds converge, or they stop.** Fixing a finding is new work by
-  the same author, so it goes back to the reviewer: the next round is handed the previous round's
-  findings and the change since that round, confirms each finding is closed, and reviews the change
-  for new ones — a deviation introduced while fixing is a judgment finding like any other. Repeat
-  until a round is clean. **A fix round only corrects.** A fix that adds a case, state, screen frame
-  or behavior **of the product** is not a correction but a judgment finding: the affected section
-  re-gates with the user, and the round waits for it (auto-run: it auto-decides ★, is recorded, and
-  the round continues). Moving an acceptance criterion's claim from
-  one stage to another is bookkeeping, not product design — a plan amendment recorded with a *Moved
-  in* line (auto-run: decided ★ and recorded; gated: asked at the checkpoint), never a finding that
-  holds the round. **Before each round, sweep and check:** grep every site of each fact the fixes
+  **One round, closed by proof — every finding is born with the command that will close it.** A
+  second round ever existed for one reason: fixing a finding is new work by the same author, so
+  nobody has reviewed the fix. Remove the reason rather than the round. **Every finding a reviewer
+  reports names its closing proof** — the literal command whose output shows the fix landed: the
+  test that must now cover the case, the repo's checker, a grep that must come back empty, the
+  compile, the coverage checker. A finding whose closure no command can show is labelled
+  **needs-eyes** by the reviewer that raised it, with why. The author fixes every finding, runs
+  every named command plus the sweep below, and **closes the stage on that output with no second
+  round** — provided the needs-eyes count is zero and no fix changed product behaviour. Bookkeeping
+  in documents — coverage claims, labels, cross-references — always closes this way: its proof is
+  the coverage checker and the doc checks run to green. A reviewer round is for what a script cannot
+  check, and naming the script up front is what keeps most findings out of one. **An unnamed proof
+  is not a free pass — it costs the stage a whole extra round**, which is why naming it is the
+  reviewer's work, not the author's.
+
+  **A behaviour-changing fix lands test-first, or the stage owes a second round.** A fix that adds a
+  case, state, screen frame or behavior **of the product** is not a correction but a judgment
+  finding: the affected section re-gates with the user, and the round waits for it (auto-run: it
+  auto-decides ★, is recorded, and the round continues). A correction that nonetheless changes what
+  the code *does* — a branch now taken, an error now surfaced, a call site removed — is written
+  **test-first**: a test that fails against the unfixed code and passes against the fix, named as
+  that finding's closing proof. Without it the fix is unreviewed new code, and no amount of
+  reasoning reviews code that did not exist when the round ran. Moving an acceptance criterion's
+  claim from one stage to another is bookkeeping, not product design — a plan amendment recorded
+  with a *Moved in* line (auto-run: decided ★ and recorded; gated: asked at the checkpoint), never a
+  finding that holds the round.
+
+  **A second round, when one is owed, is handed the previous findings and the change since that
+  round** — it confirms each finding is closed, citing where, and reviews that change in full; a
+  deviation introduced while fixing is a judgment finding like any other. Repeat until a round is
+  clean. **Before each round, sweep and check:** grep every site of each fact the fixes
   changed and fix them together (per *Correct every site*), run the repo's own doc checks and the
   plugin's coverage checker (`scripts/check-coverage.js`), and put their output in the packet. **A
   missing thing is a defect only when something requires it:** a finding that
@@ -502,17 +522,25 @@ missing acceptance criterion: a defect, not a detail.
   changes. A finding in a document the stage did not touch, or a gap of the repository itself — no
   doc checker, an unsigned profile doc — is not the stage's violation: it is noted once as a
   question, and repository gaps are recorded by `do-project-setup` in the tech-debt register, never
-  charged to a stage. **A round of bookkeeping alone closes without another round:** once the code
-  and tests are verified clean and every remaining finding is bookkeeping in documents — coverage
-  claims, labels, cross-references — the author fixes them, runs the coverage checker and the doc
-  checks to green, and closes the stage with their output in the packet. A reviewer round is for
-  what a script cannot check.
+  charged to a stage.
 
   **Reviews run as parallel dimensions, sized by risk.** Each skill's review names its dimensions.
   - **Full tier:** every dimension is its own reviewer subagent, launched together in one message,
     each handed the whole packet but only its dimension's checklist; anything it notices outside its
     dimension it reports as inferred. The author merges the reports — the same file:line counts
     once — into one verdict and one objective-violation count.
+  - **The dimensions cover the diff, and the map is part of the report.** Every changed file falls
+    to at least one named dimension, and the author records the file → dimension map in the merged
+    report. A file no dimension owns is the gap a single round cannot afford: name a dimension for
+    it, or say in the verdict that it went unreviewed and on what grounds.
+  - **The round ends with a completeness critic.** After the dimensions report and **before the
+    author fixes anything**, one more reviewer is handed the merged findings, the file → dimension
+    map and the diff, and answers one question: what in this change did no dimension actually look
+    at — a file nobody owned, a claim asserted but never run, a checklist item marked *not checked*,
+    a finding with no closing proof? What it returns joins the round's findings. It is not a second
+    round — nothing has been fixed yet — it is what makes a single round defensible, and it is
+    cheap, because it reads the reports rather than the rulebook. A review whose own load-bearing
+    claim is wrong is not a hypothetical: it is what this critic exists to catch.
   - **Light tier:** one reviewer runs every dimension, with `model: sonnet`, when the stage is small
     and low-risk **by measure, not by the author's say-so**: at most 150 changed production lines,
     no contract, schema or migration file, no file handling auth, tokens or PII (per

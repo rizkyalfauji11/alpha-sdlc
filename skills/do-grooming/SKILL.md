@@ -495,7 +495,10 @@ parallel dimensions*): **(a) contract & entities** — points 1 and 2, the half 
 migrations can settle; **(b) consistency & flow** — points 3, 4 and 5, the half only a reader
 holding the whole hub at once can judge. Merge the two reports into one verdict and one
 objective-violation count, the same `file:line` counting once. A re-run after a fix launches only
-the dimension whose points are in play.
+the dimension whose points are in play. Record which dimension owns each section of the hub, and
+**before fixing anything, run the completeness critic** over the merged findings, that map and the
+hub — a section neither dimension opened is the gap one round cannot afford (`principles.md` →
+*Reviews run as parallel dimensions*).
 
 **Rendering is checked before either of them, by script, and never reaches a reviewer** — tables
 parse and diagrams meet the Mermaid 9.x floor. `validate-doc-tables.js` already decides the table
@@ -503,8 +506,12 @@ half at write time; run the repo's doc checks for the rest and put their output 
 `principles.md` → *What a script decides never reaches a reviewer*. A reviewer spending attention
 on what a parser already answered is the cost that makes people skip review.
 
-Fix objective violations and send the fixes back for another round (`principles.md` → *The fixes
-are reviewed too*); judgment findings are the user's decision. On a clean pass stamp the hub's
+Fix objective violations and **close on each finding's closing proof** where one exists — here
+that is the doc checks, `validate-doc-tables.js`, the coverage checker or a cited re-read of the
+section (`principles.md` → *One round, closed by proof*). Hub consistency is the half no script can
+decide, so expect **needs-eyes** findings here more than anywhere else in the pipeline, and **those
+are exactly what a second round is for** — send them back rather than closing on a claim. Judgment
+findings are the user's decision. On a clean pass stamp the hub's
 **Hub review** row (`reviewed <date> · rev <commit>` plus its round counts), and only then offer the
 first spoke. Present the verdict and STOP. If no subagent can run, run the identical checklist
 inline and say so.

@@ -380,17 +380,24 @@ For the next unfinished stage in the plan:
    sabotage checks; (c) plan/AC and the mechanical checks — part 3, with the coverage and orphan
    scripts. The light tier runs all three in one reviewer when the stage measures small and
    low-risk. The packet carries your verification commands with their exit codes and summary lines,
-   so no reviewer re-runs the whole suite. Then: **fix
+   so no reviewer re-runs the whole suite. **Record the file → dimension map** — every changed file
+   owned by one of them — and when the reports come back, **before you fix anything, run the
+   completeness critic**: one more `sdlc-reviewer` handed the merged findings, that map and the
+   diff, asked what no dimension actually looked at (`principles.md` → *Reviews run as parallel
+   dimensions*). Its findings join this round's. Then: **fix
    every objective violation in this stage and re-verify green** — each one **verified** at its
    cited file and line first, per verify-before-acting above; **STOP on any judgment/scope finding**
    — record it as an **Open Decision** and hand back to the user/`do-grooming` rather than resolving
-   it yourself. **Then send the fixes back for another round** — the previous findings plus the
-   change since that round — until a round is clean, per `principles.md` → *The fixes are reviewed
-   too*; **except when every remaining finding is bookkeeping** (coverage claims, test labels,
-   cross-references) and the code and tests are already verified: fix them, run the coverage
-   checker and the doc checks to green, and close the stage with that output — no further round.
-   Carry the verdict into the packet: which docs were checked, findings by kind, what you fixed, the
-   objective-violation count per round, what you're asking about. If no subagent can run, run the
+   it yourself. **Close the stage on the findings' closing proofs, not on another round** — run the
+   command each finding named, put every output in the packet, and close when the needs-eyes count
+   is zero and no fix changed product behaviour; a correction that changes what the code *does* is
+   written **test-first** and that test is its proof (`principles.md` → *One round, closed by
+   proof*). **A second round is owed only** when a finding came back **needs-eyes**, a fix added
+   product behaviour, or a named proof would not go green — then send the previous findings plus
+   the change since that round, re-running only the dimensions that had findings.
+   Carry the verdict into the packet: which docs were checked, findings by kind, what you fixed,
+   each finding's closing proof and its output, the needs-eyes count, the objective-violation count
+   per round, what you're asking about. If no subagent can run, run the
    identical checklist inline as an explicit self-review and say that's what happened — never skip
    the step.
 6. **Visual parity + content-fit (UI stages with a design ref)** — **what you compare depends on the

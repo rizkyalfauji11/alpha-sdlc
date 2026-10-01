@@ -202,12 +202,17 @@ For each bug the user approved, in the report's order (severity first):
    siblings covered) · scope discipline (the fix and its test, nothing else) · profile + principles
    conformance** — those three parts are the review's three dimensions, one reviewer each, or one
    reviewer for all three on the light tier (`principles.md` → *Reviews run as parallel
-   dimensions*). Then: **fix every objective violation — verified at the cited file and line first
+   dimensions*). Record the file → dimension map, and when
+   the reports come back, **before you fix anything, run the completeness critic** over the merged
+   findings, that map and the diff. Then: **fix every objective violation — verified at the cited
+   file and line first
    — as part of this bug and re-verify**; **STOP on any judgment/scope finding** — Open Decision to
-   `do-grooming`, or `do-issue-grooming` for a project-wide class. **Then send the fixes back for
-   another round** — the previous findings plus the change since that round — until a round is
-   clean, per `principles.md` → *The fixes are reviewed too*. Carry the verdict into the packet,
-   with the objective-violation count per round. No subagent available → identical checklist
+   `do-grooming`, or `do-issue-grooming` for a project-wide class. **Close on the findings' closing
+   proofs, not on another round** — run the command each finding named and put its output in the
+   packet; **a second round is owed only** when something came back **needs-eyes**, a fix added
+   product behaviour, or a named proof would not go green, per `principles.md` → *One round, closed
+   by proof*. Carry the verdict into the packet, with each finding's closing proof and output, the
+   needs-eyes count, and the objective-violation count per round. No subagent available → identical checklist
    inline, and say so.
 5. **Re-verify** — re-run the bug's original failing check *and* the surrounding suite (no
    regressions). Visual bugs → re-run parity. **Boot & Smoke / integration bugs → re-boot the real

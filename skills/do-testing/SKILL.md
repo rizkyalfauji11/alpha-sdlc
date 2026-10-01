@@ -264,11 +264,16 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
    Two dimensions, one reviewer each (`principles.md` → *Reviews run as parallel dimensions*): (a)
    items 1, 2 and 5 — what the tests prove, against the AC register and the recorded results, with
    `check-coverage.js`; (b) items 3 and 4 — test theater and over-simplification. The packet
-   carries the suite's run output, so neither reviewer re-runs all of it.
+   carries the suite's run output, so neither reviewer re-runs all of it. Record the file →
+   dimension map, and **before you fix anything, run the completeness critic** over the merged
+   findings, that map and the diff — for a test review it is the one that catches a changed test
+   file no dimension opened.
 
    Fix every objective violation in the tests — a changed test goes back through step 2 (re-approve,
-   re-run) — and send the fixes back for another round until one is clean, per `principles.md` →
-   *The fixes are reviewed too*. A finding that questions the AC itself is not a testing fix — it
+   re-run) — and **close on the findings' closing proofs rather than another round**: here the proof
+   is almost always the test itself run and recorded, so a second round is owed only on a
+   **needs-eyes** finding or a proof that would not go green (`principles.md` → *One round, closed
+   by proof*). A finding that questions the AC itself is not a testing fix — it
    goes back to grooming as an **Open Decision**. The review never fixes product code: a test that
    fails for a real bug is a bug for the report, not a finding. No subagent available → identical
    checklist inline, and say so. **(Auto-run: re-approvals record `Approved: auto <date>`, a
