@@ -472,8 +472,9 @@ lives in a sibling repository, its `Repo` cell names that repo (same repo is the
 ### Step 2a — Hub review (hub only) — the gate before any spoke
 
 Once the hub's last section is written, hand the **hub, its contract delta, and the profile docs it
-references** to the **reviewer subagent** (`alpha-sdlc:sdlc-reviewer` — not your grooming context)
-with this checklist:
+references** to the **reviewer subagents** (`alpha-sdlc:sdlc-reviewer` — not your grooming context),
+split across the dimensions named under the checklist, each handed the whole packet but only its
+own points:
 
 1. **The contract passes the repo's own checks** — run the contract validation the profile records
    (`15-api-reference.md` / `10-conventions.md`, e.g. the contract test) against the delta. A form
@@ -488,7 +489,19 @@ with this checklist:
    client-only behavior.
 5. **No spoke has to decide a hub matter** — anything a spoke would need decided to make the hub
    true is decided here or listed as a hub Open Decision.
-6. **It renders** — tables parse and diagrams meet the Mermaid 9.x floor.
+
+**Two dimensions, one reviewer each**, launched together (`principles.md` → *Reviews run as
+parallel dimensions*): **(a) contract & entities** — points 1 and 2, the half a checker and the
+migrations can settle; **(b) consistency & flow** — points 3, 4 and 5, the half only a reader
+holding the whole hub at once can judge. Merge the two reports into one verdict and one
+objective-violation count, the same `file:line` counting once. A re-run after a fix launches only
+the dimension whose points are in play.
+
+**Rendering is checked before either of them, by script, and never reaches a reviewer** — tables
+parse and diagrams meet the Mermaid 9.x floor. `validate-doc-tables.js` already decides the table
+half at write time; run the repo's doc checks for the rest and put their output in the packet, per
+`principles.md` → *What a script decides never reaches a reviewer*. A reviewer spending attention
+on what a parser already answered is the cost that makes people skip review.
 
 Fix objective violations and send the fixes back for another round (`principles.md` → *The fixes
 are reviewed too*); judgment findings are the user's decision. On a clean pass stamp the hub's
