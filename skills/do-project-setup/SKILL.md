@@ -33,9 +33,25 @@ for auto mode here, decline in one line ("this phase decides — gates apply; au
   rather than guessing.
 - **One doc at a time, with approval.** Draft a doc → present it → user **approves / edits / skips**
   → only then write it to `./docs/basics/<file>.md` → move to the next. Never batch-write all docs.
+  **A doc whose regenerated content is byte-identical to the approved one on disk is not gated
+  again** — list it as unchanged in the step summary and move on (`principles.md` → *Always
+  step-by-step approval*). Diff before you present: in refresh mode most docs do not move, and
+  asking for the same approval twice is the single fastest way to stall a run.
 - **Applicability — generate only what applies.** Skip docs that don't fit this repo (e.g.
   `ui-architecture` / `asset-registry` on a backend repo) and *say so*; never emit empty filler
-  files. Confirm the applicable list with the user first.
+  files. Confirm the applicable list with the user first — **once**, under the key
+  `doc-applicability`, and record each per-document verdict as `doc-applicability-<nn>-<name>`.
+- **Read the record before you ask — every session, every time.** The first action of any run,
+  bootstrap or refresh, is to read `docs/basics/.alpha-sdlc.json` and the `approved <date>` stamps
+  already in `docs/basics/`. A subject recorded there is **stated, not re-asked**; a different
+  answer is a **reversal** and is named as one, with both values and both dates, before anything is
+  built on it (`principles.md` → *Ask, don't assume*). **Each subject has one key, and it does not
+  change between sessions, callers or plugin versions:** `profile-tier` · `plain-language` ·
+  `tracker` · `auto-run-permitted` · `comment-allowlist` · `doc-applicability` and its
+  `doc-applicability-<nn>-<name>` members · `repo-access` · and each document's own file stem
+  (`01-overview`, `07-database`). Inventing a fresh key for a subject that already has one makes two
+  askings indistinguishable to everything downstream — including to the person, who sees new
+  wording and answers it as a new question.
 - **Profile tier — right-size the ceremony (ask at the first gate).** **`lite`** = the 8 core docs
   (`01-overview` · `02-architecture` · `05-tech-stack` · `06-domain-model` · `09-environment` ·
   `10-conventions` · `15-api-reference` · `16-feature-map`); everything else is **lazy** — recorded
@@ -49,9 +65,14 @@ for auto mode here, decline in one line ("this phase decides — gates apply; au
   language; engineer detail stays technical) · tracker (none/Jira/GitHub Issues — routes
   `do-uploading`) · comment allowlist (license header / public-API doc-comments — legal/library
   needs). **Write the machine mirror `docs/basics/.alpha-sdlc.json`** (keys: `allowLicenseHeader`,
-  `allowPublicApiDocstrings`, `plainLanguage` — the plain layer's ISO 639-1 code, e.g. `id`, `en`)
-  so the hooks can read it, and stamp the **plugin version**. Refresh mode adds `plainLanguage` to a
-  mirror written before the key existed.
+  `allowPublicApiDocstrings`, `plainLanguage` — the plain layer's ISO 639-1 code, e.g. `id`, `en`
+  — plus `profileTier`, `tracker` and `autoRunPermitted`, each stamped with the date it was
+  decided) so the hooks can read it, and stamp the **plugin version**. **Every org setting goes in
+  the mirror, not only the ones a hook reads** — a setting that lives solely in `01-overview`'s
+  prose is one no later session can check before asking again, and tier and tracker are exactly the
+  two that have been reversed in the field. Refresh mode adds any key written before it existed,
+  and **never overwrites a recorded value without saying so**: a changed value is presented as a
+  reversal first.
 - **Point, don't copy volatile detail.** Dependency versions, full DB DDL, pipeline YAML, env values
   → summarize + link the authoritative file. Cache the slow-changing orientation (architecture,
   conventions, base-URL matrix).
