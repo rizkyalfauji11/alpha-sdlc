@@ -4,7 +4,7 @@
 |---|---|
 | **Platform** | <Backend / Android / iOS / Web> |
 | **Levels** | API · UI (visual + composition) · Integration (UI↔API) · System/E2E (risk-calibrated) · **Boot & Smoke (integrated — mandatory, non-skippable)** |
-| **Framework** | <existing framework reused — e.g. Playwright / Espresso / XCUITest / HTTP contract> |
+| **Framework** | <existing framework reused — e.g. Playwright / Espresso / XCUITest / the mobile driver in `09-environment.md` / HTTP contract> |
 | **TRD** | [hub](./TRD.md) · [spoke](./TRD-<platform>.md) |
 | **Plan approved** | <YYYY-MM-DD — the pyramid/plan gate> |
 | **Date** | <YYYY-MM-DD> |

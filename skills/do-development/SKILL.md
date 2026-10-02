@@ -273,7 +273,10 @@ file entirely.
   than reduce** (the mapping and the collection rule are `do-testing`'s, under Boot & Smoke): the
   build under test is installed and foregrounded per `09-environment.md`'s *Mobile app under test*,
   a console error becomes an error or fatal line in the device log attributable to the app, and an
-  error-boundary activation becomes a crash report. If you can't boot both in-session (missing
+  error-boundary activation becomes a crash report. **Where `09-environment.md` names a driver, the
+  smoke is written as a spec that framework runs** — it then leaves a video, screenshots and the
+  accessibility tree in a report rather than only your word, and the next stage re-runs it for
+  nothing (`principles.md` → *A recorded run outranks a watched one*). If you can't boot both in-session (missing
   recipe, env can't stand up), **STOP and say so** at the checkpoint — don't mark the stage passed on isolated
   tests alone. **The smoke checks freshness, not just errors:** when the stage has a flow binding /
   touches shared entities, also **mutate in the source** (create/update via the owner's real flow)

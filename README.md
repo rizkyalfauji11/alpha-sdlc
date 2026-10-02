@@ -286,7 +286,7 @@ build doesn't pass until the comparison does:
   screenshots it, and compares against the design two ways — a structured visual checklist and a
   pixel diff — then fixes and re-renders until both pass. Findings name the value, not a vibe:
   *measured 12, `space.lg` is 16*, and a wrong token counts as a defect even when the pixel diff is
-  inside tolerance. Playwright for web, real emulator and simulator for Android and iOS; it asks
+  inside tolerance. Playwright for web, and on a real emulator and simulator for Android and iOS — through whatever single-API device driver your repo records, so the run leaves a video and a report instead of a claim; it asks
   before installing a driver or booting a device.
 - **The whole screen, not the viewport.** Taller than the fold means the full scroll extent is
   captured (`fullPage`, or scroll-and-stitch on mobile) and compared section by section.

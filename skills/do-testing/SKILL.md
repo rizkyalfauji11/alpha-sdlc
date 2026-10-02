@@ -155,7 +155,9 @@ level where it's cheapest and most stable.
    Environment below).
 
 Use each platform's existing framework (detect + reuse — ladder rung 2, reuse): backend
-HTTP/contract; Web Playwright/Cypress + component; Android Espresso/Compose-UI; iOS XCUITest;
+HTTP/contract; Web Playwright/Cypress + component; Android Espresso/Compose-UI; iOS XCUITest — and
+for a journey driven across both mobile platforms, the single-API driver `09-environment.md` records,
+rather than writing the same journey twice per platform;
 render/screenshot + pixel-diff tooling for visual parity; for token conformance, the project's
 existing lint/static check plus computed-style assertions in the UI framework already in use (and
 its existing screenshot-baseline tool if it has one — don't add a new dependency for this).

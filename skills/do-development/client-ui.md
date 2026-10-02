@@ -18,7 +18,9 @@
   **web** → Playwright screenshot with `fullPage: true`; **Android** → emulator +
   **scroll-and-stitch** (`adb exec-out screencap -p` at each scroll anchor top→bottom, stitched);
   **iOS** → simulator + **scroll-and-stitch** (`xcrun simctl io booted screenshot` per scroll
-  anchor). Any other platform — e.g. a webview desktop app — uses its own full-scroll-capture
+  anchor). Where `09-environment.md` records a mobile driver, take the per-anchor shot **through it**
+  — one command for both platforms, and the capture is then repeatable by anyone — and stitch the
+  same way. Any other platform — e.g. a webview desktop app — uses its own full-scroll-capture
   equivalent. The pixel-diff half of the comparison runs through a tool like `pixelmatch`/`odiff`.
 
 ## 2. The review trail

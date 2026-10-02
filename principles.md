@@ -411,6 +411,15 @@ missing acceptance criterion: a defect, not a detail.
   4. **A run a person watches** — for what only a human notices: it feels wrong, it flickers, the
      journey is confusing, a number on screen is implausible.
 
+  **A recorded run outranks a watched one, and comes first wherever the repo can record.** A driven
+  run that leaves a committed spec, a video, screenshots and the accessibility tree costs nothing to
+  repeat and outlives the session it ran in; a watched run leaves a claim. So where
+  `09-environment.md` records a driver that can be scripted — Playwright on web, a single-API device
+  driver on Android and iOS — **rung 4 is written as a recorded run first**, and a person watches
+  only what the recording cannot show, saying in the stage report what that is. One real plan
+  scheduled twelve watched device sessions and left no log, screenshot or crash report behind from a
+  single one of them; a day later none of it could be repeated or disputed.
+
   **Naming the rung is mandatory, and the expensive rung carries the argument.** Every stage's proof
   states its rung and, from rung 3 up, **what the rung below cannot see** — "a measure pass at real
   density", "class-load across a dynamic-feature boundary", "StrictMode on a real Looper". A rung

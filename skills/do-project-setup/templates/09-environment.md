@@ -66,6 +66,7 @@ what justifies climbing.
 | <instrumented tests> | <e.g. `gradle-scripts/android_test_setup.gradle`, applied to N modules> | <on-device/emulator tests, orchestrator> | <e.g. `./gradlew :<mod>:connectedDevAndroidTest`> |
 | <cloud device farm> | <e.g. `.circleci/config.yml` job `run_instrumented_test`> | <which modules, which device models> | <the CI job name, or the CLI it wraps> |
 | <screenshot / visual baseline> | <…> | <…> | <…> |
+| <driven-journey framework> | <e.g. `playwright.config.ts`; `mobilewright.config.ts` with `@mobilewright/test` in devDependencies> | <journeys driven on a real browser, simulator, emulator or device, with video and the accessibility tree attached to the report> | <e.g. `npx playwright test`; `npx mobilewright test`> |
 
 > **A configured instrument nobody knows about is the same as none.** One real plan scheduled twelve
 > watched device sessions while a cloud device-farm job sat wired and unused in the repository,
@@ -84,6 +85,16 @@ not the IDE's run button. Name the artifact, not a person's habit.
 | **Launch** | <`adb shell monkey -p <appId> -c android.intent.category.LAUNCHER 1`, or the driver's launch tool> | <`xcrun simctl launch booted <bundleId>`> |
 | **Ready-check** | <the app is the foreground app — not merely installed> | <same> |
 | **Logs** | <`adb logcat`, and the tag/filter that isolates this app> | <`xcrun simctl spawn booted log stream`, and its predicate> |
+| **Driver** | <the framework that drives this app from a script, and how it is invoked — or `none`> | <same; a single-API driver covering both platforms is recorded once here> |
+| **Identifier coverage** | <**counted**, never estimated: `android:id` in XML, Compose `testTag` exposed through `testTagsAsResourceId`, Flutter `Semantics(identifier:)`> | <`accessibilityIdentifier` coverage, counted the same way> |
+
+> **A driver is only as good as the identifiers it can address.** Count the coverage before trusting
+> the row above it: one real Android app carried 3810 `android:id` in XML and **zero** `testTag`
+> across 311 Compose functions, so every Compose screen in it is reachable only by its visible text
+> — which `principles.md` → *A driven app is addressed by identity* rules out. A low count here is
+> not a reason to skip the driver; it is a tech-debt row and the first thing the driver's own tests
+> need. A Flutter build must usually be a **debug** build for its accessibility tree to be complete
+> — record which build the driver runs against.
 
 > **Tool paths are recorded, not assumed.** `adb`, `emulator` and `xcrun` are frequently absent from
 > `PATH` even where the SDK is installed. Write the **absolute** path here once
