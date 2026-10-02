@@ -128,6 +128,15 @@ missing acceptance criterion: a defect, not a detail.
 - **Ask, don't assume.** Don't limit yourself to the code the user pointed you at. Surface open
   questions — business rules, constraints, non-functional requirements, integrations, edge cases —
   and wait for answers. If you'd otherwise fill a gap with an assumption, stop and ask instead.
+  **But a question already answered is not asked again, and a different answer is a reversal, named
+  as one.** Before asking anything, read what the project already records — the machine mirror, the
+  approval stamps, the decisions written into the artifacts — and where a subject is already
+  settled, state the recorded answer instead of re-opening it. If the user then gives a different
+  answer, do not simply adopt it: say plainly that it reverses a recorded decision, show **both
+  values and both dates**, and let them confirm. A subject re-asked in new words is a new question
+  to everyone downstream — the person cannot see they already answered, and a reversal lands
+  silently. One real project reversed its plain-language setting, its profile tier and its tracker
+  this way, across two days, and built on the reversed answers.
 - **Offer 2–3 best-practice options when confirming a choice** — only genuinely relevant ones, no
   filler. If there's one sensible choice, say so and recommend it rather than padding to three. Mark
   the one you recommend. **The recommendation is always the product-quality option that meets the
@@ -151,7 +160,13 @@ missing acceptance criterion: a defect, not a detail.
   every unit (doc section, plan stage, task, test) one at a time and wait for approval each time. Do
   **not** offer, suggest, or default to generating a whole document/suite at once, batching
   approvals, or "approve the rest" — even if it seems tedious or the user seems satisfied. One unit,
-  one gate, always. **And every gate that passes is RECORDED in the artifact it approved** — the
+  one gate, always. **A gate exists for a decision, so an artifact with no decision in it is
+  reported, not gated:** where a regenerated artifact is byte-identical to the approved one already
+  on disk, there is nothing to approve — list it in the step summary as unchanged so the user can
+  object, and move on. That is not batching and not a shortcut: nothing new is approved, and the
+  moment a single byte differs it gates like anything else. Re-presenting an unchanged document is
+  how a run stalls on work nobody needs to look at twice.
+  **And every gate that passes is RECORDED in the artifact it approved** — the
   TRDs' `_Approved: <date>_` per section, the widget-spec/section-slicing `Approved` fields, the
   plan's per-stage `Approved` (distinct from *done*), the test-plan's per-test `Approved` (distinct
   from pass/fail), the task-list's per-part stamp, the profile docs' `approved <date>` header —
