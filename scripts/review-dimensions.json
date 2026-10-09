@@ -1,0 +1,129 @@
+{
+  "code": {
+    "skill": "do-development",
+    "step": "Flow step 5 — conformance review",
+    "dimensions": [
+      {
+        "id": "a",
+        "name": "profile and design system",
+        "items": [1],
+        "owns": ["@production", "@generated", "@lockfile", "docs/basics/**"],
+        "checklistFile": "skills/do-development/conformance-reviewer.md"
+      },
+      {
+        "id": "b",
+        "name": "principles and test quality",
+        "items": [2],
+        "owns": ["@test"],
+        "checklistFile": "skills/do-development/conformance-reviewer.md",
+        "testQuality": true
+      },
+      {
+        "id": "c",
+        "name": "plan/AC and the mechanical checks",
+        "items": [3],
+        "owns": ["@docs"],
+        "checklistFile": "skills/do-development/conformance-reviewer.md"
+      }
+    ]
+  },
+  "fix": {
+    "skill": "do-fixing",
+    "step": "Flow step 4 — conformance review",
+    "dimensions": [
+      {
+        "id": "a",
+        "name": "fix quality",
+        "items": [1],
+        "owns": ["@production", "@generated", "@test"],
+        "checklistFile": "skills/do-fixing/fix-reviewer.md",
+        "testQuality": true,
+        "agent": "alpha-sdlc:sdlc-reviewer-deep"
+      },
+      {
+        "id": "b",
+        "name": "scope discipline",
+        "items": [2],
+        "owns": ["**"],
+        "checklistFile": "skills/do-fixing/fix-reviewer.md"
+      },
+      {
+        "id": "c",
+        "name": "profile and principles conformance",
+        "items": [3],
+        "owns": ["@production", "@generated", "@lockfile", "docs/basics/**"],
+        "checklistFile": "skills/do-fixing/fix-reviewer.md"
+      }
+    ]
+  },
+  "tests": {
+    "skill": "do-testing",
+    "step": "Flow step 3 — test review",
+    "dimensions": [
+      {
+        "id": "a",
+        "name": "what the tests prove",
+        "items": [1, 2, 5],
+        "owns": ["@test", "docs/development/**"],
+        "checklistFile": "skills/do-testing/SKILL.md"
+      },
+      {
+        "id": "b",
+        "name": "test theater and over-simplification",
+        "items": [3, 4],
+        "owns": ["@test"],
+        "checklistFile": "skills/do-testing/SKILL.md",
+        "testQuality": true
+      }
+    ]
+  },
+  "hub": {
+    "skill": "do-grooming",
+    "step": "Step 2a — hub review",
+    "dimensions": [
+      {
+        "id": "a",
+        "name": "contract and entities",
+        "items": [1, 2],
+        "owns": ["**/TRD.md", "**/contract/**"],
+        "checklistFile": "skills/do-grooming/grooming-review.md"
+      },
+      {
+        "id": "b",
+        "name": "consistency and flow",
+        "items": [3, 4, 5],
+        "owns": ["**/TRD.md"],
+        "checklistFile": "skills/do-grooming/grooming-review.md",
+        "agent": "alpha-sdlc:sdlc-reviewer-deep"
+      }
+    ]
+  },
+  "trd": {
+    "skill": "do-grooming",
+    "step": "Step 4 — hub-alignment review",
+    "dimensions": [
+      {
+        "id": "a",
+        "name": "contract and data",
+        "items": [1, 2, 4, 6],
+        "owns": ["**/TRD*.md", "**/contract/**"],
+        "checklistFile": "skills/do-grooming/grooming-review.md"
+      },
+      {
+        "id": "b",
+        "name": "flow and coverage",
+        "items": [3, 5, 7, 8, 9],
+        "owns": ["**/TRD*.md", "**/widget-spec/**", "**/section-slicing/**", "**/design/**"],
+        "checklistFile": "skills/do-grooming/grooming-review.md"
+      },
+      {
+        "id": "c",
+        "name": "decisions and siblings",
+        "items": [10, 11],
+        "owns": ["**/TRD*.md"],
+        "checklistFile": "skills/do-grooming/grooming-review.md",
+        "multiSpokeItems": [11]
+      }
+    ]
+  }
+}

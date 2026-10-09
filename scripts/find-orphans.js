@@ -5,13 +5,16 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const USAGE =
-  'usage: find-orphans.js <repo-root> --diff <base>   exports the change left without a production caller,\n' +
-  '                                                   and profile rows still naming what the change removed\n' +
+  'usage: find-orphans.js <repo-root> --diff <base> [--exclude <path>...]\n' +
+  '                                                   exports the change left without a production caller,\n' +
+  '                                                   and profile rows still naming what the change removed;\n' +
+  '                                                   --exclude leaves another session\'s paths out\n' +
   '       find-orphans.js <repo-root> --registry      19-code-inventory / 18-design-tokens rows naming\n' +
   '                                                   something the source no longer has\n';
 
-const [repoRoot, mode, base] = process.argv.slice(2);
-if (!repoRoot || !['--diff', '--registry'].includes(mode) || (mode === '--diff' && !base)) {
+const [repoRoot, mode, base, ...rest] = process.argv.slice(2);
+const excluded = rest[0] === '--exclude' ? rest.slice(1).filter(Boolean) : [];
+if (!repoRoot || !['--diff', '--registry'].includes(mode) || (mode === '--diff' && !base) || (rest.length && (mode !== '--diff' || rest[0] !== '--exclude' || !excluded.length))) {
   process.stderr.write(USAGE);
   process.exit(2);
 }
@@ -72,10 +75,11 @@ function profileRowsNaming(name) {
 
 const measured = [];
 const inferred = [];
+const diffPathspec = excluded.length ? ['--', '.', ...excluded.map((entry) => `:(exclude)${entry}`)] : [];
 
 if (mode === '--diff') {
-  const changed = new Set(git('diff', '--name-only', base).split('\n').filter(Boolean));
-  for (const file of git('ls-files', '--others', '--exclude-standard').split('\n').filter(Boolean)) changed.add(file);
+  const changed = new Set(git('diff', '--name-only', base, ...diffPathspec).split('\n').filter(Boolean));
+  for (const file of git('ls-files', '--others', '--exclude-standard', ...diffPathspec).split('\n').filter(Boolean)) changed.add(file);
 
   for (const file of changed) {
     if (!sources.has(file) || TEST.test(file) || file.endsWith('.css')) continue;
@@ -90,7 +94,7 @@ if (mode === '--diff') {
   }
 
   const removed = new Set();
-  for (const line of git('diff', '-U0', base).split('\n')) {
+  for (const line of git('diff', '-U0', base, ...diffPathspec).split('\n')) {
     const ts = line.match(/^-export\s+(?:async\s+)?(?:const|let|function|class|type|interface)\s+([A-Za-z_$][\w$]*)/);
     const go = line.match(/^-(?:func\s+([A-Z]\w*)\s*\(|(?:const|var|type)\s+([A-Z]\w*)\b)/);
     const name = ts ? ts[1] : go ? go[1] || go[2] : null;

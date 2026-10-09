@@ -1,0 +1,82 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text",
+      "file": "skills/do-planning/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/R1: the skill reads its generated bundle rules/plan.md (and rules/ui.md on a client platform), built from principles.md with every rule its files cite; the SessionStart hook now injects a pointer, not an index (P2/R8); the especially-list stays",
+      "where": "skills/do-planning/SKILL.md → rules line (\"Read `../../rules/plan.md` in full now\")"
+    },
+    {
+      "clause": "Present every gate below in the shared step-summary format (`principles.md`): header (development · phase · step · status)",
+      "file": "skills/do-planning/SKILL.md",
+      "verdict": "reworded",
+      "reason": "C3/P5: one step-summary line in the head, worded like every other skill's, carries the same header, order, never-omitted why, Next-last rule and language guide",
+      "where": "skills/do-planning/SKILL.md → step-summary line (\"Every gate you present: header …\")"
+    },
+    {
+      "clause": "Stages split by architecture layer** — a screen is a sequence, not a stage",
+      "file": "skills/do-planning/plan-template.md",
+      "verdict": "duplicate",
+      "reason": "DEV-14: the template keeps field names and one-line hints and points to the rule; the rule is stated once",
+      "where": "skills/do-planning/stage-rules.md → *Layers — one stage per layer the slice touches* (\"A screen is not a stage; it's a contract → domain → data → presentation sequence\")"
+    },
+    {
+      "clause": "Unlayered project → minimum `[UI]` vs `[data-integration]` (API/DB/3rd-party).",
+      "file": "skills/do-planning/plan-template.md",
+      "verdict": "duplicate",
+      "reason": "DEV-14: stated once; the template's Layer hint still names UI / data-integration for an unlayered project",
+      "where": "skills/do-planning/stage-rules.md → *Layers — one stage per layer the slice touches* (\"Not layered → still split, minimum two: UI and data-integration\")"
+    },
+    {
+      "clause": "For stages touching the contract: merging the **approved contract delta** (hub §5, `docs/development/<feature>/contract/`) + **typed-client regeneration** come first",
+      "file": "skills/do-planning/plan-template.md",
+      "verdict": "duplicate",
+      "reason": "DEV-14: the contract-first and TIGHTENS/REMOVES rules are stated once; the template's Changes hint names the contract merge + typed-client regeneration and points to it",
+      "where": "skills/do-planning/stage-rules.md → *Order — by dependency, contract first* (\"merge the approved contract delta … → regenerate the typed client … never re-translate the hub's summary table\")"
+    },
+    {
+      "clause": "Never left blank: silence here has been read downstream as an exemption, and a `[data]` stage that deleted a live, untested endpoint shipped on unit tests alone",
+      "file": "skills/do-planning/plan-template.md",
+      "verdict": "duplicate",
+      "reason": "DEV-14: the seam anecdote is stated once; the template's seam hint keeps \"Never left blank\" and points to it",
+      "where": "skills/do-planning/stage-rules.md → *Seam and rung — never blank* (\"a [data] stage that deleted a live, untested endpoint shipped on unit tests alone … silence read as exemption\")"
+    },
+    {
+      "clause": "Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text",
+      "file": "skills/do-slicing/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/R1: the skill reads its generated bundle rules/tracker.md, built from principles.md with every rule its files cite; the SessionStart hook now injects a pointer, not an index (P2/R8); the especially-list and the internal-doc note stay",
+      "where": "skills/do-slicing/SKILL.md → rules line (\"Read `../../rules/tracker.md` in full now\")"
+    },
+    {
+      "clause": "Present every review gate below in the shared step-summary format (`principles.md`): header (development · phase · step · status)",
+      "file": "skills/do-slicing/SKILL.md",
+      "verdict": "reworded",
+      "reason": "C3/P5: one step-summary line in the head, worded like every other skill's, carries the same header, order, never-omitted why, Next-last rule and language guide",
+      "where": "skills/do-slicing/SKILL.md → step-summary line (\"Every gate you present: header …\")"
+    },
+    {
+      "clause": "append the approved part to the task-list document, **stamped `_Approved: <YYYY-MM-DD>_` under the part's heading**",
+      "file": "skills/do-slicing/SKILL.md",
+      "verdict": "changed",
+      "reason": "K1: slicing stamps `_Approved: commit <hash> · <YYYY-MM-DD>_`, the stamp do-uploading checks, so an approved part no longer fails its first upload; tasks follow task-list-template.md",
+      "where": "skills/do-slicing/SKILL.md → Flow step 2 Write (\"stamped `_Approved: commit <hash> · <YYYY-MM-DD>_` under the part's heading\")"
+    },
+    {
+      "clause": "Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text",
+      "file": "skills/do-uploading/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/R1: the skill reads its generated bundle rules/tracker.md, which carries draft + human-approve before any external write and ask-don't-assume; the especially-list stays",
+      "where": "skills/do-uploading/SKILL.md → rules line (\"Read `../../rules/tracker.md` in full now\")"
+    },
+    {
+      "clause": "Report in the shared **step-summary format** (`principles.md`) — header (development · phase · step · status), then the **bottom line** (what was created + what I need from you)",
+      "file": "skills/do-uploading/SKILL.md",
+      "verdict": "merged",
+      "reason": "C3/P5: the format half now lives in the head's step-summary line and the rule it cites (context only where it adds something, no naked references); the report keeps its bottom line and every content item",
+      "where": "skills/do-uploading/SKILL.md → step-summary line + *After upload*; principles.md → *Present every step bottom line first* (\"No naked references\")"
+    }
+  ]
+}

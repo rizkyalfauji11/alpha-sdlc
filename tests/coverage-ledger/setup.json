@@ -1,0 +1,61 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind",
+      "file": "skills/do-project-setup/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/R1 (SPEC §8 rules line): the skill reads its generated bundle rules/setup.md in full (plus rules/ui.md on a client platform), built from principles.md with every rule its files cite; it re-reads it after a compaction and reports a denied read, because rules never loaded cannot bind. The 'especially' list (ground in real code, never fabricate, UNKNOWN — needs human input, draft + human-approve, never over-simplify) is kept verbatim",
+      "where": "skills/do-project-setup/SKILL.md → head, \"Read `../../rules/setup.md` in full now …\""
+    },
+    {
+      "clause": "Present every gate below in the shared **step-summary format** (`principles.md`): header (development · phase · step · status)",
+      "file": "skills/do-project-setup/SKILL.md",
+      "verdict": "reworded",
+      "reason": "C3/SPEC §8.2: the shared step-summary line every SKILL.md now carries in its head — the same header with its status, Bottom line (what happened + what I need from you), Why it matters never omitted when a question is asked, Options ★, Context only where it adds something, engineer Details, Next as the last paragraph; the plain-language guide sentence is kept verbatim",
+      "where": "skills/do-project-setup/SKILL.md → head, \"Every gate you present: header …\" (rules → *Present every step bottom line first*)"
+    },
+    {
+      "clause": "**Full scan & confirm.** Scan the **entire** project (per the full-scan rule — every module, not a sample) to identify the repo type/platform and which docs apply (applicability), then gate the **Org settings** block",
+      "file": "skills/do-project-setup/SKILL.md",
+      "verdict": "changed",
+      "reason": "S1: the scan is reused when nothing moved — scan-record.js --check exit 0 reuses .alpha-sdlc/scan.md, exit 1 re-scans only the areas holding changed paths, exit 2 (no record) or a user request runs this same whole-project scan, sentence kept; the record keeps each area's file:line evidence and covered paths, so full coverage stays provable. The Org settings gate (profile tier first) still follows the scan, then the applicability confirmation",
+      "where": "skills/do-project-setup/SKILL.md → Flow step 1 (*Scan only what moved*, *Write the scan record*, *Org settings and applicability*); ## Gates → Normal"
+    },
+    {
+      "clause": "it returns the draft as text and writes nothing.",
+      "file": "skills/do-project-setup/SKILL.md",
+      "verdict": "changed",
+      "reason": "SB-2/S1: a background drafter still returns the draft as text and never writes docs/basics/, but it also leaves its copy in .alpha-sdlc/drafts/<file> so a fresh session can present it after its inputs are re-checked; S3: it is launched with model: \"sonnet\" and handed the scan record and the doc's template",
+      "where": "skills/do-project-setup/SKILL.md → Flow step 2 (*Draft the next doc while this one is reviewed*)"
+    },
+    {
+      "clause": "Where the same purpose has **contradictory values** (body text at 13/14/15sp across screens), do **not** pick silently",
+      "file": "skills/do-project-setup/SKILL.md",
+      "verdict": "moved",
+      "reason": "S4/P6: the 18 seed moved into the template's setup block, read whenever the doc is drafted; the template stays under its 16,000-char cap, so the histogram/canonicalize instruction is condensed there and the tech-debt migration note is the template's own *Contradictions found* text",
+      "where": "skills/do-project-setup/templates/18-design-tokens.md → setup block (*Never pick a value silently*) and ## Contradictions found (\"migrating existing screens is tech-debt work (`do-tech-debt-grooming`), never a silent rewrite during a feature\")"
+    },
+    {
+      "clause": "If the project has **no token file in code**, say so, keep the doc-level scale authoritative (it's still enforceable), and record extracting one as recommended tech-debt.",
+      "file": "skills/do-project-setup/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "S4/P6: the 18 template's own row says the same, and its setup block points the drafter at it (template cap 16,000 chars)",
+      "where": "skills/do-project-setup/templates/18-design-tokens.md → Source of truth & sync → *No token file in code?* row (\"recommended tech-debt: extract the scale into a real theme file … the doc-level scale still governs and is still enforceable\")"
+    },
+    {
+      "clause": "Also fill *Enforcement* with the project's **real** commands — and where no screenshot-baseline tool exists, record that limitation instead of inventing a gate.",
+      "file": "skills/do-project-setup/SKILL.md",
+      "verdict": "reworded",
+      "reason": "S4/P6: in the 18 template's setup block — fill *Enforcement* with the project's real commands, never a gate the repo lacks; the template's Enforcement note keeps \"record that as a known limitation here instead of pretending the gate exists\"",
+      "where": "skills/do-project-setup/templates/18-design-tokens.md → setup block and ## Enforcement note"
+    },
+    {
+      "clause": "**Write the machine mirror `docs/basics/.alpha-sdlc.json`** (keys: `allowLicenseHeader`, `allowPublicApiDocstrings`",
+      "file": "skills/do-project-setup/SKILL.md",
+      "verdict": "changed",
+      "reason": "SB-1/SB-4 (HOOKS request): the mirror also carries sessionBoundaries (advise | enforce | off, default advise) and sessionBoundaryTokens (default 200000), which boundary-guard.js reads, and the doc-applicability object with its doc-applicability-<nn>-<name> members — the one key the subject already has (verify-verify-8) — so a fresh session states the applicability verdicts; each key's decision date is a flat <key>DecidedAt key, and a mirror that already keeps its dates in a decidedOn map keeps them there, never a second record (verify-verify-8). The rule text moved verbatim otherwise, with tier and applicability, into the 01 template's setup block, read once before the first Org setting or applicability question (verify-verify-9)",
+      "where": "skills/do-project-setup/templates/01-overview.md → setup block; Org settings rows *Session boundaries*, *Session boundary tokens*"
+    }
+  ]
+}

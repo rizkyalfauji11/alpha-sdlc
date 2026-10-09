@@ -1,9 +1,13 @@
 # Conformance review — the reviewer's checklist
 
-> Handed to the reviewer subagent by `do-development` (flow step 5) together with the stage diff,
-> the stage's plan/AC, `../../principles.md`, and the `docs/basics/` docs the diff touches.
-> `SKILL.md` keeps the dispatch rule and what the author does with the findings; this file is the
-> brief the reviewer works from.
+> Handed to the reviewer subagent by `do-development` (flow step 5) inside the review packet that
+> `scripts/review-packet.js` writes: the stage diff, the stage block with its covered AC rows and
+> slice row, the review charter's path and currency, the principles rules this diff can violate
+> (the withheld ones named by line range), the change → doc map, and the mechanical outputs marked
+> settled. `SKILL.md` step 5 and `stage-steps.md` §5 keep the dispatch rule and what the author does
+> with the findings; this file is the brief the reviewer works from. Each dimension owns its items
+> by number — (a) item 1, (b) item 2 with the stage's own tests and the sabotage checks, (c) item 3
+> — and the light tier hands all three to one reviewer.
 
 1. **Profile conformance** — per doc the diff actually touches (map it, don't recite all 20): **the
    diff stayed inside the stage's declared `Layer`** (the plan's per-stage field) and honors the
@@ -33,14 +37,21 @@
    relevant, compatible, current** (no hallucinated, incompatible, or deprecated/superseded dep) ·
    project architecture respected · **zero comments** — the diff adds none at all (no prose, no doc
    comments/docstrings, no license header, no banner, no provenance); only machine directives
-   (lint/type/coverage pragmas, build tags, shebang) are allowed, and **names carry the meaning**
-   (unit/currency in the name, named constant instead of a magic number, named predicate instead of
-   an explained branch) · **profile currency** — a changed recorded fact has its doc updated *and*
-   re-stamped in the same change · **nothing left orphaned** — run the packet's `find-orphans.js
-   --diff` command: a unit that lost its last production caller in this diff, or a path the stage
-   replaced, is deleted with its tests, and every profile row naming something the diff removed is
-   deregistered (a *measured* stale row is a violation; an *inferred* candidate is a question). Dead
-   code this diff did not make dead is not deleted here — it is a tech-debt row.
+   (lint/type/coverage pragmas, build tags, shebang) are allowed — plus license headers or
+   public-API doc comments when the Org settings' comment allowlist permits them — and **names
+   carry the meaning** (unit/currency in the name, named constant instead of a magic number, named
+   predicate instead of an explained branch) · **profile currency** — a changed recorded fact has
+   its doc updated *and* re-stamped in the same change, its head still one stamp line with no
+   update log and nothing struck through · **nothing left orphaned** — read the
+   packet's settled `find-orphans.js --diff` output: a unit that lost its last production caller in
+   this diff, or a path the stage replaced, is deleted with its tests, and every profile row naming
+   something the diff removed is deregistered (a *measured* stale row is a violation; an *inferred*
+   candidate is a question). Dead code this diff did not make dead is not deleted here — it is a
+   tech-debt row.
 
 3. **Plan/AC conformance** — the stage did what the plan said, the AC it claims are genuinely
-   covered by the tests written, and **nothing extra rode along**.
+   covered by the tests written, and **nothing extra rode along**. The packet's settled
+   `check-coverage.js` output decides the claim bookkeeping; this item judges whether each test
+   really proves the criterion it names. For UI stages, **case completeness**: every section case
+   the stage claims is implemented, driven by its declared source/trigger, with none silently
+   dropped.

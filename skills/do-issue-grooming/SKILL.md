@@ -8,16 +8,44 @@ job is the **audit**: find the *whole class of the issue across the entire proje
 one place it was reported. Capture the issue from the user; if vague, ask for the symptom, repro,
 and where it was seen (error text, logs, screen, environment).
 
-**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the
-INDEX of these rules, never their text, so the file is the only place they actually bind
-(lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code, ask-don't-assume, 2–3
-best-practice options, living understanding summary, draft+human-approve). Root-cause, not symptom,
-is the whole point here.
-
+**Read `../../rules/groom.md` in full now** — these are this skill's binding rules, generated from
+`principles.md`. They include the UI rules (containers never clip, identity not position, component
+fidelity, visual values are tokens), which bind here on every platform: an issue class can reach any
+screen. After a compaction, re-read it and the reference file of your current step before the next
+gate. If the read is denied (headless runs), say so in the step report — rules never loaded cannot
+bind. Especially: lazy-senior mindset, never over-simplify, the ladder, ground-in-real-code,
+ask-don't-assume, 2–3 best-practice options, living understanding summary, draft+human-approve.
+Root-cause, not symptom, is the whole point here.
 
 **Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks
 for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at
 `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.
+
+Every gate you present: header `<development> · <phase> · <step> · ✅/⏸/⚠️`, then Bottom line (what
+happened + what I need from you) → Why it matters (never omitted when a question is asked) →
+Options ★ → Context (only where it adds something) → Details (for engineers: the audit table, the
+root cause) → Next as the last paragraph (rules → *Present every step bottom line first*). The
+plain layer is in the org's language and follows its guide in `../../plain-language/` when one
+exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
+
+## Gates
+
+- No `docs/basics/` → **STOP**: ask for `do-project-setup` first; audit without it only if the user
+  explicitly chooses to.
+- A bug from a running feature's test cycle → redirect it to `do-fixing`; accept it only escalated
+  from there with evidence.
+- Gate 0: the audit is written to the TRD as pending §1–§2, then **STOP** until the user confirms
+  the scope; the outline → **STOP** until approved; then the skeleton.
+- Each section → ask, propose, **STOP** for approval — one at a time, never a batch; on approval
+  write it and stamp `_Approved: <YYYY-MM-DD> · <commit>_`.
+- The hub review, once the last section is written → verdict, **STOP**; no spoke before the `Hub
+  review` row is ✅. Each spoke's hub-alignment review → verdict, **STOP**; it is complete only on a
+  clean, stamped pass. A hub-wrong finding changes the hub only on a yes to that change itself.
+- Review rounds flat or rising across three → **STOP**, escalate with the trend.
+- Every audited site is in the fix scope or deferred as an Open Decision; this skill never fixes.
+- Auto-run never applies here.
+
+## Flow
 
 **Read the project profile first** (`docs/basics/` from `do-project-setup`) — architecture, code
 structure, api-reference, database, conventions, `06-domain-model.md` (entity-integrity classes),
@@ -29,39 +57,80 @@ from scratch. You need it to know *where the issue class could live* and *which 
 touches*. If a section looks stale (repo moved past its commit stamp), note it and suggest a
 refresh.
 
-**If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run `do-project-setup` first**
-— a whole-project audit on an ungrounded view misses sites. Wait for their answer: recommend setting
-up first; proceed only if the user explicitly chooses to (then fall back to scanning the repo, and
-note the audit is ungrounded and may be incomplete).
+**If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run
+`do-project-setup` first** — a whole-project audit on an ungrounded view misses sites. Wait for
+their answer: recommend setting up first; proceed only if the user explicitly chooses to (then fall
+back to scanning the repo, and note the audit is ungrounded and may be incomplete).
 
-## How this differs from the other skills
+### GATE 0 — Capture, audit, and confirm (before any design)
 
-- **vs `do-fixing`** — `do-fixing` executes an already-triaged **do-testing Bugs-found list**, one
-  bug at a time, inside a feature's test cycle. **A bug arriving from a running feature's test cycle
-  does NOT start here — redirect it to `do-fixing`**; this skill accepts it only escalated from
-  there **with evidence**: confirmed sites in ≥ 2 features AND no single shared source to fix once
-  (N independent implementations — the only shape that needs an enumeration audit; a shared-source
-  class is do-fixing's root-cause bread and butter, and even a confirmed class never blocks the
-  reported bug's fix). This skill is the **front door for an issue from outside the pipeline**
-  (production/ad-hoc), and it **audits the whole project for the issue class** before anything is
-  fixed. It **grooms and scopes; it does not fix** — the fix hands off to `do-fixing`.
-- **vs `do-grooming`** — no PRD/BRD, no new product scope. The "requirement" is: eliminate this
-  issue *and its whole class* without breaking behavior.
-- **vs `do-tech-debt-grooming`** — that's a proactive, behavior-preserving improvement; this is a
-  reactive **defect** audit. Same gated engine, different framing (a real bug with a blast radius,
-  not a chosen refactor).
+1. **Capture the issue** — symptom, exact error/logs, repro steps, where seen (screen/endpoint,
+   environment, build). Read the real code at the reported site.
+2. **Audit the whole project (core rule below)** — name the class, scan for every occurrence,
+   root-cause it, and map blast radius via `16-feature-map.md`. This is the heart of the skill;
+   don't shortcut to the single reported site. **Write it down before you present it:**
+   `docs/development/<issue-name>/TRD.md` from the template — the header (a row not known yet
+   reads `pending`), §1 with the capture and §2 with the audit (the class, every affected site,
+   root cause, search coverage), each with `_Pending_` on the line under its heading, so the audit
+   outlives the session. Neither is approved until its own section gate.
+3. **Assess severity & confirm understanding** (per principles) — severity (blocker/major/minor),
+   the class, all affected sites, root cause, blast radius, and whether the fix is systemic or
+   per-site. Re-summarize on any correction, and correct the pending §1–§2 with it. Present this
+   audit summary and **get the user to confirm the scope** before designing the fix; record the
+   confirmation in §1's **Gate-0 notes** (date, severity, systemic or per-site, sites in scope).
+4. Propose the **section outline** from the template; get approval before drafting. **On approval,
+   complete the skeleton:** every other approved heading with `_Pending_` on the line under it and
+   no body; the outline approval in the Gate-0 notes; *Carry-forward answers* for what the user
+   already said about a later section.
 
-## Output
+### Per-section loop
 
-- `docs/development/<issue-name>/TRD.md` (hub) + `TRD-<platform>.md` spokes if the issue spans
-  platforms (e.g. a 405 spans backend + web). Slugify the issue to a short name (e.g.
-  `localized-render-crash`). Use `issue-TRD-template.md` in this skill's directory. One approval
-  gate per section. **Spokes pass the hub-alignment review before they're complete** (and get
-  re-reviewed whenever a hub section changes), and the hub passes the **hub review** before the
-  first spoke (`do-grooming` → Step 2a) — see `do-grooming` → *Hub-alignment review*, **read
-  by what it checks, not by its section numbers** (an issue TRD's AC registry is §4 and its slices
-  sit in §6's change manifest); for a cross-platform issue that's what keeps the backend's and the
-  web's account of the same root cause from diverging.
+Same as grooming — **one section at a time, one approval gate per section, never batch.** For each
+section: read → ask open questions (none open → say so in one line and propose in the same turn;
+§1–§2 propose their pending drafts) → propose decisions (**name the ladder rung and the world-wide
+standard; the Approach field is required** — the validator hook rejects one left empty or as a
+whole `<…>` placeholder) → get the user's approval → write prose/Mermaid, `_Pending_` replaced by
+`_Approved: <YYYY-MM-DD> · <commit>_` (today, HEAD's short hash) → next section. An answer that
+belongs to a later section goes into *Carry-forward answers* at once (`- §<n>: <the answer>`); that
+section's gate folds it in and deletes it. **Surface gaps as Open Decisions** (2–3
+options, mark one — the ★ always the quality/world-standard option, never the cheapest) — never
+invent scope to fill them. No template placeholder (`<…>`) survives into a TRD; the hook blocks
+`<YYYY-MM-DD>`, `<hash>`, `<engineer>`.
+
+### Final section — Change manifest
+
+Structured, feeds `do-planning`/`do-slicing`: repos/modules touched, **regression-safety plan** (the
+reproduce-first / characterization tests to add for the class, so a fix that misses a site fails a
+test), fix ordering, blast-radius coordination (features that must not break), dependencies/risks,
+and work slices **claiming their AC by ID from §4** — never restating the criterion's prose.
+
+### Hub review, spokes, then the hand-off
+
+Once the last section is written, the hub review (*Reviews* below). An issue that spans platforms
+(e.g. a 405 spans backend + web) then gets its spokes, each from
+`../do-grooming/TRD-spoke-template.md`, the approved hub as primary context — its outline (**STOP**
+for approval), its skeleton, the per-section loop, its hub-alignment review. Then the *Handoff*
+below.
+
+## Resume (fresh session)
+
+The TRD is the state — stamps, `_Pending_` headings, §1's Gate-0 notes, §2's audit, *Carry-forward
+answers*, the `Hub review` and *Spokes* rows, each spoke's header rows. Run `node
+../../scripts/next-step.js docs/development/<issue-name> [<platform>] --phase grooming` first (a
+spoke: its platform): exit 0 names the next unit, exit 1 a STOP to present, exit 2 an older or
+unknown format — read the files it lists instead. Read `.alpha-sdlc/next/<issue-name>--hub.json` (a
+spoke: `--<platform>`) and its handoff when present, set the next-file's `status` to `consumed`, and
+state the recorded understanding in one line. Re-read only what it lists. When the Gate-0 notes
+record no confirmed scope or no approved outline, Gate 0 is still open whatever the script names:
+resume at the step they lack (3 or 4) with the audit on disk — never re-run it. Never re-run a
+confirmed Gate-0 step or a stamped section, and never re-ask what the TRD records.
+
+**Session boundaries** (rules → *The session is disposable — the files are the state*): after the
+Gate-0 skeleton is written (its pending §1–§2 drafts included), after the hub review ✅, after each
+spoke's alignment ✅, and at the phase end — never mid-section, never between a review report and
+its fixes. Persist first, then write the next-file (`skill` `alpha-sdlc:do-issue-grooming`, `args`
+`<issue-name> [<platform>]`; at the phase end the recommended handoff, `do-fixing` or
+`do-planning`) and offer "/clear, then 'lanjut'" in Next.
 
 ## Core rule — audit the class, not the symptom
 
@@ -94,44 +163,44 @@ occurrence:
 5. **Blast radius.** Which features does the fix touch or risk? Ground in `16-feature-map.md` — a
    systemic fix can ripple into other features; list what must not break, and coordinate ordering.
 
-## Flow
+## Reviews — `../do-grooming/grooming-review.md`, issue row
 
-> Present every gate below in the shared **step-summary format** (`principles.md`): header
-> (development · phase · step · status) · **bottom line** (what happened + what I need from you) ·
-> **why it matters** (never omitted when a question is asked) · options ★ · context only where it
-> adds something · engineer detail (audit table, root cause) · **what happens next** as the last
-> paragraph. The plain layer is in the org's language and follows its guide in
-> `../../plain-language/` when one exists (`id.md` for Bahasa Indonesia) — at every gate, in every
-> phase.
+**Spokes pass the hub-alignment review before they're complete** (and get re-reviewed whenever a
+hub section changes), and the hub passes the **hub review** before the first spoke (`do-grooming` →
+Step 2a) — see `do-grooming` → *Hub-alignment review*, **read by what it checks, not by its section
+numbers** (an issue TRD's AC registry is §4 and its slices sit in §6's change manifest; a spoke's
+are its §8 and §9); for a cross-platform issue that's what keeps the backend's and the web's
+account of the same root cause from diverging. Run both by `../do-grooming/grooming-review.md` —
+read it before each review and whenever a hub edit stales a spoke (once per session, again after a
+compaction). Every point applies unless its subject is absent (*Variants* note 1), read by what
+it checks: point 8 reads "every §4 AC claimed by ≥ 1 slice in §6's change manifest and back".
+Stamps: every hub-review round appends its count to the `Hub review` row; each spoke's stamp sits
+in the hub's *Spokes* row (its one hub-side home) and in the spoke's `Hub alignment` and
+`Alignment rounds` rows.
 
-### GATE 0 — Capture, audit, and confirm (before any design)
+## How this differs from the other skills
 
-1. **Capture the issue** — symptom, exact error/logs, repro steps, where seen (screen/endpoint,
-   environment, build). Read the real code at the reported site.
-2. **Audit the whole project (core rule above)** — name the class, scan for every occurrence,
-   root-cause it, and map blast radius via `16-feature-map.md`. This is the heart of the skill;
-   don't shortcut to the single reported site.
-3. **Assess severity & confirm understanding** (per principles) — severity (blocker/major/minor),
-   the class, all affected sites, root cause, blast radius, and whether the fix is systemic or
-   per-site. Re-summarize on any correction. Present this audit summary and **get the user to
-   confirm the scope** before designing the fix.
-4. Propose the **section outline** from the template; get approval before drafting.
+- **vs `do-fixing`** — `do-fixing` executes an already-triaged **do-testing Bugs-found list**, one
+  bug at a time, inside a feature's test cycle. **A bug arriving from a running feature's test cycle
+  does NOT start here — redirect it to `do-fixing`**; this skill accepts it only escalated from
+  there **with evidence**: confirmed sites in ≥ 2 features AND no single shared source to fix once
+  (N independent implementations — the only shape that needs an enumeration audit; a shared-source
+  class is do-fixing's root-cause bread and butter, and even a confirmed class never blocks the
+  reported bug's fix). This skill is the **front door for an issue from outside the pipeline**
+  (production/ad-hoc), and it **audits the whole project for the issue class** before anything is
+  fixed. It **grooms and scopes; it does not fix** — the fix hands off to `do-fixing`.
+- **vs `do-grooming`** — no PRD/BRD, no new product scope. The "requirement" is: eliminate this
+  issue *and its whole class* without breaking behavior.
+- **vs `do-tech-debt-grooming`** — that's a proactive, behavior-preserving improvement; this is a
+  reactive **defect** audit. Same gated engine, different framing (a real bug with a blast radius,
+  not a chosen refactor).
 
-### Per-section loop
+## Output
 
-Same as grooming — **one section at a time, one approval gate per section, never batch.** For each
-section: read → ask open questions → propose decisions (**name the ladder rung and the world-wide
-standard; the Approach field is required — the validator hook enforces it**) → get the user's
-approval → write prose/Mermaid, stamped `_Approved: YYYY-MM-DD_` → next section. **Surface gaps as
-Open Decisions** (2–3 options, mark one — the ★ always the quality/world-standard option, never the
-cheapest) — never invent scope to fill them.
-
-### Final section — Change manifest
-
-Structured, feeds `do-planning`/`do-slicing`: repos/modules touched, **regression-safety plan** (the
-reproduce-first / characterization tests to add for the class, so a fix that misses a site fails a
-test), fix ordering, blast-radius coordination (features that must not break), dependencies/risks,
-and work slices **claiming their AC by ID from §4** — never restating the criterion's prose.
+- `docs/development/<issue-name>/TRD.md` (hub) + `TRD-<platform>.md` spokes if the issue spans
+  platforms (e.g. a 405 spans backend + web). Slugify the issue to a short name (e.g.
+  `localized-render-crash`). Use `issue-TRD-template.md` in this skill's directory; a spoke uses
+  `../do-grooming/TRD-spoke-template.md`. One approval gate per section.
 
 ## Handoff
 

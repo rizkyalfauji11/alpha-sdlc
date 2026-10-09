@@ -1,0 +1,40 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "The author chose which profile docs to include, and the doc an author forgets is the one never checked.",
+      "file": "agents/sdlc-reviewer.md",
+      "verdict": "changed",
+      "reason": "REC-3/F11: review-packet.js assembles the packet, not the author; the reviewer still maps the change to docs/basics itself with the packet's change → doc map and names any doc the packet left out",
+      "where": "agents/sdlc-reviewer.md → *The packet is the minimum, not the boundary — but the change is the boundary.*"
+    },
+    {
+      "clause": "Run the `check-coverage.js` command the packet gives",
+      "file": "agents/sdlc-reviewer.md",
+      "verdict": "changed",
+      "reason": "REC-3/REC-4/DEV-03: review-packet.js runs check-coverage.js and find-orphans.js once and marks the output settled; nobody re-runs plugin scripts unless scan-record.js --hash prints another tree, and anyone re-runs what they doubt with why",
+      "where": "agents/sdlc-reviewer.md → *Coverage claims are checked by script, not by reading.*"
+    },
+    {
+      "clause": "One round is the target, so review as if there is no second one.",
+      "file": "agents/sdlc-reviewer.md",
+      "verdict": "changed",
+      "reason": "REC-2: the max-effort wording drove over-investigation; the rule is now \"report everything you find now; never defer a finding to a later round\"",
+      "where": "agents/sdlc-reviewer.md → *One round is the target: report everything you find now; never defer a finding to a later round.*"
+    },
+    {
+      "clause": "End with a verdict and what happens next: the checklist items checked, findings by kind",
+      "file": "agents/sdlc-reviewer.md",
+      "verdict": "changed",
+      "reason": "REC-6: replaced by the fixed report schema — findings with kind and proof or needs-eyes, checked-clean and not-checked lines per item, counts with needs-eyes, clean only at zero objective violations, the next line",
+      "where": "agents/sdlc-reviewer.md → *Report in this order and nothing else*"
+    },
+    {
+      "clause": "If the packet names you the completeness critic, you look for gaps in the review, not in the code.",
+      "file": "agents/sdlc-reviewer.md",
+      "verdict": "moved",
+      "reason": "REC-7: the completeness critic is its own agent (alpha-sdlc:sdlc-reviewer-critic, effort medium, Read/Grep/Glob only) after review-gaps.js; its brief now also takes the grooming section map (groom-groom-02)",
+      "where": "agents/sdlc-reviewer-critic.md → *You are the completeness critic: you look for gaps in the review, not in the code.*"
+    }
+  ]
+}

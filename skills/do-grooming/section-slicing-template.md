@@ -14,22 +14,18 @@
 
 > The screen's **region + case contract**. It answers three questions the element-level widget spec
 > can't: **what regions exist**, **which of them show under which conditions (and how many views
-> each
-> renders)**, and **what drives that logic**. Every case carries a **close-up crop** of its design
-> so
-> `do-development` compares case-by-case instead of eyeballing one full-screen mockup — a case with
-> no
-> crop and no explicit marker is where a whole case silently never gets built.
+> each renders)**, and **what drives that logic**. Every case carries a **close-up crop** of its
+> design so `do-development` compares case-by-case instead of eyeballing one full-screen mockup — a
+> case with no crop and no explicit marker is where a whole case silently never gets built.
 
 ## Section tree
 
 > IDs are **stable and dot-scoped** (`ftr.actions.primary`) — referenced by the widget spec, the
-> plan's
-> stages, `do-development`'s parity report and `do-testing`'s case tests. **Split a region only when
-> it earns it:** it has its own visibility condition · more than one case · an independent data
-> source · a repeating item template. **Stop** at a single element or a component from the
-> inventory.
-> **Never split for symmetry** (a header holding only a title stays one section). **Max depth 3.**
+> plan's stages, `do-development`'s parity report and `do-testing`'s case tests. **Split a region
+> only when it earns it:** it has its own visibility condition · more than one case · an independent
+> data source · a repeating item template. **Stop** at a single element or a component from the
+> inventory. **Never split for symmetry** (a header holding only a title stays one section). **Max
+> depth 3.**
 
 ```
 hdr                      <purpose>
@@ -73,8 +69,7 @@ from.>
 
 > **Exhaustive for this section.** Each case = a condition and exactly what renders under it.
 > *Views* is the count **and** identity of what's rendered, because "2 views" alone doesn't say
-> which.
-> Every case needs a **crop** or an explicit marker (`Open Decision` / `platform default per
+> which. Every case needs a **crop** or an explicit marker (`Open Decision` / `platform default per
 > 04-ux-conventions`).
 
 | # | Condition | Views rendered (count · which) | Data source | Crop | AC |
@@ -129,7 +124,8 @@ from.>
 
 > Where a chosen option names a **mechanism**, the decided status also names **the test that will
 > prove it** — written downstream, never run here. **A mechanism amended twice stops being amended —
-> escalate to the user.** (An amendment is any change to a decided row's chosen option or its proving test — count it in `amended <n>`.)
+> escalate to the user.** (An amendment is any change to a decided row's chosen option or its
+> proving test — count it in `amended <n>`.)
 
 | # | Gap / ambiguity | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
 |---|-----------------|---------------------------|--------|

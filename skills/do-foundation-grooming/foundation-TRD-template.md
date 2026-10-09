@@ -8,40 +8,61 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 | **Platforms in scope** | <backend · web · android · ios — a spoke per platform> |
 | **Repo strategy** | <monorepo · separate repos per platform — and why> |
 | **Profile** | [architecture](../../basics/02-architecture.md) · [tech-stack](../../basics/05-tech-stack.md) · [environment](../../basics/09-environment.md) · [conventions](../../basics/10-conventions.md) · [git](../../basics/11-git-management.md) |
-| **Spokes** | <TRD-backend.md · TRD-web.md · … — each with its **hub alignment** stamp: `✅ reviewed YYYY-MM-DD · hub rev <hash/date>` / ⚠️ stale / ❌ not reviewed. Editing a hub section makes every ✅ stale.> |
+| **Spokes** | <TRD-backend.md · TRD-web.md · … — each with its **hub alignment** stamp: `✅ reviewed YYYY-MM-DD · hub rev <hash/date>` / ⚠️ stale / ❌ not reviewed, and its alignment round counts beside it (`rounds n · n`). Editing a hub section makes every ✅ stale. A foundation spoke has no header table: this row is its stamp's one home.> |
+| **Hub review** | <❌ not reviewed · rounds `n · n` while rounds run — every round appends its objective-violation count; a clean pass makes it ✅ reviewed YYYY-MM-DD · rev `<hash>` · rounds `n · n · 0`. No spoke is groomed before ✅> |
 
 > **Scaffolding only.** This TRD covers the project scaffold, folder structure, architecture
-> skeleton,
-> and build/run/test harness. **No features** — no auth, no schema, no screens, no business logic.
-> The first product feature is groomed with `do-grooming` **after** the base lands.
+> skeleton, and build/run/test harness. **No features** — no auth, no schema, no screens, no
+> business logic. The first product feature is groomed with `do-grooming` **after** the base lands.
 > **Stack decisions live in `docs/basics/`** (decided by `do-project-setup` in greenfield mode) —
-> this
-> document **binds to them by link and never re-decides them**.
+> this document **binds to them by link and never re-decides them**.
+>
+> **Gate 0 writes the skeletons:** this hub with its header filled (*Repo strategy* reads `pending
+> — gate ②` until that gate), *Intent & constraints*' *Gate-0 notes*, *Carry-forward answers* when
+> any were given, and one `TRD-<platform>.md` per spoke cut from *Per-platform sections* — every
+> approved outline heading with `_Pending_` on the line under it, no section prose, and no `<…>`
+> placeholder left anywhere (the hook blocks one). *Deliberate omissions & deferrals* is written
+> when its gate comes. A section's gate turns its `_Pending_` into
+> `_Approved: <YYYY-MM-DD> · <commit>_` and writes its prose below it.
+
+## Carry-forward answers
+
+> Answers the user gave at one gate that belong to a later one — written here the moment they are
+> given, so a fresh session still has them. One line each, naming its gate; that gate folds the
+> line in and deletes it, and the block goes with its last line.
+
+- <gate ②>: <the answer, as the user gave it>
 
 ## Intent & constraints
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 <What the product/service is, at the thinnest useful level — enough to justify the stack, not a PRD.
 Known hard constraints: target platforms/versions, org standards, must-use infrastructure,
 compliance the base must not preclude.>
 
+**Gate-0 notes** — Gate 0's approved record, written with the skeleton:
+- **Profile read** <YYYY-MM-DD>: <the docs and decisions read — framework, architecture style,
+  structure convention, tooling — and what the profile leaves open that the base needs>
+- **Intent and platform set confirmed** <YYYY-MM-DD>: <the app/service · the platforms in scope>
+
 ## Shared decisions (hub-level)
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
-> What every platform must agree on. **Approved before any spoke is groomed.**
+> What every platform must agree on. **Approved before any spoke is groomed.** One gate per row
+> (②–⑥), each row written with its own approval; the section stamp lands with the last row.
 
-| Decision | Choice | Why / tradeoff | Bound to |
-|----------|--------|----------------|----------|
-| **Repo strategy** | <monorepo / separate repos> | <…> | `11-git-management.md` |
-| **Architecture style** | <clean-layered / modular / MVC / …; layering used? yes-no> | <…> | `02-architecture.md` |
-| **Cross-service contract** | <OpenAPI file location + owner · shared types package · n/a (single platform)> | <…> | `15-api-reference.md` |
-| **Shared conventions** | <naming, formatting, commit convention> | <…> | `10-conventions.md`, `11-git-management.md` |
-| **Environments** | <which envs exist at the base: local only? local+staging?> | <…> | `09-environment.md` |
+| Decision | Choice | Why / tradeoff | Bound to | Approved |
+|----------|--------|----------------|----------|----------|
+| **Repo strategy** | <monorepo / separate repos> | <…> | `11-git-management.md` | <YYYY-MM-DD> · <commit> |
+| **Architecture style** | <clean-layered / modular / MVC / …; layering used? yes-no> | <…> | `02-architecture.md` | <YYYY-MM-DD> · <commit> |
+| **Cross-service contract** | <OpenAPI file location + owner · shared types package · n/a (single platform)> | <…> | `15-api-reference.md` | <YYYY-MM-DD> · <commit> |
+| **Shared conventions** | <naming, formatting, commit convention> | <…> | `10-conventions.md`, `11-git-management.md` | <YYYY-MM-DD> · <commit> |
+| **Environments** | <which envs exist at the base: local only? local+staging?> | <…> | `09-environment.md` | <YYYY-MM-DD> · <commit> |
 
 ## Per-platform sections *(one spoke each — the sections below live in `TRD-<platform>.md`)*
 
 ### Framework & scaffold
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 | | |
 |---|---|
@@ -52,7 +73,7 @@ _Approved: <YYYY-MM-DD>_
 | **What we change from the default** | <each deviation + why; ladder rung · world-wide standard for anything hand-built> |
 
 ### Folder structure (the deliverable — write the real tree)
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 > Concrete, directory by directory. `do-development` creates exactly this; its conformance review
 > checks the built tree against it. Must match `02-architecture.md`.
@@ -71,7 +92,7 @@ _Approved: <YYYY-MM-DD>_
 | <`presentation/`> | <UI, state> | <domain> | <data directly> |
 
 ### Architecture skeleton
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 > Empty-but-real: what code actually exists when the base is done. **No placeholder classes "for
 > later"** — if nothing needs it yet, it goes in *Deliberate omissions* instead.
@@ -85,7 +106,7 @@ _Approved: <YYYY-MM-DD>_
 | **Dependency management** | <package manager + lockfile committed> | |
 
 ### Build / run / test harness
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 | Command | Exact command | Must do |
 |---------|---------------|---------|
@@ -98,13 +119,13 @@ _Approved: <YYYY-MM-DD>_
 recipe.>
 
 ### Repo hygiene
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 <`.gitignore` (framework defaults + `design/compared-ui/`), README stub, editor/format config,
 commit-convention setup, branch protection if applicable — per `11-git-management.md`.>
 
 ### Acceptance criteria (mechanically checkable)
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 > "The base is set up" is not an AC. Each line below must be verifiable by running something or
 > asserting a fact about the tree. These are what `do-testing` checks for the base.
@@ -120,14 +141,12 @@ _Approved: <YYYY-MM-DD>_
 | A6 | <the dependency rule holds: `<layer>` doesn't import `<layer>`> | <the enforcement mechanism above — or mark deferred> |
 
 ## Deliberate omissions & deferrals
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 > What the base intentionally does **not** include, and when each gets decided. This is what keeps a
 > **prescriptive** profile honest: the docs may describe an intended design, but only what's listed
-> as
-> built is real. Anything here that someone tries to add during the base is scope creep → say no,
-> and
-> route it to `do-grooming` as the first feature.
+> as built is real. Anything here that someone tries to add during the base is scope creep → say
+> no, and route it to `do-grooming` as the first feature.
 
 | Not in the base | Why | Decided/built when |
 |-----------------|-----|--------------------|
@@ -144,8 +163,9 @@ feature. Do not report the reduced check as the full gate.
 ## Open Decisions
 
 > Where a chosen option names a **mechanism**, the decided status also names **the test that will
-> prove it**
-> (specified, not run). **A mechanism amended twice stops being amended — escalate to the user** (an amendment is any change to a decided row's chosen option or its proving test; count it in `amended <n>`).
+> prove it** (specified, not run). **A mechanism amended twice stops being amended — escalate to the
+> user** (an amendment is any change to a decided row's chosen option or its proving test; count it
+> in `amended <n>`).
 
 | # | Decision needed | Options (recommended marked) | Status |
 |---|-----------------|------------------------------|--------|
@@ -153,13 +173,22 @@ feature. Do not report the reduced check as the full gate.
 
 ## Hand-off
 
-- **`do-planning`** — scaffolding stages, `Layer: n/a (scaffolding)`: init → structure → skeleton →
-  harness → hygiene. **Each stage claims its AC by ID (`Covers: A1, A4`) — never restating the
+- **`do-planning`** — foundation work has **no domain/data/presentation split**; the layer rule
+  doesn't apply to scaffolding. Stages run: **init the project** → **create the structure** →
+  **wire the skeleton (entry point, config, dependency-rule enforcement)** → **harness
+  (build/run/test/lint)** → **repo hygiene (.gitignore, README stub)**. Each stage marks `Layer: n/a
+  (scaffolding)`. **Each stage claims its AC by ID (`Covers: A1, A4`) — never restating the
   criterion's prose**; every AC above is claimed by ≥ 1 stage, and every stage claims ≥ 1 AC.
-- **`do-development`** — TDD mostly doesn't apply; verify per stage by the real check (command runs
-  · tree matches · dependency rule holds). The conformance review checks the built tree against
-  *Folder structure*.
-- **`do-testing`** — the AC table above, plus the reduced boot check, reported honestly.
+- **`do-development`** — scaffolding stages mostly **cannot be TDD'd** (there's nothing to assert
+  until the harness exists). That's the documented fallback: say so, and verify by the stage's real
+  check — the command runs, the tree matches, the dependency rule holds. The **conformance review
+  still applies** and is unusually valuable here: "the created tree matches the decided structure"
+  is an objective check against *Folder structure*, which makes structure drift catchable on day
+  one.
+- **`do-testing`** — the AC table above, plus the reduced boot check: for the base, the levels
+  collapse to: the harness commands pass, the structure/dependency-rule assertions pass, and the app
+  boots and answers at its entry point. **Report that reduced Boot & Smoke honestly** — it is not
+  the full real-data gate.
 - **Then `do-project-setup` in refresh mode** — re-stamp the prescriptive `docs/basics/` docs
   against the real commit, flag anywhere the built base diverged from what was decided. **Only
   then** does `do-grooming` groom the first product feature.

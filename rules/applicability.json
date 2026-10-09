@@ -1,0 +1,134 @@
+{
+  "bundles": {
+    "execute": { "skills": ["do-development", "do-testing", "do-fixing"] },
+    "groom": {
+      "skills": [
+        "do-grooming", "do-tech-debt-grooming", "do-issue-grooming", "do-foundation-grooming"
+      ]
+    },
+    "plan": { "skills": ["do-planning"] },
+    "setup": { "skills": ["do-project-setup"] },
+    "tracker": { "skills": ["do-slicing", "do-uploading"] },
+    "ui": { "skills": [], "readWhen": "the platform is a client one: web, android or ios" }
+  },
+  "rules": {
+    "mindset": {
+      "bundles": ["*"], "digest": false, "review": ["always"]
+    },
+    "the-ladder": {
+      "bundles": ["*"], "digest": false, "review": ["always"]
+    },
+    "ground-in-real-code": {
+      "bundles": ["*"], "digest": false, "review": ["always"]
+    },
+    "batch-independent-reads": {
+      "bundles": ["*"], "digest": false, "review": ["never"]
+    },
+    "build-what-the-user-wants-whatever-the-code-s-state-never-requir": {
+      "bundles": ["*"], "digest": false, "review": ["always"]
+    },
+    "a-lite-tier-profile-is-not-a-broken-profile": {
+      "bundles": ["*"], "digest": false, "review": ["docs", "trd"]
+    },
+    "missing-prerequisite-stops-accept-an-explicit-user-override-with": {
+      "bundles": ["*"], "digest": true, "review": ["tests", "docs", "trd"]
+    },
+    "build-only-what-s-specified-surface-gaps-never-fill-them-with-sc": {
+      "bundles": ["*"], "digest": true, "review": ["always"]
+    },
+    "validate-every-choice-against-the-real-code-valid-relevant-compa": {
+      "bundles": ["*"], "digest": false, "review": ["code", "trd"]
+    },
+    "ask-don-t-assume": {
+      "bundles": ["*"], "digest": true, "review": ["always"]
+    },
+    "offer-2-3-best-practice-options-when-confirming-a-choice": {
+      "bundles": ["*"], "digest": false, "review": ["docs", "trd"]
+    },
+    "keep-a-living-understanding-summary": {
+      "bundles": ["*"], "digest": false, "review": ["never"]
+    },
+    "draft-human-approve-before-any-external-write": {
+      "bundles": ["*"], "digest": true, "review": ["never"]
+    },
+    "always-step-by-step-approval-never-a-full-creation-or-approve-al": {
+      "bundles": ["*"], "digest": true, "review": ["docs", "trd"]
+    },
+    "the-session-is-disposable-the-files-are-the-state": {
+      "bundles": ["*"], "digest": true, "review": ["never"]
+    },
+    "auto-run-mode-the-one-explicit-exception-to-step-by-step-approva": {
+      "bundles": ["execute"], "digest": true, "review": ["never"]
+    },
+    "present-every-step-bottom-line-first-for-everyone-shared-step-su": {
+      "bundles": ["*"], "digest": false, "review": ["never"]
+    },
+    "when-you-ask-wait-for-the-answer-no-timeout-no-auto-continue": {
+      "bundles": ["*"], "digest": true, "review": ["never"]
+    },
+    "keep-the-project-profile-current-docs-basics": {
+      "bundles": ["execute", "groom", "plan", "setup"], "digest": false, "review": ["code", "docs"]
+    },
+    "ui-containers-must-never-clip-verify-at-content-viewport-extreme": {
+      "bundles": ["groom", "ui"], "digest": false, "review": ["ui"]
+    },
+    "integrated-real-data-gate-never-call-a-feature-done-on-mock-assu": {
+      "bundles": ["execute", "groom", "plan", "setup"], "digest": false,
+      "review": ["data", "contract", "tests", "trd"]
+    },
+    "the-app-runs-where-you-can-see-it": {
+      "bundles": ["execute", "groom", "plan", "setup"], "digest": false, "review": ["code", "tests"]
+    },
+    "a-driven-app-is-addressed-by-identity-never-by-position": {
+      "bundles": ["execute", "groom", "plan", "setup"], "digest": false, "review": ["ui", "tests"]
+    },
+    "the-verification-ladder-climb-it-for-every-proof-and-name-the-ru": {
+      "bundles": ["execute", "groom", "plan", "setup"], "digest": false,
+      "review": ["code", "tests", "docs"]
+    },
+    "component-fidelity-build-exactly-the-component-the-design-specif": {
+      "bundles": ["groom", "ui"], "digest": false, "review": ["ui"]
+    },
+    "visual-values-are-tokens-zero-raw-literals": {
+      "bundles": ["groom", "ui"], "digest": false, "review": ["ui"]
+    },
+    "enumerate-then-cover-no-case-ships-unbuilt": {
+      "bundles": ["execute", "groom", "plan", "tracker"], "digest": false,
+      "review": ["code", "tests", "docs", "trd"]
+    },
+    "a-spoke-never-disagrees-with-its-hub": {
+      "bundles": ["execute", "groom", "plan", "tracker"], "digest": false,
+      "review": ["contract", "trd"]
+    },
+    "correct-every-site-of-the-fact-not-just-the-one-reported": {
+      "bundles": ["*"], "digest": false, "review": ["always"]
+    },
+    "a-document-states-the-current-truth-the-history-of-a-correction": {
+      "bundles": ["*"], "digest": false, "review": ["docs"]
+    },
+    "gated-documents-are-written-with-the-edit-or-write-tool-never-th": {
+      "bundles": ["*"], "digest": false, "review": ["docs"]
+    },
+    "every-change-is-reviewed-before-it-s-presented-fresh-eyes-not-th": {
+      "bundles": ["execute", "groom", "plan"], "digest": false, "review": ["always"]
+    },
+    "parallel-work-fills-the-time-behind-a-gate-it-never-runs-past-on": {
+      "bundles": ["*"], "digest": false, "review": ["never"]
+    },
+    "diagrams-target-the-oldest-renderer-in-the-toolchain-mermaid-9-x": {
+      "bundles": ["*"], "digest": false, "review": ["docs"]
+    },
+    "comments-none-the-names-carry-the-meaning": {
+      "bundles": ["execute", "groom", "plan", "setup"], "digest": false, "review": ["code", "tests"]
+    },
+    "naming-is-the-documentation": {
+      "bundles": ["execute", "groom", "plan", "setup"], "digest": false, "review": ["code", "tests"]
+    },
+    "respect-the-project-s-architecture-including-clean-architecture": {
+      "bundles": ["*"], "digest": false, "review": ["code", "docs", "trd"]
+    },
+    "test-first-across-the-pipeline": {
+      "bundles": ["*"], "digest": false, "review": ["code", "tests", "docs", "trd"]
+    }
+  }
+}

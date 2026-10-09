@@ -1,0 +1,110 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "Read `../../principles.md` in full now, then apply it",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/SPEC §8: the skill reads its generated bundle rules/groom.md (every rule its files cite, the UI rules included) instead of all of principles.md; the line says the rules bind only when read, and to re-read them after a compaction",
+      "where": "skills/do-grooming/SKILL.md head → **Read `../../rules/groom.md` in full now**"
+    },
+    {
+      "clause": "TRD-backend.md    ← spoke (only for platforms in scope)",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "merged",
+      "reason": "GR-09: the file-map code block became one sentence naming the same hub and spoke files, each spoke only for platforms in scope",
+      "where": "skills/do-grooming/SKILL.md → ## Hub + spokes, opening sentence"
+    },
+    {
+      "clause": "The hub is groomed first — hard gate, no spoke without an approved hub contract.** A spoke depends on the hub's",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "merged",
+      "reason": "GR-13: hub-first is stated once as the hard gate plus the Step 0.1 check — the bullet keeps its lead and its STOP (no hub, an unapproved contract, or a hub review not passed), ## Gates repeats it, and why a spoke depends on the contract (typed client and fixtures derive from it) stays in hub.md",
+      "where": "skills/do-grooming/SKILL.md → ## Hub + spokes hard-gate bullet; ## Gates line 2; Step 0.1; hub.md → The API contract must be machine-checkable"
+    },
+    {
+      "clause": "A value that isn't on the scale → snap to the nearest token and record it in the table",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "GR-15: the widget-spec template's Style bindings rules say it (snap to nearest and say so here), and now also carry the stricter ≥2-places / never-a-silent-snap / add-vs-reuse wording moved in from the skill",
+      "where": "skills/do-grooming/widget-spec-template.md → ## Style bindings, Rules; client-spoke.md → Widget spec per screen, Style bindings"
+    },
+    {
+      "clause": "Stamp the section with its approval date",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "SB-2: the stamp carries the commit — `_Approved: <YYYY-MM-DD> · <commit>_` (today's date, git rev-parse --short HEAD) — and replaces the heading's `_Pending_` skeleton marker, so a fresh session resumes at the first pending heading and a same-day edit is detectable",
+      "where": "skills/do-grooming/SKILL.md → Step 1.5 and ## Gates"
+    },
+    {
+      "clause": "Change manifest: repos/modules per platform (with links to spokes), cross-platform release ordering",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "GR-13/GR-15: the hub template's §7 lays out every part — repos/modules per platform with spoke links, cross-platform release ordering, dependencies & risks, Retires with the removing slice or \"nothing\", the platform-tagged work-slice summary; Step 2 points to it and names what the change retires",
+      "where": "skills/do-grooming/TRD-hub-template.md → ## 7. Change manifest; SKILL.md → Step 2"
+    },
+    {
+      "clause": "an AC whose clauses need two slices' code is two ACs, split here rather than halved later in the plan",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "moved",
+      "reason": "GR-15: the spoke template's §8 note carries every part — stable AC IDs, one assertable sentence, behavior only, one behavior provable inside one work slice (now with split here rather than halved later in the plan), Source naming every hub rule, flow step and binding; Step 2 keeps §8 then §9 claiming AC by ID, never restating the prose",
+      "where": "skills/do-grooming/TRD-spoke-template.md → ## 8. Acceptance criteria note; SKILL.md → Step 2"
+    },
+    {
+      "clause": "Resolve by direction — spoke wrong → fix the spoke and re-gate the affected section",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "GR-13: Step 4.2 restated the alignment rule; it now points to grooming-review.md, read at Step 4.1, whose Resolve by direction keeps spoke wrong → fix the spoke and re-gate the section",
+      "where": "skills/do-grooming/grooming-review.md → ## Resolve by direction; SKILL.md → Step 4.2"
+    },
+    {
+      "clause": "hub wrong → gather the hub-wrong findings of every spoke awaiting alignment first",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "GR-13 (+SB-2, REC-9): Resolve by direction keeps it — gather every awaiting spoke's hub-wrong findings, record them as one hub Open Decision `pending hub change`, one hub change on a yes, then alignment re-run once per spoke, scoped, one spoke at a time; Step 4.2 states the hub-wrong path in short",
+      "where": "skills/do-grooming/grooming-review.md → ## Resolve by direction; SKILL.md → Step 4.2"
+    },
+    {
+      "clause": "deliberate divergence → Open Decision, and once decided record it in the hub as a platform exception.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "GR-13: Resolve by direction keeps it word for word in its Deliberate divergence bullet",
+      "where": "skills/do-grooming/grooming-review.md → ## Resolve by direction, *Deliberate divergence*"
+    },
+    {
+      "clause": "while every round, clean or dirty, appends its objective-violation count to the spoke's",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "GR-13: Step 4.4 keeps every round's count in Alignment rounds and stamps only a clean pass; grooming-review.md → Stamps keeps both sides' stamp format (`reviewed <date> · hub rev <commit / hub's last approval date>`, those two segments only)",
+      "where": "skills/do-grooming/SKILL.md → Step 4.4; grooming-review.md → ## Stamps"
+    },
+    {
+      "clause": "Editing a hub section while spokes exist means re-running this review per spoke",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "GR-13: the same rule as The hub moving (every stamp stale, re-run per spoke scoped to the items the changed sections feed, re-stamp); SKILL.md keeps the trigger and the announce-at-the-edit duty in its Rules",
+      "where": "skills/do-grooming/grooming-review.md → ### The hub moving; SKILL.md → ## Rules, *A hub edit after any spoke exists stales every spoke's stamp*"
+    },
+    {
+      "clause": "Present every gate below in the shared step-summary format",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "C3/SPEC §8: one step-summary line in the head — the header, Bottom line → Why it matters → Options ★ → Context → Details (for engineers) → Next as the last paragraph, the plain layer per the language guide; principles.md → Present every step bottom line first, in rules/groom.md, carries the rest word for word (why it matters never omitted when a question is asked, context only where it adds something, what I need from you in the bottom line)",
+      "where": "skills/do-grooming/SKILL.md head → \"Every gate you present: header …\""
+    },
+    {
+      "clause": "**The hub is reviewed before any spoke is groomed** — Step 2a below.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "groom-groom-20: the bullet restated, in the same file, what ## Gates line 2, the hard-gate bullet (or the hub review hasn't passed — STOP and finish the hub and its review first) and Step 2a's title (the gate before any spoke) already say; it was cut so the phase-end boundary and the other F2 fixes fit under the 19,000-char body cap",
+      "where": "skills/do-grooming/SKILL.md → ## Gates line 2, ## Hub + spokes hard-gate bullet, Step 2a title; grooming-review.md → ## Hub review, \"**The hub is reviewed before any spoke is groomed.**\""
+    },
+    {
+      "clause": "the ramp doesn't have → ask the user, then register it in",
+      "file": "skills/do-grooming/widget-spec-template.md",
+      "verdict": "reworded",
+      "reason": "GR-15: the skill's stricter wording moved into the template — a typography role or token the ramp doesn't have → ask the user (add vs reuse), and a new one is registered in 18-design-tokens.md on create",
+      "where": "skills/do-grooming/widget-spec-template.md → ## Style bindings, Rules"
+    }
+  ]
+}

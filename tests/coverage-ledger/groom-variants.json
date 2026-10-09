@@ -1,0 +1,68 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind (lazy-senior mindset",
+      "file": "skills/do-tech-debt-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/SPEC §8.1: the skill reads its generated bundle rules/groom.md (every principles.md rule that governs grooming, the UI rules included, which now bind tech-debt grooming on every platform) instead of the whole file, re-reads it after a compaction and says so when the read is denied; the SessionStart hook injects a pointer, no longer an index; the 'especially' list is kept word for word",
+      "where": "skills/do-tech-debt-grooming/SKILL.md → head: \"**Read `../../rules/groom.md` in full now** — these are this skill's binding rules, generated from `principles.md`.\""
+    },
+    {
+      "clause": "**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind (lazy-senior mindset",
+      "file": "skills/do-issue-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/SPEC §8.1: the skill reads its generated bundle rules/groom.md (every principles.md rule that governs grooming, the UI rules included, which now bind issue grooming on every platform) instead of the whole file, re-reads it after a compaction and says so when the read is denied; the SessionStart hook injects a pointer, no longer an index; the 'especially' list and 'Root-cause, not symptom, is the whole point here' are kept word for word",
+      "where": "skills/do-issue-grooming/SKILL.md → head: \"**Read `../../rules/groom.md` in full now** — these are this skill's binding rules, generated from `principles.md`.\""
+    },
+    {
+      "clause": "**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind — especially the **lazy-senior mindset**",
+      "file": "skills/do-foundation-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/SPEC §8.1: the skill reads its generated bundle rules/groom.md (every principles.md rule that governs grooming) instead of the whole file, re-reads it after a compaction and says so when the read is denied; the SessionStart hook injects a pointer, no longer an index; the 'especially' list (lazy-senior mindset, no speculative scaffolding, ask don't assume, 2–3 options with one recommended, step-by-step approval) is kept word for word",
+      "where": "skills/do-foundation-grooming/SKILL.md → head: \"**Read `../../rules/groom.md` in full now** — these are this skill's binding rules, generated from `principles.md`.\""
+    },
+    {
+      "clause": "Present every gate below in the shared **step-summary format** (`principles.md`): header (development · phase · step · status)",
+      "file": "skills/do-tech-debt-grooming/SKILL.md",
+      "verdict": "reworded",
+      "reason": "C3/SPEC §8.2: the shared step-summary line every SKILL.md now carries in its head — same order and conditions (header with status, bottom line of what happened and what I need, why it matters never omitted when a question is asked, options ★, context only where it adds, details for engineers, Next as the last paragraph); it cites the rule in the generated bundle instead of principles.md",
+      "where": "skills/do-tech-debt-grooming/SKILL.md → head: \"Every gate you present: header `<development> · <phase> · <step> · ✅/⏸/⚠️`, then Bottom line …\" (rules → *Present every step bottom line first*)"
+    },
+    {
+      "clause": "Present every gate below in the shared **step-summary format** (`principles.md`): header (development · phase · step · status)",
+      "file": "skills/do-issue-grooming/SKILL.md",
+      "verdict": "reworded",
+      "reason": "C3/SPEC §8.2: the shared step-summary line every SKILL.md now carries in its head — same order and conditions (header with status, bottom line of what happened and what I need, why it matters never omitted when a question is asked, options ★, context only where it adds, details for engineers with the audit table and root cause, Next as the last paragraph); it cites the rule in the generated bundle instead of principles.md",
+      "where": "skills/do-issue-grooming/SKILL.md → head: \"Every gate you present: … Details (for engineers: the audit table, the root cause) → Next as the last paragraph\""
+    },
+    {
+      "clause": "Present every gate in the shared **step-summary format** (`principles.md`): header (development · phase · step · status)",
+      "file": "skills/do-foundation-grooming/SKILL.md",
+      "verdict": "reworded",
+      "reason": "C3/SPEC §8.2: the shared step-summary line every SKILL.md now carries in its head — same order and conditions (header with status, bottom line of what happened and what I need, why it matters never omitted when a question is asked, options ★, context only where it adds, details for engineers, Next as the last paragraph); it cites the rule in the generated bundle instead of principles.md",
+      "where": "skills/do-foundation-grooming/SKILL.md → head: \"Every gate you present: header `<development> · <phase> · <step> · ✅/⏸/⚠️`, then Bottom line …\" (rules → *Present every step bottom line first*)"
+    },
+    {
+      "clause": "**Approach field is required** — the validator hook enforces it) → get the user's approval → write prose/Mermaid, stamped `_Approved: YYYY-MM-DD_` → move to the next section.",
+      "file": "skills/do-tech-debt-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "GR-16 + SB-2: the Approach field stays required; the wording now says what validate-rung really enforces in a TRD (it rejects an Approach left empty or a whole <…> placeholder, and leftover <YYYY-MM-DD>/<hash>/<engineer> tokens; it does not check that the field exists), so keeping it present is the author's duty; the section is written under the Gate-0 skeleton's `_Pending_` heading and stamped `_Approved: <YYYY-MM-DD> · <commit>_`, the form next-step.js reads",
+      "where": "skills/do-tech-debt-grooming/SKILL.md → *Per-section loop*: \"**the Approach field is required** — the validator hook rejects it empty or left a whole `<…>` placeholder) → get the user's approval → write prose/Mermaid, `_Pending_` replaced by `_Approved: <YYYY-MM-DD> · <commit>_` … → move to the next section\""
+    },
+    {
+      "clause": "the Approach field is required — the validator hook enforces it**) → get the user's approval → write prose/Mermaid, stamped `_Approved: YYYY-MM-DD_` → next section.",
+      "file": "skills/do-issue-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "GR-16 + SB-2: the Approach field stays required; the wording now says what validate-rung really enforces in a TRD (it rejects an Approach left empty or a whole <…> placeholder, and leftover <YYYY-MM-DD>/<hash>/<engineer> tokens; it does not check that the field exists), so keeping it present is the author's duty; the section is written under the Gate-0 skeleton's `_Pending_` heading and stamped `_Approved: <YYYY-MM-DD> · <commit>_`, the form next-step.js reads",
+      "where": "skills/do-issue-grooming/SKILL.md → *Per-section loop*: \"the Approach field is required** — the validator hook rejects it empty or left a whole `<…>` placeholder) → get the user's approval → write prose/Mermaid, `_Pending_` replaced by `_Approved: <YYYY-MM-DD> · <commit>_` … → next section\""
+    },
+    {
+      "clause": "**`do-planning`** — scaffolding stages, `Layer: n/a (scaffolding)`: init → structure → skeleton → harness → hygiene.",
+      "file": "skills/do-foundation-grooming/foundation-TRD-template.md",
+      "verdict": "merged",
+      "reason": "P6/GR-13: the foundation SKILL.md's hand-off notes moved into the template's Hand-off, where the TRD's own Hand-off is written and the downstream skills read it; this short do-planning line merged with the fuller one, which names the same five stages in the same order and marks each `Layer: n/a (scaffolding)`",
+      "where": "skills/do-foundation-grooming/foundation-TRD-template.md → *Hand-off* → `do-planning`: \"Stages run: **init the project** → **create the structure** → **wire the skeleton …** → **harness …** → **repo hygiene …**. Each stage marks `Layer: n/a (scaffolding)`.\""
+    }
+  ]
+}

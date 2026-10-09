@@ -1,0 +1,19 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "Present the whole summary again with only the wording of the plain layer changed",
+      "file": "hooks/hooks.json",
+      "verdict": "changed",
+      "reason": "SJ1/SJ2/F07: the command hook sends the rewrite instruction in its block reason; sdk entrypoints keep this sentence verbatim, interactive sessions re-present the header, the plain layer and Next, with one line saying the engineer details are unchanged above",
+      "where": "hooks/stop-judge.js → HEADLESS_REWRITE and INTERACTIVE_REWRITE"
+    },
+    {
+      "clause": "Respond with the JSON object only.",
+      "file": "hooks/hooks.json",
+      "verdict": "changed",
+      "reason": "SJ1/F17: the command hook parses one line per rule and a last VERDICT line, so the judge still reasons before it rules",
+      "where": "hooks/stop-judge-rules.md → Verdict (\"Respond with these lines only.\")"
+    }
+  ]
+}

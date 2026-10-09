@@ -40,10 +40,9 @@
 | <Balance card> | `body.summary` | Container | `qris_widget_balance_card` | "Balance" | — | its inner padding is measured at assembly |
 
 > **Section** is the region ID from
-> [`../section-slicing/<screen>.md`](../section-slicing/<screen>.md) — the
-> doc that owns *when* the region shows and how many views it renders. Every element names a section
-> that
-> exists there; an element in no section is a gap.
+> [`../section-slicing/<screen>.md`](../section-slicing/<screen>.md) — the doc that owns *when* the
+> region shows and how many views it renders. Every element names a section that exists there; an
+> element in no section is a gap.
 
 ## Style bindings
 
@@ -53,9 +52,10 @@
 > Bind the **regions** plus any element that deviates from its component's default — not every
 > element.
 > Rules: a value **not on the scale** → snap to nearest **and say so here**; if the design uses it
-> systematically → **Open Decision** (new scale step vs approved deviation), never a raw literal. A
-> role
-> the ramp doesn't have → **ask the user**, then register it in `18-design-tokens.md`.
+> systematically (≥2 places or explicitly annotated) → **Open Decision** (new scale step vs approved
+> deviation), never a raw literal and never a silent snap. A typography role or token the ramp
+> doesn't have → **ask the user (add vs reuse)**, and a new one is **registered in
+> `18-design-tokens.md` on create**.
 
 | Region / element | Typography role | Spacing tokens | Divider / border | Component + variant | Deviation? |
 |------------------|-----------------|----------------|------------------|---------------------|------------|
@@ -70,9 +70,8 @@
 ## Container sizing & overflow
 
 > For **variable-content containers** on this screen (dialog, bottom sheet, list, form, multi-line
-> text) —
-> how they size and what happens when content grows. They must **fit content or scroll, never
-> clip.**
+> text) — how they size and what happens when content grows. They must **fit content or scroll,
+> never clip.**
 
 | Container | Sizing | Overflow behavior | Extremes to verify |
 |-----------|--------|-------------------|--------------------|
