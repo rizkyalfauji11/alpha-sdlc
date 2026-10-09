@@ -430,7 +430,13 @@ A skill loads its binding rules by reading `rules/<bundle>.md` under the plugin 
 project. A headless run — `claude -p`, the Agent SDK, an eval harness — denies that read unless it
 is allowed, and the skill then runs without its rules: it says so in its step report, but rules
 never loaded cannot bind. Start those runs with `--add-dir <plugin root>`, or give them a `Read`
-allow rule for the plugin root.
+allow rule for the plugin root. A run nobody watches also denies the plugin's own scripts, and a
+gate that needs one (the refresh's `check-feature-done.js`) stops there: allow
+`Bash(node <plugin root>/*)` as well.
+
+A consumer that passes `/do-project-setup` a setup-run schema with `onlyWhatChanged` gets a whole
+first report and, after it, reports of only what changed: the document rows that moved, the open
+questions and the gate. The consumer keeps every row a report does not name.
 
 ### The mobile driver loads only where there is a mobile app
 

@@ -37,6 +37,16 @@ before.
 Each question carries its subject's one key from `SKILL.md` → Flow step 1 (`profile-tier`, a
 document's file stem …), unchanged in every run and every report.
 
+## Only what changed
+
+When the consumer's schema has `onlyWhatChanged`, the first report of a session is whole. Every
+later report in that session sets `onlyWhatChanged: true`, sends `states: []`, and lists in
+`documents` only the rows whose state, notes or description changed since the report before it.
+`questions` and `gate` stay whole, because they are what is open now. A consumer's reconnect line
+is answered the same way: when nothing changed, `documents` is empty. The consumer keeps every row
+the report does not name. Re-sending every row to change one spent most of a measured run's output
+on rows nothing had touched. When the schema lacks the field, every report stays whole.
+
 ## Doc-12 candidates
 
 The `12-security-compliance.md` template's setup instructions say who may be proposed to close a
