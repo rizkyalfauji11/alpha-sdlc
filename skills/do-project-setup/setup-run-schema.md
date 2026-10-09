@@ -35,7 +35,13 @@ they are simply not emitted. This adds to the report; every existing field is fi
 before.
 
 Each question carries its subject's one key from `SKILL.md` → Flow step 1 (`profile-tier`, a
-document's file stem …), unchanged in every run and every report.
+document's file stem …), unchanged in every run and every report. **A question's `id` is that key
+only for the subject's first question.** A different question about the same subject gets
+`<key>:<what it asks>`, for example `12-security-compliance:signer`, and keeps that `id` in every
+report and every session. The consumer holds one answer per `id` for the whole run. It hides a
+question whose `id` already has an answer, and it refuses a second answer to that `id`. A new
+question that reuses an answered `id` is therefore never shown, and the run waits on a question
+nobody can see.
 
 ## Only what changed
 
@@ -51,10 +57,11 @@ on rows nothing had touched. When the schema lacks the field, every report stays
 
 The `12-security-compliance.md` template's setup instructions say who may be proposed to close a
 gap. **Reported through the setup-run schema** (when the consumer passes one as `--json-schema`),
-the question travels inside the existing shapes, with the schema unchanged: one `options[]` entry
-per person — `label` their name, `why` their role, `trade` the prior sign-off note when there is
-one; `evidence.caption` says where the names came from (e.g. *"From the three log calls'
-authors"*) and `evidence.groups[]` holds one row per gap; `actions[]` carries *Pick someone* and
-*Change*; `blocks: []`, because the run carries on; and `notes` says where each gap stands — e.g.
-`{ label: "Standing", text: "One is with <name> · the other has nobody named" }` — with names under
-the same candidate rule.
+the question travels inside the existing shapes, with the schema unchanged: `id`
+`12-security-compliance:signer`, because the document's own key belongs to its first question; one
+`options[]` entry per person — `label` their name, `why` their role, `trade` the prior sign-off note
+when there is one; `evidence.caption` says where the names came from (e.g. *"From the three log
+calls' authors"*) and `evidence.groups[]` holds one row per gap; `actions[]` carries *Pick someone*
+and *Change*; `blocks: []`, because the run carries on; and `notes` says where each gap stands —
+e.g. `{ label: "Standing", text: "One is with <name> · the other has nobody named" }` — with names
+under the same candidate rule.
