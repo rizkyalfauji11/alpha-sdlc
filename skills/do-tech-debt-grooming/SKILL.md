@@ -60,8 +60,9 @@ ungrounded).
 
 0. **Start from the register.** Read `docs/basics/20-tech-debt-register.md` — the standing backlog:
    if the improvement is already a `TD-<n>` row, groom that row (flip it `groomed → <TRD link>` when
-   this TRD lands; when the paid work ships — `do-testing` green — the row moves to Paid); if it is
-   new, **add its row first** (register-on-create), then groom.
+   this TRD lands; when the paid work ships — `do-testing` green — the row is deleted); if it is
+   new, **add its row first** (register-on-create: it takes the register's **Next ID**, which the
+   same edit increments), then groom.
 1. **Capture the condition** — what's wrong today, where, and how the engineer knows (a metric, an
    incident, a painful change, a scan). Read the real code involved. **Map the cross-feature blast
    radius:** run the impact analysis in `docs/basics/16-feature-map.md` (reverse dependency edges) +

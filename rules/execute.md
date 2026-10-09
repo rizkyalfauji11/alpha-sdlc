@@ -382,13 +382,13 @@ missing acceptance criterion: a defect, not a detail.
   → `environment`; new asset → `asset-registry` (register-on-create); new/changed design token or
   approved deviation → `design-tokens`; new reusable helper/base class/wrapper or a unit promoted
   to core → `code-inventory` (register-on-create); new named simplification, contradiction,
-  duplicate, deferral, or class-suspicion → `tech-debt-register` (register-on-create, with its
-  ceiling); changed layer-wiring pattern → `architecture`; new feature or changed cross-feature
-  dependency → `feature-map` (register-on-create); new screen / nav / component →
-  `ui-architecture`; new/changed UX convention → `ux-conventions` (register-on-create);
-  pipeline/release change → `cicd-deployment`; new auth/PII/encryption handling →
-  `security-compliance` (observed only, re-flag for sign-off); structural/layering change →
-  `architecture` or `conventions`; new code convention → `conventions`;
+  duplicate, deferral, or class-suspicion → `tech-debt-register` (register-on-create as its **Next
+  ID**, with its ceiling; paid → row deleted); changed layer-wiring pattern → `architecture`; new
+  feature or changed cross-feature dependency → `feature-map` (register-on-create); new screen /
+  nav / component → `ui-architecture`; new/changed UX convention → `ux-conventions`
+  (register-on-create); pipeline/release change → `cicd-deployment`; new auth/PII/encryption
+  handling → `security-compliance` (observed only, re-flag for sign-off); structural/layering
+  change → `architecture` or `conventions`; new code convention → `conventions`;
   branching/PR/merge/release-process change → `git-management`.
   **Deregister on delete, too:** a unit, asset, token, endpoint or component the change removes
   leaves its row with it — `code-inventory`, `asset-registry`, `design-tokens`, `api-reference`,
@@ -505,16 +505,17 @@ missing acceptance criterion: a defect, not a detail.
   the edit in the same pass. When the corrected fact was a **decided** one, the correction re-gates
   (step-by-step approval, above).
 - **A document states the current truth; the history of a correction goes in the commit message.**
-  No *"this read X until Y"*, no struck-through old value, no *"⚠️ corrected at round 4"*, no *"this
-  is the second time"* — a reader needs what is true now, and a reviewer re-audits every such note
-  as new text, so each one breeds findings and rounds. The commit that makes the correction says
-  what was wrong, why, and where else it was fixed. What stays in the document is what is still a
-  fact: an Open Decision's options and outcome, a `decided: auto ★` record awaiting ratification, a
-  live *Contradictions* row, a platform exception, the stamps and round counts. **It holds for
-  every update, not only corrections:** a profile doc's head is its title, one stamp line and its
-  description — never a log of its updates — and a retired item is deleted, not struck through
-  (only the tech-debt register keeps paid rows struck). `validate-doc-tables` blocks a head edit
-  while the head holds more than one date or struck text.
+  **Every section** of a profile doc (`docs/basics`) and a feature doc (`docs/development`: TRD,
+  spokes, plans, specs, slicing, charter) states what is true now: no *"corrected <date> for …"*,
+  *"withdrawn"*, *"renamed from X"*, *"RETIRED <date>"*, *"was decided … reversed"*, *"reconciled
+  at …"*, *"+ <feature> stage · <date>"* entry, no struck-out old value. A reviewer re-audits each
+  such note, so each breeds findings and rounds; the commit says what was wrong, why,
+  and where else it was fixed. What stays is still a fact: an Open Decision's options and outcome,
+  a `decided: auto ★` record awaiting ratification, a live *Contradictions* row, a platform
+  exception, stamps, statuses, verdicts, triage cells, round counts, a retired AC's struck row
+  (stable ID). A profile doc's head is its title, one stamp line and its description; a retired
+  item or paid debt is deleted, never struck. `validate-doc-tables` blocks such a head, struck text
+  in `docs/basics`, and a dated history note on an edited line.
 - **Gated documents are written with the Edit or Write tool, never through Bash.** The doc hooks —
   table shape, ladder rung, secrets — run only on those tools; a `sed -i`, a heredoc or a script
   that writes a `docs/**.md` skips every one of them. A `PreToolUse` hook on Bash blocks such a

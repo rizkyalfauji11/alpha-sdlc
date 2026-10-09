@@ -96,9 +96,37 @@ const PIPE_LEADING_LINE = /^ {0,3}\|/;
 const DELIMITER_CELL = /^:?-+:?$/;
 
 const PROFILE_DOC = /[\\/]docs[\\/]basics[\\/][^\\/]+\.md$/i;
-const DEBT_REGISTER = /[\\/]20-tech-debt-register\.md$/i;
+const FEATURE_DOC = /[\\/]docs[\\/]development[\\/](?:(?![\\/]\.alpha-sdlc[\\/]).)+\.md$/i;
 const ISO_DATE = /(?<!\d)\d{4}-\d{2}-\d{2}(?!\d)/g;
+const HISTORY_WORD = new RegExp(
+  '(?<![\\w-])(?:' + [
+    'corrected', 'corrections?', 'withdrawn', 'withdrew', 'retired', 'retires', 'renamed', 'reversed', 'reverted',
+    'superseded', 'supersedes', 'replaced', 'reconciled', 're-?verified', 'verified (?:at|on)', 'refreshed',
+    're-?stamped', 'struck', 'formerly', 'previously', 'no longer', 'until', 'rewritten', 're-derived',
+    're-attributed', 're-scoped', 're-measured', 'deregistered', 'narrowed', 'widened', 'amended', 'added',
+    'edited', 'updated', 'removed', 'deleted', 'dropped', 'restated', 'was:',
+    'was (?:built|decided|recorded|approved|added|removed|named|written|wrong|false|true)',
+  ].join('|') + ')(?![\\w-])',
+  'gi',
+);
+const STAMP_LEAD = new RegExp(
+  '(?:' + [
+    '(?<![a-z])approved', '(?<![a-z])auto', '(?<![a-z])done', '(?<![a-z])(?:re-)?reviewed', '(?<![a-z])rev',
+    '(?<![a-z])confirmed', '(?<![a-z])read', '(?<![a-z])ratified', '(?<![a-z])answered', '(?<![a-z])closed',
+    '(?<![a-z])fixed', '(?<![a-z])deferred', "won't fix", '(?<![a-z])(?:yes|no|defer)', '(?<![a-z])date',
+    '(?<![a-z])mirrored at', 'last updated', 'decidedat["\'`]?\\s*:?\\s*["\'`]?', '`[0-9a-f]{7,40}`',
+  ].join('|') + ')[\\s*_:·|`(]{0,8}$',
+  'i',
+);
+const DECIDED_LEAD = /(?<![\w-]|was )decided\b([^|~]{0,60})$/i;
+const STAMP_TAIL = /^[\s*_)]{0,4}·\s*(?:hub\s+)?rev\b/i;
+const UPDATE_ENTRY = /(?:_\**|\*\*)\+\s[^|\n]{0,200}?(?<!\d)\d{4}-\d{2}-\d{2}(?!\d)/;
+const RETIRED_AC_ROW = /^\s*\|\s*~~\s*\**\s*`?(?:AC|A)[-\w]*`?\s*\**\s*~~/;
+const NOTE_WINDOW_CHARS = 40;
+const LISTED_LINES_MAX = 15;
 const STRUCK_TEXT = /~~[^~\n]+~~/;
+const CODE_SPAN = /(`+)[^`]*?\1/g;
+const hasStruckText = (line) => STRUCK_TEXT.test(line.replace(CODE_SPAN, 'x'));
 const TITLE_LINE = /^#\s/;
 const SECTION_HEADING = /^#{2,6}\s/;
 const STAMP_LINE_MAX_CHARS = 200;
@@ -108,6 +136,10 @@ const TABLE_CONSEQUENCE =
 const PROFILE_CONSEQUENCE =
   'Every phase grounds in this doc, so each update line it keeps is read again, for nothing, by every later ' +
   'session; a reader needs what is true now (principles → A document states the current truth).';
+const HISTORY_CONSEQUENCE =
+  'Every later phase and every review reads this doc, so each note of what it used to say is read again, for ' +
+  'nothing, and re-audited as new text; a reader needs what is true now (principles → A document states the ' +
+  'current truth).';
 
 function isDelimiterRow(line) {
   if (INDENTED_CODE_LINE.test(line) || !hasUnescapedPipe(line)) return false;
@@ -236,7 +268,7 @@ function headRangeOf(lines) {
   return [first, end];
 }
 
-function profileDocFindings(text, isDebtRegister) {
+function profileDocFindings(text) {
   const lines = text.split(/\r?\n/);
   const findings = [];
   const [headStart, headEnd] = headRangeOf(lines);
@@ -249,7 +281,7 @@ function profileDocFindings(text, isDebtRegister) {
     const dates = lines[index].match(ISO_DATE) || [];
     dateCount += dates.length;
     if (dates.length && lines[index].length > STAMP_LINE_MAX_CHARS && longDatedLine === null) longDatedLine = index + 1;
-    if (STRUCK_TEXT.test(lines[index]) && struckLine === null) struckLine = index + 1;
+    if (hasStruckText(lines[index]) && struckLine === null) struckLine = index + 1;
   }
   const problems = [];
   if (dateCount > 1) problems.push(`${dateCount} dates`);
@@ -275,16 +307,8 @@ function profileDocFindings(text, isDebtRegister) {
         'message and the step summary say what changed, and git keeps it.',
     });
   }
-  if (isDebtRegister) return findings;
-  let openFence = null;
-  for (let index = headEnd; index < lines.length; index++) {
-    const fence = fenceAt(lines[index]);
-    if (openFence) {
-      if (fence && fence.marker === openFence.marker && fence.length >= openFence.length && fence.rest.trim() === '') openFence = null;
-      continue;
-    }
-    if (fence) { openFence = fence; continue; }
-    if (INDENTED_CODE_LINE.test(lines[index]) || !STRUCK_TEXT.test(lines[index])) continue;
+  for (const index of proseLineIndexes(lines, headEnd)) {
+    if (!hasStruckText(lines[index])) continue;
     findings.push({
       heading: 'Profile doc keeps history',
       consequence: PROFILE_CONSEQUENCE,
@@ -293,10 +317,86 @@ function profileDocFindings(text, isDebtRegister) {
       message: `line ${index + 1} strikes text through — a profile doc keeps no struck-out old value or retired item`,
       remedy:
         'Delete what is no longer true and keep only the current fact; the commit message says what changed. ' +
-        'Only the tech-debt register keeps paid rows struck through.',
+        'A paid tech-debt row is deleted too — the register\'s **Next ID** line keeps its ID from reuse.',
     });
   }
   return findings;
+}
+
+function proseLineIndexes(lines, firstIndex) {
+  const indexes = [];
+  let openFence = null;
+  for (let index = firstIndex; index < lines.length; index++) {
+    const fence = fenceAt(lines[index]);
+    if (openFence) {
+      if (fence && fence.marker === openFence.marker && fence.length >= openFence.length && fence.rest.trim() === '') openFence = null;
+      continue;
+    }
+    if (fence) { openFence = fence; continue; }
+    if (!INDENTED_CODE_LINE.test(lines[index])) indexes.push(index);
+  }
+  return indexes;
+}
+
+function isStampDate(line, start, end) {
+  const before = line.slice(Math.max(0, start - 80), start);
+  if (STAMP_LEAD.test(before) || STAMP_TAIL.test(line.slice(end, end + 20))) return true;
+  const decided = DECIDED_LEAD.exec(before);
+  return Boolean(decided) && !decided[1].match(ISO_DATE) && !decided[1].match(HISTORY_WORD);
+}
+
+function historyNoteOf(line, today) {
+  const entry = line.match(UPDATE_ENTRY);
+  if (entry) return entry[0].replace(/^[_*]+/, '').slice(0, 80);
+  if (RETIRED_AC_ROW.test(line)) return null;
+  const words = [...line.matchAll(HISTORY_WORD)];
+  if (!words.length) return null;
+  for (const date of line.matchAll(ISO_DATE)) {
+    const start = date.index;
+    const end = start + date[0].length;
+    if (date[0] > today || isStampDate(line, start, end)) continue;
+    const word = words.find((match) => {
+      const wordEnd = match.index + match[0].length;
+      if (wordEnd <= start) return start - wordEnd <= NOTE_WINDOW_CHARS && !line.slice(wordEnd, start).includes('|');
+      return match.index >= end && match.index - end <= NOTE_WINDOW_CHARS && !/^until$/i.test(match[0]) &&
+        !line.slice(end, match.index).includes('|');
+    });
+    if (!word) continue;
+    const from = Math.min(word.index, start);
+    const to = Math.max(word.index + word[0].length, end);
+    return line.slice(from, to);
+  }
+  return null;
+}
+
+function historyNoteFindings(text, today) {
+  const lines = text.split(/\r?\n/);
+  const findings = [];
+  for (const index of proseLineIndexes(lines, 0)) {
+    const note = historyNoteOf(lines[index], today);
+    if (!note) continue;
+    findings.push({
+      heading: 'Change-history note',
+      consequence: HISTORY_CONSEQUENCE,
+      exactLines: true,
+      lines: [index + 1],
+      message:
+        `line ${index + 1} carries a dated change-history note (\`${note.trim()}\`) — a project document states ` +
+        'what is true now, never what it used to say or when it changed',
+      remedy:
+        'State the current fact in its place and delete the note — the old value, the date it changed, the ' +
+        'feature, stage or round that changed it; the commit message says what changed, and git keeps it. ' +
+        'The stamps and statuses the pipeline writes stay (`_Approved: <date> · <commit>_`, `Status: done ' +
+        '<date>`, `Checkpoint verdict`, `reviewed <date> · hub rev`, a `decided:` outcome, a triage cell, a ' +
+        'retired AC\'s struck row).',
+    });
+  }
+  return findings;
+}
+
+function lineList(findings) {
+  const shown = findings.slice(0, LISTED_LINES_MAX).map((finding) => finding.lines[0]).join(', ');
+  return findings.length > LISTED_LINES_MAX ? `${shown} and ${findings.length - LISTED_LINES_MAX} more` : shown;
 }
 
 function lineAtOffset(text, offset) {
@@ -328,7 +428,10 @@ function main() {
   const touchedLineRanges = exactLineRanges.map(([first, last]) => [Math.max(1, first - 1), last + 1]);
 
   const findings = tableFindings(documentText);
-  if (PROFILE_DOC.test(absolutePath)) findings.push(...profileDocFindings(documentText, DEBT_REGISTER.test(absolutePath)));
+  if (PROFILE_DOC.test(absolutePath)) findings.push(...profileDocFindings(documentText));
+  if (PROFILE_DOC.test(absolutePath) || FEATURE_DOC.test(absolutePath)) {
+    findings.push(...historyNoteFindings(documentText, new Date().toISOString().slice(0, 10)));
+  }
   if (!findings.length) return 0;
 
   const editedFindings = findings.filter((finding) => {
@@ -338,10 +441,12 @@ function main() {
   });
   const untouchedFindings = findings.filter((finding) => !editedFindings.includes(finding));
 
-  const moreInEdit = editedFindings.length > 1 ? ` (+${editedFindings.length - 1} more in this change)` : '';
+  const moreInEdit = editedFindings.length > 1
+    ? ` (+${editedFindings.length - 1} more in this change, at line(s) ${lineList(editedFindings.slice(1))})`
+    : '';
   const elsewhere = untouchedFindings.length
     ? ` ${untouchedFindings.length} further finding(s) already in this file, outside your edit, are not blocking: ` +
-      `line(s) ${untouchedFindings.map((finding) => finding.lines[0]).join(', ')}.`
+      `line(s) ${lineList(untouchedFindings)}.`
     : '';
 
   if (!editedFindings.length) {
@@ -362,4 +467,4 @@ function main() {
 
 if (require.main === module) process.exitCode = main();
 
-module.exports = { postEditDocument };
+module.exports = { postEditDocument, historyNoteOf };

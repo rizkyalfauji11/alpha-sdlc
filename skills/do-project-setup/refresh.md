@@ -26,16 +26,21 @@ This is also the **end-of-feature reconcile** the pipeline calls after a feature
 (`do-testing` green): run it whenever a feature ships so `docs/basics/` reflects what was built
 before the next feature grooms against it. Pay special attention to `feature-map` (register the new
 feature + its dependencies), `api-reference`, `ui-architecture`/`ux-conventions`, `auth`, and
-`20-tech-debt-register` (statuses flip here: groomed debt that shipped → paid; new deferrals from
-the run → open rows).
+`20-tech-debt-register` (groomed debt that shipped → its row deleted; new deferrals from the run →
+open rows under its **Next ID**).
 
 Re-running on an existing profile: per-doc, compare the repo against the doc's commit stamp; refresh
 only the **stale** docs (with approval). **A doc whose head logs its own history counts as stale:**
 update lines, *refreshed / reconciled / verified* chains or struck items above its first section
 (written before 0.35.0) are folded out at that doc's gate — a fact the history holds that the body
-lacks moves into its section, the rest is deleted, and one stamp line remains. Struck or retired
-rows in its body go the same way (only the tech-debt register keeps paid rows struck).
-`validate-doc-tables` blocks any edit to such a head until it is clean, so never defer it.
+lacks moves into its section, the rest is deleted, and one stamp line remains. **Every section's
+body goes the same way** — dated *corrected / amended / withdrawn / retired / added at* notes,
+*+ <feature> stage · <date>* entries and struck or retired rows: keep the current fact, delete the
+note (principles → *A document states the current truth*). A tech-debt register's paid rows are
+deleted, and its head gains ``**Next ID:** `TD-<n>` — paid rows are deleted (git keeps them); an
+ID is never reused.`` with `<n>` one past the highest ID it ever used (a prefixed register keeps
+its prefix: `TD-BE-<n>`). `validate-doc-tables` blocks
+any edit to such a head, and any edited line that still carries such a note, so never defer it.
 
 For `17-asset-registry.md`, **reconcile** — diff the registry against the actual asset directories
 and flag **unregistered assets** (added without registering). For `18-design-tokens.md`,
@@ -47,7 +52,7 @@ code is worse than none — the builder trusts it. For `19-code-inventory.md`, *
 for reusable units created since the stamp but never registered, and for new duplicates of an
 already-registered job. For `20-tech-debt-register.md`, **reconcile** — every entry in any source
 table (contradictions, duplicates, omissions, named simplifications in TRDs) without a `TD-<n>` row
-is a gap; statuses checked against reality (a groomed TRD shipped means paid). For
+is a gap; statuses checked against reality (a groomed TRD shipped means paid: delete the row). For
 `03-ui-architecture.md`'s Test-ID conventions, **reconcile** — new locator IDs in code that break
 the recorded convention are flagged (new IDs must follow it; old ones are grandfathered). Fast-rot
 docs (tech-stack, database, cicd, api-reference) warrant aggressive checks; slow-rot docs

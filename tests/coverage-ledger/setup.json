@@ -56,6 +56,20 @@
       "verdict": "changed",
       "reason": "SB-1/SB-4 (HOOKS request): the mirror also carries sessionBoundaries (advise | enforce | off, default advise) and sessionBoundaryTokens (default 200000), which boundary-guard.js reads, and the doc-applicability object with its doc-applicability-<nn>-<name> members — the one key the subject already has (verify-verify-8) — so a fresh session states the applicability verdicts; each key's decision date is a flat <key>DecidedAt key, and a mirror that already keeps its dates in a decidedOn map keeps them there, never a second record (verify-verify-8). The rule text moved verbatim otherwise, with tier and applicability, into the 01 template's setup block, read once before the first Org setting or applicability question (verify-verify-9)",
       "where": "skills/do-project-setup/templates/01-overview.md → setup block; Org settings rows *Session boundaries*, *Session boundary tokens*"
+    },
+    {
+      "clause": "Struck or retired rows in its body go the same way (only the tech-debt register keeps paid rows struck)",
+      "file": "skills/do-project-setup/refresh.md",
+      "verdict": "changed",
+      "reason": "0.35.1 (user-approved): every section's body is folded the same way, dated history notes included; a tech-debt register's paid rows are deleted and its head gains the Next ID line, so no register keeps struck rows; the hook blocks such a head and any edited line still carrying a note",
+      "where": "skills/do-project-setup/refresh.md → \"**Every section's body goes the same way** …\""
+    },
+    {
+      "clause": "**paid rows are kept** (struck through, with their resolution) — the register is the history too",
+      "file": "skills/do-project-setup/templates/20-tech-debt-register.md",
+      "verdict": "changed",
+      "reason": "0.35.1 (user-approved): paid rows are deleted, git keeps them; the head's **Next ID** line keeps IDs stable and never reused, and the Paid (history) section is gone",
+      "where": "skills/do-project-setup/templates/20-tech-debt-register.md → setup block (Register / Pay a debt) and the **Next ID** line"
     }
   ]
 }

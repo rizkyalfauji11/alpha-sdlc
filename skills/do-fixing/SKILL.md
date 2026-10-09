@@ -201,8 +201,8 @@ The *Bugs found* table in `test-plan-<platform>.md` is the state — each bug's 
      **found ≥1 confirmed sibling site in a different feature** (a quick grep, named file+line), not
      "the pattern likely lives elsewhere". Suspicion without a found site → **fix the bug now**,
      record the suspicion in the after-report **and as a `TD-<n>` row in
-     `docs/basics/20-tech-debt-register.md` (kind: class-suspicion)**, and let the user decide about
-     an audit.
+     `docs/basics/20-tech-debt-register.md` (kind: class-suspicion, ID from its Next ID)**, and let
+     the user decide about an audit.
   Even when case 3 is confirmed: **fix the reported bug in this run anyway** (the feature's test →
   fix → re-test loop never waits behind a whole-project audit) and raise the class audit as a
   separate recommendation for the user.

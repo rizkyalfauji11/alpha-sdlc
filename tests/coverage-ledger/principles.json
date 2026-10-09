@@ -42,6 +42,13 @@
       "verdict": "reworded",
       "reason": "R6/R11: condensed to \"some context leaves the file, so no comment can lie\" — the same deliberate trade-off and the same reason",
       "where": "principles.md → *Comments: none* — \"(The trade-off is deliberate: some context leaves the file, so no comment can lie.)\""
+    },
+    {
+      "clause": "**It holds for every update, not only corrections:** a profile doc's head is its title, one stamp line and its description",
+      "file": "principles.md",
+      "verdict": "changed",
+      "reason": "0.35.1 (user-approved): the rule now covers every section of every profile and feature doc, not only the head; a paid tech-debt row is deleted like any retired item (the register's Next ID line keeps IDs from reuse), so the register's struck-paid-rows exception is gone; validate-doc-tables also blocks a dated history note on an edited line",
+      "where": "principles.md → *A document states the current truth* — \"**Every section** of a profile doc … A profile doc's head is its title, one stamp line and its description; a retired item or paid debt is deleted, never struck.\""
     }
   ]
 }

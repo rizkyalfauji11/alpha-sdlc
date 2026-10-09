@@ -86,14 +86,22 @@ touched are printed but never blocked, so you don't inherit a block for debt you
 table indented four spaces (inside a list item) or one inside a blockquote is skipped in silence;
 and a file it can't read is left unchecked rather than guessed at.
 
-The same hook keeps the profile (`docs/basics/`) stating what is true now, not how it got there.
-A profile doc's head — the lines above its first section — is its title, one stamp line and its
+The same hook keeps the project's documents stating what is true now, not how they got there, so
+a person reads them quickly and every later session reads fewer tokens. A profile doc's head (in
+`docs/basics/`, the lines above its first section) is its title, one stamp line and its
 description; an edit that touches a head still carrying more than one date, a stamp line grown past
 200 characters or struck-through text is blocked until the history is folded out (a fact the body
-lacks moves into its section, the rest goes; the commit message says what changed). Struck text on
-a line you edit is blocked too, except the tech-debt register's paid rows. Edits elsewhere in a doc
-are never blocked by history they didn't write, and `/do-project-setup` refresh mode treats a doc
-whose head logs its history as stale, so one refresh cleans a whole profile written before 0.35.0.
+lacks moves into its section, the rest goes; the commit message says what changed). In every
+section of a profile doc or a feature doc (`docs/development/`: TRD, spokes, plan, test plan,
+widget specs, slicing docs), a line you edit is blocked when it carries a dated change-history note
+— a date beside *corrected*, *amended*, *withdrawn*, *retired*, *added*, *until* and the like, or an
+*+ <feature> stage · <date>* entry — and, in `docs/basics/`, when it strikes text through. The
+stamps and statuses the pipeline writes and reads pass: `_Approved: <date> · <commit>_`, `Status:
+done <date>`, `Checkpoint verdict`, `reviewed <date> · hub rev`, a `decided:` outcome, a triage
+cell, a retired AC's struck row. The tech-debt register deletes a paid row; its **Next ID** line
+keeps IDs from reuse. Edits elsewhere in a doc are never blocked by history they didn't write, and
+`/do-project-setup` refresh mode treats a doc whose head logs its history as stale, so one refresh
+cleans a whole profile written before 0.35.0.
 
 ## The pipeline
 

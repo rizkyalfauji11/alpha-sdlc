@@ -79,7 +79,9 @@ const POLLUTED_PROFILE_DOC =
 const profiles = sdlcProject('profiles', {
   'docs/basics/06-domain-model.md': POLLUTED_PROFILE_DOC,
   'docs/basics/07-database.md': `# Database — app\n\n${STAMP}\n\n## Tables\n\n- \`users\` — one row per account.\n`,
-  'docs/basics/20-tech-debt-register.md': `# Tech Debt Register — app\n\n${STAMP}\n\n## Paid (history)\n\n- first paid row\n`,
+  'docs/basics/20-tech-debt-register.md':
+    `# Tech Debt Register — app\n\n${STAMP}\n\n**Next ID:** \`TD-2\` — paid rows are deleted (git keeps them); an ID is never reused.\n\n` +
+    '## Open\n\n- TD-1 first open row\n',
   'docs/basics/08-data-cache.md': `# Data & Cache — app\n\n${STAMP}\n\n## Caches\n\n- ~~**Board cache**~~ — removed.\n- **Session** — kept in memory.\n`,
 });
 const inProfiles = (relativePath) => path.join(profiles, relativePath);
@@ -816,13 +818,41 @@ blocks(
 );
 passes(
   TABLES,
-  'struck text on the line next to an edit does not block that edit',
-  editPayload(inProfiles('docs/basics/08-data-cache.md'), '- **Session** — kept in memory.', '- **Session** — kept in memory for an hour.'),
+  'a convention that shows the strike marker inside inline code is not struck text',
+  editPayload(
+    inProfiles('docs/basics/07-database.md'),
+    '- `users` — one row per account.',
+    '- `users` — one row per account.\n- A removed test id is written `~~`id`~~` and the legend says `~~struck~~`.',
+  ),
 );
 passes(
   TABLES,
-  'the tech-debt register keeps its paid rows struck through',
-  editPayload(inProfiles('docs/basics/20-tech-debt-register.md'), '- first paid row', '- ~~TD-1~~ first paid row — paid in `abc1234`'),
+  'struck text on the line next to an edit does not block that edit',
+  editPayload(inProfiles('docs/basics/08-data-cache.md'), '- **Session** — kept in memory.', '- **Session** — kept in memory for an hour.'),
+);
+blocks(
+  TABLES,
+  'a paid tech-debt row struck through is blocked — a paid row is deleted',
+  editPayload(inProfiles('docs/basics/20-tech-debt-register.md'), '- TD-1 first open row', '- ~~TD-1~~ first open row — paid in `abc1234`'),
+  { stderrIncludes: ['strikes text through', '**Next ID**'] },
+);
+passes(
+  TABLES,
+  'the tech-debt register\'s Next ID line is no history',
+  editPayload(
+    inProfiles('docs/basics/20-tech-debt-register.md'),
+    '**Next ID:** `TD-2`',
+    '**Next ID:** `TD-3`',
+  ),
+);
+passes(
+  TABLES,
+  'a prefixed Next ID line is no history either',
+  editPayload(
+    inProfiles('docs/basics/20-tech-debt-register.md'),
+    '**Next ID:** `TD-2`',
+    '**Next ID:** `TD-BE-67`',
+  ),
 );
 passes(
   TABLES,
@@ -834,9 +864,105 @@ passes(
 );
 passes(
   TABLES,
-  'a TRD outside docs/basics is not a profile doc',
-  writePayload(inProfiles('docs/development/feat/TRD.md'), `# TRD — feat\n\n${HISTORY_LINES}\n## 1. Overview\n`),
+  'a TRD outside docs/basics is not held to the one-stamp head',
+  writePayload(
+    inProfiles('docs/development/feat/TRD.md'),
+    '# TRD — feat\n\n_Groomed by `do-foundation-grooming` · 2026-09-01_\n\n**Approved:** commit `a1b2c3d` · approved 2026-09-02\n\n' +
+      '- ~~old wording~~ the hub keeps its struck form\n\n## 1. Overview\n',
+  ),
 );
+
+const featureStamps = [
+  '_Approved: 2026-09-12 · `a1b2c3d`_',
+  '_Approved: commit `a1b2c3d` · 2026-09-12_',
+  '_Approved: 2026-09-12 · `a1b2c3d`_ — the old route removed with its tests',
+  '**Approved (plan gate):** commit `a1b2c3d` · approved 2026-09-12',
+  '| **Hub alignment** | ✅ reviewed 2026-09-07 · hub rev `a1b2c3d` · rounds `5 · 2 · 0` — the stale row deleted |',
+  '| **Hub alignment** | ✅ re-reviewed 2026-09-07 · hub rev 2026-09-07 |',
+  '| **Hub review** | ✅ reviewed 2026-09-07 · rev `a1b2c3d` · rounds `3 · 0` |',
+  '- **Status:** done 2026-09-24 — the old route removed with its tests',
+  '- **Status:** DONE 2026-09-24 — the superseded helper deleted',
+  '- **Checkpoint verdict:** auto 2026-09-24 — green; the stale locator removed',
+  '- **Checkpoint verdict:** approved 2026-09-24',
+  '| D1 | the footer | ★ (a) / (b) | decided: auto ★(a) · 2026-09-23 — replaced the old caption role |',
+  '| H1 | the cache | drop it / keep it | decided: drop the cache · 2026-09-01 — the removed reads go to Jira |',
+  '| D11 | the credential | ★ A / B | **decided — auto ★A**, 2026-09-01. Hub H13 is amended in place |',
+  '| OD-3 | the cap | ★ (a) / (b) | Decided 2026-09-15 — (a), the removed limit stays out |',
+  '| **Plan approved** | 2026-09-20 · base `a1b2c3d` |',
+  '| **Environment approved** | local stack and seeded data 2026-09-20 |',
+  '| **Test review** | reviewed 2026-09-22 · rounds 2 · clean — one stale assertion removed |',
+  '| **Scope confirmed** | 2026-09-20 |',
+  '- **Understanding confirmed** 2026-09-20: the deleted rows stay deleted',
+  '## Stage breakdown — approved 2026-09-20',
+  '| B1 | the stale row is removed late | major | UI | AC-3 | 1. open | yes 2026-09-22 | 1 | fixed 2026-09-23 — the stale cache removed |',
+  '| B2 | the toast repeats | minor | UI | AC-4 | 1. open | defer 2026-09-22 | 0 | deferred |',
+  '- **Reviewed by:** Security · **Date:** 2026-09-20 — the removed endpoint re-checked',
+  '| **Values mirrored at** | 2026-09-20 · commit `a1b2c3d` |',
+  '`stackDecidedAt: 2026-09-20` — the replaced stack question is not asked again',
+  '| ~~AC-11~~ | ~~The attach code is single-use~~ | hub §6 · retired 2026-09-14 with `B3` |',
+  '| ~~`AC-W5`~~ | ~~The footer binds the caption role~~ | retired 2026-09-14, replaced by `AC-W9` |',
+  'Measured 2026-09-18: the deck is 221,559 bytes.',
+  '| AC-18 | both state 8 since 2026-09-23 | amended — pass |',
+  'The import is deferred until 2999-01-01, when the vendor API is removed.',
+];
+const featureHistoryNotes = [
+  ['a dated correction note', 'The cap is 5 _(corrected 2026-09-15 for `OD-10`)_.', 'corrected 2026-09-15'],
+  ['a retired row', '| Board row | `body.boards` | **RETIRED 2026-08-28** |', 'RETIRED 2026-08-28'],
+  ['a withdrawn decision', '| W-D5 | ⚠️ **withdrawn 2026-09-14** — nothing copies it |', 'withdrawn 2026-09-14'],
+  ['a superseded section', '> **SUPERSEDED IN PART — 2026-08-27 by `board-item-truth`.**', 'SUPERSEDED IN PART — 2026-08-27'],
+  ['what a line used to say', '⚠️ _This read 14 until 2026-09-15, at the Stage 9 gate._', 'until 2026-09-15'],
+  ['a reversed decision', 'It **was decided 2026-09-18** and reversed by `D8` the next day.', 'was decided 2026-09-18'],
+  ['an added-at note', '| C8 | the read failed | *(added 2026-08-28 by `do-fixing` B2)* |', 'added 2026-08-28'],
+  ['an amendment note', '**Amended 2026-09-02 (`D21`):** `stale` covers a failed refresh.', 'Amended 2026-09-02'],
+  ['a reconcile note', 'Seven routes, **reconciled 2026-08-26** against the yaml.', 'reconciled 2026-08-26'],
+  ['a feature-stage update entry', '_**+ `run-terminal` backend Stage 1 · 2026-09-23** — the resume invariant changed._', '+ `run-terminal` backend Stage 1 · 2026-09-23'],
+  ['a history note appended to an approval stamp', '_Approved: 2026-10-06 · `a1b2c3d` · `S1`\'s steps corrected and approved by the owner 2026-10-08_', 'corrected and approved by the owner 2026-10-08'],
+  ['a history note appended to a checkpoint verdict', '- **Checkpoint verdict:** auto 2026-09-24 · **re-verified after the fix round, 2026-09-24**', 're-verified after the fix round, 2026-09-24'],
+  ['a stale-stamp edit note', '**Approved (plan gate):** commit `a1b2c3d` · approved 2026-09-23 ⚠️ **STALE — edited 2026-09-24 at `do-fixing`**', 'edited 2026-09-24'],
+];
+const historyFeature = sdlcProject('history-feature', {
+  'docs/development/feat/TRD.md':
+    '# TRD — feat\n\n## 1. Overview\n\nThe board lists projects.\n\n## 2. Data\n\n- **User** — signs in.\n' +
+    '- **Session** — kept in memory _(corrected 2026-09-15)_.\n',
+  'docs/development/feat/.alpha-sdlc/handoff/last-stop/s1.md': 'summary\n',
+  'docs/notes.md': '# Notes\n\nfree text\n',
+});
+const inFeature = (relativePath) => path.join(historyFeature, relativePath);
+const asBlock = (line) => {
+  if (!line.startsWith('|')) return line;
+  const cellCount = line.split('|').length - 2;
+  return `|${' h |'.repeat(cellCount)}\n|${'---|'.repeat(cellCount)}\n${line}`;
+};
+for (const stamp of featureStamps) {
+  passes(TABLES, `a stamp or status line passes: ${stamp.slice(0, 60)}`,
+    editPayload(inFeature('docs/development/feat/TRD.md'), 'The board lists projects.', `The board lists projects.\n\n${asBlock(stamp)}`));
+}
+for (const stamp of featureStamps.filter((line) => !line.startsWith('|') && !line.startsWith('#'))) {
+  passes(TABLES, `the same stamp passes in a profile doc body: ${stamp.slice(0, 50)}`,
+    editPayload(inProfiles('docs/basics/07-database.md'), '- `users` — one row per account.', `- \`users\` — one row per account.\n\n${stamp}`));
+}
+for (const [name, note, quoted] of featureHistoryNotes) {
+  blocks(TABLES, `a feature doc line carrying ${name}`,
+    editPayload(inFeature('docs/development/feat/TRD.md'), 'The board lists projects.', `The board lists projects.\n\n${asBlock(note)}`),
+    { stderrIncludes: ['Change-history note', quoted, 'State the current fact'] });
+}
+blocks(TABLES, 'a profile doc body line carrying a dated amendment note',
+  editPayload(inProfiles('docs/basics/07-database.md'), '- `users` — one row per account.',
+    '- `users` — one row per account. **Amended 2026-09-16 by `project-setup` Stage 9.**'),
+  { stderrIncludes: ['Change-history note', 'Amended 2026-09-16'] });
+blocks(TABLES, 'a whole-doc write names every line that carries a note',
+  writePayload(inFeature('docs/development/feat/plan-web.md'),
+    '# Plan\n\n- A _(corrected 2026-09-15)_\n- B **withdrawn 2026-09-16**\n- C _(added 2026-09-17)_\n'),
+  { stderrIncludes: ['line 3 carries', '+2 more in this change, at line(s) 4, 5'] });
+passes(TABLES, 'a history note on the line next to an edit does not block that edit',
+  editPayload(inFeature('docs/development/feat/TRD.md'), '- **User** — signs in.', '- **User** — signs in with Google.'));
+passes(TABLES, 'a history note inside a code fence is sample text',
+  writePayload(inFeature('docs/development/feat/test-plan-web.md'),
+    '# Test plan\n\n```text\nwithdrawn 2026-09-16 — a sample line\n```\n'));
+passes(TABLES, 'a handoff summary under docs/development/.alpha-sdlc is state, not a feature doc',
+  writePayload(inFeature('docs/development/feat/.alpha-sdlc/handoff/last-stop/s1.md'), 'Stage 3 corrected 2026-09-15: the cap.\n'));
+passes(TABLES, 'a doc outside docs/basics and docs/development is not checked for history',
+  writePayload(inFeature('docs/notes.md'), '# Notes\n\nThe cap was corrected 2026-09-15.\n'));
 
 const drifted = sdlcProject('drifted', {
   'docs/development/feat/TRD.md': '# TRD\n',
