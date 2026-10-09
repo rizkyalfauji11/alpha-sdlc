@@ -8,18 +8,46 @@ stands on before any feature exists: the framework scaffold, the folder structur
 architecture skeleton the user wants. Output is a **foundation TRD** that flows into the normal
 pipeline (`do-planning` → `do-development` → `do-testing`).
 
-**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the
-INDEX of these rules, never their text, so the file is the only place they actually bind —
-especially the **lazy-senior mindset** (the base is the smallest thing that stands, not a framework
-of your own), **no speculative scaffolding**, **ask don't assume**, **2–3 options with one
-recommended**, and **step-by-step approval**.
-
+**Read `../../rules/groom.md` in full now** — these are this skill's binding rules, generated from
+`principles.md`. After a compaction, re-read it and the reference file of your current step before
+the next gate. If the read is denied (headless runs), say so in the step report — rules never
+loaded cannot bind. Especially the **lazy-senior mindset** (the base is the smallest thing that
+stands, not a framework of your own), **no speculative scaffolding**, **ask don't assume**, **2–3
+options with one recommended**, and **step-by-step approval**.
 
 **Auto-run/auto-decide NEVER applies in this skill** — this is a decision phase. If the user asks
 for auto mode here, decline in one line ("this phase decides — gates apply; auto-run starts at
 `do-development`") and proceed gated: every gate blocks as normal, nothing auto-decides.
 
-## Precondition — the stack is decided in `do-project-setup`, not here
+Every gate you present: header `<development> · <phase> · <step> · ✅/⏸/⚠️`, then Bottom line (what
+happened + what I need from you) → Why it matters (never omitted when a question is asked) →
+Options ★ → Context (only where it adds something) → Details (for engineers) → Next as the last
+paragraph (rules → *Present every step bottom line first*). The plain layer is in the org's
+language and follows its guide in `../../plain-language/` when one exists (`id.md` for Bahasa
+Indonesia) — at every gate, in every phase.
+
+## Gates
+
+- No `docs/basics/` → ask one question: run `do-project-setup` (greenfield mode) now? Yes → run it
+  here, then resume at step 1; no → **STOP** and name what's missing. Never decide the stack here.
+- `docs/basics/` describes a different, non-empty project → not greenfield: `do-grooming` or
+  `do-tech-debt-grooming`.
+- A profile decision that's wrong or left open → **STOP**, fix it in the profile, then continue.
+- Steps 1, 2 and 3 (mode and profile · intent and platform set · outline) → each **STOP** until
+  confirmed; then write the skeletons.
+- Every gate unit → **STOP** (hub ①–⑥, then each spoke's ①–⑦ and the omissions register): approve
+  as-is / with edits / regenerate / skip; written only after; never two in one turn, never "approve
+  the rest".
+- The hub review → verdict, **STOP**; no spoke before the `Hub review` row is ✅. Each spoke's
+  hub-alignment review → verdict, **STOP**; stamped only on a clean pass. A hub-wrong finding
+  changes the hub only on a yes to that change itself. Rounds flat or rising across three →
+  **STOP**, escalate with the trend.
+- A product feature asked for here is the first feature: finish the base, then `do-grooming`.
+- Auto-run never applies here.
+
+## Flow — section → review → write
+
+### Precondition — the stack is decided in `do-project-setup`, not here
 
 **Read `docs/basics/` first.** A greenfield profile is written by `do-project-setup` in **greenfield
 mode** (prescriptive/pre-code): it is where the framework, architecture style, structure convention,
@@ -39,6 +67,69 @@ and tooling get **decided with the user, one gate per decision**.
   re-decide.** If grooming exposes a decision the profile got wrong or left open, **stop and fix it
   in the profile** (re-run setup on that doc), then continue — the profile stays the single source
   of truth.
+
+### Steps
+
+1. **Confirm the mode and the profile.** State plainly: this is greenfield foundation grooming,
+   scaffolding only, and the stack decisions come from `docs/basics/` (name the docs and the
+   decisions you read — framework, architecture style, structure convention, tooling). List anything
+   the profile leaves open that the base needs. **Present, then STOP** for confirmation.
+2. **Summarize the intent and the platform set.** What the app/service is, which platforms are in
+   scope, and whether it's a monorepo or separate repos (a hub-level decision with real consequences
+   — ask, recommend, don't assume). **Present, then STOP.**
+3. **Propose the section outline** for the hub and each spoke (per `foundation-TRD-template.md`).
+   **Present, then STOP** for approval before drafting any section. **On approval, write the
+   skeletons** as the template's opening note lays out: the hub `docs/development/foundation/TRD.md`
+   with *Intent & constraints*' **Gate-0 notes** (the decisions read and what the profile leaves
+   open, the confirmed intent and platform set) and *Carry-forward answers* (step 2's repo-strategy
+   answer until gate ② folds it in), and one `TRD-<platform>.md` per spoke — every approved heading
+   marked `_Pending_` until its gate stamps it `_Approved: <YYYY-MM-DD> · <commit>_` (today, HEAD's
+   short hash). A repo with no commit yet → before writing them, ask the user to commit the
+   profile: a stamp and a review's `--base` name a real commit, never an invented one (declined:
+   stamps read `uncommitted`, and the hub review waits for that commit). No `<…>` template
+   placeholder survives into a TRD. From here on, an answer that belongs to a later gate goes into
+   *Carry-forward answers* at once; that gate folds it in.
+4. **Groom the hub — one gate per section**, in the order listed in the rules (intent → repo
+   strategy → architecture style → contract approach → shared conventions → environments). Draft
+   one, present it, **STOP**, apply their verdict, write it, next. Each *Shared decisions* row
+   (②–⑥) records its own approval; the section stamp comes with the last. The hub's shared
+   decisions are **all approved before any spoke is groomed**. Then the hub review (*Reviews*
+   below) — verdict, **STOP**.
+5. **Groom each spoke — one gate per section**, in the order listed in the rules (framework &
+   scaffold → **folder structure, alone** → architecture skeleton → harness → repo hygiene → AC →
+   omissions → Open Decisions). Same discipline: one section per turn, approved before it's written.
+   Don't collapse sections because the project is small; a tiny project just has short sections.
+   The omissions gate writes the hub's *Deliberate omissions & deferrals*, not a spoke section. Then
+   the spoke's hub-alignment review (*Reviews* below) — verdict, **STOP**.
+6. **Close out.** Confirm every AC is mechanically checkable, the omissions register is filled, and
+   the profile docs the TRD binds to are named; write the TRD's *Hand-off* from the template's. Then
+   show the user **where they are in the greenfield chain** — `setup ✓ → foundation TRD ✓ → plan →
+   build → test the base → then do-grooming per feature` — and **offer to start `do-planning` now**
+   (the base's stages are scaffolding stages, per the template's *Hand-off*). Feature grooming is
+   deliberately later: once the base is built and its reduced Boot & Smoke is green, `do-grooming`
+   grooms feature #1 — say that here so the second grooming never surprises anyone.
+
+## Resume (fresh session)
+
+The TRDs are the state — the hub's stamps and `_Pending_` headings, *Intent & constraints*' Gate-0
+notes, the *Shared decisions* rows' approvals, *Carry-forward answers*, the `Hub review` row, the
+*Spokes* row (each spoke's alignment stamp and round counts), each spoke's stamps. Run `node
+../../scripts/next-step.js docs/development/foundation [<platform>] --phase grooming` first (a
+spoke: its platform): exit 0 names the next unit, exit 1 a STOP to present, exit 2 an older or
+unknown format — read the files it lists instead; "nothing groomed yet — Gate 0" (exit 0, no
+feature directory yet) means start at step 1. Before any spoke section, confirm yourself that hub gates ①–⑥ are
+approved and the `Hub review` row is ✅. Read `.alpha-sdlc/next/foundation--hub.json` (a spoke:
+`--<platform>`) and its handoff when present, set the next-file's `status` to `consumed`, and
+state the recorded understanding in one line. Re-read only what it lists. Once the skeletons exist, never re-run steps 1–3 (Gate 0); never re-run a
+stamped section, and never re-ask what the TRDs record.
+
+**Session boundaries** (rules → *The session is disposable — the files are the state*): after the
+skeletons are written, after the hub review ✅, after each spoke's alignment ✅, and at the phase
+end — never mid-section, never between a review report and its fixes. Persist first, then write the
+next-file (`skill` `alpha-sdlc:do-foundation-grooming`, `args` `foundation [<platform>]`; at the
+phase end `alpha-sdlc:do-planning`) and offer "/clear, then 'lanjut'" in Next. A
+`do-project-setup` run started from the precondition may end at its own boundary; its next-file
+names this skill at step 1.
 
 ## Scope — scaffolding only, and it is a hard boundary
 
@@ -123,70 +214,29 @@ must state what's decided-and-built versus written-but-not-yet-real.
   may be groomed by different people. The hub carries anything they must agree on (repo strategy —
   monorepo vs separate repos, the API contract format, shared conventions), and that agreement is a
   **hub gate** before either spoke is groomed.
-- **The hub review opens the spokes** (`do-grooming` → Step 2a) — minus the contract, entity and
-  flow points a scaffold has nothing to check, said so in the verdict.
-- **Hub-alignment review closes every spoke** (see `do-grooming` → *Hub-alignment review*), **minus
-  the points a scaffold has nothing to check** — skip contract fidelity, feature-flow coverage,
-  entity ownership and the §8-AC ↔ §9-slice pair (a base has no contract, flow, entities or slices)
-  and say so in the verdict rather than reporting them passed. What's left is the highest-value
-  part: the spoke's structure tree matches the hub's decided **architecture style** and repo
-  strategy · the harness commands match the hub's environment decisions · **each spoke's AC and
-  structure are consistent with the hub's single omissions register** (one platform quietly
-  including what the register defers is exactly the divergence this catches) · both spokes' AC
-  bind to the same conventions · Open Decisions sit
-  at the right level. **The stamp lands in the hub's *Spokes* row alone** — a foundation spoke is
-  cut from *Per-platform sections* and has no header table to carry one — and re-review every spoke
-  when a hub decision changes.
 - **Open Decisions, same discipline.** Anything you'd have to guess (the user hasn't chosen a
   structure convention, or wants two incompatible things) is recorded in the spoke's **Open
   Decisions** with 2–3 options, one marked — never resolved by inventing.
 
-## Flow — section → review → write
+## Reviews — `../do-grooming/grooming-review.md`, foundation row
 
-> Present every gate in the shared **step-summary format** (`principles.md`): header (development ·
-> phase · step · status) · **bottom line** (what happened + what I need from you) · **why it
-> matters** (never omitted when a question is asked) · options ★ · context only where it adds
-> something · engineer detail · **what happens next** as the last paragraph.
-> The plain layer is in the org's language and follows its guide in `../../plain-language/`
-> when one exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
+Run both by `../do-grooming/grooming-review.md` — read it before each review and whenever a hub
+edit stales a spoke (once per session, again after a compaction). This variant:
 
-1. **Confirm the mode and the profile.** State plainly: this is greenfield foundation grooming,
-   scaffolding only, and the stack decisions come from `docs/basics/` (name the docs and the
-   decisions you read — framework, architecture style, structure convention, tooling). List anything
-   the profile leaves open that the base needs. **Present, then STOP** for confirmation.
-2. **Summarize the intent and the platform set.** What the app/service is, which platforms are in
-   scope, and whether it's a monorepo or separate repos (a hub-level decision with real consequences
-   — ask, recommend, don't assume). **Present, then STOP.**
-3. **Propose the section outline** for the hub and each spoke (per `foundation-TRD-template.md`).
-   **Present, then STOP** for approval before drafting any section.
-4. **Groom the hub — one gate per section**, in the order listed in the rules (intent → repo
-   strategy → architecture style → contract approach → shared conventions → environments). Draft
-   one, present it, **STOP**, apply their verdict, write it, next. The hub's shared decisions are
-   **all approved before any spoke is groomed**.
-5. **Groom each spoke — one gate per section**, in the order listed in the rules (framework &
-   scaffold → **folder structure, alone** → architecture skeleton → harness → repo hygiene → AC →
-   omissions → Open Decisions). Same discipline: one section per turn, approved before it's written.
-   Don't collapse sections because the project is small; a tiny project just has short sections.
-6. **Close out.** Confirm every AC is mechanically checkable, the omissions register is filled, and
-   the profile docs the TRD binds to are named. Then show the user **where they are in the
-   greenfield chain** — `setup ✓ → foundation TRD ✓ → plan → build → test the base → then
-   do-grooming per feature` — and **offer to start `do-planning` now** (the base's stages are
-   scaffolding stages, see below). Feature grooming is deliberately later: once the base is built
-   and its reduced Boot & Smoke is green, `do-grooming` grooms feature #1 — say that here so the
-   second grooming never surprises anyone.
-
-## Hand-off notes for the downstream skills
-
-- **`do-planning`** — foundation work has **no domain/data/presentation split**; the layer rule
-  doesn't apply to scaffolding. Stages run: **init the project** → **create the structure** → **wire
-  the skeleton (entry point, config, dependency-rule enforcement)** → **harness
-  (build/run/test/lint)** → **repo hygiene (.gitignore, README stub)**. Each stage marks `Layer: n/a
-  (scaffolding)`.
-- **`do-development`** — scaffolding stages mostly **cannot be TDD'd** (there's nothing to assert
-  until the harness exists). That's the documented fallback: say so, and verify by the stage's real
-  check — the command runs, the tree matches, the dependency rule holds. The **conformance review
-  still applies** and is unusually valuable here: "the created tree matches the decided structure"
-  is an objective check, which makes structure drift catchable on day one.
-- **`do-testing`** — for the base, the levels collapse to: the harness commands pass, the
-  structure/dependency-rule assertions pass, and the app boots and answers at its entry point.
-  **Report that reduced Boot & Smoke honestly** — it is not the full real-data gate.
+- **The hub review opens the spokes** (`do-grooming` → Step 2a) — minus the contract, entity and
+  flow points a scaffold has nothing to check, said so in the verdict. Points 3 and 5 run: build its
+  packet with `--items 3,5`. Every round appends its objective-violation count to the `Hub review`
+  row.
+- **Hub-alignment review closes every spoke** (see `do-grooming` → *Hub-alignment review*), **minus
+  the points a scaffold has nothing to check** — skip contract fidelity, feature-flow coverage,
+  entity ownership and the §8-AC ↔ §9-slice pair (a base has no contract, flow, entities or slices)
+  and say so in the verdict rather than reporting them passed: build its packet with `--items
+  2,3,5,6,8,9,10,11` (the packet merges dimension a into b). What's left is the highest-value
+  part: the spoke's structure tree matches the hub's decided **architecture style** and repo
+  strategy · the harness commands match the hub's environment decisions · **each spoke's AC and
+  structure are consistent with the hub's single omissions register** (one platform quietly
+  including what the register defers is exactly the divergence this catches) · both spokes' AC
+  bind to the same conventions · Open Decisions sit at the right level. **The stamp lands in the
+  hub's *Spokes* row alone** — a foundation spoke is cut from *Per-platform sections* and has no
+  header table to carry one; each round's objective-violation count sits beside it there — and
+  re-review every spoke when a hub decision changes.

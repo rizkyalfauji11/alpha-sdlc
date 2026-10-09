@@ -6,7 +6,9 @@
 | **Levels** | API · UI (visual + composition) · Integration (UI↔API) · System/E2E (risk-calibrated) · **Boot & Smoke (integrated — mandatory, non-skippable)** |
 | **Framework** | <existing framework reused — e.g. Playwright / Espresso / XCUITest / the mobile driver in `09-environment.md` / HTTP contract> |
 | **TRD** | [hub](./TRD.md) · [spoke](./TRD-<platform>.md) |
-| **Plan approved** | <YYYY-MM-DD — the pyramid/plan gate> |
+| **Plan approved** | <YYYY-MM-DD — the pyramid/plan gate> · base <commit testing started from — the test review diffs from it; one per repository when tests live in more than one, e.g. `a1b2c3d` · `../web` `e4f5a6b`> |
+| **Environment approved** | <what may be stood up — services, test data, device/emulator, tooling> <YYYY-MM-DD> |
+| **Test review** | <reviewed YYYY-MM-DD · rounds n · verdict — filled when step 3 closes> |
 | **Date** | <YYYY-MM-DD> |
 
 > Every acceptance criterion maps to at least one test case, at the **right level** — placed once
@@ -17,17 +19,22 @@
 > tolerance);
 > **token/style conformance is a separate UI check** — a wrong token is a bug even inside pixel
 > tolerance.
+> **ID** is the test's ID (`TC1`…); **File** names the test file and the test name in code spans
+> (`` `tests/api/payment.spec.ts` · `rejectsPaymentOverLimit` ``), so
+> `check-coverage.js --test-plan` can check that both exist and that each Status matches the run.
+> File paths are relative to this repository's root; a test in a sibling repository — a journey
+> written in the client repo — is `../<repo>/<path>`.
 
 ## AC → test coverage
 
 | ID | AC (the TRD's numbered AC ID + essence — the spoke's §8 registry on a hub/spoke feature; `A1`…`A6` on a foundation TRD) | Level | Test case (what it asserts) | File | Status |
 |----|---------------|-------|-----------------------------|------|--------|
-| TC1 | <e.g. payment > Rp1M rejected> | API | <asserts 4xx + error code, no debit> | <path> | pass / fail / pending |
-| TC2 | <e.g. scan screen matches design> | UI (visual) | <icons/spacing/type parity within tolerance; diff saved> | <path> | |
-| TC3 | <e.g. scan screen composition> | UI (composition) | <elements present, hierarchy, states> | <path> | |
-| TC3b | <e.g. scan screen style conformance> | UI (tokens) | <no raw literals; computed font role/size/weight, divider thickness + inset, frame + card padding match `18-design-tokens.md` ↔ widget-spec *Style bindings*; agrees with sibling screens of the same scaffold> | <path> | |
-| TC4 | <e.g. balance loads from API> | Integration | <real call renders; loading/error driven by response> | <path> | |
-| TC5 | <e.g. end-to-end pay-at-merchant> | E2E | <full journey UI→API→DB, prod-like, auth + flag> | <path> | |
+| TC1 | <e.g. payment > Rp1M rejected> | API | <asserts 4xx + error code, no debit> | <`test file` · `test name`> | pass / fail / pending |
+| TC2 | <e.g. scan screen matches design> | UI (visual) | <icons/spacing/type parity within tolerance; diff saved> | <`test file` · `test name`> | |
+| TC3 | <e.g. scan screen composition> | UI (composition) | <elements present, hierarchy, states> | <`test file` · `test name`> | |
+| TC3b | <e.g. scan screen style conformance> | UI (tokens) | <no raw literals; computed font role/size/weight, divider thickness + inset, frame + card padding match `18-design-tokens.md` ↔ widget-spec *Style bindings*; agrees with sibling screens of the same scaffold> | <`test file` · `test name`> | |
+| TC4 | <e.g. balance loads from API> | Integration | <real call renders; loading/error driven by response> | <`test file` · `test name`> | |
+| TC5 | <e.g. end-to-end pay-at-merchant> | E2E | <full journey UI→API→DB, prod-like, auth + flag> | <`test file` · `test name`> | |
 
 ## Test procedures (step-by-step)
 
@@ -78,10 +85,14 @@ blocker if it couldn't boot.
 
 > Every failure logged here first — **presented to the user before any fixing**. `do-testing`
 > does not fix; confirmed fixes go to `do-fixing`. Severity: blocker / major / minor / trivial.
+> **Fix? (user)** records the triage as it is given: `yes`, `no` or `defer`, then the date
+> (`auto <date>` under auto-run); `no` / `defer` set Status to `won't fix` / `deferred`.
+> **Attempts** starts at 0; `do-fixing` adds 1 on every failed re-verification and stops at 3
+> (three strikes). Status stays the last column — `check-feature-done.js` reads it.
 
 | # | Bug | Severity | Level | AC | Repro steps | Fix? (user) | Attempts | Status |
 |---|-----|----------|-------|----|-------------|-------------|----------|--------|
-| B1 | <what's wrong> | major | UI (visual) | <AC ref> | <1. … 2. …> | yes / no / defer | <n> | open → (do-fixing) |
+| B1 | <what's wrong> | major | UI (visual) | <AC ref> | <1. … 2. …> | <yes / no / defer> <YYYY-MM-DD> | 0 | open → (do-fixing) |
 
 ## Coverage summary
 

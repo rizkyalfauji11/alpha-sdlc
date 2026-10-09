@@ -4,6 +4,12 @@
 > Each platform team grooms its own spoke (`TRD-backend.md`, `TRD-android.md`,
 > `TRD-ios.md`, `TRD-web.md`) which links back here. Never copy the API contract
 > into a spoke — link to it, so it can't drift.
+>
+> **Gate 0 writes this file as a skeleton:** the header and the *Spokes & alignment* table filled,
+> §1's *Gate-0 notes*, *Carry-forward answers* when any were given, and every approved outline
+> heading with `_Pending_` on the line under it — no section prose, and no `<…>` placeholder left
+> anywhere (the hook blocks one). *Open Decisions* opens with its first row. A section's gate
+> turns its `_Pending_` into `_Approved: <YYYY-MM-DD> · <commit>_` and writes its prose below it.
 
 | | |
 |---|---|
@@ -11,7 +17,7 @@
 | **Author** | <engineer> |
 | **Platforms in scope** | <Backend / Android / iOS / Web> |
 | **Spokes** | <see the *Spokes & alignment* table below> |
-| **Hub review** | <✅ reviewed YYYY-MM-DD · rev `<hash>` · rounds `n · n` — or ❌ not reviewed. No spoke is groomed before ✅> |
+| **Hub review** | <❌ not reviewed · rounds `n · n` while rounds run — every round appends its objective-violation count; a clean pass makes it ✅ reviewed YYYY-MM-DD · rev `<hash>` · rounds `n · n · 0`. No spoke is groomed before ✅> |
 | **PRD/BRD** | <link to source> |
 | **Figma** | <link, if any> |
 | **Date** | <YYYY-MM-DD> |
@@ -28,13 +34,41 @@
 | <backend> | <— for this repo (the default) — or the `<org/repo>` that holds it, whose **Link** is then a full URL> | [TRD-backend.md](./TRD-backend.md) | <✅ reviewed YYYY-MM-DD · hub rev `<hash/date>` · or ⚠️ stale · or ❌ not reviewed> | <none — or the decided exception + why, recorded here so the next spoke and `do-development` see it> |
 | <android> | | <…> | | |
 
+## Open Decisions
+
+> Hub-level decisions still open — anything a spoke would otherwise have to decide (hub review
+> point 5) and a spoke's Open Decision escalated to the hub. **The hub-wrong findings gathered from
+> the spokes awaiting alignment are one row with the status `pending hub change`**, written before
+> the user is asked so they outlive the session; on a yes it becomes `decided: <the change> ·
+> <date>` in the same message as the Edits that fix the hub, on a no it records why the hub stands.
+
+| # | Gap / ambiguity | Why it's a gap (what a spoke would otherwise decide) | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
+|---|-----------------|------------------------------------------------------|---------------------------|--------|
+| H1 | <what's undecided at hub level> | <the decision a spoke would otherwise invent> | ★ <opt A> / <opt B> | pending / pending hub change: <spokes · findings> / decided: <choice> · <date> |
+
+## Carry-forward answers
+
+> Answers the user gave at one gate that belong to a later section — written here the moment they
+> are given, so a fresh session still has them. One line each, naming its section; that section's
+> gate folds the line in and deletes it, and the block goes with its last line.
+
+- §<n>: <the answer, as the user gave it>
+
 ## 1. Context / scope
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 <Why this exists, what problem it solves, what's explicitly out of scope.>
 
+**Gate-0 notes** — Gate 0's approved record, written with the skeleton:
+- **Understanding confirmed** <YYYY-MM-DD>: <problem · scope · key facts · constraints · what exists
+  to reuse · the feature dependencies found>
+- **Approach chosen:** <the option picked where the code allowed more than one, and why>
+- **Evolution:** <the 2–3 likely paths, and which the user called realistic — designed for the
+  confirmed scope only, the rest not blocked>
+- **Unlocked possibilities:** <named as opportunities, not scope>
+
 ## 2. Feature dependencies
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 > How this feature relates to **other features** — so a dependency is reused/sequenced, not missed.
 > Grounded in `docs/basics/16-feature-map.md` + sibling feature TRDs; register this feature in the
@@ -83,12 +117,11 @@ another feature:
   freshness**). A broken binding is a bug; an untested one is a coverage gap.
 
 ## 3. Feature flow
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 > **What the user does and what the system does back, end to end, platform-neutral.** Plain enough
-> for
-> a product owner to check without a walkthrough. Per-platform screen mechanics stay in the spoke
-> (*Multi-step flows*), per-screen cases in `section-slicing/`, service topology in §4 below.
+> for a product owner to check without a walkthrough. Per-platform screen mechanics stay in the
+> spoke (*Multi-step flows*), per-screen cases in `section-slicing/`, service topology in §4 below.
 
 | # | User does | System does | Result |
 |---|-----------|-------------|--------|
@@ -108,7 +141,7 @@ here rather than leaving them to be invented at test time.>
 <Each row is a natural acceptance criterion — the spoke's Work slices carry the assertable version.>
 
 ## 4. System design
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 <End-to-end picture: which clients and services are involved and how they interact.>
 
@@ -126,7 +159,7 @@ graph TD
 ```
 
 ## 5. API contracts
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 <The backend↔client contract — the shared truth every spoke references. Method, path, request,
 response, errors.>
@@ -150,13 +183,13 @@ fragment into the project spec and regenerates — no re-translation.>
 | | | | | | |
 
 ## 6. Cross-cutting concerns
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 <Things every platform must agree on: auth, error model, API versioning & backward compatibility,
 feature flags, i18n/localization, analytics events.>
 
 ## 7. Change manifest
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 > Structured handoff. Feeds ticket-slicing and monitoring.
 

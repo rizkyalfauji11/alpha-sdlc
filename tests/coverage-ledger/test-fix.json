@@ -1,0 +1,278 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind — especially: **fix the root cause, not the symptom**",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/R1 (SPEC §8 rules line): the skill reads its generated bundle rules/execute.md in full at start (plus rules/ui.md on web, Android or iOS), re-reads it after a compaction and says so when the read is denied; the SessionStart hook injects a pointer, not the index; the 'especially' list is kept verbatim",
+      "where": "skills/do-fixing/SKILL.md → head (**Read `../../rules/execute.md` in full now**)"
+    },
+    {
+      "clause": "**Read `../../principles.md` in full now, then apply it** — the `SessionStart` hook injects only the INDEX of these rules, never their text, so the file is the only place they actually bind — especially: tests derive from **testable AC**",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/R1 (SPEC §8 rules line): the skill reads its generated bundle rules/execute.md in full at start (plus rules/ui.md on web, Android or iOS), re-reads it after a compaction and says so when the read is denied; the 'especially' list is kept verbatim",
+      "where": "skills/do-testing/SKILL.md → head (**Read `../../rules/execute.md` in full now**)"
+    },
+    {
+      "clause": "**Conformance review before re-verifying — fresh eyes on the fix, never the fixer's.**",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "merged",
+      "reason": "DEV-13: the review rule and flow step 4 are one block; step 4 opens with the same rule (reviewed against the profile, the principles and the bug report before re-verification and before it is presented, fresh eyes on the fix, never the fixer's)",
+      "where": "skills/do-fixing/SKILL.md → Flow step 4 (**Conformance review (fresh eyes) — before re-verifying, before presenting.**)"
+    },
+    {
+      "clause": "Run it with the **reviewer subagent** (`alpha-sdlc:sdlc-reviewer`) handed only the **fix diff + the bug entry (repro + the AC it violates)",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "changed",
+      "reason": "REC-3/DEV-13: scripts/review-packet.js --bug writes the one packet file (fix diff, the bug row and its AC rows verbatim, the charter's currency with the docs/basics fallback, the rules this diff can violate with the withheld ones listed, settled find-orphans --diff); each reviewer gets only the packet path and its dimension id; 'never your diagnosis' and 'the reasoning that produced a fix is the worst reasoning to audit it with' stay in step 4",
+      "where": "skills/do-fixing/SKILL.md → Flow step 4"
+    },
+    {
+      "clause": "**Conformance review (fresh eyes) — before re-verifying, before presenting.** Hand the **fix diff + the bug entry (repro + violated AC)",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "changed",
+      "reason": "DEV-13/REC-1/REC-3/REC-8: one merged step-4 block; review-packet.js builds the packet, review-tier.js picks the tier (script-only: no reviewer; light: one alpha-sdlc:sdlc-reviewer runs all three parts; full: one reviewer per part, fix quality on alpha-sdlc:sdlc-reviewer-deep), reviewers launch in the foreground, a whole round in one message, at most 3 in flight; the three parts keep their contents and numbers, the checklist text lives in fix-reviewer.md",
+      "where": "skills/do-fixing/SKILL.md → Flow step 4; skills/do-fixing/fix-reviewer.md items 1–3"
+    },
+    {
+      "clause": "Map: new/changed endpoint or base URL → `15-api-reference` (+ the machine-checkable contract spec if the shape changed)",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "merged",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries the row and the contract-spec clause; do-fixing keeps the pointer and 'A changed contract shape also updates the machine-checkable contract spec.'; fix-reviewer.md item 3 checks it",
+      "where": "principles.md → *Keep the project profile current*; skills/do-fixing/SKILL.md → Rules → **Keep the project profile current**"
+    },
+    {
+      "clause": "schema/migration → `07-database`",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md (read in full through rules/execute.md) carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (schema/migration → `database`)"
+    },
+    {
+      "clause": "changed entity/relationship/on-delete/lifecycle → `06-domain-model`",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (new/changed entity, relationship, on-delete or lifecycle → `domain-model`)"
+    },
+    {
+      "clause": "changed cache keys/invalidation/real-time wiring → `08-data-cache`",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (a changed cache key, invalidation or real-time wiring → `data-cache`)"
+    },
+    {
+      "clause": "changed feature dependency → `16-feature-map`",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (changed cross-feature dependency → `feature-map`)"
+    },
+    {
+      "clause": "new env var / flag / run-recipe change → `09-environment`",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (new env var / flag / variant or run-recipe change → `environment`)"
+    },
+    {
+      "clause": "new asset → `17-asset-registry`",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (new asset → `asset-registry`)"
+    },
+    {
+      "clause": "new screen/nav/component → `03-ui-architecture`",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (new screen / nav / component → `ui-architecture`)"
+    },
+    {
+      "clause": "new UX pattern → `04-ux-conventions`",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (new/changed UX convention → `ux-conventions`)"
+    },
+    {
+      "clause": "new/changed design token or an approved deviation → `18-design-tokens`",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (new/changed design token or approved deviation → `design-tokens`)"
+    },
+    {
+      "clause": "token-handling change → `13-auth`",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (new/changed auth or token handling → `auth`)"
+    },
+    {
+      "clause": "new code convention (e.g. a localized-render helper introduced by the fix) → `10-conventions`.",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13/R10: the union change → doc map in principles.md carries this row; do-fixing points to it",
+      "where": "principles.md → *Keep the project profile current* (new code convention → `conventions`)"
+    },
+    {
+      "clause": "machine directives (lint/type/coverage pragmas) are the only comments allowed.",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13: the zero-comments restatement is dropped; principles.md (machine directives only, plus the Org settings' comment allowlist), the validate-comments hook and fix-reviewer.md item 3 carry it, and step 4 still absorbs the comment check",
+      "where": "principles.md → *Comments: none*; skills/do-fixing/fix-reviewer.md item 3"
+    },
+    {
+      "clause": "**Zero comments** (per principles) — a fix explains itself through names, not prose",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13: the rule bullet restated principles.md; no \"fixes B3\", the why in the commit message and the hook-plus-review enforcement are in principles.md, fix-reviewer.md item 3 and flow step 4 (**This step absorbs the comment check**)",
+      "where": "principles.md → *Comments: none*; skills/do-fixing/fix-reviewer.md item 3"
+    },
+    {
+      "clause": "**Present + ⏸ STOP** — present in the shared **step-summary format** (`principles.md`): header (development · phase · step · status)",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "merged",
+      "reason": "SPEC §8/C3: the format (header, bottom line, why it matters, options, context, Details, Next last) is the head's step-summary line; the context-only-what's-new, self-contained-statement and language-guide rules are principles.md → *Present every step bottom line first*; step 6 keeps the gate, the bottom line (what was fixed + what you need) and every Details item verbatim",
+      "where": "skills/do-fixing/SKILL.md → head ('Every gate you present: header …') and Flow step 6 (**Present + ⏸ STOP**)"
+    },
+    {
+      "clause": "**inferred is a question, not a defect.**",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13 item 5: the reviewer-behaviour lines are the reviewer agent's own rules; inferred findings are also never counted per principles.md → *Every round counts*",
+      "where": "agents/sdlc-reviewer.md → *Label every finding measured or inferred.*"
+    },
+    {
+      "clause": "Every finding is labeled **measured** or **inferred** — measured names the file and line, the command, test or grep that produced it",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-13 item 5: measured/inferred labelling, which copy was read, and leaving the working tree exactly as found are the reviewer agent's rules; 'verify before acting' stays in step 4 for the author",
+      "where": "agents/sdlc-reviewer.md → *Label every finding measured or inferred.* and *You report; you don't fix.*"
+    },
+    {
+      "clause": "**In auto-run mode** (`principles.md` → *Auto-run mode*): per-test approvals become reports (`Approved: auto <date>` in each procedure block)",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "merged",
+      "reason": "T4: the six auto-run restatements collapse into one head line that keeps the testing deltas (plan, test approvals, test review and bug report become reports; env/tooling stand up without asking; each test still written, stamped `Approved: auto <date>` and run one at a time; bugs to do-fixing blockers first, same turn); a design-gap bug auto-deciding ★, recorded and ratified in the chain report, is principles.md → *Auto-run mode*",
+      "where": "skills/do-testing/SKILL.md → head **Auto-run** line and ## Gates Auto-run line; principles.md → *Auto-run mode*"
+    },
+    {
+      "clause": "only an actual failure halts.)**",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "merged",
+      "reason": "T4: kept in the one auto-run line ('the environment and tooling stand up without asking — only an actual failure halts'); local tooling pre-authorized is principles.md → *Auto-run mode*",
+      "where": "skills/do-testing/SKILL.md → head **Auto-run** line"
+    },
+    {
+      "clause": "**(Auto-run: the plan is emitted as a report and testing proceeds immediately.)**",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "merged",
+      "reason": "T4: kept in the one auto-run line ('the plan, each test's approval, the test review and the bug report become reports')",
+      "where": "skills/do-testing/SKILL.md → head **Auto-run** line"
+    },
+    {
+      "clause": "**(Auto-run: each written case records `Approved: auto <date>` and runs immediately — one at a time, no batching, no asking.)**",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "merged",
+      "reason": "T4: kept in the one auto-run line ('Each test is still written, stamped `Approved: auto <date>` and run one at a time, never batched')",
+      "where": "skills/do-testing/SKILL.md → head **Auto-run** line"
+    },
+    {
+      "clause": "**(Auto-run: re-approvals record `Approved: auto <date>`, a judgment finding auto-decides its ★ resolution — recorded — and the chain continues.)**",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "merged",
+      "reason": "T4: a changed test re-enters step 2, where the auto-run line stamps it `Approved: auto <date>`; a judgment finding auto-deciding ★, recorded, with the chain continuing is principles.md → *Auto-run mode* ('A judgment finding — in a fix round too — auto-decides ★ and is recorded')",
+      "where": "skills/do-testing/SKILL.md → head **Auto-run** line; principles.md → *Auto-run mode*"
+    },
+    {
+      "clause": "**Then reconcile the profile — run `do-project-setup` in refresh mode** so `docs/basics/` reflects what was built (new endpoints → `api-reference`",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "merged",
+      "reason": "T4: the example rows (endpoints → api-reference, screens → ui-architecture, feature + deps → feature-map, conventions → conventions/ux-conventions, token handling → auth) are rows of the change → doc map the sentence now points to; the reconcile, its timing and the phase-end boundary stay",
+      "where": "skills/do-testing/SKILL.md → Flow (done paragraph); principles.md → *Keep the project profile current*"
+    },
+    {
+      "clause": "Present every gate below (plan, per-test approval, test review, coverage + bug report) in the shared **step-summary format**",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "merged",
+      "reason": "SPEC §8/C3: the step-summary line in the head names the same gates and the same order (header, Bottom line, Why it matters, Options ★, Context, Details for engineers, Next last); why-it-matters-never-omitted is principles.md → *Present every step bottom line first*",
+      "where": "skills/do-testing/SKILL.md → head ('Every gate you present (plan, per-test approval, test review, coverage + bug report): …')"
+    },
+    {
+      "clause": "The plain layer is in the org's language and follows its guide in `../../plain-language/` when one exists",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "SPEC §8/C3: the language-guide rule binds every phase in principles.md and the SessionStart hook injects the guide",
+      "where": "principles.md → *Present every step bottom line first* (**A language guide binds when one exists.**)"
+    },
+    {
+      "clause": "Hand the **test diff + the test-plan doc + the TRD's numbered AC register + the hub API contract",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "changed",
+      "reason": "REC-3/REC-11: review-packet.js --kind tests writes the one packet (test diff, the AC register — TRD.md's on a single-document Issue or Tech-Debt TRD —, the hub API contract from wherever the hub lives (the spoke's Hub row is followed into another repository; the packet says when no hub exists), charter currency, the rules these tests can violate, the run output) and runs check-coverage.js --test-plan first, settling only the bookkeeping — every register AC has a row, every cited test file and name exists and, with --report, every recorded status matches the run (verify-verify-1/scripts-S4); the right level, each manual level's reason and whether a test asserts its AC stay with dimension (a); tests in another repository get that repository's packet in the same round (verify-verify-6); 'never your testing reasoning' stays; two dimensions on alpha-sdlc:sdlc-reviewer at effort high, never tiered (REJ-3)",
+      "where": "skills/do-testing/SKILL.md → Flow step 3"
+    },
+    {
+      "clause": "the bug report is emitted, and every bug routes to `do-fixing` in severity order, and the chain continues in the same turn",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "merged",
+      "reason": "T4: the step-4 auto-run parenthetical (report emitted, not a stop; bugs to do-fixing in severity order; same turn; status done at the marker's until, the profile reconcile first when it is the until) is the one head auto-run line",
+      "where": "skills/do-testing/SKILL.md → head **Auto-run** line"
+    },
+    {
+      "clause": "Otherwise, in full: The gate that catches what every level above misses because they run each side against its own mocks",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "moved",
+      "reason": "T4/P6 (19,000-char SKILL.md cap): the full Boot & Smoke run, its fail signals, the runtime-vs-contract diff and the cross-feature and flow-dependency journeys moved to boot-smoke.md, read at step 1 on every platform and again after a compaction; level 5 in SKILL.md keeps the reductions and a digest, and the hard gate stays in SKILL.md",
+      "where": "skills/do-testing/boot-smoke.md → *The integrated run*, *Cross-feature and flow-dependency journeys*"
+    },
+    {
+      "clause": "**UI** *(clients — appearance + composition)*. Locate elements by their **widget-spec Test IDs**",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "moved",
+      "reason": "T4: the UI level (visual parity, composition + type, scaffold, tokens, section cases, states, content-fit, stepped flows), its tooling and the mobile Boot & Smoke translation moved to ui-levels.md, read at step 1 on web, Android or iOS; the visual-comparison gate stays in SKILL.md",
+      "where": "skills/do-testing/ui-levels.md"
+    },
+    {
+      "clause": "**Missed-case bugs (UI)** — when the bug is a **section case** that never shows or shows wrongly",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "moved",
+      "reason": "P6 (19,000-char SKILL.md cap) on the T4 pattern: the client-only rules moved verbatim to ui-bugs.md, read at step 1 on web, Android or iOS; the gates (an undeclared case → Open Decision to do-grooming; the comparison never skipped) stay in ## Gates and a Rules digest",
+      "where": "skills/do-fixing/ui-bugs.md"
+    },
+    {
+      "clause": "**Visual bugs** — for UI parity bugs, re-run the visual-parity loop (render → compare → fix)",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "moved",
+      "reason": "P6 (19,000-char SKILL.md cap) on the T4 pattern: moved verbatim to ui-bugs.md, read at step 1 on web, Android or iOS; never-skip-the-comparison stays in ## Gates and the Rules digest",
+      "where": "skills/do-fixing/ui-bugs.md"
+    },
+    {
+      "clause": "| **Plan approved** | <YYYY-MM-DD — the pyramid/plan gate> |",
+      "file": "skills/do-testing/test-plan-template.md",
+      "verdict": "changed",
+      "reason": "SB-2/REC-3: the row also records the commit testing started from (the test review's --base), and new Environment approved and Test review rows persist the chat-only state next-step.js reads",
+      "where": "skills/do-testing/test-plan-template.md → header table"
+    },
+    {
+      "clause": "| B1 | <what's wrong> | major | UI (visual) | <AC ref> | <1. … 2. …> | yes / no / defer | <n> | open → (do-fixing) |",
+      "file": "skills/do-testing/test-plan-template.md",
+      "verdict": "changed",
+      "reason": "SB-2: the triage cell takes the answer and its date as it is given, Attempts starts at 0 and do-fixing adds 1 per failed re-verification; the note under the heading says so and keeps Status the last column",
+      "where": "skills/do-testing/test-plan-template.md → ## Bugs found"
+    },
+    {
+      "clause": "The checklist is the same three parts as `do-development`'s, re-aimed at what actually goes wrong in fixing",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "moved",
+      "reason": "DEV-13: the reviewer's checklist (1 fix quality, 2 scope discipline, 3 profile + principles conformance) moved to fix-reviewer.md, handed to reviewers like conformance-reviewer.md; review-dimensions.json fix.a/b/c → items 1/2/3",
+      "where": "skills/do-fixing/fix-reviewer.md"
+    }
+  ]
+}

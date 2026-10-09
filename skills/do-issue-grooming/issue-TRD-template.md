@@ -4,25 +4,45 @@
 > **whole-project audit** (§2) — every site of the issue *class*, not just the reported one.
 > This grooms and scopes the fix; the fixing itself happens in `do-fixing`. Multi-platform issues
 > get `TRD-<platform>.md` spokes that link here.
+>
+> **Gate 0 writes this file in two steps.** Once the audit is done: the header (a row not known yet
+> reads `pending`), §1 with the capture and §2 with the audit, each with `_Pending_` on the line
+> under its heading. Once the outline is approved: §1's *Gate-0 notes*, *Carry-forward answers*
+> when any were given, and every other approved outline heading with `_Pending_` and no prose — no
+> `<…>` placeholder left anywhere (the hook blocks one). A section's gate turns its `_Pending_` into
+> `_Approved: <YYYY-MM-DD> · <commit>_` and writes its prose below it.
 
 | | |
 |---|---|
 | **Status** | Draft |
-| **Hub alignment** | <per spoke: `reviewed YYYY-MM-DD · hub rev <commit / hub's last approval date>` — or `NOT REVIEWED`> |
 | **Reported by** | <who / when> |
 | **Severity** | <blocker / major / minor> |
 | **Platforms affected** | <Backend / Android / iOS / Web> |
-| **Spokes** | <links to per-platform spokes, if any — each with its **hub alignment** stamp: `✅ reviewed YYYY-MM-DD · hub rev <hash/date>` / ⚠️ stale / ❌ not reviewed. Editing a hub section makes every ✅ stale.> |
+| **Spokes** | <links to per-platform spokes, if any — each with its **hub alignment** stamp: `✅ reviewed YYYY-MM-DD · hub rev <hash/date>` / ⚠️ stale / ❌ not reviewed. Editing a hub section makes every ✅ stale. This row is the hub's one home for those stamps; each spoke, from `do-grooming`'s `TRD-spoke-template.md`, carries its own `Hub alignment` and `Alignment rounds` rows.> |
+| **Hub review** | <❌ not reviewed · rounds `n · n` while rounds run — every round appends its objective-violation count; a clean pass makes it ✅ reviewed YYYY-MM-DD · rev `<hash>` · rounds `n · n · 0`. No spoke is groomed before ✅> |
 | **Date** | <YYYY-MM-DD> |
 
+## Carry-forward answers
+
+> Answers the user gave at one gate that belong to a later section — written here the moment they
+> are given, so a fresh session still has them. One line each, naming its section; that section's
+> gate folds the line in and deletes it, and the block goes with its last line.
+
+- §<n>: <the answer, as the user gave it>
+
 ## 1. Issue & reproduction
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 <The symptom as reported: exact error/log text, repro steps, where seen (screen/endpoint,
 environment, build). What the correct behavior should be.>
 
+**Gate-0 notes** — Gate 0's approved record:
+- **Scope confirmed** <YYYY-MM-DD>: <severity · systemic or per-site · the sites in scope, any
+  deferred>
+- **Outline approved** <YYYY-MM-DD>
+
 ## 2. Audit findings (whole-project)
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 **Issue class:** <the underlying pattern, generalized from the symptom — e.g. "localized `{en,id}`
 object rendered raw in JSX", not "the category name crashed">
@@ -42,7 +62,7 @@ on-delete edge, no flow-level state store, …).>
 completeness you didn't verify).>
 
 ## 3. Fix scope & approach
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 **Approach (ladder rung · world-wide standard):** <required — name the rung AND the
 industry-standard way today (security-grade standards override local reuse outright); prefer a
@@ -54,7 +74,7 @@ every site.>
 helps.>
 
 ## 4. Regression safety & acceptance criteria
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 <The **reproduce-first** tests to add so a fix that misses a site fails a test: a failing test that
 reproduces the reported bug, plus coverage for the other audited sites / the class. Characterization
@@ -78,13 +98,13 @@ tests where behavior must be pinned before changing. These are written downstrea
 | AC-4 | <consuming feature <name> still <behavior> — unchanged by the fix> | §5 blast radius |
 
 ## 5. Blast radius & feature dependencies
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 <Which features the fix touches or risks (grounded in `16-feature-map.md`), what must **not** break,
 and any cross-feature coordination/ordering. A systemic fix can ripple — name the ripple.>
 
 ## 6. Change manifest
-_Approved: <YYYY-MM-DD>_
+_Approved: <YYYY-MM-DD> · <commit>_
 
 > Structured handoff. Feeds `do-planning` / `do-slicing`.
 
@@ -113,4 +133,6 @@ _Status: <open / decided: <choice> · proven by <act → assert> · amended <n>>
 <Gaps the audit surfaced that need a human call (2–3 options, mark one — the ★ always the
 quality/world-standard option, never the cheapest). **Where the chosen option names a mechanism, the
 decision also names the test that will prove it** — specified, not run; a mechanism amended twice
-stops being amended — escalate to the user. Undecided items block the affected slice.> (An amendment is any change to a decided row's chosen option or its proving test — count it in `amended <n>`.)
+stops being amended — escalate to the user. Undecided items block the affected slice.> (An
+amendment is any change to a decided row's chosen option or its proving test — count it in
+`amended <n>`.)

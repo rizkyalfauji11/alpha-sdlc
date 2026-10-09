@@ -1,0 +1,58 @@
+{
+  "skillBodyMaxChars": 19000,
+  "skillBodyMaxCharsReason": "After a compaction Claude Code re-attaches only the first 20,000 chars of each invoked SKILL.md, frontmatter stripped: about 130 go to the 'Base directory for this skill' header and 98 to the truncation marker. A body of 19,000 chars or less comes back whole, every gate included.",
+  "gateLinePattern": "STOP|⏸|GATE|Approved",
+  "gateLineMaxOffsetChars": 19000,
+  "gateLineReason": "A line naming a STOP, ⏸, GATE or Approved stamp that ends past char 19,000 of the body is cut from the re-attached skill, so the gate is gone after a compaction.",
+  "requiredSkillSections": [
+    "## Gates",
+    "## Resume (fresh session)"
+  ],
+  "skillBodyTargetChars": {
+    "do-grooming": 15500,
+    "do-development": 19000,
+    "do-project-setup": 12500,
+    "do-testing": 16500,
+    "do-planning": 18500,
+    "do-fixing": 15500,
+    "do-foundation-grooming": 13500,
+    "do-issue-grooming": 9500,
+    "do-tech-debt-grooming": 8000,
+    "do-slicing": 7000,
+    "do-uploading": 6500
+  },
+  "descriptionMaxChars": 1536,
+  "descriptionMaxCharsReason": "The skill listing cuts description plus when_to_use at 1,536 chars.",
+  "descriptionTargetChars": 900,
+  "referenceFileMaxChars": 25000,
+  "referenceTocAboveLines": 100,
+  "templateMaxChars": 16000,
+  "fileTargetChars": {
+    "skills/do-development/client-ui.md": 12500,
+    "skills/do-development/conformance-reviewer.md": 6000,
+    "skills/do-planning/plan-template.md": 10000,
+    "skills/do-fixing/fix-reviewer.md": 3000,
+    "skills/do-grooming/grooming-review.md": 10000,
+    "skills/do-grooming/hub.md": 9200,
+    "skills/do-grooming/client-spoke.md": 11600,
+    "skills/do-testing/ui-levels.md": 9000,
+    "skills/do-slicing/task-list-template.md": 1500,
+    "skills/do-development/client-ui-rules.md": 11000
+  },
+  "agentBodyMaxChars": 6500,
+  "principlesMaxChars": 65000,
+  "bundleMaxChars": {
+    "execute": 63500,
+    "groom": 59000,
+    "plan": 57500,
+    "setup": 47000,
+    "tracker": 35000,
+    "ui": 6000
+  },
+  "bundleMaxCharsReason": "A bundle is read in full at every skill start; it grows only by displacing other text. 0.35.0 raised setup (its templates cite the verification ladder, the app-visible and real-data rules) and tracker (the profile-doc history rule and the tracker next-file key) once, and execute and plan once for *A driven app is addressed by identity*: a backend plan schedules, and a backend build, test or fix session runs, Boot & Smoke and seam smokes that drive the client, so the rule moved from rules/ui.md into both bundles and a client session still reads it once. The rules each bundle carries are named in rules/applicability.json.",
+  "compactDigestMaxChars": 3500,
+  "compactDigestReason": "inject-compact.js adds the active skill's ## Gates section and must stay under 9,000 chars; a hook output over 10,000 chars is replaced by a 2,000-char preview.",
+  "plainLanguageGuideMaxChars": 8000,
+  "plainLanguageGuideReason": "inject-language-guide.js injects the guide with a short preface; its output must stay under 9,000 chars, or the 10,000-char hook cap swaps it for a 2,000-char preview.",
+  "principlesMaxCharsReason": "0.35.0 added the session, batch-reads and profile-doc history rules; any further rule text displaces old text."
+}

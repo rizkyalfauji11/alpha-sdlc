@@ -2,16 +2,19 @@
 
 const fs = require('fs');
 const path = require('path');
+const { stateDirectoryFor } = require('./lib/sdlc-context');
+
+const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || path.join(__dirname, '..');
 
 let payload;
 try { payload = JSON.parse(fs.readFileSync(0, 'utf8')); } catch { process.exit(0); }
 
 const projectRoot = payload.cwd || process.cwd();
-const markerPath = path.join(projectRoot, '.alpha-sdlc', 'auto-run.json');
+const markerPath = path.join(stateDirectoryFor(projectRoot), 'auto-run.json');
 
 let marker;
 try { marker = JSON.parse(fs.readFileSync(markerPath, 'utf8')); } catch { process.exit(0); }
-if (!marker) process.exit(0);
+if (!marker || typeof marker !== 'object') process.exit(0);
 
 const recordedReason = Object.entries(marker).some(
   ([key, value]) => /reason/i.test(key) && typeof value === 'string' && value.trim(),
@@ -25,7 +28,7 @@ if (marker.status === 'halted') {
 } else if (marker.status === 'done') {
   if (!marker.featureDir || !marker.platform) process.exit(0);
   let featureStatus;
-  try { ({ featureStatus } = require(path.join(__dirname, '..', 'scripts', 'check-feature-done.js'))); } catch { process.exit(0); }
+  try { ({ featureStatus } = require(path.join(pluginRoot, 'scripts', 'check-feature-done.js'))); } catch { process.exit(0); }
   const verdict = featureStatus(path.resolve(projectRoot, marker.featureDir), marker.platform);
   if (!verdict.readable || verdict.done) process.exit(0);
   refusedDone = verdict.reasons;
@@ -34,16 +37,21 @@ if (marker.status === 'halted') {
 }
 
 const TOOL_USE = '"type":"tool_use"';
+const FIRST_LINES_BYTES = 64 * 1024;
+const LIVE_SESSION_SLACK_MS = 2000;
+const LIVE_SESSION_WINDOW_MS = 60 * 60 * 1000;
+const transcriptPath = payload.transcript_path ? path.resolve(payload.transcript_path) : null;
+const sessionId = typeof payload.session_id === 'string' && payload.session_id ? payload.session_id : null;
 
 function transcriptSize() {
-  try { return fs.statSync(payload.transcript_path).size; } catch { return null; }
+  try { return fs.statSync(transcriptPath).size; } catch { return null; }
 }
 
 function toolUsedSince(offset) {
-  if (offset === null || offset === undefined || !payload.transcript_path) return true;
+  if (offset === null || offset === undefined || !transcriptPath) return true;
   let handle;
   try {
-    handle = fs.openSync(payload.transcript_path, 'r');
+    handle = fs.openSync(transcriptPath, 'r');
     const size = fs.fstatSync(handle).size;
     if (size <= offset) return false;
     const length = Math.min(size - offset, 64 * 1024 * 1024);
@@ -57,11 +65,60 @@ function toolUsedSince(offset) {
   }
 }
 
-const size = transcriptSize();
-const previous = marker.lastBlock || null;
-const madeProgress = !previous || toolUsedSince(previous.transcriptSize);
+function sameConversation(previous) {
+  if (previous.transcriptPath && path.resolve(previous.transcriptPath) !== transcriptPath) return false;
+  if (previous.sessionId && sessionId && previous.sessionId !== sessionId) return false;
+  return true;
+}
 
-marker.lastBlock = { transcriptSize: size, at: new Date().toISOString() };
+function firstEntryTime() {
+  let handle;
+  try {
+    handle = fs.openSync(transcriptPath, 'r');
+    const buffer = Buffer.alloc(FIRST_LINES_BYTES);
+    const length = fs.readSync(handle, buffer, 0, FIRST_LINES_BYTES, 0);
+    for (const line of buffer.subarray(0, length).toString('utf8').split('\n')) {
+      let entry;
+      try { entry = JSON.parse(line); } catch { continue; }
+      const time = entry && Date.parse(entry.timestamp);
+      if (Number.isFinite(time)) return time;
+    }
+    return null;
+  } catch {
+    return null;
+  } finally {
+    if (handle !== undefined) try { fs.closeSync(handle); } catch {}
+  }
+}
+
+function transcriptBirth() {
+  let birth = null;
+  try { birth = fs.statSync(transcriptPath).birthtimeMs; } catch { return null; }
+  return birth > 0 ? birth : firstEntryTime();
+}
+
+function anotherSessionOwnsChain(previous) {
+  if (!previous.transcriptPath || !transcriptPath) return false;
+  const recordedPath = path.resolve(previous.transcriptPath);
+  if (recordedPath === transcriptPath) return false;
+  let recordedWrite;
+  try { recordedWrite = fs.statSync(recordedPath).mtimeMs; } catch { return false; }
+  if (Date.now() - recordedWrite > LIVE_SESSION_WINDOW_MS) return false;
+  const born = transcriptBirth();
+  return born !== null && recordedWrite > born + LIVE_SESSION_SLACK_MS;
+}
+
+const previous = marker.lastBlock && typeof marker.lastBlock === 'object' ? marker.lastBlock : null;
+if (previous && anotherSessionOwnsChain(previous)) {
+  process.stderr.write(
+    'alpha-sdlc auto-run: the chain belongs to another live session (its transcript was written after this one ' +
+    'began), so this stop is allowed and the chain is left to that session.\n',
+  );
+  process.exit(0);
+}
+const madeProgress = !previous || !sameConversation(previous) || toolUsedSince(previous.transcriptSize);
+
+marker.lastBlock = { transcriptPath, sessionId, transcriptSize: transcriptSize(), at: new Date().toISOString() };
 try { fs.writeFileSync(markerPath, JSON.stringify(marker, null, 2) + '\n'); } catch {}
 
 if (!madeProgress) {
@@ -98,6 +155,10 @@ process.stderr.write(
   'Stop only for one of the five halting cases (failed verification tooling, an input that does not exist, ' +
   'an external write, a fix that failed three times, a change the hub would need) — and before stopping, ' +
   'set "status": "halted" and a "reason" in .alpha-sdlc/auto-run.json. When the chain ends, set ' +
-  '"status": "done".\n',
+  '"status": "done".' +
+  (marker.scope === 'unit'
+    ? ' With "scope": "unit", once this stage or bug closes, write the next-file, set "status": "handoff" and end the turn.'
+    : '') +
+  '\n',
 );
 process.exit(2);

@@ -1,16 +1,21 @@
 # Client UI — the mechanics
 
-> Loaded by `do-development` when the plan's **Platform** is a client — Android, iOS or Web. A
-> Backend plan never reads this file.
+> Read by `do-development` when the plan's **Platform** is a client — Android, iOS or Web — with
+> `client-ui-rules.md`: in full before stage 1, once per session, and after a compaction again
+> before the next UI stage. A Backend plan never reads this file. `do-testing` and `do-fixing` read
+> it for their captures, trail and layout pass.
 >
 > **Mechanics only.** Where captures go, which attribute carries a Test ID, which comparison each
-> stage kind runs, what the packet reports. **Every prohibition still lives in `SKILL.md` and
-> `../../principles.md`, and every one of them binds here unchanged.** Nothing in this file
-> relaxes or replaces one: don't trust code-from-image · never read a value off the mockup, zero
-> raw literals · never substitute a component that merely looks close · a wrong token is a defect
-> inside pixel tolerance · parity is not passed while any section is uncompared · never skip or
-> auto-continue past a failed comparison, and never claim parity you didn't verify. If this file
-> and `SKILL.md` ever seem to disagree, `SKILL.md` wins.
+> stage kind runs, what the packet reports. **Every prohibition lives in `client-ui-rules.md`
+> (R1–R7), in the one-line digest `SKILL.md` keeps and in `../../rules/ui.md`, and every one of
+> them binds here unchanged.** Nothing in this file relaxes or replaces one — where two of these
+> texts ever seem to disagree, the stricter reading binds.
+
+## Contents
+
+§1 Full-scroll capture, per platform · §2 The review trail · §3 Test IDs, per platform ·
+§4 Scaffold composition · §5 The parity loop by stage kind, and what the packet reports ·
+§6 Measuring boxes, per platform
 
 ## 1. Full-scroll capture, per platform
 
@@ -18,18 +23,24 @@
   **web** → Playwright screenshot with `fullPage: true`; **Android** → emulator +
   **scroll-and-stitch** (`adb exec-out screencap -p` at each scroll anchor top→bottom, stitched);
   **iOS** → simulator + **scroll-and-stitch** (`xcrun simctl io booted screenshot` per scroll
-  anchor). Where `09-environment.md` records a mobile driver, take the per-anchor shot **through it**
-  — one command for both platforms, and the capture is then repeatable by anyone — and stitch the
-  same way. Any other platform — e.g. a webview desktop app — uses its own full-scroll-capture
+  anchor). Where `09-environment.md` records a mobile driver, take the per-anchor shot **through
+  it** — one command for both platforms, and the capture is then repeatable by anyone — and stitch
+  the same way. Any other platform — e.g. a webview desktop app — uses its own full-scroll-capture
   equivalent. The pixel-diff half of the comparison runs through a tool like `pixelmatch`/`odiff`.
+- **With the `mobile-mcp` server, trail captures go to files, not into the conversation.** A capture
+  that feeds a script or the trail — each per-anchor shot, the stitched page, the pixel-diff input,
+  every `compared-ui/` file — is taken with `mobile_save_screenshot`, which writes the file and
+  returns no image. Call `mobile_take_screenshot` only when you must judge the image yourself — the
+  AI visual checklist of an iteration, the final capture beside the design. Driving and state
+  assertions read `mobile_list_elements_on_screen` (identity, never position).
 
 ## 2. The review trail
 
 - **Every iteration lands in `docs/development/<feature-name>/design/compared-ui/`** — the actual
   screenshot as `<screen>-<platform>-v<N>.png` and the diff overlay as
   `<screen>-<platform>-v<N>-diff.png` (`N` = iteration; keep every one — that set *is* the trail a
-  reviewer reads). These are local review artifacts: the `.gitignore` requirement and the
-  never-commit rule are in `SKILL.md`. A section or case capture names its screen too —
+  reviewer reads). These are local review artifacts: gitignored and never committed
+  (`client-ui-rules.md` R1). A section or case capture names its screen too —
   `<screen>.<section-id>[--<case>]-<platform>-v<N>.png` (`run.hdr-web-v3.png`) — because every
   screen has an `hdr`, and a capture that doesn't say whose is compared against nobody's crop.
 - **A capture without its diff overlay is not a comparison, and a capture older than its design
@@ -67,7 +78,9 @@
   section's inside and what only the whole screen shows is the layout *between* sections: where
   each one sits, its padding inside its container, the gap to its neighbour, how many columns and
   rows. Per-section comparison passes a screen whose header sits 30px low and whose rows are 36px
-  short; so does an eye reading two full-page images side by side.
+  short; so does an eye reading two full-page images side by side. A `section` stage compares its
+  own crops only — full-screen parity is **not** this stage's job (the screen is knowingly
+  incomplete, so don't diff it and don't wave a failing diff through).
 - **The layout pass (assembly) — same content, measured boxes, a saved diff.**
   1. **Render the design's own content at the design frame's size.** The parity render uses a
      fixture that mirrors the design frame — the same number of rows, the same text lengths, the
@@ -138,10 +151,10 @@
   **iOS**: the UI test writes `element.frame` (points) for each `accessibilityIdentifier`. On a
   scroll-and-stitch capture, add each anchor's scroll offset so every box is page-relative.
   **Either platform, when the `mobile-mcp` server is active**: one read of the accessibility tree
-  returns every element with its identifier and box, which spares iOS a UI test written only to dump
-  frames — the asymmetry that made iOS the expensive side. **Convert before you compare, and prove
-  the conversion once**: the driver reports device pixels while the comparison is in dp (Android) or
-  points (iOS), so divide by the density and **check one element whose size the design states** —
-  a 48dp control that lands at 48 confirms the factor, and a mismatch means the units are not what
-  you assumed. Recording that check in the packet costs a line and turns every later box into
-  evidence rather than a guess.
+  (`mobile_list_elements_on_screen`) returns every element with its identifier and box, which
+  spares iOS a UI test written only to dump frames — the asymmetry that made iOS the expensive side.
+  **Convert before you compare, and prove the conversion once**: the driver reports device pixels
+  while the comparison is in dp (Android) or points (iOS), so divide by the density and **check one
+  element whose size the design states** — a 48dp control that lands at 48 confirms the factor, and
+  a mismatch means the units are not what you assumed. Recording that check in the packet costs a
+  line and turns every later box into evidence rather than a guess.

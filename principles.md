@@ -80,6 +80,9 @@ missing acceptance criterion: a defect, not a detail.
 
 - **Ground in real code.** Before proposing, read the relevant parts of the repo (schema, services,
   modules). A proposal that ignores what exists is fiction. If the repo is empty/greenfield, say so.
+- **Batch independent reads.** Independent Read, Grep, Glob and read-only git calls go out together
+  in one message — each extra round trip re-reads the whole context. Dependent steps stay
+  sequential.
 - **Build what the user wants, whatever the code's state — never require a clean foundation.** The
   plugin must support the requested work whether the codebase is greenfield, half-built, clean, or
   bad. So: **describe reality faithfully** (don't pretend messy code is clean); **establish what's
@@ -164,17 +167,42 @@ missing acceptance criterion: a defect, not a detail.
   reported, not gated:** where a regenerated artifact is byte-identical to the approved one already
   on disk, there is nothing to approve — list it in the step summary as unchanged so the user can
   object, and move on. That is not batching and not a shortcut: nothing new is approved, and the
-  moment a single byte differs it gates like anything else. Re-presenting an unchanged document is
-  how a run stalls on work nobody needs to look at twice.
-  **And every gate that passes is RECORDED in the artifact it approved** — the
-  TRDs' `_Approved: <date>_` per section, the widget-spec/section-slicing `Approved` fields, the
-  plan's per-stage `Approved` (distinct from *done*), the test-plan's per-test `Approved` (distinct
-  from pass/fail), the task-list's per-part stamp, the profile docs' `approved <date>` header —
-  approval is never implied by mere existence. **An artifact edited after its stamp is stale: it
-  re-gates**, and downstream skills treat a missing/stale stamp as not-approved. The **one
-  exception** to blocking gates is **Auto-run mode** (above) — explicit opt-in, execution phases
-  only, where gates become recorded reports stamped `auto` and questions auto-decide the ★
+  moment a single byte differs it gates like anything else.
+  **And every gate that passes is RECORDED in the artifact it approved** — the TRDs'
+  `_Approved: <date> · <commit>_` per section, the widget-spec/section-slicing `Approved` fields,
+  the plan's per-stage `Approved` (distinct from *done*), the test-plan's per-test `Approved`
+  (distinct from pass/fail), the task-list's per-part stamp, the profile docs' `approved <date>`
+  header — approval is never implied by mere existence. **An artifact edited after its stamp is
+  stale: it re-gates**, and downstream skills treat a missing/stale stamp as not-approved. The
+  **one exception** to blocking gates is **Auto-run mode** (below) — explicit opt-in, execution
+  phases only, where gates become recorded reports stamped `auto` and questions auto-decide the ★
   recommendation (only the halting cases listed there stop it).
+- **The session is disposable — the files are the state.** Every gate is recorded in its artifact,
+  so a fresh session resumes where the last one stopped. Boundaries — where a fresh session can
+  take over — fall at every phase end and where a unit closes: development — a stage closed
+  (verdict, `Status: done`, commit); fixing — a bug closed; testing — the bug report with its
+  triage recorded; planning — a stamped stage; grooming — the Gate-0 skeleton written, the hub
+  review ✅, each spoke's alignment ✅, each closed screen; slicing and uploading — a stamped part or
+  verified batch. **At a boundary, persist first, then write the next-file:** every pending
+  answer, decision and finding goes into its artifact; then
+  `.alpha-sdlc/next/<feature>--<platform>.json` (`<feature>--hub` at a hub-level grooming
+  boundary, `<feature>--tasks` in slicing and uploading, `profile--<repo>` inside a setup run)
+  goes into the session's working directory — the workspace parent when the session
+  starts there — with `skill`, `args`, `unit`, `"status": "ready"`, `at` (ISO time), `head`
+  (commit SHA), `repo` (path; a relative one resolves against that directory) and `handoff`, plus
+  `.alpha-sdlc/handoff/<feature>--<platform>.md` when session-only facts exist (running stack PIDs
+  and ports, tooling consents). The Next paragraph offers the fresh session: "/clear, then
+  'lanjut'" or `/alpha-sdlc:do-<skill> <args>`. **On resume, read the next-file and never re-run
+  Gate 0 or a stamped step:** read its handoff too, set its `status` to `consumed`, and state the
+  recorded understanding in one line. **Never place a boundary mid-unit** — nor between a review
+  report and its fixes, while a background agent runs, between gathering hub-wrong findings and the
+  single hub fix, or on an unstamped draft. Cost guards: no per-test boundaries, none inside setup
+  before its scan record exists, none when little work remains. The resume notice and the
+  `boundary-guard` hook read only those fields, from that location — the directory the session
+  started in, its project root and, in a workspace parent, each child repo; the guard nudges
+  (`advise`, the default), blocks (`enforce`) or stays silent (`off`) per the Org setting
+  `sessionBoundaries`, once the context passes the Org setting `sessionBoundaryTokens` (default
+  200000) with a ready next-file or an idle hour behind it.
 - **Auto-run mode — the one explicit exception to step-by-step approval (execution phases only).**
   When the user **explicitly opts in per invocation** ("run in auto mode", "full run without
   approvals", "jalankan penuh") — never inferred, never a default, **and declined outright when the
@@ -196,44 +224,50 @@ missing acceptance criterion: a defect, not a detail.
   taking the ★ recommendation** — safe because ★ is always the quality/world-standard option, never
   the cheap one, and for a scope question ★ is the hub's boundary, so auto-deciding never widens a
   feature. Every auto-decision is **recorded where the decision lives** (`decided: auto
-  ★<option> · <date>` in the Open Decisions row / the artifact) **and collected in a "Decisions
-  taken for you" section at the top of the chain report** — ratify-after replaces approve-before,
-  and reversing one is a named follow-up, never archaeology. **Only five things still halt the
-  chain, because nothing can be decided:** a mandatory check whose tooling fails (render/boot —
-  verification is never faked), an input that physically doesn't exist (a design/crop/test
-  account/seed access never provided), external writes (git push, Jira, deploys), a fix that has
-  failed re-verification three times (the design is wrong, not the patch — `do-fixing` stops and
-  asks), and **a change the hub would need** — a new or changed endpoint or contract field, or code
-  in another platform's repository — auto-run never edits the hub, because a hub edit re-stales
-  every spoke and belongs to grooming's gather-then-fix-once rule. **Interpretive rule for the chain
-  skills:** during auto-run, every "ask the user first" / "stop and ask" / "⏸ STOP — wait for
-  approval" instruction inside `do-development`/`do-testing`/`do-fixing` resolves to *take the ★
-  recommendation, record it, continue* — **including "stop the stage / hand back to grooming /
-  surface and wait" instructions**: the gap decides ★ in place and the chain keeps moving (the five
-  halting cases excepted) — the skills' absolute wording governs gated mode and needs no per-line
-  rewriting. An auto-decided Open Decision flips its row to `decided: auto ★<option>`; folding the
-  decision into section prose happens at ratification (or it re-gates if you reverse it). Prefer the
-  old behavior? Say "auto-run, ask on decisions" — then questions stop the chain as before. At the
-  end: one consolidated chain report + the profile-reconcile recommendation. Hooks block regardless
-  of mode — they are the floor that doesn't move.
+  ★<option> · <date>` in the Open Decisions row / the artifact), appended as it happens to the
+  marker's `decisions` array (below), **and collected in a "Decisions taken for you" section at the
+  top of the chain report**, built from that array — ratify-after replaces approve-before, and
+  reversing one is a named follow-up, never archaeology. **Only five things still halt the
+  chain, because nothing can be decided:** **a mandatory check whose tooling fails** (render/boot
+  — verification is never faked), **an input that physically doesn't exist** (a design/crop/test
+  account/seed access never provided), **external writes (git push, Jira, deploys)**, **a fix that
+  has failed re-verification three times** (the design is wrong, not the patch — `do-fixing` stops
+  and asks), and **a change the hub would need** — a new or changed endpoint or contract field, or
+  code in another platform's repository — auto-run never edits the hub, because a hub edit
+  re-stales every spoke and belongs to grooming's gather-then-fix-once rule. **Interpretive rule
+  for the chain skills:** during auto-run, every "ask the user first" / "stop and ask" / "⏸ STOP —
+  wait for approval" instruction inside `do-development`/`do-testing`/`do-fixing` resolves to *take
+  the ★ recommendation, record it, continue* — **including "stop the stage / hand back to grooming
+  / surface and wait" instructions**: the gap decides ★ in place and the chain keeps moving (the
+  five halting cases excepted) — the skills' absolute wording governs gated mode and needs no
+  per-line rewriting. An auto-decided Open Decision is folded into section prose at ratification
+  (or it re-gates if you reverse it). Prefer the old behavior? Say "auto-run, ask on decisions" —
+  then questions stop the chain as before. At the end: one consolidated chain report + the
+  profile-reconcile recommendation. Hooks block regardless of mode — they are the floor that
+  doesn't move.
 
   **The opt-in is written down, so it outlives the turn.** On opt-in, write
   `.alpha-sdlc/auto-run.json` in the session's working directory — `{"feature", "platform",
-  "featureDir", "until", "status": "running", "started"}`, with `featureDir` the path to
-  `docs/development/<feature-name>` and `until` the end the user asked for (re-test green, the
-  profile reconcile) — and add `.alpha-sdlc/` to `.gitignore`; it is never committed. The
+  "featureDir", "until", "status": "running", "started", "decisions": []}`, with `featureDir` the
+  path to `docs/development/<feature-name>` and `until` the end the user asked for (re-test green,
+  the profile reconcile) — and add `.alpha-sdlc/` to `.gitignore`; it is never committed. The
   opt-in then holds for the whole chain: a later short reply — *"pilih (a)"*, *"lanjut"* — does not
-  cancel it. A `Stop` hook reads the file and refuses to let the turn end while `status` is
-  `running`. **A stage report is not a stop, and neither is waiting for a reviewer:** emit the
-  report and keep going in the same turn, and run the reviewer in the foreground so its answer
-  arrives inside the turn. A judgment finding — in a fix round too — auto-decides ★ and is recorded;
-  it never waits for the user. The chain stops only through the file: **before** presenting one of
-  the five halting cases, set `"status": "halted"` and a `"reason"`; when `until` is reached, set
-  `"status": "done"` — which the hook refuses while `scripts/check-feature-done.js` finds Boot &
-  Smoke not passed, an AC not covered and passing, or a bug not closed, because a verification gate
-  is never waived; when the user says to stop auto-run, set `"stopped"`. A resumed chain sets
-  `running` again. If a stop is attempted with no tool run since the hook's last push, the hook lets
-  it through — a stuck chain surfaces instead of looping.
+  cancel it. The whole chain stays the default scope — one session, no boundaries; when the user
+  asks for a fresh session per unit, add `"scope": "unit"`: after each stage or bug closes, write
+  the next-file, set `"status": "handoff"` — which the hook lets through — and end the turn; the
+  next session resumes the chain with 'lanjut' and sets `running` again. A `Stop` hook reads the
+  file and refuses to let the turn end while `status` is `running`. **A stage report is not a stop,
+  and neither is waiting for a reviewer:** emit the report and keep going in the same turn, and run
+  the reviewer in the foreground so its answer arrives inside the turn. A judgment finding — in a
+  fix round too — auto-decides ★ and is recorded; it never waits for the user. The chain stops only
+  through the file: **before** presenting one of the five halting cases, set `"status": "halted"`
+  and a `"reason"`; when `until` is reached, set `"status": "done"` — which the hook refuses while
+  `scripts/check-feature-done.js` finds Boot & Smoke not passed, an AC not covered and passing, or
+  a bug not closed, because a verification gate is never waived; when the user says to stop
+  auto-run, set `"stopped"`. A resumed chain sets `running` again. If a stop is attempted with no
+  tool run since the hook's last push, the hook lets it through in the same session — the hook
+  records the transcript and session of each push, so the first stop of a new session (after
+  /clear or a resume) is pushed; a stuck chain surfaces instead of looping.
 - **Present every step bottom line first, for everyone (shared step-summary format).** At every
   gate/checkpoint where you present work for review, presenting the **plain layer in the org's
   language** when the profile's Org settings name one (engineer detail stays technical), open with a
@@ -310,11 +344,15 @@ missing acceptance criterion: a defect, not a detail.
 
   **A language guide binds when one exists.** `plain-language/<code>.md` at the plugin root (e.g.
   `id.md` for Bahasa Indonesia) carries that language's headings, glossary, and before/after
-  examples; the `SessionStart` hook injects it when the Org settings name the language, and it binds
-  the plain layer in **every phase** — its glossary wins over a translation improvised on the spot.
-  Before setup has decided the language, present in the language the user writes in. A `Stop` hook
-  reads each step summary as a non-engineer would and sends back for one rewrite any whose plain
-  layer fails — the rule is enforced, not only stated.
+  examples; the `SessionStart` hook injects it when the project's Org settings name the language
+  (workspace parents included), and it binds the plain layer in **every phase** — its glossary
+  wins over a translation improvised on the spot. Before setup has decided the language,
+  present in the language the user writes in. A `Stop` command hook reads each step summary as a
+  non-engineer would and sends back for one rewrite any whose plain layer fails — the rule is
+  enforced, not only stated. It hands the header, the plain layer and the Next paragraph — the
+  whole message when it finds no engineer-details label or the plain layer is under 200
+  characters — with the guide to an isolated model call, judges every stop in an SDLC project
+  (plain chat passes its rule 0), fails open, and `ALPHA_JUDGE=off` disables it.
 
   Each skill's specific review packet slots its detail into the Details section — the wrapper is
   identical everywhere so anyone can follow any step.
@@ -331,37 +369,41 @@ missing acceptance criterion: a defect, not a detail.
   questions actually ASKED (including auto-run's five halting cases), and those still block
   absolutely.
 - **Keep the project profile current (`docs/basics/`).** When your work changes something a profile
-  doc records, **update that doc in the same change and re-stamp its commit** — so the profile the
+  doc records, **update that doc in the same change and re-stamp its commit** (rewrite its one
+  stamp line, never add another) — so the profile the
   next phase grounds in stays true. Map of change → doc: new/changed endpoint or base URL →
-  `api-reference`; schema/migration → `database`; new/changed entity, relationship, or entity
-  ownership → `domain-model`; new/changed shared-state sync convention → `data-cache`; new/changed
-  auth or token handling → `auth`; new key library or build change → `tech-stack`; new env var /
-  flag / variant → `environment`; new asset → `asset-registry` (register-on-create); new reusable
-  helper/base class/wrapper or a unit promoted to core → `code-inventory` (register-on-create); new
-  named simplification, contradiction, duplicate, deferral, or class-suspicion →
-  `tech-debt-register` (register-on-create, with its ceiling); changed layer-wiring pattern →
-  `architecture`; new feature or changed cross-feature dependency → `feature-map`
-  (register-on-create); new screen / nav / component → `ui-architecture`; new/changed UX convention
-  → `ux-conventions` (register-on-create); pipeline/release change → `cicd-deployment`; new
-  auth/PII/encryption handling → `security-compliance` (observed only, re-flag for sign-off);
-  structural/layering change → `architecture` or `conventions`; branching/PR/merge/release-process
-  change → `git-management`. **Deregister on delete, too:** a unit, asset, token, endpoint or
-  component the change removes leaves its row with it — `code-inventory`, `asset-registry`,
-  `design-tokens`, `api-reference`, `ui-architecture`, and the `feature-map` edge — because a row
-  naming what is gone is a false fact the next phase grounds in. **What the change makes unused
-  goes with it:** when a change replaces a behavior, the old path, its tests and its rows are
-  deleted in the same change, or in a later stage named for it — never left beside the new one.
-  Dead code the change did *not* make dead is not this change's to delete: it goes in
-  `tech-debt-register` for `do-tech-debt-grooming`, because deleting it here is scope nobody
-  decided. `scripts/find-orphans.js` finds candidates (`--diff <base>`) and stale rows
-  (`--registry`). **"If needed" is literal** — only touch a doc when the change alters a
-  fact it records; don't churn docs for changes they don't track (e.g. a dependency version bump
-  that only lives in the manifest). Announce profile updates so they're visible at the phase's
-  review. This is the counterpart to `do-project-setup`'s refresh mode. **And when a feature's SDLC
-  completes, run `do-project-setup` in refresh mode to reconcile the whole profile** — the
-  per-change updates are the belt; this end-of-feature reconcile is the suspenders (it catches a new
-  feature to register in `feature-map`, a new convention, or cross-feature deps the incremental
-  updates missed), so the next feature grooms against an accurate profile.
+  `api-reference`, and a changed shape also updates the machine-checkable contract spec;
+  schema/migration → `database`; new/changed entity, relationship, on-delete or lifecycle, or entity
+  ownership → `domain-model`; new/changed shared-state sync convention → `data-cache` (so does a
+  changed cache key, invalidation or real-time wiring); new/changed auth or token handling → `auth`;
+  new key library or build change → `tech-stack`; new env var / flag / variant or run-recipe change
+  → `environment`; new asset → `asset-registry` (register-on-create); new/changed design token or
+  approved deviation → `design-tokens`; new reusable helper/base class/wrapper or a unit promoted
+  to core → `code-inventory` (register-on-create); new named simplification, contradiction,
+  duplicate, deferral, or class-suspicion → `tech-debt-register` (register-on-create, with its
+  ceiling); changed layer-wiring pattern → `architecture`; new feature or changed cross-feature
+  dependency → `feature-map` (register-on-create); new screen / nav / component →
+  `ui-architecture`; new/changed UX convention → `ux-conventions` (register-on-create);
+  pipeline/release change → `cicd-deployment`; new auth/PII/encryption handling →
+  `security-compliance` (observed only, re-flag for sign-off); structural/layering change →
+  `architecture` or `conventions`; new code convention → `conventions`;
+  branching/PR/merge/release-process change → `git-management`.
+  **Deregister on delete, too:** a unit, asset, token, endpoint or component the change removes
+  leaves its row with it — `code-inventory`, `asset-registry`, `design-tokens`, `api-reference`,
+  `ui-architecture`, and the `feature-map` edge — because a row naming what is gone is a false fact
+  the next phase grounds in. **What the change makes unused goes with it:** when a change replaces
+  a behavior, the old path, its tests and its rows are deleted in the same change, or in a later
+  stage named for it — never left beside the new one. Dead code the change did *not* make dead is
+  not this change's to delete: it goes in `tech-debt-register` for `do-tech-debt-grooming`, because
+  deleting it here is scope nobody decided. `scripts/find-orphans.js` finds candidates
+  (`--diff <base>`) and stale rows (`--registry`). **"If needed" is literal** — only touch a doc
+  when the change alters a fact it records; don't churn docs for changes they don't track (e.g. a
+  dependency version bump that only lives in the manifest). Announce profile updates in the step
+  summary and the commit message so they're visible at the phase's review — never in the doc
+  itself. **And when a feature's SDLC completes, run `do-project-setup` in
+  refresh mode to reconcile the whole profile** — it catches what the per-change updates missed (a
+  new feature to register in `feature-map`, a new convention, cross-feature deps), so the next
+  feature grooms against an accurate profile.
 - **UI containers must never clip — verify at content + viewport extremes.** Any **variable-content
   container** (dialog, bottom sheet, list, form, multi-line text) must **fit its content or scroll —
   never clip or cut off content**. Verify it not just at the design's ideal content but at the
@@ -490,36 +532,43 @@ missing acceptance criterion: a defect, not a detail.
   as new text, so each one breeds findings and rounds. The commit that makes the correction says
   what was wrong, why, and where else it was fixed. What stays in the document is what is still a
   fact: an Open Decision's options and outcome, a `decided: auto ★` record awaiting ratification, a
-  live *Contradictions* row, a platform exception, the stamps and round counts.
+  live *Contradictions* row, a platform exception, the stamps and round counts. **It holds for
+  every update, not only corrections:** a profile doc's head is its title, one stamp line and its
+  description — never a log of its updates — and a retired item is deleted, not struck through
+  (only the tech-debt register keeps paid rows struck). `validate-doc-tables` blocks a head edit
+  while the head holds more than one date or struck text.
 - **Gated documents are written with the Edit or Write tool, never through Bash.** The doc hooks —
   table shape, ladder rung, secrets — run only on those tools; a `sed -i`, a heredoc or a script
   that writes a `docs/**.md` skips every one of them. A `PreToolUse` hook on Bash blocks such a
-  write. Reading, grepping, copying a doc out, and git commands stay free.
+  write. Reading, grepping, copying a doc out, and git commands stay free. **Write so the hooks pass
+  the first time:** in a table, escape a literal `|` inside a cell (code spans too) and give every
+  row the header's cell count; every plan stage and TRD design section carries a filled
+  **Approach** naming its rung; no template placeholder (`<YYYY-MM-DD>`, `<hash>`,
+  `<feature name>`, `<engineer>`, any other `<…>`) survives in a TRD or plan. For several sites,
+  send all the Edit calls in one message; each one is still checked.
 - **Every change is reviewed before it's presented — fresh eyes, not the author's.** A stage's diff,
   or a fix, is audited against the **profile docs it touches — through the feature's review charter
-  where one exists — these principles, and its own
-  plan/AC** *before* verification and *before* it reaches the user — ideally by a reviewer with the
-  diff and the docs but **not** the reasoning that produced it, because the context that made a
-  decision is the worst context for auditing it. **Objective violations** (wrong layer, raw literal,
-  swallowed error, hand-written type where a generator exists, missing profile update, an unbuilt
-  case) are fixed in the same unit of work; **judgment or scope findings** (invented behavior, scope
-  beyond the plan, a deviation from a decided convention) are a hard STOP → Open Decision, because
-  self-approving a scope change defeats the gate.
+  where one exists — these principles, and its own plan/AC** *before* verification and *before* it
+  reaches the user — ideally by a reviewer with the diff and the docs but **not** the reasoning that
+  produced it, because the context that made a decision is the worst context for auditing it.
+  **Objective violations** (wrong layer, raw literal, swallowed error, hand-written type where a
+  generator exists, missing profile update, an unbuilt case) are fixed in the same unit of work;
+  **judgment or scope findings** (invented behavior, scope beyond the plan, a deviation from a
+  decided convention) are a hard STOP → Open Decision, because self-approving a scope change
+  defeats the gate.
 
   **One round, closed by proof — every finding is born with the command that will close it.** A
-  second round ever existed for one reason: fixing a finding is new work by the same author, so
-  nobody has reviewed the fix. Remove the reason rather than the round. **Every finding a reviewer
-  reports names its closing proof** — the literal command whose output shows the fix landed: the
-  test that must now cover the case, the repo's checker, a grep that must come back empty, the
-  compile, the coverage checker. A finding whose closure no command can show is labelled
-  **needs-eyes** by the reviewer that raised it, with why. The author fixes every finding, runs
-  every named command plus the sweep below, and **closes the stage on that output with no second
-  round** — provided the needs-eyes count is zero and no fix changed product behaviour. Bookkeeping
-  in documents — coverage claims, labels, cross-references — always closes this way: its proof is
-  the coverage checker and the doc checks run to green. A reviewer round is for what a script cannot
-  check, and naming the script up front is what keeps most findings out of one. **An unnamed proof
-  is not a free pass — it costs the stage a whole extra round**, which is why naming it is the
-  reviewer's work, not the author's.
+  second round exists only because a fix is new work nobody has reviewed; a named proof removes that
+  reason. **Every finding a reviewer reports names its closing proof** — the literal command whose
+  output shows the fix landed: the test that must now cover the case, the repo's checker, a grep
+  that must come back empty, the compile, the coverage checker. A finding whose closure no command
+  can show is labelled **needs-eyes** by the reviewer that raised it, with why. The author fixes
+  every finding, runs every named command plus the sweep below, and **closes the stage on that
+  output with no second round** — provided the needs-eyes count is zero and no fix changed product
+  behaviour. Bookkeeping in documents — coverage claims, labels, cross-references — always closes
+  this way: its proof is the coverage checker and the doc checks run to green. A reviewer round is
+  for what a script cannot check. **An unnamed proof is not a free pass — it costs the stage a whole
+  extra round**, which is why naming it is the reviewer's work, not the author's.
 
   **A behaviour-changing fix lands test-first, or the stage owes a second round.** A fix that adds a
   case, state, screen frame or behavior **of the product** is not a correction but a judgment
@@ -527,11 +576,10 @@ missing acceptance criterion: a defect, not a detail.
   auto-decides ★, is recorded, and the round continues). A correction that nonetheless changes what
   the code *does* — a branch now taken, an error now surfaced, a call site removed — is written
   **test-first**: a test that fails against the unfixed code and passes against the fix, named as
-  that finding's closing proof. Without it the fix is unreviewed new code, and no amount of
-  reasoning reviews code that did not exist when the round ran. Moving an acceptance criterion's
-  claim from one stage to another is bookkeeping, not product design — a plan amendment recorded
-  with a *Moved in* line (auto-run: decided ★ and recorded; gated: asked at the checkpoint), never a
-  finding that holds the round.
+  that finding's closing proof; without it the fix is new code no round has reviewed. Moving an
+  acceptance criterion's claim from one stage to another is bookkeeping, not product design — a
+  plan amendment recorded with a *Moved in* line (auto-run: decided ★ and recorded; gated: asked at
+  the checkpoint), never a finding that holds the round.
 
   **A second round, when one is owed, is handed the previous findings and the change since that
   round** — it confirms each finding is closed, citing where, and reviews that change in full; a
@@ -548,59 +596,68 @@ missing acceptance criterion: a defect, not a detail.
   question, and repository gaps are recorded by `do-project-setup` in the tech-debt register, never
   charged to a stage.
 
-  **Reviews run as parallel dimensions, sized by risk.** Each skill's review names its dimensions.
-  - **Full tier:** every dimension is its own reviewer subagent, launched together in one message,
-    each handed the whole packet but only its dimension's checklist; anything it notices outside its
-    dimension it reports as inferred. The author merges the reports — the same file:line counts
-    once — into one verdict and one objective-violation count.
+  **Reviews run as parallel dimensions, sized by risk.** Each skill's review names its dimensions;
+  `scripts/review-tier.js` measures the tier — `script-only`, `light` or `full`, and full when
+  unsure — and test and grooming reviews are never tiered. Dimension reviewers are
+  `alpha-sdlc:sdlc-reviewer` (Opus, effort high), except the grooming hub review's consistency
+  dimension and `do-fixing`'s fix-quality dimension, which use `alpha-sdlc:sdlc-reviewer-deep`
+  (effort max). **Reviewers run in the foreground, a whole round in one message, at most 3 in
+  flight** — never reviews of different stages, bugs or spokes in one message.
+  - **Full tier:** every dimension is its own reviewer subagent, each handed the whole packet but
+    only its dimension's checklist; anything it notices outside its dimension it reports as
+    inferred. The author merges the reports — the same file:line counts once — into one verdict and
+    one objective-violation count.
   - **The dimensions cover the diff, and the map is part of the report.** Every changed file falls
     to at least one named dimension, and the author records the file → dimension map in the merged
     report. A file no dimension owns is the gap a single round cannot afford: name a dimension for
     it, or say in the verdict that it went unreviewed and on what grounds.
   - **The round ends with a completeness critic.** After the dimensions report and **before the
-    author fixes anything**, one more reviewer is handed the merged findings, the file → dimension
-    map and the diff, and answers one question: what in this change did no dimension actually look
-    at — a file nobody owned, a claim asserted but never run, a checklist item marked *not checked*,
-    a finding with no closing proof? What it returns joins the round's findings. It is not a second
-    round — nothing has been fixed yet — it is what makes a single round defensible, and it is
-    cheap, because it reads the reports rather than the rulebook. A review whose own load-bearing
-    claim is wrong is not a hypothetical: it is what this critic exists to catch.
-  - **Light tier:** one reviewer runs every dimension, with `model: sonnet`, when the stage is small
-    and low-risk **by measure, not by the author's say-so**: at most 150 changed production lines,
-    no contract, schema or migration file, no file handling auth, tokens or PII (per
+    author fixes anything**, `scripts/review-gaps.js` checks the round's reports against the packet,
+    and on the full tier `alpha-sdlc:sdlc-reviewer-critic` (effort medium, no Bash) is handed the
+    reports, the file → dimension map, the diff stat and the gaps output, and answers one question:
+    what in this change did no dimension actually look at — a file nobody owned, a claim asserted
+    but never run, a checklist item marked *not checked*, a finding with no closing proof? What they
+    return joins the round's findings; **a round cannot close without the gaps output in the merged
+    report.** It is not a second round — nothing has been fixed yet — but what makes one round
+    defensible, and it is cheap: it reads the reports, not the rulebook.
+  - **Light tier:** one `alpha-sdlc:sdlc-reviewer` runs every dimension, with `review-gaps.js` as
+    its critic and no critic agent, when `review-tier.js` reports `light` — the stage is small and
+    low-risk **by measure, not by the author's say-so**: at most 150 changed production lines, no
+    contract, schema or migration file, no file handling auth, tokens or PII (per
     `12-security-compliance` and `13-auth`), and no UI section.
   - **Script-only band — no reviewer agent at all.** A stage whose diff **cannot change reachable
     production behaviour** — documentation, tests, formatting, a version string, a pure move with no
     edit — closes on the scripts and hooks alone: the repo's own checks, the coverage checker, the
-    orphan sweep and the stage's own suite, with their output in the packet. A reviewer reading six
-    hundred lines of principles adds nothing to a change that cannot violate them. **Reachability
-    decides the band, never appearance:** deleting a call site, removing a dependency, or changing a
-    condition stays out of it however small the diff — a deletion that looks mechanical is exactly
-    how a live, untested endpoint leaves an app.
-  - **The packet carries only what the diff can violate.** A reviewer is handed the principles
-    **sections the diff can actually break**, not all of them, derived from what the diff touches —
-    a data-layer change with no UI file cannot violate the design-token, component-fidelity,
-    container-clipping, visual-parity or diagram rules, and a reviewer cannot find a violation of a
-    rule the change is incapable of breaking. The packet says which sections were withheld and on
-    what test, so a wrong narrowing is visible rather than silent. Review cost is otherwise
-    **constant per stage** — the rules and the profile are the same size whether the diff is four
-    lines or four hundred — which is what makes a twenty-stage plan expensive for no added safety.
+    orphan sweep and the stage's own suite, with their output in the packet; `review-tier.js`
+    decides the band, never the author. **Reachability decides the band, never appearance:**
+    deleting a call site, removing a dependency, or changing a condition stays out of it however
+    small the diff — a deletion that looks mechanical is exactly how a live, untested endpoint
+    leaves an app.
+  - **The packet carries only what the diff can violate.** One packet file per round, written by
+    `scripts/review-packet.js`, hands a reviewer the principles **sections the diff can actually
+    break**, not all of them, picked by the review triggers in `rules/applicability.json` from what
+    the diff touches — a data-layer change with no UI file cannot violate the design-token,
+    component-fidelity, container-clipping, visual-parity or diagram rules. The packet says which
+    sections were withheld and on what test, so a wrong narrowing is visible rather than silent;
+    when unsure, it includes. Each reviewer writes its report to the path the packet names under
+    `.alpha-sdlc/review/` and returns it; the critic, having no Bash, returns text the author files.
   - **The profile is distilled once per development, not re-derived per stage.** `do-planning`
     writes a **review charter** beside the plan — the conventions, seams, entity ownership and
     house values this feature's reviewers must hold, drawn from `docs/basics/` — and every stage's
     reviewer is handed the charter plus its diff instead of the profile docs again. The charter
     records the **profile commit it was built from** and is rebuilt when that moves, so a stale
-    charter is a detectable state rather than a silent one. Twenty stages otherwise re-read the
-    same unchanged documents twenty times.
+    charter is a detectable state rather than a silent one.
   - **What a script decides never reaches a reviewer.** Run the mechanical checks **first** — the
     repo's doc checks, `scripts/check-coverage.js`, `scripts/find-orphans.js`, the raw-literal
     enforcement command the token doc records, the hooks — put their output in the packet, and tell
-    the reviewer those dimensions are settled. Reviewer attention is for what no script can decide;
-    spending it on what one already did is the cost that makes people skip review entirely.
+    the reviewer those dimensions are settled. The packet builder runs the plugin's scripts once;
+    nobody re-runs them unless the tree hash differs. Reviewer attention is for what no script can
+    decide.
   - **A fix round re-runs only the dimensions that had findings**, plus the mechanical one.
   - **The whole suite is not run twice.** The packet carries the author's verification commands with
-    their exit codes and summary lines; the reviewer re-runs the stage's own tests, the sabotage
-    checks, and anything it doubts.
+    their exit codes and summary lines; only the test-quality dimension (or the single light-tier
+    reviewer) re-runs the stage's own tests and the sabotage checks, and any reviewer re-runs what
+    it doubts, listing each re-run with why.
   - **A stalled reviewer is not waited on.** One that returns nothing within 15 minutes is launched
     once more; if it stalls again, its dimension runs inline and the report says so.
 
@@ -616,8 +673,9 @@ missing acceptance criterion: a defect, not a detail.
      sweep, a draft of a factual doc — records the approved inputs it read; if the decision at the
      current gate changes any of them, redo it instead of presenting it. Only facts read from code
      are drafted ahead. A decision never is: it waits for the decision before it.
-  3. **At most four subagents at once**, each handed only what it needs — every one reloads the
-     principles and the profile, so width costs tokens.
+  3. **At most four subagents at once**, reviewer runs included, each handed only what it needs:
+     the rules its packet names (a fact sweep loads none) and the profile docs its task reads —
+     every one reloads them, so width costs tokens.
   4. **Platforms run in parallel sessions.** Once the hub's API contract is approved, each
      platform's spoke grooming, planning, development, testing and fixing can run in its own
      session at the same time — they share the contract, not each other's work. Each session owns
@@ -640,18 +698,21 @@ missing acceptance criterion: a defect, not a detail.
   table when a diagram would only restate it.
 - **Comments: none. The names carry the meaning.** Source code ships with **zero comments** — no
   explanatory prose, no doc comments (JSDoc/KDoc/Javadoc/Python docstrings), no license headers, no
-  section banners, no provenance. Every urge to write one is a naming or structure problem: **rename
-  the variable, extract and name the function, introduce a named constant instead of the magic
-  number, name the predicate.** `retryAfterUpstreamRateLimit()` and `MAX_TRANSFER_IDR = 1_000_000`
-  say what a comment would have said, and they can't fall out of date the way a comment does. **The
-  only comments allowed are machine directives** a compiler, linter, type-checker or coverage tool
-  actually acts on — `eslint-disable`, `@ts-expect-error`, `# noqa`, `# type: ignore`, `# pragma: no
-  cover`, `//go:build`, `swiftlint:disable`, shebangs — because they aren't documentation and no
-  rename replaces them. **Where the *why* genuinely can't fit in a name** — an upstream bug you're
-  working around, a regulatory threshold, the benchmark behind a constant — it goes in the **commit
-  message / PR description**, which is where history belongs and where it can't rot next to code
-  that has since changed. Hook-enforced: `validate-comments` blocks the write. *(The trade-off is
-  deliberate: some context leaves the file. That's the cost of never reading a comment that lies.)*
+  section banners, no provenance — unless the Org settings' comment allowlist
+  (`allowLicenseHeader`, `allowPublicApiDocstrings` in `docs/basics/.alpha-sdlc.json`) permits
+  license headers or public-API doc comments. Every urge to write one is a naming or structure
+  problem: **rename the variable, extract and name the function, introduce a named constant instead
+  of the magic number, name the predicate.** `retryAfterUpstreamRateLimit()` and
+  `MAX_TRANSFER_IDR = 1_000_000` say what a comment would have said, and they can't fall out of
+  date. Beyond the allowlist, **the only comments allowed are machine directives** a compiler,
+  linter, type-checker or coverage tool actually acts on — `eslint-disable`, `@ts-expect-error`,
+  `# noqa`, `# type: ignore`, `# pragma: no cover`, `//go:build`, `swiftlint:disable`, shebangs —
+  because they aren't documentation and no rename replaces them. **Where the *why* genuinely can't
+  fit in a name** — an upstream bug you're working around, a regulatory threshold, the benchmark
+  behind a constant — it goes in the **commit message / PR description**, where history belongs
+  and can't rot next to code that has since changed. Hook-enforced: `validate-comments` blocks the
+  write, honouring the allowlist of the edited file's own profile. *(The trade-off is deliberate:
+  some context leaves the file, so no comment can lie.)*
 - **Naming is the documentation.** Since nothing is explained in prose, names must earn it: a
   function name states what it does *and* the condition it applies to; a variable name states what
   it holds including unit and currency (`amountIdr`, `timeoutMs`, `isAwaitingSettlement`); a boolean

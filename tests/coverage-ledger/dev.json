@@ -1,0 +1,103 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "then each checkpoint emits its full packet as a **report**, stamps `Approved: auto <date>`, commits, and continues",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "merged",
+      "reason": "DEV-12: the eight auto-run restatements collapse into one Auto-run section; the guard 'Never run past a checkpoint unattended — unless the user explicitly opted into auto-run mode' stays in the role paragraph, and the stamp is named as the stage's Checkpoint verdict `auto <date>` (*Auto-run mode*'s `Approved: auto <date>`)",
+      "where": "skills/do-development/SKILL.md → role paragraph + ## Auto-run (first sentence: report, stamp, commit, onward into do-testing, ★ answers, the five halting cases)"
+    },
+    {
+      "clause": "the `SessionStart` hook injects only the INDEX of these rules, never their text",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "P7/SPEC §8 rules line: the skill reads its generated bundle ../../rules/execute.md (and ../../rules/ui.md on web, android, ios), built from principles.md, re-reads it after a compaction and reports a denied read; the 'especially' list (ladder, never over-simplify, ground in real code, surface drift) is kept verbatim",
+      "where": "skills/do-development/SKILL.md → rules line ('Read `../../rules/execute.md` in full now …')"
+    },
+    {
+      "clause": "Read `client-ui.md` **once for the whole run, not per stage**",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "SB-1/DEV-01: a run now spans fresh sessions, so the UI files (client-ui-rules.md and client-ui.md, build-build-14) are read once per session and again after a compaction before the next UI stage; the [domain]/[data]-stage sentence is kept, reading them",
+      "where": "skills/do-development/SKILL.md → Flow, start of every session (the client-ui-rules.md and client-ui.md bullet) and Rules (UI digest)"
+    },
+    {
+      "clause": "The UI mechanics live in `client-ui.md` (this skill's directory) — read it now if you have not.",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "DEV-12/P6: the UI-only rules moved out of SKILL.md; build-build-14 put them in client-ui-rules.md (R1–R7), read only by do-development, so client-ui.md holds the mechanics again for do-testing and do-fixing too; SKILL.md keeps the read trigger, a one-line prohibition digest and the re-read after a compaction",
+      "where": "skills/do-development/SKILL.md → Flow (client-ui-rules.md and client-ui.md bullet), step 6, Rules (UI digest); skills/do-development/client-ui-rules.md → header and R1–R7; skills/do-development/client-ui.md → header and Contents"
+    },
+    {
+      "clause": "The rules in this list still state every UI prohibition inline",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "P6/DEV-12: precedence rewritten on purpose — the UI rules now live in client-ui-rules.md (build-build-14), so neither text outranks the other: nothing in either relaxes a rule, and where two seem to disagree the stricter reading binds",
+      "where": "skills/do-development/client-ui-rules.md → header (Precedence); skills/do-development/client-ui.md → header; skills/do-development/stage-steps.md → header"
+    },
+    {
+      "clause": "so the reviewer re-runs them rather than tracing claims by hand",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "REC-3/REC-4/DEV-09: scripts/review-packet.js writes one packet per round — diff, stage block with its AC and slice rows, charter currency (no charter or a moved profile commit → the docs the diff touches), the verification log, check-coverage (with the stage's changed tests) and find-orphans --diff run once and marked settled, the rules this diff can violate with the withheld list, the file → dimension map; reviewers get the packet path, their dimension and, on a UI stage, the section-slicing doc when the packet does not list it",
+      "where": "skills/do-development/SKILL.md → Flow step 5; skills/do-development/stage-steps.md → §5 (The packet, Three economies, Launch the round in the foreground)"
+    },
+    {
+      "clause": "**in auto-run, in the foreground** — a reviewer left running in the background ends the turn",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "DEV-08/REC-8/REC-9: reviewers always run in the foreground, the whole round in one message, at most 3 in flight; the three-part checklist (profile · principles · plan/AC and nothing more) and UI case completeness are kept — conformance-reviewer.md items 1–3, item 3 holding case completeness",
+      "where": "skills/do-development/SKILL.md → Flow step 5; skills/do-development/stage-steps.md → §5 (full tier, Launch the round in the foreground)"
+    },
+    {
+      "clause": "one more `sdlc-reviewer` handed the merged findings, that map and the diff, asked what no dimension actually looked at",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "REC-7: the completeness critic is review-gaps.js on every reviewed round plus alpha-sdlc:sdlc-reviewer-critic on the full tier (reports, map, diff stat, gaps output), still before any fix; review-packet.js writes the file → dimension map with every changed file owned; the light tier runs the gap script only",
+      "where": "skills/do-development/SKILL.md → Flow step 5 (the tier sets the round); skills/do-development/stage-steps.md → §5 (the tier, full)"
+    },
+    {
+      "clause": "if both can't be booted in-session, stop and report (don't pass on isolated tests alone).",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "DEV-12: old step 7 restated the smoke rule's own sentence, which SKILL.md step 7 now carries verbatim",
+      "where": "skills/do-development/SKILL.md → Flow step 7 ('if you can't boot both in-session (missing recipe, env can't stand up), STOP and say so at the checkpoint — don't mark the stage passed on isolated tests alone')"
+    },
+    {
+      "clause": "and either continue to the next stage or stop if the user wants (honoring safe-stop).",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "DEV-01/SB-1/SB-2: after the verdict, Status: done and the commit comes the session boundary — persist (Carry-forward lines, decisions), write the next-file and any handoff, offer the fresh session; continue in place only when the user asks or little work remains, or stop if the user wants (honoring safe-stop)",
+      "where": "skills/do-development/SKILL.md → Flow step 9; skills/do-development/stage-steps.md → §9"
+    },
+    {
+      "clause": "**A second round is owed only** when a finding came back **needs-eyes**, a fix added product behaviour, or a named proof would not go green",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "moved",
+      "reason": "build-build-12: stage-steps.md no longer repeats SKILL.md step 5; the three conditions stay in SKILL.md step 5 and the re-run of only the dimensions that had findings, with the previous findings and the change since that round, is stage-steps.md §5",
+      "where": "skills/do-development/SKILL.md → Flow step 5 ('A second round is owed only for a needs-eyes finding, a fix that added product behaviour, or a proof that would not go green'); skills/do-development/stage-steps.md → §5 ('When a second round is owed there, send the previous findings plus the change since that round, re-running only the dimensions that had findings: review-packet.js … --round 2 …')"
+    },
+    {
+      "clause": "Nothing in this file relaxes or replaces one: don't trust code-from-image · never read a value off the mockup, zero raw literals",
+      "file": "skills/do-development/client-ui.md",
+      "verdict": "duplicate",
+      "reason": "build-build-13: the header listed prohibitions every UI reader already gets in full; client-ui.md keeps 'Nothing in this file relaxes or replaces one' and the stricter-reading precedence, and each prohibition is stated in client-ui-rules.md and SKILL.md's UI digest",
+      "where": "skills/do-development/client-ui-rules.md → R1 (don't trust code-from-image, parity not passed while any section is uncompared, never skipped or auto-continued, never claim parity you didn't verify), R2 (never read a value off the mockup, zero raw literals), R1 (a wrong token is a defect inside pixel tolerance), R7 (never substitute a look-alike component); skills/do-development/SKILL.md → Rules (UI digest)"
+    },
+    {
+      "clause": "Every prohibition still lives in `SKILL.md` and `../../principles.md`, and every one of them binds here unchanged.",
+      "file": "skills/do-development/client-ui.md",
+      "verdict": "changed",
+      "reason": "DEV-12/P6/P7: the prohibitions now live in client-ui-rules.md R1–R7 (build-build-14), SKILL.md's one-line digest and ../../rules/ui.md (generated from principles.md); every one still binds unchanged",
+      "where": "skills/do-development/client-ui.md → header ('Every prohibition lives in client-ui-rules.md (R1–R7), in the one-line digest SKILL.md keeps and in ../../rules/ui.md, and every one of them binds here unchanged.')"
+    },
+    {
+      "clause": "the `.gitignore` requirement and the never-commit rule are in `SKILL.md`",
+      "file": "skills/do-development/client-ui.md",
+      "verdict": "moved",
+      "reason": "DEV-12/build-build-14: the .gitignore requirement and the never-commit rule moved from SKILL.md into client-ui-rules.md R1, so client-ui.md §2 now points there",
+      "where": "skills/do-development/client-ui-rules.md → R1 ('Save every iteration … ensure docs/development/<feature-name>/design/compared-ui/ is in the project's .gitignore … never commit them'); skills/do-development/client-ui.md → §2"
+    }
+  ]
+}

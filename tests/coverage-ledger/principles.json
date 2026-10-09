@@ -1,0 +1,47 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "An auto-decided Open Decision flips its row to `decided: auto ★<option>`",
+      "file": "principles.md",
+      "verdict": "duplicate",
+      "reason": "R6/P8: the same rule already records every auto-decision as `decided: auto ★<option> · <date>` in its Open Decisions row; the sentence keeps only what it added — the fold into section prose waits for ratification, or re-gates on reversal",
+      "where": "principles.md → *Auto-run mode* — \"Every auto-decision is recorded where the decision lives (`decided: auto ★<option> · <date>` in the Open Decisions row / the artifact)\""
+    },
+    {
+      "clause": "On opt-in, write `.alpha-sdlc/auto-run.json` in the session's working directory",
+      "file": "principles.md",
+      "verdict": "changed",
+      "reason": "SB-2/SB-6: the marker gains `\"decisions\": []`, the auto-decision ledger the \"Decisions taken for you\" section is built from; every other key, the featureDir/until meaning and the gitignore rule are unchanged",
+      "where": "principles.md → *Auto-run mode* → *The opt-in is written down, so it outlives the turn.*"
+    },
+    {
+      "clause": "reconcile the whole profile — the per-change updates are the belt",
+      "file": "principles.md",
+      "verdict": "reworded",
+      "reason": "R6/P8: the belt-and-suspenders metaphor became its plain meaning — the end-of-feature reconcile catches what the per-change updates missed (a new feature for feature-map, a new convention, cross-feature deps)",
+      "where": "principles.md → *Keep the project profile current* — \"And when a feature's SDLC completes, run do-project-setup in refresh mode to reconcile the whole profile\""
+    },
+    {
+      "clause": "A reviewer is handed the principles sections the diff can actually break, not all of them",
+      "file": "principles.md",
+      "verdict": "changed",
+      "reason": "REC-3: one packet file per round, written by scripts/review-packet.js, now picks the sections through the review triggers in rules/applicability.json and includes when unsure; the restated reason (a reviewer cannot find a violation of a rule the change cannot break) folded into the data-layer example (R6)",
+      "where": "principles.md → *Every change is reviewed* → *The packet carries only what the diff can violate.*"
+    },
+    {
+      "clause": "At most four subagents at once, each handed only what it needs — every one reloads the principles and the profile",
+      "file": "principles.md",
+      "verdict": "changed",
+      "reason": "P4(4)/REC-9: the cap of four now counts reviewer runs, and a subagent loads only the rules its packet names (a fact sweep loads none) plus the profile docs its task reads instead of the whole principles file; width still costs tokens",
+      "where": "principles.md → *Parallel work* item 3 — \"At most four subagents at once, reviewer runs included\""
+    },
+    {
+      "clause": "That's the cost of never reading a comment that lies.)*",
+      "file": "principles.md",
+      "verdict": "reworded",
+      "reason": "R6/R11: condensed to \"some context leaves the file, so no comment can lie\" — the same deliberate trade-off and the same reason",
+      "where": "principles.md → *Comments: none* — \"(The trade-off is deliberate: some context leaves the file, so no comment can lie.)\""
+    }
+  ]
+}
