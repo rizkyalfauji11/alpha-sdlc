@@ -264,9 +264,9 @@ missing acceptance criterion: a defect, not a detail.
   fix round too — auto-decides ★ and is recorded; it never waits for the user. The chain stops only
   through the file: **before** presenting one of the five halting cases, set `"status": "halted"`
   and a `"reason"`; when `until` is reached, set `"status": "done"` — which the hook refuses while
-  `scripts/check-feature-done.js` finds Boot & Smoke not passed, an AC not covered and passing, or
-  a bug not closed, because a verification gate is never waived; when the user says to stop
-  auto-run, set `"stopped"`. A resumed chain sets `running` again. If a stop is attempted with no
+  `scripts/check-feature-done.js` finds Boot & Smoke not passed, an AC not covered and passing, a
+  bug not closed, or debt left `open` in the footprint, because a verification gate is never
+  waived; when the user says to stop auto-run, set `"stopped"`. A resumed chain sets `running` again. If a stop is attempted with no
   tool run since the hook's last push, the hook lets it through in the same session — the hook
   records the transcript and session of each push, so the first stop of a new session (after
   /clear or a resume) is pushed; a stuck chain surfaces instead of looping.
@@ -396,8 +396,7 @@ missing acceptance criterion: a defect, not a detail.
   the next phase grounds in. **What the change makes unused goes with it:** when a change replaces
   a behavior, the old path, its tests and its rows are deleted in the same change, or in a later
   stage named for it — never left beside the new one. Dead code the change did *not* make dead is
-  not this change's to delete: it goes in `tech-debt-register` for `do-tech-debt-grooming`, because
-  deleting it here is scope nobody decided. `scripts/find-orphans.js` finds candidates
+  debt: paid when it sits in a file the change edits, registered otherwise. `scripts/find-orphans.js` finds candidates
   (`--diff <base>`) and stale rows (`--registry`). **"If needed" is literal** — only touch a doc
   when the change alters a fact it records; don't churn docs for changes they don't track (e.g. a
   dependency version bump that only lives in the manifest). Announce profile updates in the step
@@ -406,6 +405,22 @@ missing acceptance criterion: a defect, not a detail.
   refresh mode to reconcile the whole profile** — it catches what the per-change updates missed (a
   new feature to register in `feature-map`, a new convention, cross-feature deps), so the next
   feature grooms against an accurate profile.
+- **A change adds no debt, and pays the debt in its footprint.** Debt is a `tech-debt-register` row
+  naming the files it lives in: a duplicate, workaround, skipped case or test, value hard-coded
+  where the profile names its source, deferred migration, contradiction, dead code. **No new debt
+  without the user's pick at a gate:** a cut — an option below the world-wide standard — is offered
+  with its cost and ceiling, never as the ★ — picked, it is registered `accepted` — so auto-run
+  never takes one; a change registering a cut it wrote that no gate chose is a judgment finding,
+  while debt it only found is registered as found. **Open debt in a file the change edits is paid in that change:** those files are its
+  footprint, and their debt is a quality question, never a scope one — paying adds no behavior for
+  the hub to anchor — so its ★ is *pay it here*, behavior-preserving, a characterization test
+  first, its row deleted in the same diff. The ★ keeps it only when paying changes behavior or a
+  contract (→ `do-grooming`) or edits a file beyond the footprint: the register then says
+  `accepted — <why + revisit trigger>`, or `accepted — auto ★ <date>` in auto-run, ratified after.
+  Planning asks each row; a review pays what it finds — never *beyond hub scope* — and asks only
+  that exception.
+  `scripts/debt-balance.js` measures it at planning and in every stage and fix review; the done gate
+  refuses a feature planned with a *Debt in the footprint* table that leaves a footprint row `open`.
 - **Integrated real-data gate — never call a feature "done" on mock/assumed data alone.** The
   frontend's assumptions about the backend (HTTP method, path, field shape/type, nullability, enum
   values, loading/error/empty states) are only *true* once the real screens render against real

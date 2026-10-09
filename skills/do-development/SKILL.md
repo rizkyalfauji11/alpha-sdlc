@@ -95,8 +95,8 @@ Why it matters → Options ★ → Context → Details (for engineers) → Next 
    green. **A red test you did not cause is still named in the stage packet**: an unmentioned
    failure is a report falsified by omission. **Report results honestly** — never claim done on red.
 4. **Refactor** — clean up while staying green (ladder, never over-simplify away validation/error
-   handling/edge cases the AC needs): clearer names, smaller functions, dead code out, comments a
-   better name makes unnecessary deleted. Re-run to confirm still green. The doc/principle
+   handling/edge cases the AC needs): clearer names, smaller functions, dead code out, the stage's
+   `Pays debt:` rows paid, comments a better name makes unnecessary deleted. Re-run to confirm still green. The doc/principle
    **auditing happens in step 5** — don't half-do it here and call it checked.
 5. **Conformance review (fresh eyes) — before verifying, before presenting** (in full:
    `stage-steps.md` §5). Log your verification commands with exit codes and summary lines under

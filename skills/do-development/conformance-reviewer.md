@@ -46,11 +46,20 @@
    packet's settled `find-orphans.js --diff` output: a unit that lost its last production caller in
    this diff, or a path the stage replaced, is deleted with its tests, and every profile row naming
    something the diff removed is deregistered (a *measured* stale row is a violation; an *inferred*
-   candidate is a question). Dead code this diff did not make dead is not deleted here — it is a
-   tech-debt row.
+   candidate is a question) · **no debt left in the footprint** (`principles.md` → *A change adds
+   no debt*) — read the packet's settled `debt-balance.js --diff` output. A `measured` row the
+   stage can pay behaviour-preserving inside the files it edits is an **objective violation**,
+   closed by paying it (characterization test first, row deleted); one whose payment changes
+   behaviour or a contract, or edits a file beyond the footprint, is a **judgment finding** whose ★
+   keeps it, recorded in the register as `accepted — <why + revisit trigger>` and in the plan's
+   *Debt* table, never in the spoke. A cut this diff writes (a duplicate, workaround, skipped case
+   or test, a value hard-coded where the profile names its source) with no gate's pick is a
+   judgment finding; `inferred` rows are questions. Dead code this diff did not make dead, in a
+   file it edits, is footprint debt like any other, and never *beyond hub scope*.
 
 3. **Plan/AC conformance** — the stage did what the plan said, the AC it claims are genuinely
-   covered by the tests written, and **nothing extra rode along**. The packet's settled
+   covered by the tests written, and **nothing extra rode along** (footprint debt paid per item 2
+   is not extra). The packet's settled
    `check-coverage.js` output decides the claim bookkeeping; this item judges whether each test
    really proves the criterion it names. For UI stages, **case completeness**: every section case
    the stage claims is implemented, driven by its declared source/trigger, with none silently

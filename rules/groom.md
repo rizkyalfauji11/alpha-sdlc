@@ -331,8 +331,7 @@ missing acceptance criterion: a defect, not a detail.
   the next phase grounds in. **What the change makes unused goes with it:** when a change replaces
   a behavior, the old path, its tests and its rows are deleted in the same change, or in a later
   stage named for it — never left beside the new one. Dead code the change did *not* make dead is
-  not this change's to delete: it goes in `tech-debt-register` for `do-tech-debt-grooming`, because
-  deleting it here is scope nobody decided. `scripts/find-orphans.js` finds candidates
+  debt: paid when it sits in a file the change edits, registered otherwise. `scripts/find-orphans.js` finds candidates
   (`--diff <base>`) and stale rows (`--registry`). **"If needed" is literal** — only touch a doc
   when the change alters a fact it records; don't churn docs for changes they don't track (e.g. a
   dependency version bump that only lives in the manifest). Announce profile updates in the step
@@ -679,3 +678,4 @@ missing acceptance criterion: a defect, not a detail.
 
 Not in this bundle (they do not govern these skills, or bind through the add-on named beside them):
 - *Auto-run mode*
+- *A change adds no debt, and pays the debt in its footprint*

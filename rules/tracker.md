@@ -400,6 +400,7 @@ missing acceptance criterion: a defect, not a detail.
 Not in this bundle (they do not govern these skills, or bind through the add-on named beside them):
 - *Auto-run mode*
 - *Keep the project profile current (`docs/basics/`)*
+- *A change adds no debt, and pays the debt in its footprint*
 - *UI containers must never clip*
 - *Integrated real-data gate*
 - *The app runs where you can see it*

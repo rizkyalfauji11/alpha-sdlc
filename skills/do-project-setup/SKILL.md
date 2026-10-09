@@ -44,7 +44,7 @@ Indonesia) — at every gate, in every phase. When the consumer passes a setup-r
   `do-foundation-grooming`.
 - **Refresh:** a feature's reconcile first needs `check-feature-done.js` exit 0 for every platform
   the feature built, else **STOP** — back to `do-testing` / `do-fixing`, never waived, not even on
-  *proceed anyway*. Every refresh runs `find-orphans.js --registry`; migrations are offered one at
+  *proceed anyway*. A debt row it names is the user's to decide here: pay it, or `accepted`. Every refresh runs `find-orphans.js --registry`; migrations are offered one at
   a time.
 - **`12-security-compliance.md`:** observed controls only; written only after an explicit human
   sign-off — the other docs carry on while it waits.
@@ -71,7 +71,9 @@ Indonesia) — at every gate, in every phase. When the consumer passes a setup-r
      <platform>` for every platform the feature built. Anything but exit 0 — Boot & Smoke not
      passed, an AC not covered and passing, a bug not closed — is a **STOP**: report the reasons
      and send the feature back to `do-testing` / `do-fixing`. A verification gate is never waived,
-     so an explicit *proceed anyway* does not open this one. A refresh that is not a feature's
+     so an explicit *proceed anyway* does not open this one. A debt row left `open` in the feature's
+     files is no waiver either: ask the user to pay it (`do-fixing`, a characterization test first)
+     or keep it as `accepted — <why + revisit trigger>` in the register, then re-run the check. A refresh that is not a feature's
      reconcile (the profile has simply aged) runs as before. Then read `refresh.md` and follow it.
    - **Scan only what moved.** The check's exit 0 → the record is the scan: reuse it, launch no
      scanner. Exit 1 → re-scan only the record's areas whose covered paths hold a path it lists

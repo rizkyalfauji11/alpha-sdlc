@@ -64,6 +64,10 @@ pertama, tulis penjelasan itu sekali di ringkasan, lalu cukup istilahnya.
 | resisted the temptation | saya sengaja tidak … |
 | overclaim, klaim berlebih | mengklaim lebih dari yang sudah dicek |
 | round (review) | putaran review |
+| tech debt, debt | utang teknis — saat pertama muncul: *utang teknis (kekurangan kode yang harus dibayar nanti)* |
+| footprint | file yang diubah perubahan ini |
+| characterization test | test pengunci perilaku (memastikan perilaku lama tidak berubah) |
+| `accepted` (status debt) | disimpan atas keputusanmu, dengan alasan dan kapan ditinjau ulang |
 | *"persis X yang Y ada untuk mencegah(nya)"* (dari *"exactly the X that Y exists to prevent"*) | *"Y dibuat justru untuk mencegah X"* |
 | *"bukan tambahan sopan santun"* (dari *"not a courtesy"*) | *"bukan tambahan opsional"* |
 

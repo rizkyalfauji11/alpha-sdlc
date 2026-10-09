@@ -142,7 +142,8 @@ if (refusedDone) {
     'alpha-sdlc auto-run: "status": "done" is refused' + (scope ? ' for ' + scope : '') +
     ' — the feature is not done: ' + refusedDone.join('; ') + '. ' +
     'A verification gate is never waived. Re-drive what failed until it passes and record it in the ' +
-    'test plan, then set "done"; if it cannot pass in this run, set "status": "halted" and write why into "reason".\n',
+    'test plan — a debt row left open is paid, or its ★ keep recorded in the register as ' +
+    '`accepted — auto ★ <date>` — then set "done"; if it cannot pass in this run, set "status": "halted" and write why into "reason".\n',
   );
   process.exit(2);
 }

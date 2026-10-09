@@ -338,6 +338,9 @@ report('review-packet.js', 'coverage and orphan outputs are settled in the packe
   /### check-coverage\.js — exit 0\n\n`node .*check-coverage\.js .* --stage 1 --base [0-9a-f]+ --tests .*data\.test\.ts`/.test(dataText) &&
     /### find-orphans\.js --diff — exit \d/.test(dataText) && dataText.includes('nobody re-runs these unless the tree hash differs'),
   sectionOf(dataText, 'Settled script outputs'));
+report('review-packet.js', 'the debt balance is settled in the packet, read against the plan\'s Pays debt lines',
+  /### debt-balance\.js --diff — exit \d\n\n`node .*debt-balance\.js .* --diff [0-9a-f]+ --plan .*plan-web\.md --stage 1`/.test(dataText),
+  sectionOf(dataText, 'Settled script outputs'));
 report('review-packet.js', 'the author\'s verification log is verbatim', sectionOf(dataText, 'Author\'s verification').includes('npm test -- data\n2 passed, exit 0'),
   sectionOf(dataText, 'Author\'s verification'));
 report('review-packet.js', 'a light-tier stage goes to one reviewer that re-runs the tests, with no critic',

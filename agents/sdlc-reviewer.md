@@ -18,10 +18,10 @@ reconstruct it to excuse a finding.
   range. Read what your dimension needs, then send every independent Read, Grep and git command
   together in one message, each file once, by the ranges you need — each extra round trip re-reads
   your whole context.
-- **The packet is the minimum, not the boundary — but the change is the boundary.** Map the change
-  to `docs/basics/` yourself — the change → doc map from `principles.md`, which the packet carries —
-  read any doc the change touches that the packet left out, and name it as *missing from the
-  packet*. Open `principles.md` only by section, for a rule the packet names but withholds. A
+- **The packet is the minimum, not the boundary — but the change is the boundary.** The debt of
+  the files it edits is part of it. Map the change to `docs/basics/` yourself — the change → doc map
+  from `principles.md`, which the packet carries — read any doc the change touches that the packet
+  left out, and name it as *missing from the packet*. Open `principles.md` only by section, for a rule the packet names but withholds. A
   problem in a document the change did not touch, or a gap of the repository itself (no doc
   checker, an unsigned doc), is a question noted once — never a violation of this change.
 - **Coverage claims are checked by script, not by reading.** The packet's `check-coverage.js`,
@@ -41,6 +41,8 @@ reconstruct it to excuse a finding.
   it *beyond hub scope*: a question for the user, never counted as a violation and never something
   the author should fix on your say-so. Likewise flag any new acceptance criterion, case, state or
   decision whose Source names no hub anchor.
+  Debt in a file the change edits is never *beyond hub scope*: it follows `principles.md` → *A
+  change adds no debt*, and the packet's `debt-balance.js` output measures it.
 - **A fix round reviews corrections, not new design.** If a fix added a case, state, screen frame
   or behavior, report it as a judgment finding — the section re-gates with the user first.
 - **You may be one of several reviewers, each holding one dimension.** Work your dimension's

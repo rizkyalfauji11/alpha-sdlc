@@ -21,13 +21,18 @@
    wearing a fix's clothes) · **same-feature siblings fixed here; a project-wide class flagged for
    `do-issue-grooming`** rather than quietly left behind.
 2. **Scope discipline** — the diff contains the root-cause fix **and its regression test, and
-   nothing else**. A diff that adds or changes an endpoint or a contract field, or changes code in
+   nothing else** but the debt of the files it edits (`principles.md` → *A change adds no debt*).
+   A diff that adds or changes an endpoint or a contract field, or changes code in
    another platform's repository, is not a fix but a **design gap** — a judgment finding that
    stops the fix, whatever the bug report called it. A fix that replaces a path deletes the old
-   one with its tests and profile rows (`principles.md` → *Deregister on delete*). No
-   opportunistic refactor, no drive-by rename, no "while I was in there". This is the review's
-   sharpest job in fixing: a fix diff is where scope creep is easiest to justify and hardest to
-   spot.
+   one with its tests and profile rows (`principles.md` → *Deregister on delete*). A `measured` row
+   in the packet's `debt-balance.js --diff` output is paid in the fix — behaviour-preserving, a
+   characterization test first, the row deleted — or, when paying would change behaviour or a
+   contract, kept by the user's decision (`accepted — <why + revisit trigger>`); a cut the fix
+   writes with no gate's pick is a judgment finding. Beyond that, no opportunistic refactor, no
+   drive-by rename, no "while I was in there". This is
+   the review's sharpest job in fixing: a fix diff is where scope creep is easiest to justify and
+   hardest to spot.
 3. **Profile + principles conformance** — per doc the diff touches: layer/dependency rule
    (`02-architecture`) · error handling & logging, no swallowed catch (`10-conventions`) · **a
    style bug fixed at the token, never with a literal** (`18-design-tokens`) · canonical query
