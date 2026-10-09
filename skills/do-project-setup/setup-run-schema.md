@@ -41,7 +41,12 @@ only for the subject's first question.** A different question about the same sub
 report and every session. The consumer holds one answer per `id` for the whole run. It hides a
 question whose `id` already has an answer, and it refuses a second answer to that `id`. A new
 question that reuses an answered `id` is therefore never shown, and the run waits on a question
-nobody can see.
+nobody can see. **A document is gated once per run, too.** The consumer holds one decision per
+document and hides a `gate` on a document that already has one. A change found after the decision,
+such as a correction to a document already approved or signed, is asked as a question instead:
+`id` `<key>:correction`, `documentKey` the document, `options[]` *apply the correction* and *keep
+it as written*, `evidence` the lines it changes, and `blocks` that document. A second correction
+to the same document is `<key>:correction-2`.
 
 ## Only what changed
 
