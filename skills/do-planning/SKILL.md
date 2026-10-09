@@ -37,7 +37,8 @@ Indonesia) — at every gate, in every phase.
   `do-grooming` Step 3. Crops but no full frame → **STOP**, back to `do-grooming`.
 - A depended-on feature missing or not built → **STOP**: Open Decision; never plan on a phantom.
 - Step 1 scope summary → **STOP** until confirmed; record `Scope confirmed`.
-- Step 2 layout → **STOP**, end the turn; record its `_Approved:` stamp.
+- Step 2 layout → **STOP**, end the turn; record its `_Approved:` stamp. Its footprint debt is
+  asked at the same gate, each row's decision recorded in the plan.
 - Step 3 stage breakdown → **STOP** until approved; write the `Stage breakdown — approved` table.
 - Step 4, one stage at a time → **STOP** (approve / edit / re-split), end the turn; on approval
   write it with `Approved: <commit · date>`. Every stage ends in a **⏸ STOP — review** checkpoint.
@@ -96,7 +97,10 @@ Indonesia) — at every gate, in every phase.
    — the layers you place work into here become the stages in step 3, so name them explicitly
    (including the unlayered case's UI vs data-integration division). This is *not* a re-statement of
    the TRD design; link to the TRD and keep this concrete (file-system level). It's the map the
-   stages slot into; keep it short for small features. **Present the layout, then STOP — end your
+   stages slot into; keep it short for small features. **Then list the debt in that footprint**
+   (`stage-rules.md` → *Footprint debt*): `debt-balance.js --files` over the layout's paths, each
+   open row its own question with ★ *pay it in this feature*; the answers fill the plan's *Debt in
+   the footprint* table. **Present the layout, then STOP — end your
    turn and wait for approval. Do not start the stage breakdown in the same turn.** On approval,
    write the section with its `_Approved: <date>_` stamp.
 3. Propose the **stage breakdown** (titles + one-line goals + order only) — each stage references

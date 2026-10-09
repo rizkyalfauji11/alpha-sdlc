@@ -268,8 +268,8 @@ padding is applied by the scaffold component or per screen — pick one and use 
 > The drift **already** in the codebase: same-purpose values that disagree across real screens.
 > Filled
 > during setup/refresh from the actual code, then canonicalized **with the user** — migrating
-> existing
-> screens is tech-debt work (`do-tech-debt-grooming`), never a silent rewrite during a feature.
+> screens a feature does not edit is tech-debt work (`do-tech-debt-grooming`), never a silent
+> rewrite; a screen it edits pays its drift, asked at `do-planning`.
 
 | Concern | Values found in use | Canonical (decided) | Screens to migrate |
 |---------|--------------------|--------------------|--------------------|

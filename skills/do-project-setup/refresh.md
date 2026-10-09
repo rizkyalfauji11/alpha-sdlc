@@ -6,7 +6,8 @@ feature's SDLC ends with its reconcile, or when the user asks for a refresh. Eve
 
 **The done-gate comes first** (`SKILL.md` → Flow step 1): a feature's reconcile starts only after
 `node ../../scripts/check-feature-done.js docs/development/<feature-name> <platform>` exits 0 for
-every platform the feature built — anything else is a **STOP**, never waived.
+every platform the feature built — anything else is a **STOP**, never waived; a debt reason is
+closed by the user's decision (pay it, or `accepted`), never by a waiver.
 
 **Every refresh looks for rows naming what is gone.** Run `node ../../scripts/find-orphans.js
 <repo-root> --registry`: each *measured* line is a `19-code-inventory` or `18-design-tokens` row

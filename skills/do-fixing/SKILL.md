@@ -48,7 +48,8 @@ For each bug the user approved, in the report's order (severity first):
    session, again after a compaction).
 2. **Red** — write/confirm the failing test that reproduces it; run, confirm it fails for the right
    reason.
-3. **Fix** — root-cause fix, minimal, climbing the ladder; run tests + build until green. Report
+3. **Fix** — root-cause fix, minimal, climbing the ladder, and pay the open debt of the files it
+   edits; run tests + build until green. Report
    honestly (no "fixed" on red).
 4. **Conformance review (fresh eyes) — before re-verifying, before presenting.** Every fix is
    reviewed against the profile, the principles, and the bug report **before** re-verification and
@@ -74,8 +75,8 @@ For each bug the user approved, in the report's order (severity first):
    - **full** — one reviewer per part: (a) **fix quality** (root cause, not symptom · the regression
      test really reproduces it · right layer · siblings covered), item 1, on
      `alpha-sdlc:sdlc-reviewer-deep`, re-running the regression test and the sabotage check; (b)
-     **scope discipline** (the fix and its test, nothing else), item 2; (c) **profile + principles
-     conformance**, item 3.
+     **scope discipline** (the fix, its test and its files' debt, nothing else), item 2; (c)
+     **profile + principles conformance**, item 3.
 
    Record the file → dimension map, and when the reports come back, **before you fix anything, run
    the completeness critic** over the merged findings, that map and the diff. It is the
@@ -183,9 +184,11 @@ The *Bugs found* table in `test-plan-<platform>.md` is the state — each bug's 
   each fail re-verification means the design is wrong, not the patch — **STOP**, present the
   architectural question as an **Open Decision**, and do not attempt a fourth. Under auto-run this
   is a halting case: the chain loops until re-test is green, and nothing else terminates it.
-- **Scope discipline.** Fix *only* the bug. No opportunistic refactors or added scope (that's the
-  over-delivery trap). If the bug reveals a design gap, that's an **Open Decision → back to
-  `do-grooming`**, not something you invent a fix for. **A fix that needs a new or changed endpoint
+- **Scope discipline.** Fix *only* the bug. The open debt of the files the fix edits is not added
+  scope: it is paid with the fix, or kept by the user's decision (rules → *A change adds no debt*).
+  No opportunistic refactors or added scope (that's the over-delivery trap). If the bug reveals a
+  design gap, that's an **Open Decision → back to `do-grooming`**, not something you invent a fix
+  for. **A fix that needs a new or changed endpoint
   or contract field, or code in another platform's repository, is a design gap by definition** —
   the hub and that platform's spoke are where it gets decided, and a route built from inside a fix
   has no spoke, no plan and no stage review behind it. Stop and route it to grooming; in auto-run it

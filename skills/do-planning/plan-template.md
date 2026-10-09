@@ -55,6 +55,17 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 
 <Optional: a small module/dependency diagram if the layout isn't obvious.>
 
+## Debt in the footprint
+
+> Every open `tech-debt-register` row naming a file this plan edits — `node
+> ../../scripts/debt-balance.js <repo> --files <the layout's paths>` — and the user's answer at
+> the layout gate (`stage-rules.md` → *Footprint debt*): paid by a stage, or kept as `accepted —
+> <why + revisit trigger>` in the register. `none` when the output lists no row.
+
+| Row | File it names | Decision |
+|-----|---------------|----------|
+| <`TD-<n>` — what it is> | <path> | <paid by Stage N · kept: why, decided <YYYY-MM-DD> · not edited> |
+
 ## Screen stage map *(UI platforms)*
 
 > Each screen's presentation work: **shell → section stages → assembly** (`stage-rules.md` →
@@ -88,6 +99,8 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 - **Removes:** <what this stage deletes because it replaces it — the old path, its tests, its
   profile rows — or "nothing". A stage that replaces a behavior names the removal here or names the
   later stage that carries it>
+- **Pays debt:** <the `TD-<n>` rows this stage pays, behaviour-preserving, its characterization
+  test named under *Test first* — or "nothing">
 - **Built with:** <only when this stage lands in the same change as another: `Stage N` — each of
   them names the others, and each keeps its own review round and checkpoint verdict>
 - **Moved in:** <only when this stage claims an AC that §9 gives another slice: `AC-n` from
@@ -151,6 +164,7 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 ### Stage 2 — [<layer>] `<slice id>` — <goal>
 - **Covers:** <…>
 - **Removes:** <…>
+- **Pays debt:** <…>
 - **Layer:** <…>
 - **Files / modules:** <…>
 - **Approach:** <…>

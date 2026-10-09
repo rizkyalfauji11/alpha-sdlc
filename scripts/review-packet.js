@@ -599,6 +599,10 @@ function settledRuns(options, kind, codeRepo, measure, excluded) {
   if (kind === 'code' || kind === 'fix') {
     const exclusions = excluded.length ? ['--exclude', ...excluded] : [];
     runs.push({ label: 'find-orphans.js --diff', ...runScript('find-orphans.js', [codeRepo, '--diff', options.base, ...exclusions], codeRepo) });
+    const planClaims = kind === 'code'
+      ? ['--plan', path.join(options.featureDirectory, `plan-${options.platform}.md`), '--stage', String(options.stage)]
+      : [];
+    runs.push({ label: 'debt-balance.js --diff', ...runScript('debt-balance.js', [codeRepo, '--diff', options.base, ...planClaims, ...exclusions], codeRepo) });
   }
   for (const file of options.settled) {
     const text = readOptional(path.resolve(file));

@@ -62,7 +62,8 @@ R1–R5 on the mechanics of `client-ui.md` §5.
   verify step — don't fake a test to look TDD. For scaffolding, the verify step *is* the real check:
   **the command runs (build/run/test/lint), the created tree matches the foundation TRD's structure
   section, and the dependency rule holds** — and the conformance review checks the built tree
-  against that structure, which is what makes base drift catchable on day one.
+  against that structure, which is what makes base drift catchable on day one. Paying debt is the
+  other exception to red: its first test is a characterization test, green before and after.
 
 ## 3. Build — the contract's types, reuse, wiring, assets
 
@@ -100,6 +101,16 @@ On a client plan, `client-ui-rules.md` R1–R7 bind at this step too.
   **create new**, create it *and* **register it** in `17-asset-registry.md` (name, description,
   path, tags) — an unregistered new asset breaks the search-before-create loop and duplicates creep
   back.
+
+- **The stage leaves no debt in the files it edits** (`principles.md` → *A change adds no debt*).
+  Pay the rows its `Pays debt:` line names — a characterization test first, green before and after
+  — and delete each row in the stage's diff. Write no cut of your own (a duplicate, workaround,
+  skipped case or test, a value hard-coded where the profile names its source): a cut the code
+  seems to need is a question, ★ the full build. Open debt in a file the stage edits that the plan
+  never listed is paid here the same way, or in its own stage by plan amendment when it would make
+  this one unreviewable. When paying changes behaviour or a contract, or edits a file beyond the
+  stage, it is a question at the checkpoint, ★ keep: the register gets `accepted — <why + revisit
+  trigger>` and the plan's *Debt* table the answer — never the spoke. `debt-balance.js` checks it.
 
 ## 5. Conformance review — fresh eyes, before verifying and before presenting
 
@@ -252,6 +263,9 @@ The structured packet is the **Details (for engineers)** section of the step sum
   token / approved deviation → design-tokens, etc.), updated + re-stamped in the same change —
   the doc's one stamp line rewritten, what changed said here and in the commit, never logged in the
   doc. "None" if the stage touched nothing the profile tracks.
+- **Debt** — the packet's `debt-balance.js` summary line (born · paid · balance · open in the
+  footprint), each row this stage paid with its characterization test, and any row left for the
+  user to decide.
 - **Section cases (UI stages)** — its gate is `SKILL.md` step 8; its shape is `client-ui.md` §5.
 - **Visual parity (UI stages)** — what this slot reports (the final screenshot beside the design,
   the AI checklist + pixel-diff, iteration count, accepted platform deviations, full-scroll

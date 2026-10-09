@@ -137,8 +137,8 @@ When there are no bugs, every AC is covered, **and Boot & Smoke has actually pas
 assembled app**, report the result and the coverage doc; the feature is ready for the deployment
 phase. **Confirm it mechanically first:** `node ../../scripts/check-feature-done.js
 docs/development/<feature-name> <platform>` must exit 0 — it reads the test plan's Boot & Smoke and
-AC-covered lines and every bug's status, so a blocked journey or a fix not re-verified cannot be
-called done. **Then reconcile the profile — run `do-project-setup` in refresh mode** so
+AC-covered lines, every bug's status and its files' debt, so a blocked journey or a fix not
+re-verified cannot be called done. **Then reconcile the profile — run `do-project-setup` in refresh mode** so
 `docs/basics/` reflects what was built (each change to its doc, per the change → doc map in
 `principles.md` → *Keep the project profile current*) before the next feature grooms against it — a
 phase end: write the next-file for that reconcile and offer the fresh session. When there are

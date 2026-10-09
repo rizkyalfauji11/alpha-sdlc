@@ -142,6 +142,7 @@ function parsePlan(plan, slices) {
     const coversText = bulletText(stage.block, 'Covers');
     const [claimedPart, ...amendmentParts] = coversText.split('⚠️');
     stage.covers = new Set(acIdsIn(claimedPart.replace(/^.*?\*\*Covers:?\*\*/, '')));
+    stage.paysDebt = /\bTD-(?:[A-Za-z][A-Za-z0-9]*-)?\d+\b/.test(bulletText(stage.block, 'Pays debt'));
     const amendment = amendmentParts.join(' ');
     for (const match of amendment.matchAll(/AC-(\d+)[^.;]*?\bmoves? to Stage (\d+)/g)) {
       recordMove(Number(match[1]), Number(match[2]));
@@ -171,7 +172,7 @@ function planProblems({ spokePath, register, retired, slices, stages, movedInto 
   const problems = [];
   const claimedBy = new Map();
   for (const stage of stages) {
-    if (!stage.covers.size) problems.push(`Stage ${stage.number} claims no acceptance criterion`);
+    if (!stage.covers.size && !stage.paysDebt) problems.push(`Stage ${stage.number} claims no acceptance criterion and pays no debt`);
     for (const id of stage.covers) {
       if (!claimedBy.has(id)) claimedBy.set(id, []);
       claimedBy.get(id).push(stage.number);

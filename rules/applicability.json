@@ -69,6 +69,9 @@
     "keep-the-project-profile-current-docs-basics": {
       "bundles": ["execute", "groom", "plan", "setup"], "digest": false, "review": ["code", "docs"]
     },
+    "a-change-adds-no-debt-and-pays-the-debt-in-its-footprint": {
+      "bundles": ["execute", "plan", "setup"], "digest": true, "review": ["code", "tests"]
+    },
     "ui-containers-must-never-clip-verify-at-content-viewport-extreme": {
       "bundles": ["groom", "ui"], "digest": false, "review": ["ui"]
     },

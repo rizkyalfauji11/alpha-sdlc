@@ -2,6 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
+const { debtBalance, reportLines } = require('./debt-balance');
 
 const CLOSED_BUG = /\b(fixed|deferred|won'?t fix|closed|withdrawn|rejected|duplicate)\b/i;
 const STILL_OPEN = /\bnot re-?verified\b|\bre-?opened?\b|\bpending\b|\bin progress\b|\bopen\b/i;
@@ -58,7 +60,39 @@ function featureStatus(featureDirectory, platform) {
   }
 
   for (const bug of openBugs(lines)) reasons.push(`bug still open: ${bug}`);
-  return { done: reasons.length === 0, readable: true, reasons };
+
+  const debt = featureDebt(featureDirectory, platform);
+  if (debt && debt.gated && debt.balance.error) reasons.push(`the debt balance cannot be measured: ${debt.balance.error}`);
+  else if (debt && debt.gated) {
+    for (const row of debt.balance.undecided) {
+      reasons.push(`debt left open in a file this feature changed: ${row.id} names ${row.files.join(', ')} — ` +
+        'pay it (characterization test first, row deleted), or the user keeps it (`accepted — <why + revisit trigger>`; auto-run: `accepted — auto ★ <date>`, ratified after)');
+    }
+  }
+  const debtSummary = debt
+    ? reportLines(debt.balance).pop() + (debt.gated ? '' : ' — not gated: the plan has no *Debt in the footprint* section (planned before the debt rule)')
+    : null;
+  return { done: reasons.length === 0, readable: true, reasons, debtSummary, debtGated: Boolean(debt && debt.gated) };
+}
+
+function profileRootOf(featureDirectory) {
+  const resolved = path.resolve(featureDirectory);
+  const underDevelopment = resolved.match(/^(.*?)[\\/]docs[\\/]development[\\/][^\\/]+[\\/]?$/);
+  if (underDevelopment) return underDevelopment[1];
+  const toplevel = spawnSync('git', ['-C', resolved, 'rev-parse', '--show-toplevel'], { encoding: 'utf8' });
+  return toplevel.status === 0 ? toplevel.stdout.trim() : null;
+}
+
+function featureDebt(featureDirectory, platform) {
+  const root = profileRootOf(featureDirectory);
+  if (!root) return null;
+  const inside = spawnSync('git', ['-C', root, 'rev-parse', '--is-inside-work-tree'], { encoding: 'utf8' });
+  if (inside.status !== 0) return null;
+  const balance = debtBalance({ repoRoot: root, featureDirectory, platform });
+  if (!balance.registerFound) return null;
+  let plan = '';
+  try { plan = fs.readFileSync(path.join(featureDirectory, `plan-${platform}.md`), 'utf8'); } catch {}
+  return { balance, gated: /^##\s+Debt in the footprint\b/m.test(plan) };
 }
 
 module.exports = { featureStatus };
@@ -74,11 +108,14 @@ if (require.main === module) {
     process.stdout.write(`feature: unreadable — ${status.reasons[0]}\n`);
     process.exit(2);
   }
+  const debtLine = status.debtSummary ? `  ${status.debtSummary}\n` : '';
   if (status.done) {
-    process.stdout.write('feature: done — Boot & Smoke passed, every AC covered and passing, no open bug\n');
+    const debtClause = status.debtGated ? ', no open debt in its footprint' : '';
+    process.stdout.write(`feature: done — Boot & Smoke passed, every AC covered and passing, no open bug${debtClause}\n` + debtLine);
     process.exit(0);
   }
   process.stdout.write(`feature: NOT done — ${status.reasons.length} reason(s)\n`);
   for (const reason of status.reasons) process.stdout.write(`  - ${reason}\n`);
+  process.stdout.write(debtLine);
   process.exit(1);
 }

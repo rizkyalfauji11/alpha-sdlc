@@ -44,6 +44,15 @@ outright (no propagating the hand-rolled JWT parser because it was nearby), whil
 become options you decide. You end up with less code to own — none of it quietly behind the
 industry.
 
+**Leave debt in the code it touched.** A change writes no cut corner of its own — no duplicate,
+workaround, skipped case or hard-coded value — unless you pick that cut at a gate, and the
+recommended option is never the cut, so auto-run never takes one. Debt already in a file the change
+edits is the change's to pay, behaviour-preserving behind a characterization test: planning lists
+those register rows and asks about each one, recommending to pay it, and only a payment that would
+change behaviour or a contract, or reach beyond the edited files, is recommended for later. A
+script (`scripts/debt-balance.js`) puts the rows born, paid and still open in those files into
+every review, and a feature is not done while one of them is open and undecided.
+
 One thing it does *to* your code: source ships with **zero comments** — configurable where law or
 libraries demand it: setup can allow **license headers** and **public-API doc-comments** (an org
 setting the hook reads from the edited file's own profile); everything else stays banned, and a
@@ -119,7 +128,7 @@ Then, per feature:
 |---|---|---|
 | **Groom** | `/do-grooming` | PRD/BRD → requirements doc, one approval per section. The shared hub is reviewed by fresh eyes and the repo's own contract checks before any platform spoke starts, so spokes don't discover its errors one at a time. Every criterion, case or decision a spoke adds names the hub sentence that requires it — anything else is asked as a scope question whose default is *not in this feature* — and each gate shows how much the spoke grew since it was last approved. Variants: `/do-tech-debt-grooming` for behavior-preserving work, `/do-issue-grooming` which audits the whole issue *class* across the project rather than the symptom you hit, `/do-foundation-grooming` for a new project's scaffold |
 | **Plan** | `/do-planning` | Small independently reviewable stages, split by the layers your repo actually has — contract → domain → data → presentation, or just UI vs data-integration; it won't impose layering it doesn't find. UI splits again by section |
-| **Build** | `/do-development` | One stage at a time, test-first. Each diff is audited by a fresh-eyes reviewer holding your profile docs but not the reasoning that produced the code — then it stops for you. Which criterion each stage proves is checked by a script (`scripts/check-coverage.js`), not by rounds of reading, and the review aims to be **one round**: every finding is reported with the command that will prove its fix landed, so the stage closes on those outputs instead of handing the fixes back to a reviewer. What a change makes obsolete — the old path, its tests, its profile rows — goes with it (`scripts/find-orphans.js`); dead code it didn't cause becomes a tech-debt row, not a drive-by deletion |
+| **Build** | `/do-development` | One stage at a time, test-first. Each diff is audited by a fresh-eyes reviewer holding your profile docs but not the reasoning that produced the code — then it stops for you. Which criterion each stage proves is checked by a script (`scripts/check-coverage.js`), not by rounds of reading, and the review aims to be **one round**: every finding is reported with the command that will prove its fix landed, so the stage closes on those outputs instead of handing the fixes back to a reviewer. What a change makes obsolete — the old path, its tests, its profile rows — goes with it (`scripts/find-orphans.js`); debt in the files it edits — dead code it didn't cause included — is paid in the same change or kept by your decision (`scripts/debt-balance.js`) |
 | **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion — a script (`scripts/check-coverage.js --test-plan`) confirms every criterion is in the test plan and every test it names exists, and, given the runner's report, that every recorded status matches it — and the tests themselves reviewed by fresh eyes before coverage is reported. Verify-only: it reports every bug and fixes none |
 | **Fix** | `/do-fixing` | The bugs you triaged, one at a time, reproduce-first, root cause not symptom |
 
@@ -178,8 +187,8 @@ happens, so the final report is built from the file, not from memory. A `Stop` h
 the turn while that file says `running`. A stage report is not a stop, and a reviewer runs in the
 foreground instead of parking the turn. The chain ends only by writing `halted` (with its reason)
 or `done` into that file — and `done` is refused while `scripts/check-feature-done.js` reads a
-blocked Boot & Smoke, an uncovered AC or an unclosed bug in the test plan, the same check a
-feature's profile reconcile waits on; a stop attempted with no tool run since the last push in the
+blocked Boot & Smoke, an uncovered AC or an unclosed bug in the test plan, or a debt row still
+`open` in the feature's files — the same check a feature's profile reconcile waits on; a stop attempted with no tool run since the last push in the
 same session is let through, so a stuck run surfaces instead of looping, while the first stop after
 a `/clear` is pushed on. Want a fresh session per stage instead of one long one? Ask for it: each
 closed stage or bug then hands off, and *lanjut* in the new session picks the chain up again — see
@@ -547,6 +556,12 @@ Third-party marketplaces don't auto-update by default:
 Prefer automatic: `/plugin` → *Marketplaces* → `alpha` → **Enable auto-update**. Rolling it out to a
 team? Add the marketplace with `"autoUpdate": true` under `extraKnownMarketplaces` in your project's
 `.claude/settings.json`, and everyone stays current.
+
+From 0.37.0 the done gate also reads the tech-debt register. A feature planned before then has no
+*Debt in the footprint* table in its plan, so its debt is measured and reported but never blocks
+it; the gate binds every plan written from 0.37.0 on. Rows that name no file stay invisible to
+`scripts/debt-balance.js` — name the files in each row's engineer half, as the register template
+now asks.
 
 ## Roadmap
 

@@ -2001,7 +2001,7 @@ function testingNext(context, result) {
     return;
   }
   if (verdict) for (const reason of verdict.reasons) result.facts.push(`not done: ${reason}`);
-  setNext(result, 'Step 4', 'coverage + Boot & Smoke: drive what is not passing until `check-feature-done.js` exits 0');
+  setNext(result, 'Step 4', 'coverage + Boot & Smoke + footprint debt: drive what is not passing, and take each open debt row to the user, until `check-feature-done.js` exits 0');
 }
 
 function fixingPosition(context, result) {

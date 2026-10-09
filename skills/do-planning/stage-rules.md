@@ -11,6 +11,7 @@ draft (Step 4) follow these rules; `plan-template.md` is the block each stage fi
 - Layers — one stage per layer the slice touches
 - Presentation — shell → sections → assembly
 - Order — by dependency, contract first
+- Footprint debt — paid before the work that builds on it
 - Stepped flows — from the flow spec
 - Checkpoint — and whether it is safe to stop
 - Coverage — traced to AC and work slices
@@ -117,6 +118,27 @@ draft (Step 4) follow these rules; `plan-template.md` is the block each stage fi
   merges in the stage that carries the code satisfying or performing it, named on that stage's
   `Covers:`.
 
+## Footprint debt — paid before the work that builds on it
+
+- **The debt in the files this plan edits is planned, not discovered** (`principles.md` → *A change
+  adds no debt*). At the layout gate, `node ../../scripts/debt-balance.js <repo> --files <every
+  path the layout names>` lists the open register rows that name those files; each is its own
+  question, ★ *pay it in this feature* — unless paying changes behaviour or a contract (→
+  `do-grooming`) or edits a file beyond the footprint, where ★ keeps it. A kept row's status is
+  written in the register at this gate — `accepted — <why + revisit trigger>` — or the stage review
+  measures it again. A row grooming already decided is not asked again: its answer is recorded. A
+  `decided` row whose revisit trigger this plan meets is asked again. A row found only because a
+  directory the layout names holds its file, which no stage will edit, is recorded *not edited*.
+- **No register** (a `lite` profile) → offer the single-doc setup of `20-tech-debt-register`;
+  declined, the plan says its footprint debt is unmeasured.
+- **A paid row gets a stage, or rides one.** Small debt rides the stage that first edits its file,
+  named on that stage's `Pays debt:` line; debt that would make the stage unreviewable gets its own
+  stage, in the file's layer, ordered **before** the stage that builds on it — make the change easy,
+  then make the easy change. Either way its *Test first* is a **characterization test** that pins
+  today's behaviour and stays green across the payment, the stage's diff deletes the row, and its
+  `Covers:` claims no AC: paying debt adds no behaviour. `debt-balance.js` reads `Pays debt:` lines,
+  so a row a later stage claims is not charged to the stages before it.
+
 ## Stepped flows — from the flow spec
 
 - **Stage a stepped flow from its flow spec.** If the spoke has a **Multi-step flows** spec, the
@@ -141,14 +163,15 @@ draft (Step 4) follow these rules; `plan-template.md` is the block each stage fi
   satisfies (plus task IDs / Jira keys if the Jira phases were run). **Coverage is derived, not
   asserted:** read the TRD's numbered AC register (the spoke's §8, or its equivalent in an issue /
   tech-debt / foundation TRD) against the union of the stages' `Covers:` — every AC is claimed by
-  **≥ 1** stage and every stage claims **≥ 1** AC, and every work slice lands in some stage. An
-  unclaimed AC is unbuilt scope; an AC-less stage is untestable work. **Derived means computed:**
+  **≥ 1** stage and every stage claims **≥ 1** AC or pays **≥ 1** debt row (`Pays debt:`), and
+  every work slice lands in some stage. An unclaimed AC is unbuilt scope; an AC-less stage that pays
+  no debt is untestable work. **Derived means computed:**
   run `node ../../scripts/check-coverage.js docs/development/<feature-name> <platform>` and paste
   its output into *Sequencing & stop points* — never a hand-written coverage table or prose that
   restates the `Covers:` lines, because a second copy is the one that drifts. Each stage heading
-  names its slice (`` `W4a` `` for a stage of `W4`); a stage that claims an AC §9 gives another
-  slice carries a **`Moved in:`** line naming it, its source slice and why — the checker fails a
-  cross-slice claim without one. **Every AC a stage claims is provable in that stage:** its *Test
+  names its slice (`` `W4a` `` for a stage of `W4`; a debt stage, the slice whose files it
+  prepares); a stage that claims an AC §9 gives another slice carries a **`Moved in:`** line naming
+  it, its source slice and why — the checker fails a cross-slice claim without one. **Every AC a stage claims is provable in that stage:** its *Test
   first* names the test that proves it here. An AC whose proof needs a later stage's code moves to
   that stage **now**, at planning, with its *Moved in* line — never split or moved during
   development.

@@ -35,6 +35,14 @@ const coverageCases = [
   { name: 'a stage claiming another slice\'s criterion without a Moved in record is reported', expected: 1,
     spoke: spokeWith(TWO_SLICES),
     plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2` · `AC-3`') },
+  { name: 'a stage that pays debt and claims no criterion is clean', expected: 0,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — pay TD-4\n- **Covers:** none — pays debt\n- **Pays debt:** `TD-4` — the duplicate\n\n' +
+      '### Stage 2 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n\n### Stage 3 — [UI] `W2` — b\n- **Covers:** `AC-3`') },
+  { name: 'a stage that claims no criterion and pays no debt is reported', expected: 1,
+    spoke: spokeWith(TWO_SLICES),
+    plan: planWith('### Stage 1 — [data] `W1` — tidy\n- **Covers:** none\n- **Pays debt:** nothing\n\n' +
+      '### Stage 2 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n\n### Stage 3 — [UI] `W2` — b\n- **Covers:** `AC-3`') },
   { name: 'the same claim with a Moved in record is clean', expected: 0,
     spoke: spokeWith(TWO_SLICES),
     plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2` · `AC-3`\n- **Moved in:** `AC-3` from `W2` — provable only here') },
@@ -134,6 +142,132 @@ for (const orphanCase of orphanCases) {
   const exitCode = runScript('find-orphans.js', [root, ...orphanCase.mode]).exitCode;
   report('find-orphans.js', orphanCase.name, exitCode === orphanCase.expected,
     `expected exit ${orphanCase.expected}, got ${exitCode}`);
+}
+
+const REGISTER = 'docs/basics/20-tech-debt-register.md';
+const registerWith = (rows) => '# Tech-Debt Register\n\n**Next ID:** `TD-9`\n\n## Open\n\n' +
+  '| ID | What (plain · engineer) | Kind | Origin | Ceiling | Status |\n|---|---|---|---|---|---|\n' +
+  rows.map(([id, file, status]) => `| ${id} | a debt · \`${file}\` | duplicate | setup | soon | ${status} |`).join('\n') + '\n';
+const twoSources = { 'src/a.ts': 'export const a = 1\n', 'src/b.ts': 'export const b = 1\n' };
+const stagesPayingDebt = '# Plan\n\n### Stage 1 — [data] `W1` — a\n- **Pays debt:** nothing\n\n' +
+  '### Stage 2 — [data] `W1` — b\n- **Pays debt:** `TD-1` — the duplicate\n';
+const debtCases = [
+  { name: 'an open row naming a file the change edits is reported', expected: 1, mode: ['--diff', 'HEAD'],
+    before: { ...twoSources, [REGISTER]: registerWith([['TD-1', 'src/a.ts', 'open']]) },
+    after: { 'src/a.ts': 'export const a = 2\n' }, output: /measured\s+TD-1 .*open debt in a file this change edits/ },
+  { name: 'an open row naming a file the change leaves alone is clean', expected: 0, mode: ['--diff', 'HEAD'],
+    before: { ...twoSources, [REGISTER]: registerWith([['TD-1', 'src/a.ts', 'open']]) },
+    after: { 'src/b.ts': 'export const b = 2\n' } },
+  { name: 'a row the user accepted is clean', expected: 0, mode: ['--diff', 'HEAD'],
+    before: { ...twoSources, [REGISTER]: registerWith([['TD-1', 'src/a.ts', 'accepted — a contract change · revisit at v2']]) },
+    after: { 'src/a.ts': 'export const a = 2\n' }, output: /decided\s+TD-1/ },
+  { name: 'a row the change pays is counted as paid', expected: 0, mode: ['--diff', 'HEAD'],
+    before: { ...twoSources, [REGISTER]: registerWith([['TD-1', 'src/a.ts', 'open']]) },
+    after: { 'src/a.ts': 'export const a = 2\n', [REGISTER]: registerWith([]) }, output: /1 paid · balance -1/ },
+  { name: 'a row the change registers in a file it edits is reported as born undecided', expected: 1, mode: ['--diff', 'HEAD'],
+    before: { ...twoSources, [REGISTER]: registerWith([]) },
+    after: { 'src/a.ts': 'export const a = 2\n', [REGISTER]: registerWith([['TD-1', 'src/a.ts', 'open']]) },
+    output: /registered by this change in a file it edits/ },
+  { name: 'a row the change registers outside its footprint is a question', expected: 0, mode: ['--diff', 'HEAD'],
+    before: { ...twoSources, [REGISTER]: registerWith([]) },
+    after: { 'src/a.ts': 'export const a = 2\n', [REGISTER]: registerWith([['TD-1', 'src/b.ts', 'open']]) },
+    output: /inferred\s+TD-1 .*outside the footprint/ },
+  { name: 'a row a later stage pays is not charged to this stage', expected: 0,
+    mode: ['--diff', 'HEAD', '--plan', '{root}/plan-web.md', '--stage', '1'],
+    before: { ...twoSources, 'plan-web.md': stagesPayingDebt, [REGISTER]: registerWith([['TD-1', 'src/a.ts', 'open']]) },
+    after: { 'src/a.ts': 'export const a = 2\n' }, output: /planned\s+TD-1 .*Stage 2/ },
+  { name: 'a row the stage under review was to pay is still reported', expected: 1,
+    mode: ['--diff', 'HEAD', '--plan', '{root}/plan-web.md', '--stage', '2'],
+    before: { ...twoSources, 'plan-web.md': stagesPayingDebt, [REGISTER]: registerWith([['TD-1', 'src/a.ts', 'open']]) },
+    after: { 'src/a.ts': 'export const a = 2\n' } },
+  { name: 'a basename two files share names neither', expected: 0, mode: ['--diff', 'HEAD'],
+    before: { 'src/a/util.ts': 'export const a = 1\n', 'src/b/util.ts': 'export const b = 1\n', [REGISTER]: registerWith([['TD-1', 'util.ts', 'open']]) },
+    after: { 'src/a/util.ts': 'export const a = 2\n' } },
+  { name: 'a component named without its extension is found', expected: 1, mode: ['--diff', 'HEAD'],
+    before: { 'src/MonthGrid.tsx': 'export const g = 1\n', [REGISTER]: registerWith([['TD-1', 'MonthGrid', 'open']]) },
+    after: { 'src/MonthGrid.tsx': 'export const g = 2\n' } },
+  { name: 'planning lists the open rows under a layout directory', expected: 1, mode: ['--files', 'src/'],
+    before: { ...twoSources, [REGISTER]: registerWith([['TD-1', 'src/b.ts', 'open'], ['TD-2', 'lib/c.ts', 'open']]) },
+    output: /measured\s+TD-1[\s\S]*1 open in the footprint/ },
+  { name: 'a repository without a register has nothing to measure', expected: 0, mode: ['--diff', 'HEAD'],
+    before: twoSources, after: { 'src/a.ts': 'export const a = 2\n' }, output: /no docs\/basics\/20-tech-debt-register\.md/ },
+];
+
+for (const debtCase of debtCases) {
+  const root = gitRepoFixture('debt-' + debtCase.name.replace(/\W+/g, '-'), debtCase.before, debtCase.after);
+  const { exitCode, stdout } = runScript('debt-balance.js', [root, ...debtCase.mode.map((argument) => argument.replace('{root}', root))]);
+  const ok = exitCode === debtCase.expected && (!debtCase.output || debtCase.output.test(stdout));
+  report('debt-balance.js', debtCase.name, ok, [`expected exit ${debtCase.expected}, got ${exitCode}`, stdout]);
+}
+
+const moreDebtCases = [
+  { name: 'a row an earlier stage claimed and left open is still reported', expected: 1,
+    mode: ['--diff', 'HEAD', '--plan', '{root}/plan-web.md', '--stage', '2'],
+    before: { ...twoSources, 'plan-web.md': '# Plan\n\n### Stage 1 — [data] `W1` — a\n- **Pays debt:** `TD-1`\n\n### Stage 2 — [data] `W1` — b\n- **Pays debt:** nothing\n',
+      [REGISTER]: registerWith([['TD-1', 'src/a.ts', 'open']]) },
+    after: { 'src/a.ts': 'export const a = 2\n' } },
+  { name: 'a claim on a wrapped Pays debt line counts', expected: 0,
+    mode: ['--diff', 'HEAD', '--plan', '{root}/plan-web.md', '--stage', '1'],
+    before: { ...twoSources, 'plan-web.md': '# Plan\n\n### Stage 1 — [data] `W1` — a\n- **Pays debt:** nothing\n\n### Stage 2 — [data] `W1` — b\n- **Pays debt:** `TD-2` — the copy, and\n  `TD-1` — the duplicate\n',
+      [REGISTER]: registerWith([['TD-1', 'src/a.ts', 'open']]) },
+    after: { 'src/a.ts': 'export const a = 2\n' } },
+  { name: 'an ID cell carrying a marker is still read', expected: 1, mode: ['--diff', 'HEAD'],
+    before: { ...twoSources, [REGISTER]: registerWith([['**TD-BR-11** ⏰', 'src/a.ts', 'open']]) },
+    after: { 'src/a.ts': 'export const a = 2\n' }, output: /measured\s+TD-BR-11/ },
+  { name: 'a lowercase word that happens to be a file stem names no file', expected: 0, mode: ['--diff', 'HEAD'],
+    before: { 'src/main.ts': 'export const m = 1\n', [REGISTER]: registerWith([['TD-1', 'main', 'open']]) },
+    after: { 'src/main.ts': 'export const m = 2\n' } },
+];
+for (const debtCase of moreDebtCases) {
+  const root = gitRepoFixture('debt-' + debtCase.name.replace(/\W+/g, '-'), debtCase.before, debtCase.after);
+  const { exitCode, stdout } = runScript('debt-balance.js', [root, ...debtCase.mode.map((argument) => argument.replace('{root}', root))]);
+  const ok = exitCode === debtCase.expected && (!debtCase.output || debtCase.output.test(stdout));
+  report('debt-balance.js', debtCase.name, ok, [`expected exit ${debtCase.expected}, got ${exitCode}`, stdout]);
+}
+
+const commitAll = (root, message) => {
+  spawnSync('git', ['-C', root, 'add', '-A']);
+  spawnSync('git', ['-C', root, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '-m', message]);
+};
+{
+  const root = gitRepoFixture('debt-a-renamed-file-still-counts-as-edited', { ...twoSources, [REGISTER]: registerWith([['TD-1', 'src/a.ts', 'open']]) });
+  spawnSync('git', ['-C', root, 'mv', 'src/a.ts', 'src/renamed.ts']);
+  const { exitCode, stdout } = runScript('debt-balance.js', [root, '--diff', 'HEAD']);
+  report('debt-balance.js', 'a renamed file still counts as edited', exitCode === 1 && /measured\s+TD-1/.test(stdout), [`exit ${exitCode}`, stdout]);
+}
+
+const PLAN_WITH_DEBT_TABLE = '# Plan\n\n## Debt in the footprint\n\nnone\n\n### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1`\n';
+const PLAN_BEFORE_THE_RULE = '# Plan\n\n### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1`\n';
+const featureDebtCases = [
+  { name: 'a feature leaving an open row in a file it changed is not done', expected: 1, rows: [['TD-1', 'src/a.ts', 'open']], plan: PLAN_WITH_DEBT_TABLE },
+  { name: 'a feature whose row in a changed file the user kept is done', expected: 0,
+    rows: [['TD-1', 'src/a.ts', 'accepted — a contract change · revisit at v2']], plan: PLAN_WITH_DEBT_TABLE },
+  { name: 'a feature planned before the debt rule is measured, not gated', expected: 0, rows: [['TD-1', 'src/a.ts', 'open']],
+    plan: PLAN_BEFORE_THE_RULE, output: /not gated/ },
+  { name: 'a row registered after the feature\'s last commit is not charged to it', expected: 0, rows: [],
+    later: [['TD-1', 'src/a.ts', 'open']], plan: PLAN_WITH_DEBT_TABLE, output: /0 undecided/ },
+];
+for (const featureDebtCase of featureDebtCases) {
+  const root = gitRepoFixture('feature-debt-' + featureDebtCase.name.replace(/\W+/g, '-'), {
+    ...twoSources,
+    'docs/development/f/plan-web.md': featureDebtCase.plan,
+    'docs/development/f/test-plan-web.md': testPlan(),
+    [REGISTER]: registerWith(featureDebtCase.rows),
+  });
+  if (featureDebtCase.later) {
+    fs.writeFileSync(path.join(root, REGISTER), registerWith(featureDebtCase.later));
+    commitAll(root, 'a later feature registers debt');
+  }
+  const { exitCode, stdout, stderr } = runScript('check-feature-done.js', [path.join(root, 'docs/development/f'), 'web']);
+  const ok = exitCode === featureDebtCase.expected && /debt: /.test(stdout) && (!featureDebtCase.output || featureDebtCase.output.test(stdout));
+  report('check-feature-done.js', featureDebtCase.name, ok, [`expected exit ${featureDebtCase.expected}, got ${exitCode}`, stdout, stderr]);
+}
+{
+  const root = gitRepoFixture('feature-debt-no-register', {
+    ...twoSources, 'docs/development/f/plan-web.md': PLAN_WITH_DEBT_TABLE, 'docs/development/f/test-plan-web.md': testPlan(),
+  });
+  const { exitCode, stdout } = runScript('check-feature-done.js', [path.join(root, 'docs/development/f'), 'web']);
+  report('check-feature-done.js', 'a repository without a register is judged as before', exitCode === 0 && !/debt/.test(stdout), [`exit ${exitCode}`, stdout]);
 }
 
 const HOUR = 3600 * 1000;
