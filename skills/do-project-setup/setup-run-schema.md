@@ -5,6 +5,16 @@ tool) — at the start of every such run, before the first report. Everything in
 applies; this file maps it onto the schema's fields. The schema itself never changes, and every
 existing field is filled exactly as before.
 
+## When to report
+
+**A report ends your turn.** With a schema, the StructuredOutput call is the turn's final answer,
+and nothing runs after it until a line arrives on stdin. So report only when something waits on
+the reader (an open `gate` or a question that `blocks` the run), or when the setup is finished or
+cannot go on. Progress between those moments, such as *"19 written, starting 20"*, goes in plain
+text, which the consumer shows as what the run is doing now. A report that asks nothing while work
+remains leaves the run idle until someone notices: measured, 109 minutes. Without a schema this
+does not apply, because the step summary is plain text and the turn goes on.
+
 ## Every question
 
 `SKILL.md` → *Every question setup raises* holds the rules every question follows; with a schema
@@ -53,10 +63,11 @@ to the same document is `<key>:correction-2`.
 When the consumer's schema has `onlyWhatChanged`, the first report of a session is whole. Every
 later report in that session sets `onlyWhatChanged: true`, sends `states: []`, and lists in
 `documents` only the rows whose state, notes or description changed since the report before it.
-`questions` and `gate` stay whole, because they are what is open now. A consumer's reconnect line
-is answered the same way: when nothing changed, `documents` is empty. The consumer keeps every row
-the report does not name. Re-sending every row to change one spent most of a measured run's output
-on rows nothing had touched. When the schema lacks the field, every report stays whole.
+`questions` and `gate` stay whole, because they are what is open now. A consumer's reconnect line is
+answered the same way when something is open, and `documents` is empty when nothing changed. When
+nothing is open, it is not answered with a report: carry on (*When to report*). The consumer keeps
+every row the report does not name. Re-sending every row to change one spent most of a measured
+run's output on rows nothing had touched. When the schema lacks the field, every report stays whole.
 
 ## Doc-12 candidates
 

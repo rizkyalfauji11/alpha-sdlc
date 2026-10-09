@@ -436,7 +436,9 @@ gate that needs one (the refresh's `check-feature-done.js`) stops there: allow
 
 A consumer that passes `/do-project-setup` a setup-run schema with `onlyWhatChanged` gets a whole
 first report and, after it, reports of only what changed: the document rows that moved, the open
-questions and the gate. The consumer keeps every row a report does not name.
+questions and the gate. The consumer keeps every row a report does not name. A report ends the
+turn under a schema, so the skill reports only when it asks something or the setup is finished;
+progress between those moments is plain text.
 
 ### The mobile driver loads only where there is a mobile app
 
