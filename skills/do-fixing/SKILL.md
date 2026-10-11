@@ -26,9 +26,8 @@ Why it matters → Options ★ → Context → Details (for engineers) → Next 
 - **2** — no fix before a failing test reproduces the bug (red).
 - **Scope** — a fix that needs a new or changed endpoint or contract field, or code in another
   platform's repository, is a design gap: stop and route it to grooming.
-- **4** — **STOP on any judgment/scope finding** — Open Decision to `do-grooming`, or
-  `do-issue-grooming` for a project-wide class. Objective violations flat or rising over three
-  rounds → STOP.
+- **4** — the self-review is never skipped; **STOP on any judgment/scope finding** — Open Decision
+  to `do-grooming`, or `do-issue-grooming` for a project-wide class.
 - **UI** — a section case the doc doesn't declare → Open Decision back to `do-grooming`, never
   authored here. Visual-bug tooling fails → stop, report + fix it; never skip the comparison.
 - **5** — every failed re-verification adds 1 to `Attempts`; at 3 → STOP, Open Decision, no fourth
@@ -36,7 +35,9 @@ Why it matters → Options ★ → Context → Details (for engineers) → Next 
 - **6** — ⏸ Present and STOP: approve / change / stop. Do not touch the next bug until they respond.
 - **7** — only on approval: mark it fixed, commit by explicit path. The session boundary comes after
   the bug closes, never mid-bug.
-- **After the last bug** — hand back to `do-testing` for the re-test.
+- **After the last bug** — the fix review, once, over every fix of the batch: its verdict ⏸ STOP,
+  its needs-eyes and judgment findings the user's; only then hand back to `do-testing` for the
+  re-test.
 - **Auto-run** — each ⏸ is a report stamped `auto`; only the five halting cases stop it.
 
 ## Flow — per bug
@@ -51,40 +52,20 @@ For each bug the user approved, in the report's order (severity first):
 3. **Fix** — root-cause fix, minimal, climbing the ladder, and pay the open debt of the files it
    edits; run tests + build until green. Report
    honestly (no "fixed" on red).
-4. **Conformance review (fresh eyes) — before re-verifying, before presenting.** Every fix is
-   reviewed against the profile, the principles, and the bug report **before** re-verification and
-   **before** it's presented — fresh eyes on the fix, never the fixer's, because the reasoning that
-   produced a fix is the worst reasoning to audit it with. Log your verification commands with their
+4. **Self-review — before re-verifying, before presenting.** Check the fix yourself against the
+   profile, the principles and the bug report with `fix-reviewer.md`; no reviewer runs per bug
+   (`principles.md` → *Each phase is reviewed once*). Log your verification commands with their
    exit codes under `.alpha-sdlc/` and run `node ../../scripts/review-packet.js
    docs/development/<feature-name> <platform> --bug <B#> --base <the commit this bug's work started
-   from> --verify <log>` (another session's uncommitted paths: `--exclude <path>…`, which the packet
-   header names; never a path this fix changed): one packet file — the fix diff, the bug row and its
-   AC rows verbatim, the
-   charter's currency, the rules this diff can violate, the maps, `find-orphans.js --diff` settled
-   — never your diagnosis. On the issue-TRD path, which has no test plan, save the site's
-   audit-table row (with its header) and the AC rows it names under `.alpha-sdlc/` and pass that
-   file with `--settled`, so the packet carries the bug entry. Its first stdout lines give the
-   packet path, the tier (`review-tier.js`, by measure), the reviewers and the settled exit codes.
-   **Reviewers run in the foreground, the whole round in one message, at most 3 in flight**, each
-   handed only the packet path and its dimension id; the checklist is `fix-reviewer.md`
-   (`principles.md` → *Reviews run as parallel dimensions*):
-   - **script-only** — no reviewer: close on the settled scripts and the bug's own tests.
-   - **light** — one `alpha-sdlc:sdlc-reviewer` runs all three parts, re-running the regression
-     test and the sabotage check; then the `review-gaps.js` command in the packet's *Reviewers*
-     section.
-   - **full** — one reviewer per part: (a) **fix quality** (root cause, not symptom · the regression
-     test really reproduces it · right layer · siblings covered), item 1, on
-     `alpha-sdlc:sdlc-reviewer-deep`, re-running the regression test and the sabotage check; (b)
-     **scope discipline** (the fix, its test and its files' debt, nothing else), item 2; (c)
-     **profile + principles conformance**, item 3.
-
-   Record the file → dimension map, and when the reports come back, **before you fix anything, run
-   the completeness critic** over the merged findings, that map and the diff. It is the
-   `review-gaps.js` command, then on the full tier `alpha-sdlc:sdlc-reviewer-critic` on the
-   reports, the map, the diff stat and the gaps output — all merged into `<packet stem>-merged.md`,
-   the same file:line counted once. **Verify before acting** — open the cited file at the cited
-   line before editing anything on a report's authority: a review that is wrong in one finding is
-   not wrong in all of them, and acting on the wrong one costs a whole round.
+   from> --self --verify <log>` (another session's uncommitted paths: `--exclude <path>…`; never a
+   path this fix changed): one packet with the bug row, its AC rows, the rules this diff can violate
+   and the settled `find-orphans.js --diff` and `debt-balance.js --diff`. On the issue-TRD path,
+   which has no test plan, save the site's audit-table row (with its header) and the AC rows it names
+   under `.alpha-sdlc/` and pass that file with `--settled`. Then walk the three items, each
+   answered with the line or the command that settles it: **fix quality** — grep the sibling
+   call-sites; **remove the fix and watch the regression test fail**, then restore it
+   byte-identically; right layer · **scope discipline** — the fix, its test and its files' debt,
+   nothing else · **profile + principles conformance**.
 
    **Findings split by kind.** An **objective violation** → fix it as part of this bug's work and
    re-verify (symptom-level patch, wrong layer, raw literal instead of a token, local refetch hack
@@ -94,15 +75,8 @@ For each bug the user approved, in the report's order (severity first):
    an **Open Decision** (`do-grooming`); a **project-wide class** routes to `do-issue-grooming`.
    Never fix-and-continue on those — the whole reason fixing is a separate phase is that the user
    decides what gets touched. **(Auto-run: a judgment/scope finding auto-decides its ★ resolution —
-   recorded — and the fix continues.)** **This step absorbs the comment check** (one review, not a
-   scattered pass). **Close on the findings' closing proofs, not on another round** — run the
-   command each finding named and put its output in the packet; **a second round is owed only** when
-   something came back **needs-eyes**, a fix added product behaviour, or a named proof would not go
-   green, per `principles.md` → *One round, closed by proof* — then re-run the packet with `--round
-   2 --prev <merged findings> --dimensions <ids that had findings>`. Carry the verdict into the
-   packet, with each finding's closing proof and output, the needs-eyes count, and the
-   objective-violation count per round. **If a reviewer subagent can't run, say so and run the
-   identical checklist inline** — the step is never skipped, and "fix looks right" is not a review.
+   recorded — and the fix continues.)** **This step absorbs the comment check** (one pass, not a
+   scattered one). The step is never skipped, and "fix looks right" is not a self-review.
 5. **Re-verify** — re-run the bug's original failing check *and* the surrounding suite (no
    regressions). Visual bugs → re-run parity. **Boot & Smoke / integration bugs → re-boot the real
    stack and re-drive the journey** (not just an isolated test). **Shared-entity/contract/cache
@@ -112,13 +86,13 @@ For each bug the user approved, in the report's order (severity first):
 6. **Present + ⏸ STOP** — in the step-summary format above, the bottom line saying what was fixed
    and what you need, with these **Details (for engineers)**: the root cause, the fix (diff), the
    now-passing regression test, the re-verify result, **Profile updates** (any `docs/basics/` doc
-   this fix changed a recorded fact in, updated + re-stamped — or "None"), and the **Conformance
-   review** — who reviewed (subagent, or inline + why), which docs were checked, and findings by
-   kind: objective violations *fixed* · judgment/scope findings **raised** (Open Decision, or routed
+   this fix changed a recorded fact in, updated + re-stamped — or "None"), and the **Self-review** —
+   which docs were checked, each item and what settled it, the settled scripts' exit codes, and
+   findings by kind: objective violations *fixed* · judgment/scope findings **raised** (Open Decision, or routed
    to `do-issue-grooming`) · the sibling call-sites confirmed covered · comments justified with no
    provenance. "Clean" is valid — say what was checked to earn it. The report's **last paragraph
-   says what happens next** (`principles.md` → *Next*): the next bug, the re-test, or what the
-   review left to fix or decide. Ask: approve / change / stop. Do not touch the next bug until they
+   says what happens next** (`principles.md` → *Next*): the next bug, the fix review, or what the
+   self-review left to decide. Ask: approve / change / stop. Do not touch the next bug until they
    respond. **(Auto-run: nothing is asked — report, stamp `auto`, commit, next bug immediately.)**
 7. **On approval** — mark the bug **fixed** in the test-plan *Bugs found* table, **commit the fix
    automatically** (conventional message; no push unless asked) **by explicit path**, never
@@ -130,7 +104,28 @@ For each bug the user approved, in the report's order (severity first):
 
 ## After the last bug
 
-Report what was fixed, what was deferred, and any bug that turned out to be a design gap (now an
+**First, the fix review — once, over every fix of the batch** (`principles.md` → *Each phase is
+reviewed once*). Run `node ../../scripts/review-packet.js docs/development/<feature-name> <platform>
+--bug <B#,B#,…> --base <the commit before this batch's first fix> --verify <log>` — one packet: the
+batch's diff, each bug row and its AC rows verbatim, the settled scripts — never your diagnoses.
+**Reviewers run in the foreground, the whole round in one message, at most 3 in flight**, each handed
+only the packet path and its dimension id; the checklist is `fix-reviewer.md`, and the tier the
+packet names sets who runs: **script-only** — no reviewer, close on the settled scripts and the
+bugs' own tests; **light** — one `alpha-sdlc:sdlc-reviewer` for all three parts, then
+`review-gaps.js`; **full** — one reviewer per part, (a) fix quality on
+`alpha-sdlc:sdlc-reviewer-deep`, re-running the regression tests and the sabotage checks, then,
+**before you fix anything**, `review-gaps.js` and `alpha-sdlc:sdlc-reviewer-critic` — all merged
+into `<packet stem>-merged.md`. **Verify before acting** — open the cited file at the cited line
+first. Fix every objective finding in one pass and **close each on its proof**; a correction that
+changes what the code *does* is written **test-first**. There is no second round: **present the
+verdict and ⏸ STOP** with every needs-eyes and judgment finding for the user (auto-run: a cited
+re-read closes needs-eyes, recorded). On the close, rewrite the test plan's `Fix review` row —
+`reviewed <date> · <every bug a fix review has covered> · findings <n> · needs-eyes <n> ·
+<verdict>` (the issue-TRD path: a `Fix review` line under §2's audit table) — and commit the fixes
+by explicit path. **If a reviewer subagent can't run, say so and run the identical checklist
+inline** — the review is never skipped.
+
+Then report what was fixed, what was deferred, and any bug that turned out to be a design gap (now an
 Open Decision) — built from the *Bugs found* table. Hand back to **`do-testing`** to re-run and
 confirm the fixes hold and nothing regressed — the test → fix → re-test loop closes here; a phase
 end, so write the next-file for that re-test and offer the fresh session. **(Auto-run: hand back in
@@ -153,7 +148,8 @@ The *Bugs found* table in `test-plan-<platform>.md` is the state — each bug's 
    `status` to `consumed`, and state the recorded understanding in one line.
 3. Re-read what it lists, plus `ui-bugs.md` on a client, in one message. Uncommitted changes in
    the bug's own files are its work in progress — run its tests, never discard them. Never redo a
-   `fixed` bug or re-ask a recorded triage; `Attempts` carries forward, never resets.
+   `fixed` bug or re-ask a recorded triage; `Attempts` carries forward, never resets. Every
+   triaged bug fixed and a fixed bug the `Fix review` row does not name → the fix review is next.
 
 ## Source
 
@@ -170,7 +166,8 @@ The *Bugs found* table in `test-plan-<platform>.md` is the state — each bug's 
 - **One bug at a time, with approval.** Never batch-fix. Fix a bug, present it, wait for approval,
   then the next. **In auto-run mode** (`principles.md` → *Auto-run mode*): still one bug at a time
   in severity order, but each presentation is a **report** (`Approved: auto <date>`), committed and
-  continuing — then **hand back to `do-testing` automatically** after the last bug, looping the
+  continuing — then **hand back to `do-testing` automatically** after the last bug and its fix
+  review, looping the
   chain until re-test is green — questions along the way auto-decide their ★ recommendation
   (recorded); only failed mandatory tooling, physically missing inputs, an external write, a fix
   that has failed three times, or a change the hub would need halt it. The chain ends with one

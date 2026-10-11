@@ -38,10 +38,10 @@ Indonesia) — at every gate, in every phase.
 - Every gate unit → **STOP** (hub ①–⑥, then each spoke's ①–⑦ and the omissions register): approve
   as-is / with edits / regenerate / skip; written only after; never two in one turn, never "approve
   the rest".
-- The hub review → verdict, **STOP**; no spoke before the `Hub review` row is ✅. Each spoke's
-  hub-alignment review → verdict, **STOP**; stamped only on a clean pass. A hub-wrong finding
-  changes the hub only on a yes to that change itself. Rounds flat or rising across three →
-  **STOP**, escalate with the trend.
+- The hub's self-review → **STOP**; no spoke before the `Hub review` row is `self-reviewed`. Each
+  spoke's alignment self-review → **STOP**. The grooming review, once every spoke is
+  self-reviewed → verdict, **STOP**; stamped only on its close. A hub-wrong finding changes the hub
+  only on a yes to that change itself.
 - A product feature asked for here is the first feature: finish the base, then `do-grooming`.
 - Auto-run never applies here.
 
@@ -86,21 +86,22 @@ and tooling get **decided with the user, one gate per decision**.
    marked `_Pending_` until its gate stamps it `_Approved: <YYYY-MM-DD> · <commit>_` (today, HEAD's
    short hash). A repo with no commit yet → before writing them, ask the user to commit the
    profile: a stamp and a review's `--base` name a real commit, never an invented one (declined:
-   stamps read `uncommitted`, and the hub review waits for that commit). No `<…>` template
+   stamps read `uncommitted`, and the grooming review waits for that commit). No `<…>` template
    placeholder survives into a TRD. From here on, an answer that belongs to a later gate goes into
    *Carry-forward answers* at once; that gate folds it in.
 4. **Groom the hub — one gate per section**, in the order listed in the rules (intent → repo
    strategy → architecture style → contract approach → shared conventions → environments). Draft
    one, present it, **STOP**, apply their verdict, write it, next. Each *Shared decisions* row
    (②–⑥) records its own approval; the section stamp comes with the last. The hub's shared
-   decisions are **all approved before any spoke is groomed**. Then the hub review (*Reviews*
-   below) — verdict, **STOP**.
+   decisions are **all approved before any spoke is groomed**. Then the hub's self-review
+   (*Reviews* below) — **STOP**.
 5. **Groom each spoke — one gate per section**, in the order listed in the rules (framework &
    scaffold → **folder structure, alone** → architecture skeleton → harness → repo hygiene → AC →
    omissions → Open Decisions). Same discipline: one section per turn, approved before it's written.
    Don't collapse sections because the project is small; a tiny project just has short sections.
    The omissions gate writes the hub's *Deliberate omissions & deferrals*, not a spoke section. Then
-   the spoke's hub-alignment review (*Reviews* below) — verdict, **STOP**.
+   the spoke's alignment self-review (*Reviews* below) — **STOP**; once every spoke is
+   self-reviewed, the grooming review — verdict, **STOP**.
 6. **Close out.** Confirm every AC is mechanically checkable, the omissions register is filled, and
    the profile docs the TRD binds to are named; write the TRD's *Hand-off* from the template's. Then
    show the user **where they are in the greenfield chain** — `setup ✓ → foundation TRD ✓ → plan →
@@ -113,19 +114,19 @@ and tooling get **decided with the user, one gate per decision**.
 
 The TRDs are the state — the hub's stamps and `_Pending_` headings, *Intent & constraints*' Gate-0
 notes, the *Shared decisions* rows' approvals, *Carry-forward answers*, the `Hub review` row, the
-*Spokes* row (each spoke's alignment stamp and round counts), each spoke's stamps. Run `node
+*Spokes* row (each spoke's alignment stamp), each spoke's stamps. Run `node
 ../../scripts/next-step.js docs/development/foundation [<platform>] --phase grooming` first (a
 spoke: its platform): exit 0 names the next unit, exit 1 a STOP to present, exit 2 an older or
 unknown format — read the files it lists instead; "nothing groomed yet — Gate 0" (exit 0, no
 feature directory yet) means start at step 1. Before any spoke section, confirm yourself that hub gates ①–⑥ are
-approved and the `Hub review` row is ✅. Read `.alpha-sdlc/next/foundation--hub.json` (a spoke:
+approved and the `Hub review` row is `self-reviewed` or ✅. Read `.alpha-sdlc/next/foundation--hub.json` (a spoke:
 `--<platform>`) and its handoff when present, set the next-file's `status` to `consumed`, and
 state the recorded understanding in one line. Re-read only what it lists. Once the skeletons exist, never re-run steps 1–3 (Gate 0); never re-run a
 stamped section, and never re-ask what the TRDs record.
 
 **Session boundaries** (rules → *The session is disposable — the files are the state*): after the
-skeletons are written, after the hub review ✅, after each spoke's alignment ✅, and at the phase
-end — never mid-section, never between a review report and its fixes. Persist first, then write the
+skeletons are written, after the hub's self-review, after each spoke's self-review, and at the
+phase end (the grooming review ✅) — never mid-section, never between a review report and its fixes. Persist first, then write the
 next-file (`skill` `alpha-sdlc:do-foundation-grooming`, `args` `foundation [<platform>]`; at the
 phase end `alpha-sdlc:do-planning`) and offer "/clear, then 'lanjut'" in Next. A
 `do-project-setup` run started from the precondition may end at its own boundary; its next-file
@@ -220,23 +221,21 @@ must state what's decided-and-built versus written-but-not-yet-real.
 
 ## Reviews — `../do-grooming/grooming-review.md`, foundation row
 
-Run both by `../do-grooming/grooming-review.md` — read it before each review and whenever a hub
-edit stales a spoke (once per session, again after a compaction). This variant:
+Run the self-reviews and the grooming review by `../do-grooming/grooming-review.md` — read it
+before each and whenever a hub edit moves a spoke (once per session, again after a compaction).
+This variant:
 
-- **The hub review opens the spokes** (`do-grooming` → Step 2a) — minus the contract, entity and
-  flow points a scaffold has nothing to check, said so in the verdict. Points 3 and 5 run: build its
-  packet with `--items 3,5`. Every round appends its objective-violation count to the `Hub review`
-  row.
-- **Hub-alignment review closes every spoke** (see `do-grooming` → *Hub-alignment review*), **minus
-  the points a scaffold has nothing to check** — skip contract fidelity, feature-flow coverage,
+- **The hub's self-review opens the spokes** (`do-grooming` → Step 2a) — minus the contract, entity
+  and flow points a scaffold has nothing to check, said so in the result: hub points 14 and 16 run.
+- **The grooming review closes every spoke** (`do-grooming` → Step 5), once, after each spoke's
+  self-review, **minus the points a scaffold has nothing to check** — skip contract fidelity, feature-flow coverage,
   entity ownership and the §8-AC ↔ §9-slice pair (a base has no contract, flow, entities or slices)
   and say so in the verdict rather than reporting them passed: build its packet with `--items
-  2,3,5,6,8,9,10,11` (the packet merges dimension a into b). What's left is the highest-value
+  2,3,5,6,8,9,10,11,14,16` (the packet merges dimension a into b). What's left is the highest-value
   part: the spoke's structure tree matches the hub's decided **architecture style** and repo
   strategy · the harness commands match the hub's environment decisions · **each spoke's AC and
   structure are consistent with the hub's single omissions register** (one platform quietly
   including what the register defers is exactly the divergence this catches) · both spokes' AC
   bind to the same conventions · Open Decisions sit at the right level. **The stamp lands in the
   hub's *Spokes* row alone** — a foundation spoke is cut from *Per-platform sections* and has no
-  header table to carry one; each round's objective-violation count sits beside it there — and
-  re-review every spoke when a hub decision changes.
+  header table to carry one — and every spoke is re-checked when a hub decision changes.

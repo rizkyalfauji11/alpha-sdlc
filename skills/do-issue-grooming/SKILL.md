@@ -38,10 +38,11 @@ exists (`id.md` for Bahasa Indonesia) — at every gate, in every phase.
   the scope; the outline → **STOP** until approved; then the skeleton.
 - Each section → ask, propose, **STOP** for approval — one at a time, never a batch; on approval
   write it and stamp `_Approved: <YYYY-MM-DD> · <commit>_`.
-- The hub review, once the last section is written → verdict, **STOP**; no spoke before the `Hub
-  review` row is ✅. Each spoke's hub-alignment review → verdict, **STOP**; it is complete only on a
-  clean, stamped pass. A hub-wrong finding changes the hub only on a yes to that change itself.
-- Review rounds flat or rising across three → **STOP**, escalate with the trend.
+- The hub's self-review, once the last section is written → **STOP**; no spoke before the `Hub
+  review` row is `self-reviewed`. Each spoke's alignment self-review → **STOP**. The grooming review,
+  once every spoke is self-reviewed (no spokes: right after the hub's) → verdict, **STOP**; the TRD
+  is complete only on its close, stamped. A hub-wrong finding changes the hub only on a yes to that
+  change itself.
 - Every audited site is in the fix scope or deferred as an Open Decision; this skill never fixes.
 - Auto-run never applies here.
 
@@ -104,13 +105,13 @@ reproduce-first / characterization tests to add for the class, so a fix that mis
 test), fix ordering, blast-radius coordination (features that must not break), dependencies/risks,
 and work slices **claiming their AC by ID from §4** — never restating the criterion's prose.
 
-### Hub review, spokes, then the hand-off
+### Self-reviews, spokes, the grooming review, then the hand-off
 
-Once the last section is written, the hub review (*Reviews* below). An issue that spans platforms
-(e.g. a 405 spans backend + web) then gets its spokes, each from
+Once the last section is written, the hub's self-review (*Reviews* below). An issue that spans
+platforms (e.g. a 405 spans backend + web) then gets its spokes, each from
 `../do-grooming/TRD-spoke-template.md`, the approved hub as primary context — its outline (**STOP**
-for approval), its skeleton, the per-section loop, its hub-alignment review. Then the *Handoff*
-below.
+for approval), its skeleton, the per-section loop, its alignment self-review. Then the grooming
+review, once, over the hub and every spoke, and after it closes the *Handoff* below.
 
 ## Resume (fresh session)
 
@@ -126,8 +127,8 @@ resume at the step they lack (3 or 4) with the audit on disk — never re-run it
 confirmed Gate-0 step or a stamped section, and never re-ask what the TRD records.
 
 **Session boundaries** (rules → *The session is disposable — the files are the state*): after the
-Gate-0 skeleton is written (its pending §1–§2 drafts included), after the hub review ✅, after each
-spoke's alignment ✅, and at the phase end — never mid-section, never between a review report and
+Gate-0 skeleton is written (its pending §1–§2 drafts included), after the hub's self-review, after
+each spoke's self-review, and at the phase end (the grooming review ✅) — never mid-section, never between a review report and
 its fixes. Persist first, then write the next-file (`skill` `alpha-sdlc:do-issue-grooming`, `args`
 `<issue-name> [<platform>]`; at the phase end the recommended handoff, `do-fixing` or
 `do-planning`) and offer "/clear, then 'lanjut'" in Next.
@@ -165,18 +166,17 @@ occurrence:
 
 ## Reviews — `../do-grooming/grooming-review.md`, issue row
 
-**Spokes pass the hub-alignment review before they're complete** (and get re-reviewed whenever a
-hub section changes), and the hub passes the **hub review** before the first spoke (`do-grooming` →
-Step 2a) — see `do-grooming` → *Hub-alignment review*, **read by what it checks, not by its section
-numbers** (an issue TRD's AC registry is §4 and its slices sit in §6's change manifest; a spoke's
+**The hub is self-reviewed before the first spoke, every spoke before the grooming review, and that
+review runs once, over the hub and every spoke, before the TRD is complete** (`do-grooming` → Step
+2a, Step 4, Step 5; a hub section that changes moves every stamp) — its checklist **read by what it
+checks, not by its section numbers** (an issue TRD's AC registry is §4 and its slices sit in §6's change manifest; a spoke's
 are its §8 and §9); for a cross-platform issue that's what keeps the backend's and the web's
-account of the same root cause from diverging. Run both by `../do-grooming/grooming-review.md` —
-read it before each review and whenever a hub edit stales a spoke (once per session, again after a
+account of the same root cause from diverging. Run them by `../do-grooming/grooming-review.md` —
+read it before each and whenever a hub edit moves a spoke (once per session, again after a
 compaction). Every point applies unless its subject is absent (*Variants* note 1), read by what
 it checks: point 8 reads "every §4 AC claimed by ≥ 1 slice in §6's change manifest and back".
-Stamps: every hub-review round appends its count to the `Hub review` row; each spoke's stamp sits
-in the hub's *Spokes* row (its one hub-side home) and in the spoke's `Hub alignment` and
-`Alignment rounds` rows.
+Stamps: the `Hub review` row carries the hub's; each spoke's stamp sits in the hub's *Spokes* row
+(its one hub-side home) and in the spoke's `Hub alignment` row.
 
 ## How this differs from the other skills
 

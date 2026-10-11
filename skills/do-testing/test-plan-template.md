@@ -8,7 +8,8 @@
 | **TRD** | [hub](./TRD.md) · [spoke](./TRD-<platform>.md) |
 | **Plan approved** | <YYYY-MM-DD — the pyramid/plan gate> · base <commit testing started from — the test review diffs from it; one per repository when tests live in more than one, e.g. `a1b2c3d` · `../web` `e4f5a6b`> |
 | **Environment approved** | <what may be stood up — services, test data, device/emulator, tooling> <YYYY-MM-DD> |
-| **Test review** | <reviewed YYYY-MM-DD · rounds n · verdict — filled when step 3 closes> |
+| **Test review** | <reviewed YYYY-MM-DD · findings n · needs-eyes n · verdict — filled when step 3 closes> |
+| **Fix review** | <none yet — then `reviewed YYYY-MM-DD · B1, B2 · findings n · needs-eyes n · verdict`, rewritten by `do-fixing` each time a batch's fix review closes; it names every bug whose fix a review has covered> |
 | **Date** | <YYYY-MM-DD> |
 
 > Every acceptance criterion maps to at least one test case, at the **right level** — placed once

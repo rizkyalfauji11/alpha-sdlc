@@ -126,9 +126,9 @@ Then, per feature:
 
 | | | |
 |---|---|---|
-| **Groom** | `/do-grooming` | PRD/BRD → requirements doc, one approval per section. The shared hub is reviewed by fresh eyes and the repo's own contract checks before any platform spoke starts, so spokes don't discover its errors one at a time. Every criterion, case or decision a spoke adds names the hub sentence that requires it — anything else is asked as a scope question whose default is *not in this feature* — and each gate shows how much the spoke grew since it was last approved. Variants: `/do-tech-debt-grooming` for behavior-preserving work, `/do-issue-grooming` which audits the whole issue *class* across the project rather than the symptom you hit, `/do-foundation-grooming` for a new project's scaffold |
+| **Groom** | `/do-grooming` | PRD/BRD → requirements doc, one approval per section. The shared hub is checked by its author against the hub checklist and the repo's own contract checks before any platform spoke starts, so spokes don't discover its errors one at a time; once every spoke is self-checked the same way, one fresh-eyes review reads the hub and every spoke together. Every criterion, case or decision a spoke adds names the hub sentence that requires it — anything else is asked as a scope question whose default is *not in this feature* — and each gate shows how much the spoke grew since it was last approved. Variants: `/do-tech-debt-grooming` for behavior-preserving work, `/do-issue-grooming` which audits the whole issue *class* across the project rather than the symptom you hit, `/do-foundation-grooming` for a new project's scaffold |
 | **Plan** | `/do-planning` | Small independently reviewable stages, split by the layers your repo actually has — contract → domain → data → presentation, or just UI vs data-integration; it won't impose layering it doesn't find. UI splits again by section |
-| **Build** | `/do-development` | One stage at a time, test-first. Each diff is audited by a fresh-eyes reviewer holding your profile docs but not the reasoning that produced the code — then it stops for you. Which criterion each stage proves is checked by a script (`scripts/check-coverage.js`), not by rounds of reading, and the review aims to be **one round**: every finding is reported with the command that will prove its fix landed, so the stage closes on those outputs instead of handing the fixes back to a reviewer. What a change makes obsolete — the old path, its tests, its profile rows — goes with it (`scripts/find-orphans.js`); debt in the files it edits — dead code it didn't cause included — is paid in the same change or kept by your decision (`scripts/debt-balance.js`) |
+| **Build** | `/do-development` | One stage at a time, test-first. Each stage is self-checked against the review checklist, then it stops for you; after the last stage, **one** fresh-eyes review — holding your profile docs but not the reasoning that produced the code — reads the whole feature diff. Which criterion each stage proves is checked by a script (`scripts/check-coverage.js`), not by rounds of reading, and there is no second round: every finding is reported with the command that will prove its fix landed, the review closes on those outputs, and what no command can prove comes to you. What a change makes obsolete — the old path, its tests, its profile rows — goes with it (`scripts/find-orphans.js`); debt in the files it edits — dead code it didn't cause included — is paid in the same change or kept by your decision (`scripts/debt-balance.js`) |
 | **Test** | `/do-testing` | API · UI · integration · E2E · boot-and-smoke, every check traced to an acceptance criterion — a script (`scripts/check-coverage.js --test-plan`) confirms every criterion is in the test plan and every test it names exists, and, given the runner's report, that every recorded status matches it — and the tests themselves reviewed by fresh eyes before coverage is reported. Verify-only: it reports every bug and fixes none |
 | **Fix** | `/do-fixing` | The bugs you triaged, one at a time, reproduce-first, root cause not symptom |
 
@@ -147,13 +147,25 @@ lines or four hundred, so a reviewer is handed **one packet file**, built by
 again, only the principles sections the diff **can** break — the withheld ones listed with the test
 that withheld them — and the output of the mechanical checks, run once and marked settled. How many
 reviewers read it is measured from the diff, never asserted by its author
-(`scripts/review-tier.js`): a stage that cannot change reachable production behaviour skips the
+(`scripts/review-tier.js`): a diff that cannot change reachable production behaviour skips the
 reviewer entirely; a small one — at most 150 production lines, no contract, schema, migration,
 auth, token, PII or UI file — gets one reviewer covering every dimension; anything else, or
 anything the script is unsure of, gets the full panel. Reachability decides the first band, never
-appearance: deleting a call site is never in it. Every round ends with `scripts/review-gaps.js`,
+appearance: deleting a call site is never in it. Every review ends with `scripts/review-gaps.js`,
 which names the changed file no report covered, the finding with no closing proof and the checklist
 item nobody checked. Test and grooming reviews are never tiered.
+
+**Each phase is reviewed once, at its end.** Grooming reviews the hub and every spoke together,
+development the whole feature diff after the last stage, testing the tests, fixing every fix of the
+batch after its last bug. Inside a phase, each hub, spoke, stage and fix is checked by its author
+against the same checklist, after the scripts have run, and the result is shown at its gate. A
+reviewer per unit re-read the same profile at every stage, drew a fresh sample of findings every
+round, and still missed the seams between units, where drift lives: on a real project one hub
+review ran four rounds over five hours — twelve reviewer runs — and its findings went 23 → 20 → 15
+→ 13 without ever coming back clean. The superpowers plugin reached the same answer from the
+other side: its 5.0.6 release dropped its subagent reviews of specs and plans after five versions,
+tested five times each, showed no quality difference, while those reviews cost about 25 minutes and
+the author's own checklist found three to five bugs in about 30 seconds.
 
 If you track work in Jira or GitHub Issues, `/do-slicing` and `/do-uploading` turn an approved
 requirements doc into a story-pointed task list and create it sample-first in small batches (tracker
@@ -169,8 +181,8 @@ execution. Opt in explicitly:
 ```
 
 and the **build → test → fix → re-test chain runs end-to-end**: each stage builds test-first, gets
-its fresh-eyes review and design-parity check, then its checkpoint lands as a **report** stamped
-`auto` instead of a question — straight into testing (environment boots and seeds itself; every test
+its self-review and design-parity check, then its checkpoint lands as a **report** stamped
+`auto` instead of a question — then the feature's one review, straight into testing (environment boots and seeds itself; every test
 case recorded then run), the bug report flows into fixing (**all bugs, severity order, blockers
 first**), and back to re-test until green. Commits happen per stage and per fix, as always.
 
@@ -223,10 +235,9 @@ for, so you spend less time watching it think:
   current one. The scan is recorded with the commit and working tree it read
   (`scripts/scan-record.js`), so a later run re-scans only the areas that changed since.
 - **Grooming gathers the next section's code facts while you review this one**, and after a hub
-  fix it re-reviews each spoke against what the fix moved, one spoke at a time.
-- **A review round launches at once** — every dimension reviewer of the round in one message, in
-  the foreground, at most three at a time. Reviews of different stages, bugs or spokes never share
-  a message.
+  fix the grooming review runs once more over the hub and every spoke, scoped to what the fix moved.
+- **A review launches at once** — every dimension reviewer in one message, in the foreground, at
+  most three at a time. Two reviews never share a message.
 
 Subagents only read and report; only the main agent writes what a gate approved. Anything prepared
 ahead is redone if your decision at the current gate changed what it was built on, and nothing that
@@ -239,8 +250,8 @@ counts, so a new session picks up where the last one stopped. A long session is 
 to run: every call re-reads the whole context, and over two months of real projects, 85% of
 interactive skill runs started inside a running session that already carried a median 616K
 tokens. So each unit of work ends on a **boundary** — a closed stage, a closed bug, a bug report
-with its triage, a stamped plan stage, the grooming skeleton, the hub review, each spoke's
-alignment, each closed screen, a stamped tracker part or verified batch, and every phase end. There
+with its triage, a stamped plan stage, the grooming skeleton, the hub's self-review, each spoke's
+self-review, each closed screen, the grooming review, a stamped tracker part or verified batch, and every phase end. There
 the skill first writes everything still open in chat into its document, then
 `.alpha-sdlc/next/<feature>--<platform>.json` — the skill, the unit and the commit it stood on —
 plus a handoff note when only the session knows something (a running stack's ports, a tooling
@@ -322,29 +333,27 @@ Opus (`claude-opus-5-5`) defaults to **medium** effort at the API, below the tab
 belongs to one model, so a switch mid-session writes the whole context again.
 
 The pinned pieces are the **fresh-eyes reviewers** — no Write/Edit tools, each handed one packet
-file instead of the conversation — behind the conformance review in development and fixing, the
-test review in testing, and the hub and hub-alignment reviews in grooming. Each runs
+file instead of the conversation — behind the one review each phase gets: the grooming review, the
+feature review in development, the test review in testing and the fix review in fixing. Each runs
 start-to-finish in one shot, so its pin holds, and a review is the last check before your gate:
 
 | Agent | Model · effort | Runs |
 |---|---|---|
 | `sdlc-reviewer` | Opus · `high` | Every review dimension, and alone on the light tier |
-| `sdlc-reviewer-deep` | Opus · `max` | Only hub-review consistency and fix quality |
+| `sdlc-reviewer-deep` | Opus · `max` | Only grooming-review consistency and fix quality |
 | `sdlc-reviewer-critic` | Opus · `medium`, no Bash | The completeness critic of a full round |
 
 Reviewers run at high effort, not max, **because max bought re-reading, not findings**: on this
 plugin's own reviews a round at max cost about three times a round at high, a reviewer at max ran
 a median 16 minutes against under 5, and the difference went to re-reading the rulebook, the
 profile and the sources. Max stays on the two dimensions where judgment-heavy, needs-eyes findings
-concentrate — the grooming hub review's consistency and `do-fixing`'s fix quality. The round is
-still meant to be the only one: each finding is reported with the literal command whose output
-shows its fix landed, the dimensions declare which changed file each of them owned, and
-`review-gaps.js` — with the critic on the full tier, reading the reports rather than the code —
-names what nobody looked at before anything is fixed. The stage then closes on those command
-outputs. A second round is owed only when a reviewer says in advance that a finding's closure **no
-command can show**, when a fix adds product behaviour, or when a named proof will not go green —
-and a count that stops falling for three rounds stops the loop and comes to you. Nothing in review
-runs on Sonnet: the light tier is one Opus reviewer at high effort. The plugin itself picks Sonnet
+concentrate — the grooming review's consistency and `do-fixing`'s fix quality. The round is the
+only one: each finding is reported with the literal command whose output shows its fix landed,
+the dimensions declare which changed file each of them owned, and `review-gaps.js` — with the
+critic on the full tier, reading the reports rather than the code — names what nobody looked at
+before anything is fixed. The review then closes on those command outputs; a finding whose closure
+**no command can show** comes to you at the phase's closing gate, never to a second round, and a
+fix that adds product behaviour goes back to its gate. Nothing in review runs on Sonnet: the light tier is one Opus reviewer at high effort. The plugin itself picks Sonnet
 only for setup's read-only scans and its drafts of factual profile docs — what is read from code,
 not decided; every decision and every gate stays on your session's model. An org that needs another
 model sets `CLAUDE_CODE_SUBAGENT_MODEL=<model>` **with** `CLAUDE_CODE_SUBAGENT_MODEL_FORCE=1` —
@@ -532,7 +541,7 @@ docs/development/<feature>/
   task-list.md                story-pointed tasks — written by /do-slicing,
                               tracker keys written back by /do-uploading
   plan-<platform>.md          staged plan, each stage with its checkpoint
-  review-charter.md           what every stage's reviewer must hold,
+  review-charter.md           what the feature's reviewers must hold,
                               distilled once from the profile
   design/                     the designs it builds and diffs against
   test-plan-<platform>.md     acceptance criterion → test → level → status
@@ -562,6 +571,16 @@ From 0.37.0 the done gate also reads the tech-debt register. A feature planned b
 it; the gate binds every plan written from 0.37.0 on. Rows that name no file stay invisible to
 `scripts/debt-balance.js` — name the files in each row's engineer half, as the register template
 now asks.
+
+From 0.38.0 each phase is reviewed once. Documents already stamped stay as they are: a ✅ hub or
+spoke stamp is still `reviewed`, and nothing re-runs. A hub or spoke still at `❌ not reviewed` or
+a ⚠️ stamp is sent to its self-review, then to the grooming review. A plan begun earlier gets the
+feature review only once its header has the template's `Feature review` row — add it, and the
+review's base is the parent of the first stage built without a per-stage review; a plan without
+the row hands off to testing after its last stage, as before. A test plan gets the fix review the
+same way, from its `Fix review` row. `review-packet.js` refuses the retired options by name:
+`--round`, `--prev`, `--since`, `--dimensions`, `--kind hub` and `--kind trd` (now
+`--kind groom`).
 
 ## Roadmap
 

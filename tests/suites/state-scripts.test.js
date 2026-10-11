@@ -68,7 +68,7 @@ function sectionsText(titles, states, bodies) {
   }).join('\n');
 }
 
-function hubDocument({ states = [], review = '✅ reviewed 2026-10-01 · rev `a1b2c3d` · rounds `2 · 0`', spokes = null, extra = '' } = {}) {
+function hubDocument({ states = [], review = '✅ reviewed 2026-10-01 · rev `a1b2c3d` · findings 2 · needs-eyes 0', spokes = null, extra = '' } = {}) {
   const spokeTable = spokes
     ? '## Spokes & alignment\n\n| Spoke | Repo | Link | Hub alignment | Platform exceptions (decided divergences) |\n' +
       '|-------|------|------|---------------|-------------------------------------------|\n' +
@@ -87,13 +87,12 @@ function spokeDocument({
   platform = 'Backend',
   states = [],
   alignment = '✅ reviewed 2026-10-01 · hub rev 2026-10-01',
-  rounds = '`3 · 0`',
   acs = [1, 2, 3],
   slices = '- [ ] **`BE1`** — everything — AC: `AC-1` … `AC-3`',
   extra = '',
 } = {}) {
   return `# TRD (${platform}): Checkout\n\n| | |\n|---|---|\n| **Status** | Draft |\n| **Platform** | ${platform} |\n` +
-    `| **Hub** | [./TRD.md](./TRD.md) |\n| **Hub alignment** | ${alignment} |\n| **Alignment rounds** | ${rounds} |\n` +
+    `| **Hub** | [./TRD.md](./TRD.md) |\n| **Hub alignment** | ${alignment} |\n` +
     '| **Date** | 2026-10-01 |\n\n## Open Decisions\n\n| # | Gap | Why | Options | Status |\n|---|---|---|---|---|\n' +
     '| D1 | a gap | a reason | ★ A / B | decided: A |\n\n' +
     sectionsText(SPOKE_TITLES, states, { 8: AC_TABLE(acs), 9: slices }) + extra;
@@ -133,9 +132,11 @@ function planDocument({
   breakdown = null,
   stages = [],
   sequencing = true,
+  featureReview = null,
 } = {}) {
   const header = `# Dev Plan (${platform}): Checkout\n\n| | |\n|---|---|\n| **Platform** | ${platform} |\n` +
-    (scope === null ? '' : `| **Scope confirmed** | ${scope} |\n`) + '| **Date** | 2026-10-02 |\n\n';
+    (scope === null ? '' : `| **Scope confirmed** | ${scope} |\n`) + '| **Date** | 2026-10-02 |\n' +
+    (featureReview === null ? '' : `| **Feature review** | ${featureReview} |\n`) + '\n';
   const layoutSection = '## Architecture & package layout\n\n' + (layout ? layout + '\n\n' : '') +
     '**Approach (ladder rung · world-wide standard):** rung 2 — reuse the existing packages · standard: agrees\n\n';
   const breakdownSection = breakdown
@@ -151,7 +152,8 @@ function planDocument({
 function testPlanDocument({
   planApproved = 'auto 2026-10-05',
   environment = 'local stack · 2026-10-05',
-  review = 'reviewed 2026-10-06 · rounds 1 · clean',
+  review = 'reviewed 2026-10-06 · findings 0 · needs-eyes 0 · clean',
+  fixReview = null,
   tests = [['TC1', 'pass'], ['TC2', 'pass']],
   procedures = [['TC1', '2026-10-05'], ['TC2', '2026-10-05']],
   bugs = null,
@@ -161,7 +163,8 @@ function testPlanDocument({
   const header = '# Test Plan (Backend): Checkout\n\n| | |\n|---|---|\n| **Platform** | Backend |\n' +
     (planApproved === null ? '' : `| **Plan approved** | ${planApproved} |\n`) +
     (environment === null ? '' : `| **Environment approved** | ${environment} |\n`) +
-    (review === null ? '' : `| **Test review** | ${review} |\n`) + '| **Date** | 2026-10-05 |\n\n';
+    (review === null ? '' : `| **Test review** | ${review} |\n`) +
+    (fixReview === null ? '' : `| **Fix review** | ${fixReview} |\n`) + '| **Date** | 2026-10-05 |\n\n';
   const coverage = '## AC → test coverage\n\n| ID | AC | Level | Test case | File | Status |\n|----|----|----|----|----|----|\n' +
     tests.map(([id, status], index) => `| ${id} | AC-${index + 1} — the list shows it | API | asserts it | test/checkout.test.ts | ${status} |`).join('\n') + '\n\n';
   const procedureSection = '## Test procedures (step-by-step)\n\n' + procedures.map(([id, approved]) =>
@@ -315,19 +318,28 @@ function expectNext(name, outcome, expectations) {
   const { featureDirectory } = featureProject('spoke-hub-unreviewed', {
     'TRD.md': hubDocument({ review: '❌ not reviewed' }),
   });
-  expectNext('a spoke whose hub review has not passed stops', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
-    { exit: 1, stop: /finish the hub and its review first/ });
+  expectNext('a spoke whose hub is not self-reviewed stops', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
+    { exit: 1, step: /^Step 2a — the hub's self-review/, stop: /finish the hub and its self-review first/ });
+}
+
+{
+  const { featureDirectory } = featureProject('spoke-hub-self-reviewed', {
+    'TRD.md': hubDocument({ review: 'self-reviewed 2026-10-01 · rev `a1b2c3d`' }),
+    'TRD-backend.md': spokeDocument({ states: ['approved', 'pending'] }),
+  });
+  expectNext('a self-reviewed hub opens its spokes — the grooming review comes after them', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
+    { exit: 0, unit: /^§ 2\. /, noStop: true });
 }
 
 for (const [kind, title] of [['tech-debt', '# Tech-Debt TRD: Checkout'], ['issue', '# Issue TRD: Checkout'], ['foundation', '# Foundation TRD — Checkout']]) {
   const { featureDirectory } = featureProject(`spoke-${kind}-hub-unreviewed`, {
-    'TRD.md': hubDocument({ review: '❌ not reviewed · rounds `4`' }).replace('# TRD (Hub): Checkout', title),
+    'TRD.md': hubDocument({ review: '❌ not reviewed' }).replace('# TRD (Hub): Checkout', title),
     'TRD-backend.md': spokeDocument({ states: ['approved', 'pending'] }),
   });
-  expectNext(`a spoke whose ${kind} hub review has not passed stops too`, nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
+  expectNext(`a spoke whose ${kind} hub is not self-reviewed stops too`, nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
     {
-      exit: 1, unit: /^the hub$/, step: /^the hub review \(`do-grooming` → Step 2a\)$/,
-      stop: /finish the hub and its review first/, fact: /^hub review: ❌ not reviewed/,
+      exit: 1, unit: /^the hub$/, step: /^the hub's self-review \(`do-grooming` → Step 2a\)$/,
+      stop: /finish the hub and its self-review first/, fact: /^hub review: ❌ not reviewed/,
     });
 }
 
@@ -341,11 +353,11 @@ for (const [kind, title] of [['tech-debt', '# Tech-Debt TRD: Checkout'], ['issue
 }
 
 {
-  const { featureDirectory } = featureProject('hub-review-rising', {
+  const { featureDirectory } = featureProject('hub-review-dirty', {
     'TRD.md': hubDocument({ review: '⚠️ round 3 found 7 · rounds `5 · 6 · 7`' }),
   });
-  expectNext('hub review rounds flat or rising across three rounds are a STOP', nextStep(featureDirectory),
-    { exit: 1, unit: /the hub/, step: /hub review/, stop: /Hub review rounds 5 · 6 · 7: flat or rising/ });
+  expectNext('a hub stamped by an old multi-round review goes to its self-review — no rounds STOP is left', nextStep(featureDirectory),
+    { exit: 0, unit: /^the hub$/, step: /^Step 2a — the hub's self-review \(hub points 12–16\)$/, gate: /Present the verdict and STOP/, reread: /grooming-review\.md$/, noStop: true });
 }
 
 {
@@ -354,26 +366,58 @@ for (const [kind, title] of [['tech-debt', '# Tech-Debt TRD: Checkout'], ['issue
     'TRD-web.md': spokeDocument({ platform: 'Web' }),
     'TRD-backend.md': spokeDocument(),
   });
-  expectNext('a reviewed hub names the first spoke still awaiting alignment', nextStep(featureDirectory),
-    { exit: 0, unit: /spoke backend/, step: /hub-alignment review/, fact: /spoke web: reviewed — .* · alignment rounds 3 · 0$/ });
+  expectNext('the hub names the first spoke still waiting for its self-review', nextStep(featureDirectory),
+    { exit: 0, unit: /spoke backend/, step: /^Step 4 — the spoke's alignment self-review \(points 1–11\)$/, fact: /^spoke web: reviewed — ✅ reviewed 2026-10-01 · hub rev a1b2c3d$/ });
 }
 
 {
-  const { featureDirectory } = featureProject('spoke-rounds-rising', {
-    'TRD.md': hubDocument(),
-    'TRD-backend.md': spokeDocument({ alignment: '`NOT REVIEWED`', rounds: '`7 · 7 · 8`' }),
-  });
-  expectNext('alignment rounds rising across three rounds are a STOP', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
-    { exit: 1, step: /hub-alignment review/, stop: /Alignment rounds 7 · 7 · 8/ });
+  const selfReviewed = 'self-reviewed 2026-10-02 · hub rev 2026-10-01';
+  const project = (name, review, web, backend) => featureProject(name, {
+    'TRD.md': hubDocument({ review, spokes: [['web', web], ['backend', backend]] }),
+    'TRD-web.md': spokeDocument({ platform: 'Web', alignment: web }),
+    'TRD-backend.md': spokeDocument({ alignment: backend }),
+  }).featureDirectory;
+  const hubSelfReviewed = 'self-reviewed 2026-10-01 · rev `a1b2c3d`';
+  const allSelf = project('grooming-review-due', hubSelfReviewed, selfReviewed, selfReviewed);
+  expectNext('once the hub and every spoke are self-reviewed, the grooming review runs once over all of them', nextStep(allSelf),
+    { exit: 0, unit: /^grooming$/, step: /^Step 5 — the grooming review, once: the hub and every spoke \(`review-packet\.js <feature> all --kind groom`\)$/, gate: /Present the verdict and STOP/, reread: /grooming-review\.md$/ });
+  expectNext('a spoke session that finds every spoke self-reviewed runs the grooming review', nextStep(allSelf, ['backend', '--phase', 'grooming']),
+    { exit: 0, unit: /^grooming$/, step: /^Step 5 — the grooming review, once/, fact: /^spoke web: self-reviewed$/ });
+  const oneWaiting = project('grooming-review-waits', hubSelfReviewed, '❌ not reviewed', selfReviewed);
+  expectNext('a self-reviewed spoke names the spokes the grooming review still waits for', nextStep(oneWaiting, ['backend', '--phase', 'grooming']),
+    { exit: 0, unit: /^grooming$/, step: /still waiting for spoke web$/, check: (json) => json.gate === null });
+  const reviewed = '✅ reviewed 2026-10-03 · hub rev 2026-10-01';
+  const closed = project('grooming-review-closed', '✅ reviewed 2026-10-03 · rev `a1b2c3d` · findings 4 · needs-eyes 1', reviewed, reviewed);
+  expectNext('the grooming review closed: grooming is complete', nextStep(closed),
+    { exit: 0, unit: /^grooming$/, step: /^the grooming review closed: the hub and every spoke are reviewed — hand off to `do-planning`/ });
+  const added = project('grooming-review-spoke-added', '✅ reviewed 2026-10-03 · rev `a1b2c3d` · findings 4 · needs-eyes 1', reviewed, selfReviewed);
+  expectNext('a spoke added after the grooming review closed gets the review scoped to it', nextStep(added),
+    { exit: 0, step: /^Step 5 — the grooming review, scoped to spoke backend, .*`review-packet\.js <feature> backend --kind groom --items 1,2,3,4,5,6,7,8,9,10,11`/ });
+  expectNext('the added spoke\'s own session finds the same scoped review', nextStep(added, ['backend', '--phase', 'grooming']),
+    { exit: 0, step: /^Step 5 — the grooming review, scoped to spoke backend/ });
+  expectNext('planning refuses a spoke that is only self-reviewed', nextStep(added, ['backend', '--phase', 'planning']),
+    { exit: 1, stop: /stamp is only `self-reviewed` — the grooming review has not closed/ });
 }
 
 {
-  const { featureDirectory } = featureProject('spoke-rounds-falling', {
+  const hubOnly = (name, review) => featureProject(name, {
+    'TRD.md': hubDocument({ review }).replace('# TRD (Hub): Checkout', '# Issue TRD: Checkout'),
+  }).featureDirectory;
+  expectNext('planning refuses an issue TRD with no spoke whose hub is only self-reviewed',
+    nextStep(hubOnly('plan-hub-only-self', 'self-reviewed 2026-10-01 · rev `a1b2c3d`'), ['backend', '--phase', 'planning']),
+    { exit: 1, stop: /^The hub's `Hub review` row is only `self-reviewed` — the grooming review has not closed/ });
+  expectNext('an issue TRD with no spoke and a closed grooming review is planned',
+    nextStep(hubOnly('plan-hub-only-reviewed', '✅ reviewed 2026-10-02 · rev `a1b2c3d` · findings 1 · needs-eyes 0'), ['backend', '--phase', 'planning']),
+    { check: (json) => !json.stops.some((stop) => /`Hub review` row/.test(stop)), fact: /^hub review: ✅ reviewed 2026-10-02/ });
+}
+
+{
+  const { featureDirectory } = featureProject('spoke-dirty-stamp', {
     'TRD.md': hubDocument(),
-    'TRD-backend.md': spokeDocument({ alignment: '`NOT REVIEWED`', rounds: '`9 · 4 · 2`' }),
+    'TRD-backend.md': spokeDocument({ alignment: '⚠️ round 3 found 8' }),
   });
-  expectNext('falling alignment rounds carry on to the next round', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
-    { exit: 0, step: /hub-alignment review/, noStop: true });
+  expectNext('a spoke stamped by an old multi-round review goes to its self-review — no rounds STOP is left', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
+    { exit: 0, step: /^Step 4 — the spoke's alignment self-review/, gate: /Present the verdict and STOP/, noStop: true });
 }
 
 {
@@ -390,7 +434,7 @@ for (const [kind, title] of [['tech-debt', '# Tech-Debt TRD: Checkout'], ['issue
     .replace(/_Approved: 2026-10-01 · a1b2c3d_/g, stamp).replace(/## 6\.[\s\S]*$/, '');
   const { featureDirectory } = featureProject('letters-only-commit', { 'TRD.md': droppedOutline('_Approved: 2026-10-01 · abcdefa_') });
   expectNext('a stamp whose commit is only the letters a–f still marks a TRD written from its skeleton', nextStep(featureDirectory),
-    { exit: 0, unit: /^the hub$/, step: /^Step 2a — hub review/ });
+    { exit: 0, unit: /^the hub$/, step: /^Step 2a — the hub's self-review/ });
   const remark = featureProject('hex-word-remark', { 'TRD.md': droppedOutline('_Approved: 2026-10-01 — signed off · acceded_') });
   expectNext('a word of the letters a–f outside the stamp position is no commit', nextStep(remark.featureDirectory),
     { exit: 2, unknown: /template's sections not written yet: 6\. Cross-cutting concerns/ });
@@ -469,19 +513,19 @@ function issueDocument({ notes = [], outline = [] } = {}) {
   const widgetSpec = '# Widget Spec — cart\n\n| | |\n|---|---|\n| **Approved** | commit `abc1234` · approved 2026-10-01 |\n';
   const { featureDirectory } = featureProject('screens', {
     'TRD.md': hubDocument(),
-    'TRD-web.md': spokeDocument({ platform: 'Web', alignment: '`NOT REVIEWED`', rounds: '<objective-violation count per round>' }),
+    'TRD-web.md': spokeDocument({ platform: 'Web', alignment: '`NOT REVIEWED`' }),
     'widget-spec/cart.md': widgetSpec,
   });
   expectNext('a client spoke with a widget spec but no section slicing goes back to Step 3', nextStep(featureDirectory, ['web', '--phase', 'grooming']),
     { exit: 0, unit: /screen cart/, step: /Step 3 .*no section-slicing doc/, noStop: true });
   const started = featureProject('screens-during-review', {
     'TRD.md': hubDocument(),
-    'TRD-web.md': spokeDocument({ platform: 'Web', alignment: '`NOT REVIEWED`', rounds: '`4`' }),
+    'TRD-web.md': spokeDocument({ platform: 'Web', alignment: 'self-reviewed 2026-10-01 · hub rev 2026-10-01' }),
     'widget-spec/cart.md': widgetSpec,
     'section-slicing/cart.md': '# Section Slicing — cart\n\n| | |\n|---|---|\n| **Approved (screen)** | commit `abc1234` · approved 2026-10-01 |\n\n' +
       '## Coverage checklist\n\n- [x] Every section has a block.\n- [ ] Every case has a crop.\n',
   });
-  expectNext('a screen left incomplete once the alignment review has started is a STOP back to Step 3',
+  expectNext('a screen left incomplete after the spoke\'s self-review is a STOP back to Step 3',
     nextStep(started.featureDirectory, ['web', '--phase', 'grooming']),
     { exit: 1, unit: /screen cart/, step: /1 Coverage checklist line\(s\) unchecked/, stop: /cart: any screen missing either doc, or with its Coverage checklist unchecked → STOP, back to Step 3/ });
 }
@@ -494,15 +538,20 @@ function issueDocument({ notes = [], outline = [] } = {}) {
   const hubRevision = commitAll(projectRoot, 'hub', '2026-10-01T10:00:00');
   write(path.join(featureDirectory, 'TRD-backend.md'), spokeDocument({ alignment: `✅ reviewed 2026-10-02 · hub rev \`${hubRevision.slice(0, 7)}\`` }));
   commitAll(projectRoot, 'spoke', '2026-10-02T10:00:00');
-  expectNext('a spoke aligned with the current hub is done grooming', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
-    { exit: 0, step: /aligned with the current hub/ });
+  expectNext('a spoke reviewed against the current hub is done grooming', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
+    { exit: 0, step: /^reviewed with the current hub/ });
   const hubPath = path.join(featureDirectory, 'TRD.md');
   write(hubPath, fs.readFileSync(hubPath, 'utf8').replace('Decisions for 5. API contracts.', 'Decisions for 5. API contracts, now paged.'));
   commitAll(projectRoot, 'hub moves', '2026-10-03T10:00:00');
-  expectNext('a hub edited after the spoke\'s stamp makes the alignment stale', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
-    { exit: 0, step: /re-run the hub-alignment review/, fact: /stale: the hub changed since rev/ });
+  expectNext('a hub edited after the grooming review runs it once more, scoped to what moved', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
+    { exit: 0, step: /^Step 5 — the grooming review once more, scoped to the hub sections that moved/, fact: /stale: the hub changed since rev/ });
   expectNext('planning refuses a spoke whose stamp is older than the hub\'s last change', nextStep(featureDirectory, ['backend', '--phase', 'planning']),
     { exit: 1, stop: /older than the hub's last change/ });
+  const reviewedSpoke = fs.readFileSync(path.join(featureDirectory, 'TRD-backend.md'), 'utf8');
+  write(path.join(featureDirectory, 'TRD-backend.md'), spokeDocument({ alignment: `self-reviewed 2026-10-02 · hub rev \`${hubRevision.slice(0, 7)}\`` }));
+  expectNext('a hub edited after a spoke\'s self-review re-walks that self-review', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
+    { exit: 0, step: /^Step 4 — re-walk the self-review's points the moved hub sections feed/ });
+  write(path.join(featureDirectory, 'TRD-backend.md'), reviewedSpoke);
   write(hubPath, fs.readFileSync(hubPath, 'utf8').replace('| **Status** | Draft |', '| **Status** | Approved |'));
   write(path.join(featureDirectory, 'TRD-backend.md'), spokeDocument({ alignment: `✅ reviewed 2026-10-04 · hub rev \`${commitAll(projectRoot, 'restamp', '2026-10-04T10:00:00').slice(0, 7)}\`` }));
   commitAll(projectRoot, 'spoke restamped', '2026-10-04T11:00:00');
@@ -557,7 +606,7 @@ function issueDocument({ notes = [], outline = [] } = {}) {
   write(hubPath, fs.readFileSync(hubPath, 'utf8').replace('Decisions for 5. API contracts.', 'Decisions for 5. API contracts, with an Idempotency-Key header.'));
   expectNext('a hub that was not committed at the stamp\'s rev leaves the alignment unverified, said in a note',
     nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
-    { exit: 0, step: /aligned with the current hub/, note: /alignment freshness not verified: the hub was not committed at rev/ });
+    { exit: 0, step: /^reviewed with the current hub/, note: /alignment freshness not verified: the hub was not committed at rev/ });
   commitAll(projectRoot, 'groomed TRDs', '2026-10-03T10:00:00');
   expectNext('committing a hub that was untracked at the stamp\'s rev is not read as a hub change',
     nextStep(featureDirectory, ['backend', '--phase', 'planning']),
@@ -565,9 +614,10 @@ function issueDocument({ notes = [], outline = [] } = {}) {
 }
 
 {
-  const foundationHub = (spokesCell, omissions) => '# Foundation TRD — Checkout\n\n| | |\n|---|---|\n' +
+  const foundationHub = (spokesCell, omissions, review = '✅ reviewed 2026-10-01 · rev `a1b2c3d` · findings 1 · needs-eyes 0') =>
+    '# Foundation TRD — Checkout\n\n| | |\n|---|---|\n' +
     '| **Platforms in scope** | backend |\n' + `| **Spokes** | ${spokesCell} |\n` +
-    '| **Hub review** | ✅ reviewed 2026-10-01 · rev `a1b2c3d` · rounds `1 · 0` |\n\n' +
+    `| **Hub review** | ${review} |\n\n` +
     '## Intent & constraints\n_Approved: 2026-10-01 · a1b2c3d_\n\nA scaffold.\n\n' +
     '## Shared decisions (hub-level)\n_Approved: 2026-10-01 · a1b2c3d_\n\nDecided.\n\n' + (omissions || '') +
     '## Open Decisions\n_Approved: 2026-10-01 · a1b2c3d_\n\n| # | Decision needed | Options | Status |\n|---|---|---|---|\n| D1 | a | ★ a | decided: a |\n';
@@ -581,12 +631,14 @@ function issueDocument({ notes = [], outline = [] } = {}) {
     for (const [file, content] of Object.entries(files)) write(path.join(featureDirectory, file), content);
     return featureDirectory;
   };
-  const rising = project('foundation-rounds', {
-    'TRD.md': foundationHub('TRD-backend.md ❌ not reviewed · rounds `6 · 6 · 7`', OMISSIONS),
+  const selfReviewed = project('foundation-self-reviewed', {
+    'TRD.md': foundationHub('TRD-backend.md self-reviewed 2026-10-02 · hub rev 2026-10-01', OMISSIONS, 'self-reviewed 2026-10-01 · rev `a1b2c3d`'),
     'TRD-backend.md': foundationSpoke([]),
   });
-  expectNext('a foundation spoke\'s rounds in the hub\'s Spokes row rising across three rounds are a STOP',
-    nextStep(rising, ['backend', '--phase', 'grooming']), { exit: 1, stop: /Alignment rounds 6 · 6 · 7: flat or rising/ });
+  expectNext('a foundation whose hub and spoke are self-reviewed runs the grooming review',
+    nextStep(selfReviewed), { exit: 0, unit: /^grooming$/, step: /^Step 5 — the grooming review, once/, fact: /^spoke backend: self-reviewed — self-reviewed 2026-10-02/ });
+  expectNext('a foundation spoke reads its self-review stamp from the hub\'s Spokes row',
+    nextStep(selfReviewed, ['backend', '--phase', 'grooming']), { exit: 0, step: /^Step 5 — the grooming review, once/, fact: /^hub alignment \(the foundation hub's Spokes row\): self-reviewed/ });
   const omissionsDue = project('foundation-omissions', {
     'TRD.md': foundationHub('TRD-backend.md ❌ not reviewed'),
     'TRD-backend.md': foundationSpoke(['approved', 'approved', 'approved', 'approved', 'approved', 'approved', 'pending']),
@@ -594,8 +646,12 @@ function issueDocument({ notes = [], outline = [] } = {}) {
   expectNext('a foundation spoke past its AC gate goes to the hub\'s omissions register before Open Decisions',
     nextStep(omissionsDue, ['backend', '--phase', 'grooming']),
     { exit: 0, unit: /^the omissions register \(hub\)$/, step: /omissions gate/, gate: /one section at a time/ });
-  expectNext('a foundation hub without its omissions register is not called complete', nextStep(omissionsDue),
-    { exit: 0, unit: /the spokes/, note: /omissions register .* is missing/ });
+  const omissionsAfterReview = project('foundation-omissions-reviewed', {
+    'TRD.md': foundationHub('TRD-backend.md ✅ reviewed 2026-10-02 · hub rev 2026-10-01'),
+    'TRD-backend.md': foundationSpoke([]),
+  });
+  expectNext('a foundation hub without its omissions register is not called complete', nextStep(omissionsAfterReview),
+    { exit: 0, unit: /^the omissions register \(hub\)$/, step: /is missing .* not complete without it/ });
   const omissionsWritten = project('foundation-omissions-written', {
     'TRD.md': foundationHub('TRD-backend.md ❌ not reviewed', OMISSIONS),
     'TRD-backend.md': foundationSpoke(['approved', 'approved', 'approved', 'approved', 'approved', 'approved', 'pending']),
@@ -618,11 +674,11 @@ function issueDocument({ notes = [], outline = [] } = {}) {
   const declined = project('foundation-uncommitted', {
     'TRD.md': foundationHub('TRD-backend.md ❌ not reviewed')
       .replace(/_Approved: 2026-10-01 · a1b2c3d_/g, '_Approved: 2026-10-09 · uncommitted_')
-      .replace('✅ reviewed 2026-10-01 · rev `a1b2c3d` · rounds `1 · 0`', '❌ not reviewed'),
+      .replace('✅ reviewed 2026-10-01 · rev `a1b2c3d` · findings 1 · needs-eyes 0', '❌ not reviewed'),
   });
-  expectNext('a foundation hub stamped `uncommitted` (its first commit declined) resumes at its hub review, not an unknown format',
+  expectNext('a foundation hub stamped `uncommitted` (its first commit declined) resumes at its self-review, not an unknown format',
     nextStep(declined, ['--phase', 'grooming']),
-    { exit: 0, unit: /^the hub$/, step: /^Step 2a — hub review/, gate: /Present the verdict and STOP/, check: (json) => json.unknown === null });
+    { exit: 0, unit: /^the hub$/, step: /^Step 2a — the hub's self-review/, gate: /Present the verdict and STOP/, check: (json) => json.unknown === null });
 }
 
 {
@@ -666,7 +722,7 @@ function issueDocument({ notes = [], outline = [] } = {}) {
     'TRD-web.md': spokeDocument({ platform: 'Web', alignment: '`NOT REVIEWED`' }),
   });
   expectNext('a tech-debt web spoke is never sent to write widget specs or slicing docs', nextStep(featureDirectory, ['web', '--phase', 'grooming']),
-    { exit: 0, step: /hub-alignment review/, check: (json) => !(json.notes || []).some((item) => /widget spec/.test(item)) });
+    { exit: 0, step: /^Step 4 — the spoke's alignment self-review/, check: (json) => !(json.notes || []).some((item) => /widget spec/.test(item)) });
 }
 
 {
@@ -674,8 +730,8 @@ function issueDocument({ notes = [], outline = [] } = {}) {
     'TRD.md': hubDocument(),
     'TRD-backend.md': spokeDocument({ alignment: '`NOT REVIEWED`' }),
   });
-  expectNext('a spoke at its alignment review re-reads the review file, not the section template', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
-    { exit: 0, step: /hub-alignment review/, reread: /grooming-review\.md$/, notReread: /TRD-spoke-template\.md$/ });
+  expectNext('a spoke at its self-review re-reads the review file, not the section template', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
+    { exit: 0, step: /^Step 4 — the spoke's alignment self-review/, reread: /grooming-review\.md$/, notReread: /TRD-spoke-template\.md$/ });
   expectNext('a hub handed off to planning re-reads no template or branch file', nextStep(featureDirectory),
     { exit: 0, notReread: /TRD-hub-template\.md$|do-grooming\/hub\.md$/ });
 }
@@ -794,13 +850,14 @@ function issueDocument({ notes = [], outline = [] } = {}) {
   });
   expectNext('development resumes at the first stage not done, with its block and covered AC', nextStep(featureDirectory, ['backend']),
     {
-      exit: 0, phase: 'development', unit: /Stage 2/, step: /build it/, block: /^### Stage 2 — \[domain\][\s\S]*Covers:\*\* `AC-2`/,
+      exit: 0, phase: 'development', unit: /Stage 2/, step: /^build it: frame → red → green → refactor → self-review → verify$/, block: /^### Stage 2 — \[domain\][\s\S]*Covers:\*\* `AC-2`/,
       fact: /covers: AC-2 — the list shows criterion 2/, gate: /do not touch the next stage/,
       rereadOrder: ['do-development/stage-steps.md', 'do-development/conformance-reviewer.md'],
       rereadWhy: {
         'do-development/stage-steps.md': /^every rule the stage's steps apply — once per session, again after a compaction$/,
-        'do-development/conformance-reviewer.md': /^the reviewers' checklist — read it yourself only to run the review inline$/,
+        'do-development/conformance-reviewer.md': /^the self-review checklist — items 1–3, walked by you at step 5$/,
       },
+      note: /^the plan has no `Feature review` row — add it from plan-template\.md/,
       check: (json) => json.facts.includes('platform: backend — backend: client-ui-rules.md and client-ui.md are not needed'),
     });
   expectNext('a carry-forward remark in the next stage is surfaced', nextStep(featureDirectory, ['backend']),
@@ -1024,9 +1081,34 @@ function issueDocument({ notes = [], outline = [] } = {}) {
     'plan-backend.md': planDocument({ stages: [1, 2, 3].map((number) => ({ number, ...DONE })) }),
   });
   expectNext('every stage done hands off to do-testing', nextStep(featureDirectory, ['backend', '--phase', 'development']),
-    { exit: 0, step: /hand off to `do-testing`/ });
+    { exit: 0, step: /hand off to `do-testing`/, note: /no `Feature review` row — it predates the feature review/ });
   expectNext('the detected phase after the last stage is testing', nextStep(featureDirectory, ['backend']),
     { exit: 0, phase: 'testing', unit: /Step 1/, gate: /ask before standing it up/ });
+}
+
+{
+  const stages = [1, 2, 3].map((number) => ({ number, ...DONE }));
+  const pending = featureProject('dev-feature-review', {
+    'TRD.md': hubDocument(),
+    'TRD-backend.md': spokeDocument(),
+    'plan-backend.md': planDocument({ stages, featureReview: '<pending — then `reviewed YYYY-MM-DD · base <commit> · findings n · needs-eyes n · verdict`>' }),
+  }).featureDirectory;
+  expectNext('every stage done and the Feature review row unfilled: the feature review is next, once, over the whole diff',
+    nextStep(pending, ['backend']),
+    {
+      exit: 0, phase: 'development', unit: /^the feature review$/, step: /^once, after the last stage: .*`review-packet\.js <feature> <platform> --base <the commit development started from>`, no `--stage`\)$/,
+      gate: /Present the verdict and STOP/, rereadOrder: ['do-development/stage-steps.md', 'do-development/conformance-reviewer.md'],
+      rereadWhy: { 'do-development/stage-steps.md': /^§10 — the feature review/ },
+    });
+  const closed = featureProject('dev-feature-reviewed', {
+    'TRD.md': hubDocument(),
+    'TRD-backend.md': spokeDocument(),
+    'plan-backend.md': planDocument({ stages, featureReview: 'reviewed 2026-10-07 · base `a1b2c3d` · findings 3 · needs-eyes 1 · approve' }),
+  }).featureDirectory;
+  expectNext('a closed feature review hands off to do-testing', nextStep(closed, ['backend', '--phase', 'development']),
+    { exit: 0, step: /^the feature review closed — .*hand off to `do-testing`$/, fact: /^feature review: reviewed 2026-10-07/ });
+  expectNext('the detected phase after a closed feature review is testing', nextStep(closed, ['backend']),
+    { exit: 0, phase: 'testing' });
 }
 
 const builtPlan = planDocument({ stages: [1, 2, 3].map((number) => ({ number, ...DONE })) });
@@ -1243,7 +1325,33 @@ const CHARTER = '# Review charter\n\n| | |\n|---|---|\n| **Built from profile co
     'test-plan-backend.md': testPlanDocument({ bugs: BUG_HEADER + bugRow('B1', 'major', 'yes', 1, '**fixed** 2026-10-07') }),
   });
   expectNext('with every triaged bug fixed, fixing hands back to do-testing', nextStep(featureDirectory, ['backend', '--phase', 'fixing']),
+    { exit: 0, step: /hand back to `do-testing`/, note: /no `Fix review` row — test plans before it never recorded one/ });
+}
+
+{
+  const bugs = BUG_HEADER + [bugRow('B1', 'major', 'yes', 1, '**fixed** 2026-10-07'), bugRow('B2', 'minor', 'yes', 0, 'fixed 2026-10-07'),
+    bugRow('B3', 'trivial', 'no 2026-10-06', 0, "won't fix")].join('\n');
+  const project = (name, fixReview) => featureProject(name, {
+    'TRD.md': hubDocument(), 'TRD-backend.md': spokeDocument(), 'plan-backend.md': builtPlan,
+    'test-plan-backend.md': testPlanDocument({ bugs, fixReview }),
+  }).featureDirectory;
+  const due = project('fix-review-due', '<none yet — then `reviewed YYYY-MM-DD · B1, B2 · findings n · needs-eyes n · verdict`>');
+  expectNext('every triaged bug fixed and none reviewed: the fix review is next, once, over the whole batch',
+    nextStep(due, ['backend', '--phase', 'fixing']),
+    {
+      exit: 0, unit: /^the fix review$/, step: /^once, over every fix of the batch — B1, B2 \(`review-packet\.js <feature> <platform> --bug B1,B2 --base <the commit before this batch's first fix>`\)/,
+      gate: /Present the verdict and STOP/, rereadWhy: { 'do-fixing/fix-reviewer.md': /^the fix-review checklist — read it yourself only to run the review inline$/ },
+    });
+  expectNext('a fix review still due keeps the detected phase in fixing', nextStep(due, ['backend']),
+    { exit: 0, phase: 'fixing', unit: /^the fix review$/ });
+  const partly = project('fix-review-partly', 'reviewed 2026-10-06 · B1 · findings 1 · needs-eyes 0 · approve');
+  expectNext('a bug the Fix review row does not name is reviewed in the next fix review', nextStep(partly, ['backend', '--phase', 'fixing']),
+    { exit: 0, unit: /^the fix review$/, step: /— B2 \(`review-packet\.js <feature> <platform> --bug B2 /, fact: /^fix review: reviewed 2026-10-06 · B1/ });
+  const closed = project('fix-review-closed', 'reviewed 2026-10-08 · B1, B2 · findings 2 · needs-eyes 1 · approve');
+  expectNext('once the fix review names every fixed bug, fixing hands back to do-testing', nextStep(closed, ['backend', '--phase', 'fixing']),
     { exit: 0, step: /hand back to `do-testing`/ });
+  expectNext('after the fix review closes the detected phase is testing', nextStep(closed, ['backend']),
+    { exit: 0, phase: 'testing' });
 }
 
 {
@@ -1259,12 +1367,13 @@ const CHARTER = '# Review charter\n\n| | |\n|---|---|\n| **Built from profile co
     'plan-web.md': builtPlan, 'plan-backend.md': builtPlan,
     'test-plan-web.md': testPlanDocument({ bugs }), 'test-plan-backend.md': testPlanDocument({ bugs }),
   });
-  expectNext('fixing on a client re-reads ui-bugs.md, and the fix-review checklist only for an inline review',
+  expectNext('fixing on a client re-reads ui-bugs.md, and the fix-review checklist for the bug\'s self-review',
     nextStep(featureDirectory, ['web', '--phase', 'fixing']),
     {
       exit: 0, unit: /^B1$/,
       rereadOrder: ['checkout/test-plan-web.md', 'checkout/TRD-web.md', 'do-fixing/ui-bugs.md', 'do-fixing/fix-reviewer.md'],
-      rereadWhy: { 'do-fixing/fix-reviewer.md': /^the fix-review checklist — read it only to run the review inline$/ },
+      rereadWhy: { 'do-fixing/fix-reviewer.md': /^the self-review checklist — its three parts, walked by you at step 4$/ },
+      step: /^frame → red \(a failing test that reproduces it\) → root-cause fix → self-review → re-verify$/,
     });
   expectNext('a backend fix never reads ui-bugs.md', nextStep(featureDirectory, ['backend', '--phase', 'fixing']),
     { exit: 0, unit: /^B1$/, rereadOrder: ['checkout/test-plan-backend.md', 'checkout/TRD-backend.md', 'do-fixing/fix-reviewer.md'] });

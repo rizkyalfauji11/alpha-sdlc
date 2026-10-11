@@ -1,7 +1,7 @@
 {
   "code": {
     "skill": "do-development",
-    "step": "Flow step 5 — conformance review",
+    "step": "After the last stage — the feature review (a stage's self-review: flow step 5)",
     "dimensions": [
       {
         "id": "a",
@@ -29,7 +29,7 @@
   },
   "fix": {
     "skill": "do-fixing",
-    "step": "Flow step 4 — conformance review",
+    "step": "After the last bug — the fix review (a bug's self-review: flow step 4)",
     "dimensions": [
       {
         "id": "a",
@@ -77,51 +77,32 @@
       }
     ]
   },
-  "hub": {
+  "groom": {
     "skill": "do-grooming",
-    "step": "Step 2a — hub review",
-    "dimensions": [
-      {
-        "id": "a",
-        "name": "contract and entities",
-        "items": [1, 2],
-        "owns": ["**/TRD.md", "**/contract/**"],
-        "checklistFile": "skills/do-grooming/grooming-review.md"
-      },
-      {
-        "id": "b",
-        "name": "consistency and flow",
-        "items": [3, 4, 5],
-        "owns": ["**/TRD.md"],
-        "checklistFile": "skills/do-grooming/grooming-review.md",
-        "agent": "alpha-sdlc:sdlc-reviewer-deep"
-      }
-    ]
-  },
-  "trd": {
-    "skill": "do-grooming",
-    "step": "Step 4 — hub-alignment review",
+    "step": "Step 5 — the grooming review (self-reviews: Steps 2a and 4)",
+    "alignmentItems": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     "dimensions": [
       {
         "id": "a",
         "name": "contract and data",
-        "items": [1, 2, 4, 6],
+        "items": [1, 2, 4, 6, 12, 13],
         "owns": ["**/TRD*.md", "**/contract/**"],
         "checklistFile": "skills/do-grooming/grooming-review.md"
       },
       {
         "id": "b",
         "name": "flow and coverage",
-        "items": [3, 5, 7, 8, 9],
+        "items": [3, 5, 7, 8, 9, 15],
         "owns": ["**/TRD*.md", "**/widget-spec/**", "**/section-slicing/**", "**/design/**"],
         "checklistFile": "skills/do-grooming/grooming-review.md"
       },
       {
         "id": "c",
-        "name": "decisions and siblings",
-        "items": [10, 11],
+        "name": "consistency and decisions",
+        "items": [10, 11, 14, 16],
         "owns": ["**/TRD*.md"],
         "checklistFile": "skills/do-grooming/grooming-review.md",
+        "agent": "alpha-sdlc:sdlc-reviewer-deep",
         "multiSpokeItems": [11]
       }
     ]

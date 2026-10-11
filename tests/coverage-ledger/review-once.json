@@ -1,0 +1,685 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "**A fix round reviews corrections, not new design.** If a fix added a case, state, screen frame or behavior, report it as a judgment finding — the section re-gates with the user first.",
+      "file": "agents/sdlc-reviewer-deep.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no fix round; a fix that adds product behaviour is a judgment finding that re-gates first",
+      "where": "principles.md → *A behaviour-changing fix lands test-first*"
+    },
+    {
+      "clause": "**A fix round reviews corrections, not new design.** If a fix added a case, state, screen frame or behavior, report it as a judgment finding — the section re-gates with the user first.",
+      "file": "agents/sdlc-reviewer.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no fix round; a fix that adds product behaviour is a judgment finding that re-gates first",
+      "where": "principles.md → *A behaviour-changing fix lands test-first*"
+    },
+    {
+      "clause": "A judgment finding — in a fix round too — auto-decides ★ and is recorded",
+      "file": "principles.md",
+      "verdict": "reworded",
+      "reason": "ONCE-2: no fix round exists; the auto-run clause now reads \"in a phase review too\"",
+      "where": "principles.md → *Auto-run mode*"
+    },
+    {
+      "clause": "**One round, closed by proof — every finding is born with the command that will close it.** A second round exists only because a fix is new work nobody has reviewed",
+      "file": "principles.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate",
+      "where": "principles.md → *One round, closed by proof*"
+    },
+    {
+      "clause": "**An unnamed proof is not a free pass — it costs the stage a whole extra round**, which is why naming it is the reviewer's work, not the author's.",
+      "file": "principles.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: an unnamed proof now reaches the user as needs-eyes, never a second round",
+      "where": "principles.md → *One round, closed by proof*; agents/sdlc-reviewer.md"
+    },
+    {
+      "clause": "**A second round, when one is owed, is handed the previous findings and the change since that round** — it confirms each finding is closed, citing where, and reviews that change in full",
+      "file": "principles.md",
+      "verdict": "removed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate"
+    },
+    {
+      "clause": "**A fix round re-runs only the dimensions that had findings**, plus the mechanical one.",
+      "file": "principles.md",
+      "verdict": "removed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate"
+    },
+    {
+      "clause": "**flat or rising across three rounds is a STOP** — escalate to the user with the trend instead of launching another round.",
+      "file": "principles.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: with one review per phase there are no rounds to count; a proof that will not go green stops at its third failure instead",
+      "where": "principles.md → *A behaviour-changing fix lands test-first* (its third failure is a STOP for the user)"
+    },
+    {
+      "clause": "5: never skipped (no subagent → the checklist inline, said so).",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-1: each phase is reviewed once, at its end, by fresh eyes; a unit inside it (stage, spoke, bug) gets the author's self-review",
+      "where": "skills/do-development/SKILL.md → Gates: \"Feature review, after the last stage: never skipped (no subagent → the checklist inline, said so)\""
+    },
+    {
+      "clause": "Objective-violation count flat or rising over three rounds → STOP.",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: with one review per phase there are no rounds to count; a proof that will not go green stops at its third failure instead",
+      "where": "principles.md → *A behaviour-changing fix lands test-first* (its third failure is a STOP for the user)"
+    },
+    {
+      "clause": "**Conformance review (fresh eyes) — before verifying, before presenting** (in full: `stage-steps.md` §5).",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-1: each phase is reviewed once, at its end, by fresh eyes; a unit inside it (stage, spoke, bug) gets the author's self-review",
+      "where": "skills/do-development/SKILL.md → flow step 5 (the self-review) and *After the last stage — the feature review, once*"
+    },
+    {
+      "clause": "The tier sets the round (`stage-steps.md` §5): **script-only** — no reviewer, close on the settled scripts and the stage's own suite",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "moved",
+      "reason": "ONCE-1: the tiers set the feature review, not a stage",
+      "where": "skills/do-development/SKILL.md → *After the last stage — the feature review, once*; skills/do-development/stage-steps.md §10"
+    },
+    {
+      "clause": "**Close the stage on the findings' closing proofs, not on another round**: every named command's output in the packet, needs-eyes zero, no fix that changed product behaviour",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate",
+      "where": "skills/do-development/SKILL.md → *After the last stage — the feature review, once*"
+    },
+    {
+      "clause": "**A second round is owed only** for a needs-eyes finding, a fix that added product behaviour, or a proof that would not go green.",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "removed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate"
+    },
+    {
+      "clause": "If no subagent can run, run the identical checklist inline as an explicit self-review and say that's what happened — never skip the step.",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "moved",
+      "reason": "ONCE-1: the inline fallback guards the feature review, the one fresh-eyes review left",
+      "where": "skills/do-development/SKILL.md → Gates: \"Feature review, after the last stage: never skipped (no subagent → the checklist inline, said so)\""
+    },
+    {
+      "clause": "**After the last stage** — confirm every task/AC the plan covered is implemented and verified, report what's done and anything deferred, and hand off to `do-testing` — the AC are its input.",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-1: after the last stage the feature review runs first, then the hand-off to do-testing",
+      "where": "skills/do-development/SKILL.md → *After the last stage — the feature review, once*"
+    },
+    {
+      "clause": "**Conformance review before verifying — fresh eyes on the diff, never the author's.** Every stage gets reviewed against the profile, the principles, and its own plan **before** the visual/smoke verification and **before** it's presented (flow step 5).",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "changed",
+      "reason": "ONCE-1: each phase is reviewed once, at its end, by fresh eyes; a unit inside it (stage, spoke, bug) gets the author's self-review",
+      "where": "skills/do-development/stage-steps.md §5 *Self-review* and §10 *The feature review*"
+    },
+    {
+      "clause": "Run it with the **reviewer subagent** (`alpha-sdlc:sdlc-reviewer`) handed only the packet `scripts/review-packet.js` writes — the **stage diff + the stage's plan/AC + the feature's `review-charter.md` + the principles sections this diff can actually violate** — the principles are in the packet because the principles-conformance check audits against them, and a reviewer asked to check a document it was never given checks nothing.",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "moved",
+      "reason": "ONCE-1: the reviewer subagents and their packet serve the feature review",
+      "where": "skills/do-development/stage-steps.md §10 *The feature review — once, after the last stage*"
+    },
+    {
+      "clause": "Its `.alpha-sdlc/review/<feature>-<platform>-s<n>-r<round>.md` holds the diff, the stage block with its AC and slice rows, the charter's currency, your log, the settled `check-coverage.js` (with the stage's changed tests) and `find-orphans.js --diff` outputs, the rules this diff can violate with the withheld ones named, and the file → dimension map.",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: packet names carry no round — `<stem>.md`, and `-self` for a self-review",
+      "where": "scripts/review-packet.js; skills/do-development/stage-steps.md §10"
+    },
+    {
+      "clause": "**Launch the round in the foreground, as `SKILL.md` step 5 says** — never two stages' reviews in one message",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "moved",
+      "reason": "ONCE-1: the foreground launch rule governs the feature review",
+      "where": "skills/do-development/stage-steps.md §10; skills/do-development/SKILL.md → *After the last stage — the feature review, once*"
+    },
+    {
+      "clause": "**If a reviewer subagent can't run in this session, say so and run the same checklist inline as an explicit self-review** — the step is never skipped, and \"looks fine\" is not a review.",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "moved",
+      "reason": "ONCE-1: the inline fallback guards the feature review",
+      "where": "skills/do-development/SKILL.md → Gates: \"Feature review, after the last stage: never skipped\""
+    },
+    {
+      "clause": "**Close the stage on the findings' closing proofs** (`SKILL.md` step 5).",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate",
+      "where": "skills/do-development/SKILL.md → *After the last stage — the feature review, once*"
+    },
+    {
+      "clause": "**When a second round is owed** there, send the previous findings plus the change since that round, re-running only the dimensions that had findings: `review-packet.js … --round 2 --prev <packet stem>-merged.md --dimensions <ids that had findings>` (the change since round 1 comes from that round's snapshot).",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "removed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate"
+    },
+    {
+      "clause": "**Every round counts:** an objective-violation count flat or rising across three rounds is a STOP — escalate to the user with the trend instead of launching another round.",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: every review still records its count once — objective violations and needs-eyes — but there are no rounds to trend",
+      "where": "principles.md → *Every review counts*"
+    },
+    {
+      "clause": "**Carry the verdict into the stage packet** (step 8's *Conformance review* slot): which docs were checked, findings by kind, what you fixed, each finding's closing proof and its output, the needs-eyes count, the objective-violation count per round, what you're asking about.",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "changed",
+      "reason": "ONCE-1: the step-8 slot carries the self-review's result",
+      "where": "skills/do-development/stage-steps.md §8 — the *Self-review* slot"
+    },
+    {
+      "clause": "**After the last stage** the next-file names `alpha-sdlc:do-testing`.",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "changed",
+      "reason": "ONCE-1: the feature review comes between the last stage and the hand-off",
+      "where": "skills/do-development/stage-steps.md §9 — \"After the last stage comes the feature review (§10)\""
+    },
+    {
+      "clause": "Objective violations flat or rising over three rounds → STOP.",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: with one review per phase there are no rounds to count; a proof that will not go green stops at its third failure instead",
+      "where": "principles.md → *A behaviour-changing fix lands test-first* (its third failure is a STOP for the user)"
+    },
+    {
+      "clause": "**After the last bug** — hand back to `do-testing` for the re-test.",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-1: the fix review runs first, once over the batch, then the hand-back to do-testing",
+      "where": "skills/do-fixing/SKILL.md → *After the last bug*"
+    },
+    {
+      "clause": "**Conformance review (fresh eyes) — before re-verifying, before presenting.** Every fix is reviewed against the profile, the principles, and the bug report **before** re-verification and **before** it's presented — fresh eyes on the fix, never the fixer's, because the reasoning that produced a fix is the worst reasoning to audit it with.",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-1: each phase is reviewed once, at its end, by fresh eyes; a unit inside it (stage, spoke, bug) gets the author's self-review",
+      "where": "skills/do-fixing/SKILL.md → flow step 4 (the self-review) and *After the last bug* (the fix review)"
+    },
+    {
+      "clause": "Record the file → dimension map, and when the reports come back, **before you fix anything, run the completeness critic** over the merged findings, that map and the diff.",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "moved",
+      "reason": "ONCE-1: the dimension map and the critic serve the fix review",
+      "where": "skills/do-fixing/SKILL.md → *After the last bug*"
+    },
+    {
+      "clause": "**Close on the findings' closing proofs, not on another round** — run the command each finding named and put its output in the packet",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate",
+      "where": "skills/do-fixing/SKILL.md → *After the last bug*"
+    },
+    {
+      "clause": "**a second round is owed only** when something came back **needs-eyes**, a fix added product behaviour, or a named proof would not go green, per `principles.md` → *One round, closed by proof* — then re-run the packet with `--round 2 --prev <merged findings> --dimensions <ids that had findings>`.",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "removed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate"
+    },
+    {
+      "clause": "The hub review → verdict, **STOP**",
+      "file": "skills/do-foundation-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-foundation-grooming/SKILL.md → Gates: \"The hub's self-review → STOP\""
+    },
+    {
+      "clause": "Each spoke's hub-alignment review → verdict, **STOP**",
+      "file": "skills/do-foundation-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-foundation-grooming/SKILL.md → Gates: \"Each spoke's alignment self-review → STOP\""
+    },
+    {
+      "clause": "stamped only on a clean pass.",
+      "file": "skills/do-foundation-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-foundation-grooming/SKILL.md → Gates: \"stamped only on its close\""
+    },
+    {
+      "clause": "Rounds flat or rising across three → **STOP**, escalate with the trend.",
+      "file": "skills/do-foundation-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: with one review per phase there are no rounds to count; a proof that will not go green stops at its third failure instead",
+      "where": "principles.md → *A behaviour-changing fix lands test-first* (its third failure is a STOP for the user)"
+    },
+    {
+      "clause": "Then the hub review (*Reviews* below) — verdict, **STOP**.",
+      "file": "skills/do-foundation-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-foundation-grooming/SKILL.md → flow: \"Then the hub's self-review\""
+    },
+    {
+      "clause": "Then the spoke's hub-alignment review (*Reviews* below) — verdict, **STOP**.",
+      "file": "skills/do-foundation-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-foundation-grooming/SKILL.md → flow: \"the spoke's alignment self-review … once every spoke is self-reviewed, the grooming review\""
+    },
+    {
+      "clause": "Step 2a → the hub-review verdict, **STOP**",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/SKILL.md → Gates: \"Step 2a → the hub's self-review, STOP\""
+    },
+    {
+      "clause": "only a clean pass stamps ✅ and opens the first spoke.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/SKILL.md → Gates: \"its `self-reviewed` stamp opens the first spoke\""
+    },
+    {
+      "clause": "the alignment verdict, **STOP**",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/SKILL.md → Gates: \"the spoke's self-review, STOP\""
+    },
+    {
+      "clause": "only a clean pass is stamped.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/SKILL.md → Gates: \"Step 5 → the grooming review … only its close stamps\""
+    },
+    {
+      "clause": "**flat or rising across three rounds is a STOP** — escalate to the user with the trend instead of launching another round.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: with one review per phase there are no rounds to count; a proof that will not go green stops at its third failure instead",
+      "where": "principles.md → *A behaviour-changing fix lands test-first* (its third failure is a STOP for the user)"
+    },
+    {
+      "clause": "On a clean pass stamp the hub's **Hub review** row (`reviewed <date> · rev <commit>` plus its round counts), and only then offer the first spoke.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/SKILL.md → Step 2a — the hub's self-review; skills/do-grooming/grooming-review.md → *Stamps*"
+    },
+    {
+      "clause": "Present the verdict and STOP.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub's self-review presents its result and STOPs; the grooming review keeps \"Present the verdict and STOP\"",
+      "where": "skills/do-grooming/SKILL.md → Step 5 — The grooming review"
+    },
+    {
+      "clause": "Step 4 — Hub-alignment review (spokes only) — the completion gate",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/SKILL.md → Step 4 — The spoke's alignment self-review; Step 5 — The grooming review"
+    },
+    {
+      "clause": "Read `grooming-review.md` and run its *Hub-alignment review* — the 11-point checklist in the packet's dimensions, the gaps check and the critic — never beside another spoke's review.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/SKILL.md → Step 4 and Step 5; skills/do-grooming/grooming-review.md → *How the grooming review runs*"
+    },
+    {
+      "clause": "Only needs-eyes findings go to a next round.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate",
+      "where": "skills/do-grooming/grooming-review.md → *Closing on proofs*"
+    },
+    {
+      "clause": "**Present the verdict and STOP** — what was checked, findings by direction, what you fixed, what needs the user's decision.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "moved",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/SKILL.md → Step 5: \"Present the verdict and STOP — what was checked, findings by direction, what you fixed\""
+    },
+    {
+      "clause": "only a clean pass stamps both sides (`grooming-review.md` → *Stamps*) — a user who chooses to proceed anyway is taking `principles.md`'s recorded override at that downstream STOP, with the gap named and recorded there — the spoke is still not stamped.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "moved",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/SKILL.md → Step 5: \"On the close, stamp the hub's Hub review row ✅ and every spoke's alignment\""
+    },
+    {
+      "clause": "**Editing any hub section below makes every ✅ stale** — re-run the hub-alignment review per spoke and re-stamp. `do-planning` won't plan a spoke that isn't aligned with the hub's current state.",
+      "file": "skills/do-grooming/TRD-hub-template.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *The hub moving*"
+    },
+    {
+      "clause": "**One packet per round, written by script** — the hub review runs `node ../../scripts/review-packet.js docs/development/<feature> hub --kind trd --base <sha>` and an alignment review the same with `<platform>` in place of `hub`. `--base` is the hub rev of the spoke's last stamp",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *How the grooming review runs*, step 1"
+    },
+    {
+      "clause": "**Launch the reviewers it names, in the foreground** — each handed the packet path, its dimension id and, for a variant TRD, that variant's notes under *Variants* as text (a foundation spoke's own checks, note 5, one per line, each answered on its own report line), the whole round in one message, at most 3 in flight, never reviews of two spokes in one message.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: one grooming review covers every spoke, so no spoke's review runs beside another's",
+      "where": "skills/do-grooming/grooming-review.md → *How the grooming review runs*, step 2"
+    },
+    {
+      "clause": "Once the hub's last section is written, hand the **hub, its contract delta, and the profile docs it references** — the packet — to the **reviewer subagents** (`alpha-sdlc:sdlc-reviewer` — not your grooming context), split across the dimensions named under the checklist, each handed the whole packet but only its own points:",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *Self-reviews*: \"The hub is self-reviewed before any spoke is groomed\""
+    },
+    {
+      "clause": "**Two dimensions, one reviewer each**, launched together (`principles.md` → *Reviews run as parallel dimensions*): **(a) contract & entities** — points 1 and 2, the half a checker and the migrations can settle",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *How the grooming review runs*: \"Three dimensions, one reviewer each\""
+    },
+    {
+      "clause": "**(b) consistency & flow** — points 3, 4 and 5, the half only a reader holding the whole hub at once can judge, run on `alpha-sdlc:sdlc-reviewer-deep`.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub points are numbered 12–16 and their consistency half joins dimension (c)",
+      "where": "skills/do-grooming/grooming-review.md → *How the grooming review runs*: \"(c) consistency and decisions … on alpha-sdlc:sdlc-reviewer-deep\""
+    },
+    {
+      "clause": "A re-run after a fix launches only the dimension whose points are in play.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "removed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate"
+    },
+    {
+      "clause": "Record which dimension owns each section of the hub, and **before fixing anything, run the completeness critic** over the merged findings, that map and the hub — a section neither dimension opened is the gap one round cannot afford (`principles.md` → *Reviews run as parallel dimensions*).",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "merged",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *How the grooming review runs*, step 3"
+    },
+    {
+      "clause": "Fix objective violations and **close on each finding's closing proof** where one exists — here that is the doc checks, `validate-doc-tables.js`, the coverage checker or a cited re-read of the section (`principles.md` → *One round, closed by proof*).",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "merged",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *Closing on proofs*"
+    },
+    {
+      "clause": "**Every round, clean or not, appends its objective-violation count to the Hub review row** — `` ❌ not reviewed · rounds `5 · 2` `` — so the count, and the three-round STOP it feeds, outlive the session.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: the Hub review row records findings and needs-eyes once, when the grooming review closes",
+      "where": "skills/do-grooming/grooming-review.md → *Stamps*"
+    },
+    {
+      "clause": "On a clean pass stamp the hub's **Hub review** row (`reviewed <date> · rev <commit>` plus its round counts — `` ✅ reviewed <YYYY-MM-DD> · rev `<hash>` · rounds `5 · 2 · 0` ``), and only then offer the first spoke.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *Stamps*"
+    },
+    {
+      "clause": "**Hub-alignment review — every spoke, before it's done, and again whenever the hub moves.** The hub is the single source of truth",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *Self-reviews* and *The hub moving*"
+    },
+    {
+      "clause": "**Three dimensions, one reviewer each**, launched together (`principles.md` → *Reviews run as parallel dimensions*): (a) contract and data — points 1, 2, 4 and 6",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *How the grooming review runs*: \"Three dimensions, one reviewer each\""
+    },
+    {
+      "clause": "**A thin dimension folds into its neighbour**, and the packet does the folding and says so: with one spoke, point 11 does not apply and point 10 joins (b)",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *How the grooming review runs*: \"A thin dimension folds into its neighbour\""
+    },
+    {
+      "clause": "A re-run after a fix, or a scoped re-review after a hub change, launches only the dimensions whose points are in play.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no re-run after a fix; a scoped review after a hub change takes `--items` for the points in play",
+      "where": "skills/do-grooming/grooming-review.md → *The hub moving*"
+    },
+    {
+      "clause": "Record which checklist points — and so which spoke sections — each dimension owned, and **before fixing anything, run the completeness critic** over the merged findings, that map and the spoke: a screen, slice or AC row no dimension opened is the gap one round cannot afford (`principles.md` → *Reviews run as parallel dimensions*).",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "merged",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *How the grooming review runs*, step 3"
+    },
+    {
+      "clause": "**Scoped re-reviews run one spoke at a time** — the packet with `--items <points in play> --single`, one reviewer, then the critic — and the stamps are written after every review is back.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: a scoped review after a hub change runs once over the hub and every spoke, with `--items`",
+      "where": "skills/do-grooming/grooming-review.md → *The hub moving*"
+    },
+    {
+      "clause": "**Rounds converge, or they stop — and the first one aims to be the only one.** Every finding names its **closing proof** where a command can give one — the contract checker, the repo's doc checks, `validate-doc-tables.js`, the AC ↔ slice lookup — and the author closes on that output instead of handing the fixes back",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate",
+      "where": "skills/do-grooming/grooming-review.md → *Closing on proofs*"
+    },
+    {
+      "clause": "a finding no command can close is labelled **needs-eyes** by the reviewer that raised it, and those are what a next round is for (`principles.md` → *One round, closed by proof*).",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate",
+      "where": "skills/do-grooming/grooming-review.md → *Closing on proofs*"
+    },
+    {
+      "clause": "**flat or rising across three rounds is a STOP** — escalate to the user with the trend instead of launching another round.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: with one review per phase there are no rounds to count; a proof that will not go green stops at its third failure instead",
+      "where": "principles.md → *A behaviour-changing fix lands test-first* (its third failure is a STOP for the user)"
+    },
+    {
+      "clause": "In alignment, **close on each finding's closing proof** where one exists — the contract checker for point 1, the AC ↔ slice lookup for point 8, the doc checks for the rest — and send back only what came back **needs-eyes**.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "merged",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate",
+      "where": "skills/do-grooming/grooming-review.md → *Closing on proofs*"
+    },
+    {
+      "clause": "**Stamp the result.** The spoke header records `Hub alignment: reviewed <date> · hub rev <commit / hub's last approval date>`, and the hub's *Spokes* table records the same per spoke — those two segments only",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *Stamps*"
+    },
+    {
+      "clause": "Both sides are stamped only on a clean pass",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *Stamps*: \"The exit is never a dirty stamp\""
+    },
+    {
+      "clause": "**The exit is never a dirty stamp** — the stamp keeps meaning *aligned*, so it lands only on a clean pass.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: `reviewed` means the grooming review's findings are closed on their proofs and its needs-eyes answered",
+      "where": "skills/do-grooming/grooming-review.md → *Stamps*"
+    },
+    {
+      "clause": "Spokes may also be groomed in parallel sessions, one per platform, each owning its `TRD-<platform>.md` (per `principles.md` → *Parallel work*) — but then **no spoke is stamped until every spoke in scope has finished its first alignment round**, so the hub-wrong findings of all of them are gathered and fixed once.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: each parallel session self-reviews its own spoke; the grooming review runs once, when every spoke is self-reviewed",
+      "where": "skills/do-grooming/grooming-review.md → *Stamps*"
+    },
+    {
+      "clause": "**The hub moving makes every stamp stale — and the re-review is scoped to what moved.** When a hub section is edited after any spoke exists, re-run this review for each spoke and re-stamp, handing the reviewer the hub diff since that spoke's stamp and only the checklist items the changed sections feed: §1 context or §4 system design → 2 · §2 dependencies and entities → 4, 5, 8 · §3 feature flow → 7, 8 · §5 contract → 1, 2 · §6 cross-cutting → 6 · §7 change manifest and release ordering → 3, 9 — plus 10 always, and 11 when two or more spokes exist.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *The hub moving*"
+    },
+    {
+      "clause": "**Stamps per variant.** Every hub carries a `Hub review` row — round counts every round, ✅ on a clean pass.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-grooming/grooming-review.md → *Variants*: \"Stamps per variant\""
+    },
+    {
+      "clause": "The hub review, once the last section is written → verdict, **STOP**",
+      "file": "skills/do-issue-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-issue-grooming/SKILL.md → Gates: \"The hub's self-review, once the last section is written → STOP\""
+    },
+    {
+      "clause": "Each spoke's hub-alignment review → verdict, **STOP**",
+      "file": "skills/do-issue-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-issue-grooming/SKILL.md → Gates: \"Each spoke's alignment self-review → STOP\""
+    },
+    {
+      "clause": "it is complete only on a clean, stamped pass.",
+      "file": "skills/do-issue-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-issue-grooming/SKILL.md → Gates: \"the TRD is complete only on its close, stamped\""
+    },
+    {
+      "clause": "Review rounds flat or rising across three → **STOP**, escalate with the trend.",
+      "file": "skills/do-issue-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: with one review per phase there are no rounds to count; a proof that will not go green stops at its third failure instead",
+      "where": "principles.md → *A behaviour-changing fix lands test-first* (its third failure is a STOP for the user)"
+    },
+    {
+      "clause": "**Spokes pass the hub-alignment review before they're complete** (and get re-reviewed whenever a hub section changes), and the hub passes the **hub review** before the first spoke (`do-grooming` → Step 2a) — see `do-grooming` → *Hub-alignment review*, **read by what it checks, not by its section numbers** (an issue TRD's AC registry is §4 and its slices sit in §6's change manifest",
+      "file": "skills/do-issue-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-issue-grooming/SKILL.md → *Reviews*"
+    },
+    {
+      "clause": "The hub review, once the last section is written → verdict, **STOP**",
+      "file": "skills/do-tech-debt-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-tech-debt-grooming/SKILL.md → Gates: \"The hub's self-review, once the last section is written → STOP\""
+    },
+    {
+      "clause": "Each spoke's hub-alignment review → verdict, **STOP**",
+      "file": "skills/do-tech-debt-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-tech-debt-grooming/SKILL.md → Gates: \"Each spoke's alignment self-review → STOP\""
+    },
+    {
+      "clause": "it is complete only on a clean, stamped pass.",
+      "file": "skills/do-tech-debt-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-tech-debt-grooming/SKILL.md → Gates: \"the TRD is complete only on its close, stamped\""
+    },
+    {
+      "clause": "Review rounds flat or rising across three → **STOP**, escalate with the trend.",
+      "file": "skills/do-tech-debt-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: with one review per phase there are no rounds to count; a proof that will not go green stops at its third failure instead",
+      "where": "principles.md → *A behaviour-changing fix lands test-first* (its third failure is a STOP for the user)"
+    },
+    {
+      "clause": "Same engine (gated section-by-section TRD, hub/spokes, ladder, Mermaid, flows into `do-slicing`) — **including the hub-alignment review**: every spoke passes it before it's complete, gets stamped on both sides, and is re-reviewed whenever a hub section changes (see `do-grooming` → *Hub-alignment review*) — and the hub passes the **hub review** before the first spoke (`do-grooming` → Step 2a).",
+      "file": "skills/do-tech-debt-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-4: the hub review and every spoke's alignment review are one grooming review, after the hub's and each spoke's self-review",
+      "where": "skills/do-tech-debt-grooming/SKILL.md → *Reviews*: \"including the self-reviews and the grooming review\""
+    },
+    {
+      "clause": "objective violations flat or rising over three rounds → STOP.",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-3: with one review per phase there are no rounds to count; a proof that will not go green stops at its third failure instead",
+      "where": "principles.md → *A behaviour-changing fix lands test-first* (its third failure is a STOP for the user)"
+    },
+    {
+      "clause": "Fix every objective violation in the tests — a changed test goes back through step 2 (re-approve, re-run) — and **close on the findings' closing proofs rather than another round**: here the proof is almost always the test itself run and recorded, so a second round is owed only on a **needs-eyes** finding or a proof that would not go green (`principles.md` → *One round, closed by proof*).",
+      "file": "skills/do-testing/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: there is no second round — a fix closes on its named proof, and what would have owed a round goes to the user as needs-eyes at the phase's closing gate",
+      "where": "skills/do-testing/SKILL.md → flow step 3: \"There is no second round\""
+    },
+    {
+      "clause": "Merge every report, the gaps output and the file → dimension map into `<packet stem>-merged.md` — the same file:line counts once: one verdict, one objective-violation count.",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "merged",
+      "reason": "ONCE-5: the per-phase review text was cut to fit the 19,000-char skill body and the 25,000-char reference budgets; the merge rule lives once in principles",
+      "where": "principles.md → *Reviews run as parallel dimensions*: \"The author merges the reports — the same file:line counts once\""
+    },
+    {
+      "clause": "a correction that changes what the code *does* is written **test-first** and that test is its proof",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "merged",
+      "reason": "ONCE-5: the per-phase review text was cut to fit the 19,000-char skill body and the 25,000-char reference budgets; the proof rule lives in principles",
+      "where": "principles.md → *A behaviour-changing fix lands test-first*"
+    },
+    {
+      "clause": "**Three economies, all from `principles.md` → *Reviews run as parallel dimensions*, and none of them cuts rigor:**",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "merged",
+      "reason": "ONCE-5: the per-phase review text was cut to fit the 19,000-char skill body and the 25,000-char reference budgets; the charter, the narrowed principles and the scripts-first rule are principles' own bullets; §10 keeps the charter fallback",
+      "where": "principles.md → *Reviews run as parallel dimensions*; skills/do-development/stage-steps.md §10, the packet bullet"
+    },
+    {
+      "clause": "**full** — **three dimensions, one reviewer each** (`principles.md` → *Reviews run as parallel dimensions*): (a) profile and design system — checklist item 1",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "reworded",
+      "reason": "ONCE-5: the per-phase review text was cut to fit the 19,000-char skill body and the 25,000-char reference budgets; the bullet keeps every dimension and item; the cross-reference moved to the packet bullet above it",
+      "where": "skills/do-development/stage-steps.md §10 → *The tier is measured, never chosen*"
+    },
+    {
+      "clause": "The packet's file → dimension map gives every changed file an owner.",
+      "file": "skills/do-development/stage-steps.md",
+      "verdict": "merged",
+      "reason": "ONCE-5: the per-phase review text was cut to fit the 19,000-char skill body and the 25,000-char reference budgets; the coverage rule lives once in principles; §10's packet bullet still names the map",
+      "where": "principles.md → *The dimensions cover the diff, and the map is part of the report*"
+    },
+    {
+      "clause": "the checklist is `fix-reviewer.md` (`principles.md` → *Reviews run as parallel dimensions*):",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "reworded",
+      "reason": "ONCE-5: the per-phase review text was cut to fit the 19,000-char skill body and the 25,000-char reference budgets; the fix review still names fix-reviewer.md as its checklist",
+      "where": "skills/do-fixing/SKILL.md → *After the last bug*"
+    },
+    {
+      "clause": "**script-only** — no reviewer: close on the settled scripts and the bug's own tests.",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "reworded",
+      "reason": "ONCE-1: the fix review covers the batch, so it closes on the bugs' own tests",
+      "where": "skills/do-fixing/SKILL.md → *After the last bug*: \"script-only — no reviewer, close on the settled scripts and the bugs' own tests\""
+    },
+    {
+      "clause": "**Verify before acting** — open the cited file at the cited line before editing anything on a report's authority: a review that is wrong in one finding is not wrong in all of them, and acting on the wrong one costs a whole round.",
+      "file": "skills/do-fixing/SKILL.md",
+      "verdict": "changed",
+      "reason": "ONCE-2: with no second round, acting on a wrong finding no longer costs a round — it ships a fix nobody reviews",
+      "where": "skills/do-fixing/SKILL.md → *After the last bug*: \"Verify before acting\"; skills/do-development/stage-steps.md §10"
+    },
+    {
+      "clause": "Any screen missing either doc → **STOP, back to Step 3** — do not run the review, do not call the spoke complete (this is the hole where a run that drifts after the widget-spec gates used to sail through).",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "reworded",
+      "reason": "ONCE-4: the STOP now guards the spoke's self-review; the history parenthesis was cut for the 19,000-char body budget",
+      "where": "skills/do-grooming/SKILL.md → Step 4: \"do not run the self-review, do not call the spoke complete\""
+    }
+  ]
+}

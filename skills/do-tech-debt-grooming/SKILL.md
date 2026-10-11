@@ -35,10 +35,11 @@ Indonesia) — at every gate, in every phase.
   the understanding is confirmed, at step 4 until the outline is approved; then write the skeleton.
 - Each section → ask, propose, **STOP** for approval — one at a time, never a batch; on approval
   write it and stamp `_Approved: <YYYY-MM-DD> · <commit>_`.
-- The hub review, once the last section is written → verdict, **STOP**; no spoke before the `Hub
-  review` row is ✅. Each spoke's hub-alignment review → verdict, **STOP**; it is complete only on a
-  clean, stamped pass. A hub-wrong finding changes the hub only on a yes to that change itself.
-- Review rounds flat or rising across three → **STOP**, escalate with the trend.
+- The hub's self-review, once the last section is written → **STOP**; no spoke before the `Hub
+  review` row is `self-reviewed`. Each spoke's alignment self-review → **STOP**. The grooming review,
+  once every spoke is self-reviewed (no spokes: right after the hub's) → verdict, **STOP**; the TRD
+  is complete only on its close, stamped. A hub-wrong finding changes the hub only on a yes to that
+  change itself.
 - Auto-run never applies here.
 
 ## Flow
@@ -101,13 +102,13 @@ Structured, feeds `do-slicing`: modules touched, **regression-safety plan** (cha
 to add first), measurable success + how it's checked, rollback, dependencies/risks, and work slices
 **claiming their AC by ID from §6** — never restating the criterion's prose.
 
-### Hub review, spokes, then the phase end
+### Self-reviews, spokes, the grooming review, then the phase end
 
-Once the last section is written, the hub review (*Reviews* below). When the work spans platforms,
-each spoke follows from `../do-grooming/TRD-spoke-template.md`, the approved hub as primary
-context — its outline (**STOP** for approval), its skeleton, the per-section loop, its
-hub-alignment review. After the hub review ✅ (with spokes: the last alignment ✅), tell the user
-the TRD is complete and flip the register row.
+Once the last section is written, the hub's self-review (*Reviews* below). When the work spans
+platforms, each spoke follows from `../do-grooming/TRD-spoke-template.md`, the approved hub as
+primary context — its outline (**STOP** for approval), its skeleton, the per-section loop, its
+alignment self-review. Then the grooming review, once, over the hub and every spoke. After it closes
+✅, tell the user the TRD is complete and flip the register row.
 
 ## Resume (fresh session)
 
@@ -121,28 +122,28 @@ understanding in one line. Re-read only what it lists. Never re-run Gate 0 or a 
 and never re-ask what the TRD records.
 
 **Session boundaries** (rules → *The session is disposable — the files are the state*): after the
-Gate-0 skeleton is written, after the hub review ✅, after each spoke's alignment ✅, and at the
-phase end — never mid-section, never between a review report and its fixes. Persist first, then
-write the next-file (`skill` `alpha-sdlc:do-tech-debt-grooming`, `args` `<feature-name>
+Gate-0 skeleton is written, after the hub's self-review, after each spoke's self-review, and at
+the phase end (the grooming review ✅) — never mid-section, never between a review report and its
+fixes. Persist first, then write the next-file (`skill` `alpha-sdlc:do-tech-debt-grooming`, `args` `<feature-name>
 [<platform>]`; at the phase end `do-slicing` when the work is tracked, else `do-planning`) and offer
 "/clear, then 'lanjut'" in Next.
 
 ## Reviews — `../do-grooming/grooming-review.md`, tech-debt row
 
 Same engine (gated section-by-section TRD, hub/spokes, ladder, Mermaid, flows into `do-slicing`) —
-**including the hub-alignment review**: every spoke passes it before it's complete, gets stamped on
-both sides, and is re-reviewed whenever a hub section changes (see `do-grooming` → *Hub-alignment
-review*) — and the hub passes the **hub review** before the first spoke (`do-grooming` → Step 2a).
-Run both by `../do-grooming/grooming-review.md` — read it before each review and whenever a hub edit
-stales a spoke (once per session, again after a compaction). This variant:
+**including the self-reviews and the grooming review**: the hub is self-reviewed before the first
+spoke (`do-grooming` → Step 2a), every spoke is self-reviewed before the grooming review (Step 4),
+and that review runs once, over the hub and every spoke, before the TRD is complete (Step 5); a hub
+section that changes moves every stamp. Run them by `../do-grooming/grooming-review.md` — read it
+before each and whenever a hub edit moves a spoke (once per session, again after a compaction).
+This variant:
 **read that checklist by what it checks, not by its section numbers — a tech-debt TRD numbers its
 sections differently:** its AC registry is §6 and its slices are §8, so the AC ↔ slice point reads
 "every §6 AC claimed by ≥ 1 §8 slice and back" (a spoke's: its §8 and §9); **contract fidelity and
 feature-flow coverage apply only when the refactor touches a contract or a user flow** — skip them
 otherwise and say so in the verdict rather than reporting them passed, building that packet with
-`--items` that leave them out. Stamps: every hub-review round appends its count to the `Hub review`
-row; each spoke's stamp sits in the hub's *Spokes* row (its one hub-side home) and in the spoke's
-`Hub alignment` and `Alignment rounds` rows.
+`--items` that leave them out. Stamps: the `Hub review` row carries the hub's; each spoke's stamp
+sits in the hub's *Spokes* row (its one hub-side home) and in the spoke's `Hub alignment` row.
 
 ## How this differs from `do-grooming`
 

@@ -8,8 +8,8 @@ _Groomed by `do-foundation-grooming` · <YYYY-MM-DD>_
 | **Platforms in scope** | <backend · web · android · ios — a spoke per platform> |
 | **Repo strategy** | <monorepo · separate repos per platform — and why> |
 | **Profile** | [architecture](../../basics/02-architecture.md) · [tech-stack](../../basics/05-tech-stack.md) · [environment](../../basics/09-environment.md) · [conventions](../../basics/10-conventions.md) · [git](../../basics/11-git-management.md) |
-| **Spokes** | <TRD-backend.md · TRD-web.md · … — each with its **hub alignment** stamp: `✅ reviewed YYYY-MM-DD · hub rev <hash/date>` / ⚠️ stale / ❌ not reviewed, and its alignment round counts beside it (`rounds n · n`). Editing a hub section makes every ✅ stale. A foundation spoke has no header table: this row is its stamp's one home.> |
-| **Hub review** | <❌ not reviewed · rounds `n · n` while rounds run — every round appends its objective-violation count; a clean pass makes it ✅ reviewed YYYY-MM-DD · rev `<hash>` · rounds `n · n · 0`. No spoke is groomed before ✅> |
+| **Spokes** | <TRD-backend.md · TRD-web.md · … — each with its **hub alignment** stamp: `self-reviewed YYYY-MM-DD · hub rev <hash/date>` after its self-review, `✅ reviewed YYYY-MM-DD · hub rev <hash/date>` after the grooming review / ⚠️ stale / ❌ not reviewed. Editing a hub section moves every stamp. A foundation spoke has no header table: this row is its stamp's one home.> |
+| **Hub review** | <❌ not reviewed — then `self-reviewed YYYY-MM-DD · rev <hash>` after the hub's self-review (no spoke is groomed before it), then ✅ reviewed YYYY-MM-DD · rev `<hash>` · findings n · needs-eyes n when the grooming review closes> |
 
 > **Scaffolding only.** This TRD covers the project scaffold, folder structure, architecture
 > skeleton, and build/run/test harness. **No features** — no auth, no schema, no screens, no

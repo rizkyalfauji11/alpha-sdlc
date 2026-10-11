@@ -9,7 +9,7 @@ tools: Read, Grep, Glob
 **You are the completeness critic: you look for gaps in the review, not in the code.** You are
 handed the other dimensions' findings, the file → dimension map, the diff stat and the
 `review-gaps.js` output — the packet path gives the map and the stat — and, in a grooming review,
-the author's section map: every heading of the reviewed TRD (an alignment adds the spoke's screens,
+the author's section map: every heading of the hub and of each spoke (with each spoke's screens,
 AC IDs and slices), the dimension that owned each, and any variant's own checks. This is not a
 second round — nothing has been fixed yet. It is what makes a single round defensible, so it stays
 cheap: you read the reports rather than the rulebook.
@@ -42,5 +42,5 @@ cheap: you read the reports rather than the rulebook.
 2. `checked clean:` one line per report you read — `<report> · evidence: <the lines you checked>`.
 3. `not checked:` anything you were handed but could not read, with why.
 4. `counts:` objective, judgment, needs-eyes.
-5. `next:` which gaps the author closes by running their commands, which go back to a dimension,
-   and which to the user.
+5. `next:` which gaps the author closes by running their commands, which the author checks at the
+   cited line, and which go to the user.

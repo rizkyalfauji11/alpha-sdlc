@@ -34,7 +34,8 @@ Indonesia) — at every gate, in every phase.
 ## Gates
 
 - TRD not approved/complete → offer the matching grooming skill first.
-- Spoke `Hub alignment` missing, `NOT REVIEWED` or older than the hub's last change → **STOP**.
+- Spoke `Hub alignment` missing, `NOT REVIEWED`, only `self-reviewed` or older than the hub's last
+  change → **STOP**.
 - Setup → **STOP** until the scale and the part list are confirmed; record both in the task list.
 - Each part → show its tasks for review (approve / edit / re-split) and **STOP**; on approval write
   it stamped `_Approved: commit <hash> · <YYYY-MM-DD>_`. Anything > 13 points is split first.
@@ -46,8 +47,8 @@ Indonesia) — at every gate, in every phase.
 
 1. **Feature** — which `docs/development/<feature-name>/` TRD to slice. Confirm it's
    approved/complete; if not, offer to run the matching grooming skill first. **Check the spoke's
-   `Hub alignment` stamp the way `do-planning` does — missing, `NOT REVIEWED`, or older than the
-   hub's last change → STOP**: this branch ends in external writes, so an unreviewed spoke's
+   `Hub alignment` stamp the way `do-planning` does — missing, `NOT REVIEWED`, only
+   `self-reviewed`, or older than the hub's last change → STOP**: this branch ends in external writes, so an unreviewed spoke's
    disagreement with its hub would be assigned to a human as tickets. A foundation spoke has no
    header table, so read its row in the hub's *Spokes* table (spelled `❌ not reviewed` there).
 2. **Scale** — confirm modified Fibonacci (1, 2, 3, 5, 8, 13) or the team's variant. Nothing else is

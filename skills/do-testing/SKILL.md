@@ -40,9 +40,8 @@ runs it first).
 - **UI** — render/screenshot tooling fails → STOP, report the issue + a concrete fix, and wait.
 - **Boot & Smoke** — the stack can't boot → report the blocker + fix; the feature stays blocked,
   never manual.
-- **3** — test review before the coverage report; a changed test re-enters step 2; a finding that
-  questions an AC → Open Decision to grooming; objective violations flat or rising over three
-  rounds → STOP.
+- **3** — test review before the coverage report, once; a changed test re-enters step 2; a finding
+  that questions an AC → Open Decision to grooming; a needs-eyes finding goes to the user at step 4.
 - **4** — ⏸ STOP: present the bug report and let the user triage; fix nothing here. The session
   boundary comes only after the triage is recorded — never between tests.
 - **Done** — only when `check-feature-done.js` exits 0; then the profile reconcile.
@@ -109,15 +108,15 @@ runs it first).
    catches a changed test file no dimension opened: the `review-gaps.js` command in the packet's
    *Reviewers* section, then `alpha-sdlc:sdlc-reviewer-critic`; both go into the merged report.
 
-   Fix every objective violation in the tests — a changed test goes back through step 2 (re-approve,
-   re-run) — and **close on the findings' closing proofs rather than another round**: here the proof
-   is almost always the test itself run and recorded, so a second round is owed only on a
-   **needs-eyes** finding or a proof that would not go green (`principles.md` → *One round, closed
-   by proof*). A finding that questions the AC itself is not a testing fix — it goes back to
-   grooming as an **Open Decision**. The review never fixes product code: a test that fails for a
+   This is the testing phase's one review. Fix every objective violation in the tests in one pass — a changed test goes back through step 2
+   (re-approve, re-run) — and **close each on its proof**: here the proof is almost always the test
+   itself run and recorded. There is no second round: a **needs-eyes** finding goes to the user at
+   the coverage report, with its fix (`principles.md` → *One round, closed by proof*). A finding
+   that questions the AC itself is not a testing fix — it goes back to grooming as an **Open
+   Decision**. The review never fixes product code: a test that fails for a
    real bug is a bug for the report, not a finding. No subagent available → identical checklist
    inline, and say so. When the review closes, fill the plan's `Test review` row: `reviewed <date>
-   · rounds <n> · <verdict>`.
+   · findings <n> · needs-eyes <n> · <verdict>`.
 4. **Coverage + bug report.** Confirm every AC maps to at least one passing test at the right level;
    show the **pyramid coverage** (API / UI / Integration / E2E) **and the Boot & Smoke result** (the
    critical journeys run against the real assembled app, with 4xx/5xx · console errors ·

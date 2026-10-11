@@ -9,16 +9,16 @@
 
 ## Contents
 
-0. Stage discipline · 1. Frame · 2. Test first · 3. Build · 5. Conformance review · 7. Integrated
-smoke · 8. Present · 9. On approval. Step 4 is whole in `SKILL.md`; step 6 is `client-ui-rules.md`
+0. Stage discipline · 1. Frame · 2. Test first · 3. Build · 5. Self-review · 7. Integrated smoke ·
+8. Present · 9. On approval · 10. The feature review. Step 4 is whole in `SKILL.md`; step 6 is `client-ui-rules.md`
 R1–R5 on the mechanics of `client-ui.md` §5.
 
 ## 0. Stage discipline
 
-- **Stages built together are recorded, and each still gets its own review.** When two or more
-  stages land in one change — auto-run building a band of small UI stages at once — each of their
-  plan blocks carries **`Built with:`** naming the others, and each stage still gets its own
-  conformance review round and its own checkpoint verdict. `scripts/check-coverage.js` fails a
+- **Stages built together are recorded, and each still gets its own self-review.** When two or
+  more stages land in one change — auto-run building a band of small UI stages at once — each of
+  their plan blocks carries **`Built with:`** naming the others, and each stage still gets its own
+  self-review and its own checkpoint verdict. `scripts/check-coverage.js` fails a
   one-sided record and a done stage without its own verdict.
 - **Respect "safe to stop after".** When the user wants to halt, stop cleanly after a stage the plan
   marks safe (working/shippable state). If they want to stop at an unsafe point, tell them what's
@@ -61,8 +61,8 @@ R1–R5 on the mechanics of `client-ui.md` §5.
   stages** — there's nothing to assert until the harness exists), say so and fall back to the plan's
   verify step — don't fake a test to look TDD. For scaffolding, the verify step *is* the real check:
   **the command runs (build/run/test/lint), the created tree matches the foundation TRD's structure
-  section, and the dependency rule holds** — and the conformance review checks the built tree
-  against that structure, which is what makes base drift catchable on day one. Paying debt is the
+  section, and the dependency rule holds** — and the self-review and the feature review check the
+  built tree against that structure, which is what makes base drift catchable on day one. Paying debt is the
   other exception to red: its first test is a characterization test, green before and after.
 
 ## 3. Build — the contract's types, reuse, wiring, assets
@@ -91,8 +91,8 @@ On a client plan, `client-ui-rules.md` R1–R7 bind at this step too.
   a registered job is drift — if the inventory shows one already exists elsewhere, reuse or raise
   it, never write a second. **Wire every boundary per `02-architecture.md` → Layer interaction &
   wiring patterns** — interface/impl/binding placement, async and error types at the boundary, DTO
-  mapping at the data edge — the conformance review checks the pattern, not just the dependency
-  rule.
+  mapping at the data edge — the self-review and the feature review check the pattern, not just
+  the dependency rule.
 - **Asset search flow, then register-on-create.** Before creating any asset, search in order,
   stopping at the first hit: (1) **registry** `docs/basics/17-asset-registry.md` by name/tags; (2)
   **assets module** — if no registry or no match, the asset-providing module/package located via
@@ -112,72 +112,28 @@ On a client plan, `client-ui-rules.md` R1–R7 bind at this step too.
   stage, it is a question at the checkpoint, ★ keep: the register gets `accepted — <why + revisit
   trigger>` and the plan's *Debt* table the answer — never the spoke. `debt-balance.js` checks it.
 
-## 5. Conformance review — fresh eyes, before verifying and before presenting
+## 5. Self-review — the author's checklist, before verifying and before presenting
 
-- **Conformance review before verifying — fresh eyes on the diff, never the author's.** Every stage
-  gets reviewed against the profile, the principles, and its own plan **before** the visual/smoke
-  verification and **before** it's presented (flow step 5). Run it with the **reviewer subagent**
-  (`alpha-sdlc:sdlc-reviewer`) handed only the packet `scripts/review-packet.js` writes — the
-  **stage diff + the stage's plan/AC + the feature's `review-charter.md` + the principles sections
-  this diff can actually violate** — the principles are in the packet because the
-  principles-conformance check audits against them, and a reviewer asked to check a document it was
-  never given checks nothing. The packet is deliberately *not* your build reasoning, because the
-  context that made a decision is the worst context for auditing it ("I wrote it, so it looks
-  right"). The reviewer also gets **`conformance-reviewer.md`** (this skill's directory) — the
-  three-part checklist it works from: profile conformance · principles conformance · plan/AC
-  conformance.
-- **The packet — one file per round, written by script.** Log and save the outputs where `SKILL.md`
+- **Every stage is self-reviewed, never handed to a reviewer.** Before the visual/smoke verification
+  and before it's presented (flow step 5), you audit the stage diff against the profile, the
+  principles and its own plan with **`conformance-reviewer.md`** (this skill's directory) — the
+  three-part checklist the feature review uses: profile conformance · principles conformance ·
+  plan/AC conformance. The development phase has one review, after the last stage (§10).
+- **The scripts first — one packet, written by script.** Log and save the outputs where `SKILL.md`
   step 5 says — under `.alpha-sdlc/`, because a log in the repo root shows up as a changed
-  production file — and run `review-packet.js` as it shows. Uncommitted paths that are not this
-  stage's — another session's or an earlier stage's work in the same tree, which `next-step.js`
+  production file — and run `review-packet.js … --self` as it shows. Uncommitted paths that are not
+  this stage's — another session's or an earlier stage's work in the same tree, which `next-step.js`
   lists (the first five; `git status --short` gives the rest) — go in with `--exclude <path>…`, and
-  the packet's header
-  names them; never exclude a path this stage changed. Its
-  `.alpha-sdlc/review/<feature>-<platform>-s<n>-r<round>.md` holds the diff, the stage block with
-  its AC and slice rows, the charter's currency, your log, the settled `check-coverage.js` (with
-  the stage's changed tests) and `find-orphans.js --diff` outputs, the rules this diff can violate
-  with the withheld ones named, and the file → dimension map. No charter, or one whose recorded
-  profile commit has moved → the reviewers fall back to the `docs/basics/` docs the diff touches.
-- **Three economies, all from `principles.md` → *Reviews run as parallel dimensions*, and none of
-  them cuts rigor:** the charter replaces re-reading `docs/basics/` every stage (it was distilled
-  once at planning, and carries the profile commit it was built from — rebuild it if that moved,
-  and fall back to the docs themselves if there is no charter); the principles are **narrowed to
-  what this diff can break**, with the packet naming which sections were withheld and on what test,
-  because a reviewer cannot find a violation of a rule the change is incapable of breaking; and the
-  **mechanical checks run first** — the repo's doc checks, `scripts/check-coverage.js`,
-  `scripts/find-orphans.js`, the raw-literal command the token doc records — with their output in
-  the packet and those dimensions marked settled.
-- **The tier is measured, never chosen** — `scripts/review-tier.js` sets it inside the packet, and
-  full when unsure:
-  - **script-only** — a stage whose diff **cannot change reachable production behaviour** (docs,
-    tests, formatting, a version string, a pure move) skips the reviewer entirely and closes on
-    those scripts and the stage's own suite — but **reachability decides that, never appearance**:
-    a deleted call site or a removed dependency is never in that band.
-  - **light** — the light tier runs all three in one reviewer when the stage measures small and
-    low-risk: one `alpha-sdlc:sdlc-reviewer` runs every dimension and re-runs the stage's own tests
-    and the sabotage checks; then the `review-gaps.js` command the packet prints. No critic agent.
-  - **full** — **three dimensions, one reviewer each** (`principles.md` → *Reviews run as parallel
-    dimensions*): (a) profile and design system — checklist item 1; (b) principles and test
-    quality — item 2, the one dimension that re-runs the stage's own tests and the sabotage checks;
-    (c) plan/AC and the mechanical checks — item 3, on the settled coverage and orphan outputs, and
-    for UI stages, **case completeness: every section case implemented, driven by its declared
-    source/trigger, with none silently dropped**. The packet's file → dimension map gives every
-    changed file an owner. When the reports come back, **before you fix anything, run the
-    completeness critic**: `review-gaps.js` first, then `alpha-sdlc:sdlc-reviewer-critic` on the
-    reports, the map, the diff stat and the gaps output — what no dimension actually looked at. Its
-    findings join this round's.
-- **Launch the round in the foreground, as `SKILL.md` step 5 says** — never two stages' reviews in
-  one message; a reviewer left running in the background only adds polling, and in auto-run it
-  ends the turn. Each writes `<packet stem>-<id>.md` (`-single.md` on the light tier); file the
-  critic's as `<packet stem>-critic.md`. The packet carries your verification commands with their
-  exit codes and summary lines, so no reviewer re-runs the whole suite.
-- **Every finding is labeled measured or inferred.** Measured names the file and line, the command,
-  test or grep that produced it, and **which copy was read** (committed `HEAD` or the working tree,
-  and which files were already modified when the review started); **inferred is a question, not a
-  defect.** The reviewer **leaves the working tree exactly as it found it.**
-- **Verify before acting.** The author **verifies before acting** — open the cited file at the cited
-  line before editing anything on a report's authority: a review that is wrong in one finding is not
-  wrong in all of them, and acting on the wrong one costs a whole round.
+  the packet's header names them; never exclude a path this stage changed. Its
+  `.alpha-sdlc/review/<feature>-<platform>-s<n>-self.md` holds the settled `check-coverage.js` (with
+  the stage's changed tests), `find-orphans.js --diff` and `debt-balance.js --diff` outputs, the
+  charter's currency, the rules this diff can violate with the withheld ones named, and the diff.
+  Read every output that did not exit 0, and the rules section. The charter stands in for the
+  profile docs — rebuild it if its recorded profile commit moved; no charter → the `docs/basics/`
+  docs the diff touches.
+- **Then the checklist, item by item.** Each item is answered with the line or the command that
+  settles it — a grep, the raw-literal command, a test you ran — and an item judged by reading says
+  so. "Looks fine" is not a self-review, and the step is never skipped.
 - **Findings split by kind.** An **objective violation** → fix it in this stage and re-verify green
   (wrong layer · raw literal instead of a token · swallowed/missing error log · hand-written type
   where the generator exists · private query key for a shared entity · unregistered asset/component
@@ -189,17 +145,9 @@ On a client plan, `client-ui-rules.md` R1–R7 bind at this step too.
   stage packet.
 - **This step replaces the scattered self-checks** — conventions/error-handling, the token
   no-raw-literals check, and comment hygiene all run here, once, instead of three partial passes.
-  **If a reviewer subagent can't run in this session, say so and run the same checklist inline as an
-  explicit self-review** — the step is never skipped, and "looks fine" is not a review.
-- **Close the stage on the findings' closing proofs** (`SKILL.md` step 5). **When a second round is
-  owed** there, send the previous findings plus the change since that round, re-running only the
-  dimensions that had findings: `review-packet.js … --round 2 --prev <packet stem>-merged.md
-  --dimensions <ids that had findings>` (the change since round 1 comes from that round's
-  snapshot). **Every round counts:** an objective-violation count flat or rising across three
-  rounds is a STOP — escalate to the user with the trend instead of launching another round.
-- **Carry the verdict into the stage packet** (step 8's *Conformance review* slot): which docs were
-  checked, findings by kind, what you fixed, each finding's closing proof and its output, the
-  needs-eyes count, the objective-violation count per round, what you're asking about.
+- **Carry the result into the stage packet** (step 8's *Self-review* slot): which docs were
+  checked, each item and what settled it, findings by kind, what you fixed, the settled scripts'
+  exit codes, what you're asking about.
 
 ## 7. Integrated smoke — boot both, hit it for real
 
@@ -249,15 +197,15 @@ The structured packet is the **Details (for engineers)** section of the step sum
   anything *not* covered by a test and why (e.g. UI fell back to a manual check).
 - **Changes summary** — what actually changed, per file/module (and any drift from the plan), then
   the diff itself.
-- **Conformance review** — who reviewed (reviewer subagent, or inline self-review + why), **which
-  `docs/basics/` docs were checked** against this diff, and the findings **by kind**: objective
+- **Self-review** — **which `docs/basics/` docs were checked** against this diff, each checklist
+  item and what settled it, the settled scripts' exit codes, and the findings **by kind**: objective
   violations *fixed* (each one, and the re-verify result) · judgment/scope findings **raised as Open
   Decisions** (with the question the user has to answer) · anything deliberate **named and
   accepted**. Include the comment check here — **zero comments added** (machine directives only,
   plus what the Org settings' comment allowlist permits), and where a comment was tempting, the
   **name/constant/function that replaced it** (or the commit message that now carries the *why*).
   "Clean" is a valid verdict — but say *what was checked* to earn it, never just "clean". Add the
-  tier and the merged report's path.
+  self-review packet's path.
 - **Profile updates** — any `docs/basics/` doc this stage changed a recorded fact in (new endpoint →
   api-reference, migration → database, new env var → environment, new asset → asset-registry, new
   token / approved deviation → design-tokens, etc.), updated + re-stamped in the same change —
@@ -270,7 +218,7 @@ The structured packet is the **Details (for engineers)** section of the step sum
 - **Visual parity (UI stages)** — what this slot reports (the final screenshot beside the design,
   the AI checklist + pixel-diff, iteration count, accepted platform deviations, full-scroll
   coverage, token findings) is in **`client-ui.md` §5 — read it now if you have not**; the static
-  no-raw-literals result lives in *Conformance review*, not here. "n/a" for non-UI, or note if
+  no-raw-literals result lives in *Self-review*, not here. "n/a" for non-UI, or note if
   parity couldn't be rendered in-session.
 - **Integrated smoke (full-stack stages)** — the real request driven through the booted stack, and
   the result: 4xx/5xx, console errors, error-boundary trips (all zero to pass). "n/a" for non-seam
@@ -302,4 +250,60 @@ The structured packet is the **Details (for engineers)** section of the step sum
   3. **Write the handoff** `.alpha-sdlc/handoff/<feature>--<platform>.md` when session-only facts
      exist — the running stack's PIDs and ports, the tooling consents the user gave.
   4. **Offer the fresh session in the Next paragraph**, worded as `SKILL.md` step 9 gives it.
-- **After the last stage** the next-file names `alpha-sdlc:do-testing`.
+- **After the last stage** comes the feature review (§10); once it closes, the next-file names
+  `alpha-sdlc:do-testing`.
+
+## 10. The feature review — once, after the last stage
+
+- **The development phase's one review — fresh eyes on the whole feature diff, never the
+  author's** (`SKILL.md` → *After the last stage*; `principles.md` → *Each phase is reviewed
+  once*). Run it with the **reviewer subagents** handed only the packet `scripts/review-packet.js`
+  writes — the **feature diff + the plan and its AC + the feature's `review-charter.md` + the
+  principles sections this diff can actually violate** — never your build reasoning, because the
+  context that made a decision is the worst context for auditing it. The reviewers work from
+  **`conformance-reviewer.md`**. One review of the whole feature sees what reviews per stage could
+  not: a seam one stage opened and a later one closed differently.
+- **The packet — one file, written by script.** `--base` is the commit development started from —
+  the parent of Stage 1's commit (a plan begun before 0.38.0: the parent of its first stage built
+  without a review) — and there is no `--stage`. Its
+  `.alpha-sdlc/review/<feature>-<platform>-feature.md` holds the diff (split per file past 1,500
+  lines — each reviewer reads the files its dimension owns), every stage block with its AC rows, the
+  charter's currency, your log, the settled `check-coverage.js`, `find-orphans.js --diff` and
+  `debt-balance.js --diff` outputs, the rules this diff can violate with the withheld ones named,
+  and the file → dimension map. Uncommitted paths that are not this feature's go in with
+  `--exclude`. The charter stands in for `docs/basics/` — rebuild it if its profile commit moved;
+  no charter → the docs themselves (`principles.md` → *Reviews run as parallel dimensions*).
+- **The tier is measured, never chosen** — `scripts/review-tier.js` sets it inside the packet, and
+  full when unsure:
+  - **script-only** — a diff that **cannot change reachable production behaviour** closes on the
+    settled scripts and its own suite, no reviewer; **reachability decides that, never
+    appearance**: a deleted call site or a removed dependency is never in that band.
+  - **light** — one `alpha-sdlc:sdlc-reviewer` runs every dimension and re-runs the tests and the
+    sabotage checks; then the `review-gaps.js` command the packet prints. No critic agent.
+  - **full** — **three dimensions, one reviewer each**: (a) profile and design system — checklist
+    item 1; (b) principles and test quality — item 2, the one dimension that re-runs the feature's
+    tests and the sabotage checks; (c) plan/AC and the mechanical checks — item 3, on the settled
+    coverage and orphan outputs, and for UI stages, **case completeness: every section case
+    implemented, driven by its declared source/trigger, with none silently dropped**. When the
+    reports come back, **before you fix anything, run the completeness critic**: `review-gaps.js`
+    first, then `alpha-sdlc:sdlc-reviewer-critic` on the reports, the map, the diff stat and the
+    gaps output. Its findings join the review's.
+- **Launch the round in the foreground** — never two reviews in one message; a reviewer left
+  running in the background only adds polling, and in auto-run it ends the turn. Each writes
+  `<packet stem>-<id>.md`; file the critic's as `<packet stem>-critic.md`. The reviewers' brief
+  carries their output contract — measured or inferred per finding (**inferred is a question, not a
+  defect**), which copy was read, the working tree left as found.
+- **Verify before acting** — open the cited file at the cited line before editing anything on a
+  report's authority: acting on a wrong finding ships a fix nobody reviews. Findings split by kind,
+  as in §5: an objective violation is fixed and re-verified green; a judgment or scope finding is an
+  **Open Decision** for the user, **never fix-and-continue**.
+- **One round, closed by proof — no second round** (`principles.md` → *One round, closed by
+  proof*). Fix every objective finding in one pass and close each on its proof, its output in the
+  merged report; a correction that changes what the code *does* is written **test-first**. A
+  needs-eyes finding goes to the user at the verdict, with its fix and the lines it changed
+  (auto-run: your cited re-read closes it, recorded). **If no subagent can run in this session, say
+  so and run the same checklist inline** — the review is never skipped.
+- **Present the verdict and ⏸ STOP** — which docs were checked, findings by kind, what you fixed
+  with each proof's output, every needs-eyes and judgment finding for the user, the tier and the
+  merged report's path. On the close, fill the plan's `Feature review` row — `reviewed <date> ·
+  base <commit> · findings <n> · needs-eyes <n> · <verdict>` — and commit the fixes by explicit path.

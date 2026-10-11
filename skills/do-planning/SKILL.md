@@ -30,8 +30,9 @@ Indonesia) — at every gate, in every phase.
 
 - No `docs/basics/` → **STOP**: ask for `do-project-setup` first; plan without it only if the user
   explicitly chooses to.
-- Spoke `Hub alignment` missing, `NOT REVIEWED` or older than the hub's last change → **STOP**, back
-  to `do-grooming`. A per-screen artifact (widget spec, section slicing) never stamped or changed
+- Spoke `Hub alignment` missing, `NOT REVIEWED`, only `self-reviewed` or older than the hub's last
+  change → **STOP**, back to `do-grooming`; an issue or tech-debt TRD with no spoke, its `Hub
+  review` row not ✅, the same. A per-screen artifact (widget spec, section slicing) never stamped or changed
   after its stamp → **STOP** the same way; print that outstanding list before refusing or planning.
 - A screen this feature grooms with no `section-slicing/<screen>.md` → **STOP**, back to
   `do-grooming` Step 3. Crops but no full frame → **STOP**, back to `do-grooming`.
@@ -188,8 +189,9 @@ scanning the repo, and note the layout is ungrounded).
   `principles.md` → *Parallel work*).
 - **Inputs:** the feature's approved TRD (`docs/development/<feature-name>/` hub + the relevant
   spoke) — its **work slices + AC are the source of work**. **Check the spoke's `Hub alignment`
-  stamp first (hub/spoke feature TRD) — missing, `NOT REVIEWED`, or older than the hub's last change
-  → STOP** and send it back to `do-grooming` for the hub-alignment review. Feature, issue and
+  stamp first (hub/spoke feature TRD) — missing, `NOT REVIEWED`, only `self-reviewed` (the grooming
+  review has not run), or older than the hub's last change → STOP** and send it back to
+  `do-grooming` for the grooming review. Feature, issue and
   tech-debt spokes carry their own `Hub alignment` row and are read there; only a **foundation**
   spoke, which is cut from *Per-platform sections* and has no header table, is read in the hub's
   *Spokes* row instead (spelled `❌ not reviewed` there). Planning a spoke that disagrees with the
@@ -212,11 +214,10 @@ scanning the repo, and note the layout is ungrounded).
   it touches, who owns each entity it reads or writes, the conventions its code must follow, the
   house values its UI must use — and it carries the **profile commit it was built from** (a
   `Profile commit:` line with the hash in backticks, from `git log -1 --format=%h -- docs/basics`;
-  `next-step.js` and `review-packet.js` compare it with the profile). Every stage's reviewer is
-  then handed the charter plus its diff instead of the profile documents again. Without it twenty
-  stages re-read the same unchanged documents twenty times, which is where per-stage review cost
-  actually goes: the rules and the profile are the same size whether the diff is four lines or four
-  hundred. Rebuild the charter when the profile commit moves; a charter whose recorded commit is
+  `next-step.js` and `review-packet.js` compare it with the profile). Every stage's self-review and
+  the feature review then read the charter instead of the profile documents again. Without it
+  twenty stages re-read the same unchanged documents twenty times: the rules and the profile are the
+  same size whether the diff is four lines or four hundred. Rebuild the charter when the profile commit moves; a charter whose recorded commit is
   behind is stale and says so.
 
 ## What makes a good stage — `stage-rules.md`

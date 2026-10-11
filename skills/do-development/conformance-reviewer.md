@@ -1,13 +1,15 @@
-# Conformance review — the reviewer's checklist
+# Conformance review — the checklist
 
-> Handed to the reviewer subagent by `do-development` (flow step 5) inside the review packet that
-> `scripts/review-packet.js` writes: the stage diff, the stage block with its covered AC rows and
-> slice row, the review charter's path and currency, the principles rules this diff can violate
-> (the withheld ones named by line range), the change → doc map, and the mechanical outputs marked
-> settled. `SKILL.md` step 5 and `stage-steps.md` §5 keep the dispatch rule and what the author does
-> with the findings; this file is the brief the reviewer works from. Each dimension owns its items
-> by number — (a) item 1, (b) item 2 with the stage's own tests and the sabotage checks, (c) item 3
-> — and the light tier hands all three to one reviewer.
+> Two readers work from it. The author runs it on each stage's diff as the self-review
+> (`do-development` flow step 5, `stage-steps.md` §5). The reviewer subagents run it once on the
+> whole feature diff — the feature review after the last stage, the development phase's one
+> review — inside the packet `scripts/review-packet.js` writes: the diff, the stage blocks with
+> their covered AC rows and slice rows, the review charter's path and currency, the principles
+> rules this diff can violate (the withheld ones named by line range), the change → doc map, and the
+> mechanical outputs marked settled. `SKILL.md` and `stage-steps.md` §10 keep the dispatch rule and
+> what the author does with the findings. Each dimension owns its items by number — (a) item 1,
+> (b) item 2 with the feature's own tests and the sabotage checks, (c) item 3 — and the light tier
+> hands all three to one reviewer. "The stage" below reads "each stage" in the feature review.
 
 1. **Profile conformance** — per doc the diff actually touches (map it, don't recite all 20): **the
    diff stayed inside the stage's declared `Layer`** (the plan's per-stage field) and honors the

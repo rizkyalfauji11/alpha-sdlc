@@ -12,8 +12,8 @@
 | **Author** | <engineer> |
 | **Platforms** | <Backend / Android / iOS / Web — those affected> |
 | **Behavior change?** | <No — behavior-preserving / Yes — describe> |
-| **Spokes** | <only if the work spans platforms: links to per-platform spokes, each with its **hub alignment** stamp (`✅ reviewed YYYY-MM-DD · hub rev <hash/date>` / ⚠️ stale / ❌ not reviewed). Editing a hub section makes every ✅ stale. This row is the hub's one home for those stamps; each spoke, from `do-grooming`'s `TRD-spoke-template.md`, carries its own `Hub alignment` and `Alignment rounds` rows.> |
-| **Hub review** | <❌ not reviewed · rounds `n · n` while rounds run — every round appends its objective-violation count; a clean pass makes it ✅ reviewed YYYY-MM-DD · rev `<hash>` · rounds `n · n · 0`. No spoke is groomed before ✅> |
+| **Spokes** | <only if the work spans platforms: links to per-platform spokes, each with its **hub alignment** stamp (`self-reviewed YYYY-MM-DD · hub rev <hash/date>` after its self-review, `✅ reviewed YYYY-MM-DD · hub rev <hash/date>` after the grooming review / ⚠️ stale / ❌ not reviewed). Editing a hub section moves every stamp. This row is the hub's one home for those stamps; each spoke, from `do-grooming`'s `TRD-spoke-template.md`, carries its own `Hub alignment` row.> |
+| **Hub review** | <❌ not reviewed — then `self-reviewed YYYY-MM-DD · rev <hash>` after the hub's self-review (no spoke is groomed before it), then ✅ reviewed YYYY-MM-DD · rev `<hash>` · findings n · needs-eyes n when the grooming review closes> |
 | **Date** | <YYYY-MM-DD> |
 
 ## Carry-forward answers
