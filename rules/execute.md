@@ -184,9 +184,9 @@ missing acceptance criterion: a defect, not a detail.
   take over — fall at every phase end and where a unit closes: development — a stage closed
   (verdict, `Status: done`, commit); fixing — a bug closed; testing — the bug report with its
   triage recorded; planning — a stamped stage; grooming — the Gate-0 skeleton written, the hub
-  review ✅, each spoke's alignment ✅, each closed screen; slicing and uploading — a stamped part or
-  verified batch. **At a boundary, persist first, then write the next-file:** every pending
-  answer, decision and finding goes into its artifact; then
+  self-review, each spoke's self-review, each closed screen, the grooming review ✅;
+  slicing and uploading — a stamped part or verified batch. **At a boundary, persist first, then
+  write the next-file:** every pending answer, decision and finding goes into its artifact; then
   `.alpha-sdlc/next/<feature>--<platform>.json` (`<feature>--hub` at a hub-level grooming
   boundary, `<feature>--tasks` in slicing and uploading, `profile--<repo>` inside a setup run)
   goes into the session's working directory — the workspace parent when the session
@@ -261,7 +261,7 @@ missing acceptance criterion: a defect, not a detail.
   file and refuses to let the turn end while `status` is `running`. **A stage report is not a stop,
   and neither is waiting for a reviewer:** emit the report and keep going in the same turn, and run
   the reviewer in the foreground so its answer arrives inside the turn. A judgment finding — in a
-  fix round too — auto-decides ★ and is recorded; it never waits for the user. The chain stops only
+  phase review too — auto-decides ★ and is recorded; it never waits for the user. The chain stops only
   through the file: **before** presenting one of the five halting cases, set `"status": "halted"`
   and a `"reason"`; when `until` is reached, set `"status": "done"` — which the hook refuses while
   `scripts/check-feature-done.js` finds Boot & Smoke not passed, an AC not covered and passing, a
@@ -299,8 +299,8 @@ missing acceptance criterion: a defect, not a detail.
   5. **Details (for engineers)** — the technical evidence (diff, test output, files, coverage,
      screenshots) demoted near the end.
   6. **Next** — **always the last paragraph**, in plain words: what happens next and who does it.
-     After a gate: what the user's answer unlocks. After a review: what its verdict means — a fix
-     round on which dimensions, the stage closing, or a decision the user owes. In auto-run: what
+     After a gate: what the user's answer unlocks. After a review: what its verdict means — its
+     fixes, the phase closing, or a decision the user owes. In auto-run: what
      the chain does next, continuing now. At a halt: what would let it continue. A report that ends
      without it leaves the reader to guess whether anything is waiting on them.
 
@@ -419,7 +419,7 @@ missing acceptance criterion: a defect, not a detail.
   `accepted — <why + revisit trigger>`, or `accepted — auto ★ <date>` in auto-run, ratified after.
   Planning asks each row; a review pays what it finds — never *beyond hub scope* — and asks only
   that exception.
-  `scripts/debt-balance.js` measures it at planning and in every stage and fix review; the done gate
+  `scripts/debt-balance.js` measures it at planning and in every review; the done gate
   refuses a feature planned with a *Debt in the footprint* table that leaves a footprint row `open`.
 - **Integrated real-data gate — never call a feature "done" on mock/assumed data alone.** The
   frontend's assumptions about the backend (HTTP method, path, field shape/type, nullability, enum
@@ -540,63 +540,65 @@ missing acceptance criterion: a defect, not a detail.
   **Approach** naming its rung; no template placeholder (`<YYYY-MM-DD>`, `<hash>`,
   `<feature name>`, `<engineer>`, any other `<…>`) survives in a TRD or plan. For several sites,
   send all the Edit calls in one message; each one is still checked.
-- **Every change is reviewed before it's presented — fresh eyes, not the author's.** A stage's diff,
-  or a fix, is audited against the **profile docs it touches — through the feature's review charter
-  where one exists — these principles, and its own plan/AC** *before* verification and *before* it
-  reaches the user — ideally by a reviewer with the diff and the docs but **not** the reasoning that
-  produced it, because the context that made a decision is the worst context for auditing it.
+- **Each phase is reviewed once, before it closes — fresh eyes, not the author's.** A phase's work
+  is audited against the **profile docs it touches — through the feature's review charter where one
+  exists — these principles, and its own plan/AC** — ideally by a reviewer with the diff and the
+  docs but **not** the reasoning that produced it, because the context that made a decision is the
+  worst context for auditing it. **Once, at the phase's end:** grooming — the hub and every spoke
+  together; development — the whole feature diff; testing — the tests; fixing — the batch's fixes.
+  **Each unit inside a phase is self-reviewed:** its author walks the phase review's checklist after
+  the scripts run, and shows the result at the unit's gate.
   **Objective violations** (wrong layer, raw literal, swallowed error, hand-written type where a
   generator exists, missing profile update, an unbuilt case) are fixed in the same unit of work;
   **judgment or scope findings** (invented behavior, scope beyond the plan, a deviation from a
   decided convention) are a hard STOP → Open Decision, because self-approving a scope change
   defeats the gate.
 
-  **One round, closed by proof — every finding is born with the command that will close it.** A
-  second round exists only because a fix is new work nobody has reviewed; a named proof removes that
-  reason. **Every finding a reviewer reports names its closing proof** — the literal command whose
+  **One round, closed by proof — every finding is born with the command that will close it.**
+  There is no second round: a fix is new work nobody has reviewed, and a named proof is what checks
+  it. **Every finding a reviewer reports names its closing proof** — the literal command whose
   output shows the fix landed: the test that must now cover the case, the repo's checker, a grep
   that must come back empty, the compile, the coverage checker. A finding whose closure no command
   can show is labelled **needs-eyes** by the reviewer that raised it, with why. The author fixes
-  every finding, runs every named command plus the sweep below, and **closes the stage on that
-  output with no second round** — provided the needs-eyes count is zero and no fix changed product
-  behaviour. Bookkeeping in documents — coverage claims, labels, cross-references — always closes
-  this way: its proof is the coverage checker and the doc checks run to green. A reviewer round is
-  for what a script cannot check. **An unnamed proof is not a free pass — it costs the stage a whole
-  extra round**, which is why naming it is the reviewer's work, not the author's.
+  every finding in one pass, runs every named command plus the sweep below, and **closes the
+  review on that output**. **A needs-eyes finding goes to the user at the closing gate, never to
+  another round** (auto-run: a cited re-read closes it, recorded). Bookkeeping in documents —
+  coverage claims, labels, cross-references — always closes this way: its proof is the coverage
+  checker and the doc checks run to green. A reviewer is for what a script cannot check. **An unnamed proof is not a free pass — it reaches the user as
+  needs-eyes**, which is why naming it is the reviewer's work, not the author's. **Only real
+  problems are findings** — a wording preference is not one.
 
-  **A behaviour-changing fix lands test-first, or the stage owes a second round.** A fix that adds a
-  case, state, screen frame or behavior **of the product** is not a correction but a judgment
-  finding: the affected section re-gates with the user, and the round waits for it (auto-run: it
-  auto-decides ★, is recorded, and the round continues). A correction that nonetheless changes what
-  the code *does* — a branch now taken, an error now surfaced, a call site removed — is written
-  **test-first**: a test that fails against the unfixed code and passes against the fix, named as
-  that finding's closing proof; without it the fix is new code no round has reviewed. Moving an
-  acceptance criterion's claim from one stage to another is bookkeeping, not product design — a
-  plan amendment recorded with a *Moved in* line (auto-run: decided ★ and recorded; gated: asked at
-  the checkpoint), never a finding that holds the round.
+  **A behaviour-changing fix lands test-first.** A fix that adds a case, state, screen frame or
+  behavior **of the product** is not a correction but a judgment finding: the affected section
+  re-gates with the user, and the review waits for it (auto-run: it auto-decides ★, is recorded, and
+  the review continues). A correction that nonetheless changes what the code *does* — a branch now
+  taken, an error now surfaced, a call site removed — is written **test-first**: a test that fails
+  against the unfixed code and passes against the fix, named as that finding's closing proof. A
+  proof that will not go green is worked until it does; its third failure is a STOP for the user.
+  Moving an acceptance criterion's claim from one stage to another is bookkeeping, not product
+  design — a plan amendment recorded with a *Moved in* line (auto-run: decided ★ and recorded;
+  gated: asked at the checkpoint), never a finding that holds the review.
 
-  **A second round, when one is owed, is handed the previous findings and the change since that
-  round** — it confirms each finding is closed, citing where, and reviews that change in full; a
-  deviation introduced while fixing is a judgment finding like any other. Repeat until a round is
-  clean. **Before each round, sweep and check:** grep every site of each fact the fixes
-  changed and fix them together (per *Correct every site*), run the repo's own doc checks and the
-  plugin's coverage checker (`scripts/check-coverage.js`), and put their output in the packet. **A
-  missing thing is a defect only when something requires it:** a finding that
-  *X is not handled* counts only when the hub, an approved decision or an acceptance criterion
+  **Work that changes after its phase review is its own change, reviewed once**, scoped to what
+  moved — never the whole phase again. **Before closing, sweep and check:** grep every site of each
+  fact the fixes changed and fix them together (per *Correct every site*), run the repo's own doc
+  checks and the plugin's coverage checker (`scripts/check-coverage.js`), and put their output in
+  the merged report. **A missing thing is a defect only when something requires it:** a finding
+  that *X is not handled* counts only when the hub, an approved decision or an acceptance criterion
   requires X; otherwise it is labelled *beyond hub scope*, asked as a question, never counted and
-  never auto-fixed. **A stage's review covers the stage:** its diff and the documents that diff
-  changes. A finding in a document the stage did not touch, or a gap of the repository itself — no
-  doc checker, an unsigned profile doc — is not the stage's violation: it is noted once as a
+  never auto-fixed. **A phase's review covers the phase:** its diff and the documents that diff
+  changes. A finding in a document the phase did not touch, or a gap of the repository itself — no
+  doc checker, an unsigned profile doc — is not the phase's violation: it is noted once as a
   question, and repository gaps are recorded by `do-project-setup` in the tech-debt register, never
-  charged to a stage.
+  charged to a phase.
 
   **Reviews run as parallel dimensions, sized by risk.** Each skill's review names its dimensions;
   `scripts/review-tier.js` measures the tier — `script-only`, `light` or `full`, and full when
   unsure — and test and grooming reviews are never tiered. Dimension reviewers are
-  `alpha-sdlc:sdlc-reviewer` (Opus, effort high), except the grooming hub review's consistency
+  `alpha-sdlc:sdlc-reviewer` (Opus, effort high), except the grooming review's consistency
   dimension and `do-fixing`'s fix-quality dimension, which use `alpha-sdlc:sdlc-reviewer-deep`
   (effort max). **Reviewers run in the foreground, a whole round in one message, at most 3 in
-  flight** — never reviews of different stages, bugs or spokes in one message.
+  flight** — never two reviews in one message.
   - **Full tier:** every dimension is its own reviewer subagent, each handed the whole packet but
     only its dimension's checklist; anything it notices outside its dimension it reports as
     inferred. The author merges the reports — the same file:line counts once — into one verdict and
@@ -615,14 +617,14 @@ missing acceptance criterion: a defect, not a detail.
     report.** It is not a second round — nothing has been fixed yet — but what makes one round
     defensible, and it is cheap: it reads the reports, not the rulebook.
   - **Light tier:** one `alpha-sdlc:sdlc-reviewer` runs every dimension, with `review-gaps.js` as
-    its critic and no critic agent, when `review-tier.js` reports `light` — the stage is small and
+    its critic and no critic agent, when `review-tier.js` reports `light` — the change is small and
     low-risk **by measure, not by the author's say-so**: at most 150 changed production lines, no
     contract, schema or migration file, no file handling auth, tokens or PII (per
     `12-security-compliance` and `13-auth`), and no UI section.
-  - **Script-only band — no reviewer agent at all.** A stage whose diff **cannot change reachable
+  - **Script-only band — no reviewer agent at all.** A change whose diff **cannot change reachable
     production behaviour** — documentation, tests, formatting, a version string, a pure move with no
     edit — closes on the scripts and hooks alone: the repo's own checks, the coverage checker, the
-    orphan sweep and the stage's own suite, with their output in the packet; `review-tier.js`
+    orphan sweep and its own suite, with their output in the packet; `review-tier.js`
     decides the band, never the author. **Reachability decides the band, never appearance:**
     deleting a call site, removing a dependency, or changing a condition stays out of it however
     small the diff — a deletion that looks mechanical is exactly how a live, untested endpoint
@@ -638,7 +640,7 @@ missing acceptance criterion: a defect, not a detail.
   - **The profile is distilled once per development, not re-derived per stage.** `do-planning`
     writes a **review charter** beside the plan — the conventions, seams, entity ownership and
     house values this feature's reviewers must hold, drawn from `docs/basics/` — and every stage's
-    reviewer is handed the charter plus its diff instead of the profile docs again. The charter
+    self-review and the feature review read the charter instead of the profile docs again. The charter
     records the **profile commit it was built from** and is rebuilt when that moves, so a stale
     charter is a detectable state rather than a silent one.
   - **What a script decides never reaches a reviewer.** Run the mechanical checks **first** — the
@@ -647,17 +649,15 @@ missing acceptance criterion: a defect, not a detail.
     the reviewer those dimensions are settled. The packet builder runs the plugin's scripts once;
     nobody re-runs them unless the tree hash differs. Reviewer attention is for what no script can
     decide.
-  - **A fix round re-runs only the dimensions that had findings**, plus the mechanical one.
   - **The whole suite is not run twice.** The packet carries the author's verification commands with
     their exit codes and summary lines; only the test-quality dimension (or the single light-tier
-    reviewer) re-runs the stage's own tests and the sabotage checks, and any reviewer re-runs what
+    reviewer) re-runs the change's own tests and the sabotage checks, and any reviewer re-runs what
     it doubts, listing each re-run with why.
   - **A stalled reviewer is not waited on.** One that returns nothing within 15 minutes is launched
     once more; if it stalls again, its dimension runs inline and the report says so.
 
-  **Every round counts.** Each round records its **objective-violation count** (inferred findings
-  are questions, never counted); **flat or rising across three rounds is a STOP** — escalate to the
-  user with the trend instead of launching another round.
+  **Every review counts.** Its stamp records its **objective-violation count** (inferred findings
+  are questions, never counted) and its needs-eyes count.
 - **Parallel work fills the time behind a gate — it never runs past one.** Gates stay one at a time;
   what runs in parallel is AI work the next gate would otherwise wait for.
   1. **Subagents read and report; only the main agent writes gated artifacts.** A subagent returns

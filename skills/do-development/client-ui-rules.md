@@ -71,9 +71,10 @@ from the container (never a fixed width), one line per boundary. If the stage ne
 scale doesn't have: **snap to the nearest token and report it**, or — if the design uses it
 systematically — **stop and raise an Open Decision** (new scale step vs approved deviation) back to
 `do-grooming`; a genuinely **new token** is **registered in `18-design-tokens.md` on create**, like
-an asset. The **conformance review (step 5)** audits this: it runs the project's no-raw-literals
-check from the doc's *Enforcement* table, or greps the diff for numeric/hex literals in UI code — a
-literal that slipped through is an objective violation, fixed in the stage before it's presented.
+an asset. The **self-review (step 5)** audits this, and the feature review again: it runs the
+project's no-raw-literals check from the doc's *Enforcement* table, or greps the diff for
+numeric/hex literals in UI code — a literal that slipped through is an objective violation, fixed
+in the stage before it's presented.
 
 ## R3. Section cases
 

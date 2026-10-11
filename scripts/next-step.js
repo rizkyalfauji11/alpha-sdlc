@@ -36,19 +36,19 @@ const STOPS = {
     'its approved API contract) before the spoke — the spoke can\'t be groomed against a missing/unapproved contract.',
   foundationHubFirst:
     'There is no foundation hub yet: STOP and groom the hub first — the hub\'s shared decisions are all approved before ' +
-    'any spoke is groomed, and hub gates ①–⑥ are approved and the `Hub review` row is ✅ before any spoke section.',
+    'any spoke is groomed, and hub gates ①–⑥ are approved and the `Hub review` row is `self-reviewed` before any spoke section.',
   hubReviewFirst:
-    'The hub review hasn\'t passed: STOP and finish the hub and its review first. Never start a spoke on a missing, ' +
-    'unapproved or unreviewed hub.',
-  rounds: (label, trend) =>
-    `${label} rounds ${trend}: flat or rising across three rounds is a STOP — escalate to the user with the trend ` +
-    'instead of launching another round.',
+    'The hub is not self-reviewed yet: STOP and finish the hub and its self-review first. Never start a spoke on a ' +
+    'missing, unapproved or unchecked hub.',
   screensFirst: (screens) =>
     `${screens}: any screen missing either doc, or with its Coverage checklist unchecked → STOP, back to Step 3 — ` +
-    'do not run the review, do not call the spoke complete.',
+    'do not run the self-review, do not call the spoke complete.',
   alignment: (why) =>
     `The spoke's \`Hub alignment\` stamp is ${why} → STOP and send it back to \`do-grooming\` for the ` +
-    'hub-alignment review. Planning a spoke that disagrees with the hub bakes the disagreement into stages.',
+    'grooming review. Planning a spoke that disagrees with the hub bakes the disagreement into stages.',
+  hubOnlyReview: (why) =>
+    `The hub's \`Hub review\` row is ${why} → STOP and send it back to its grooming skill for the grooming review. ` +
+    'A TRD with no spoke is planned only after that review closes.',
   unfinishedSpoke: (screens) =>
     `${screens}: a screen this feature grooms (it has a widget spec in this feature's directory) with no ` +
     '`section-slicing/<screen>.md` is an UNFINISHED SPOKE — STOP and send it back to `do-grooming` Step 3.',
@@ -395,6 +395,7 @@ function reviewState(value) {
   const lead = plain(text).slice(0, 160);
   const firstClause = lead.split(/\s[—–]\s|\.\s/)[0];
   if (/\bnot\s+(?:reviewed|stamped)\b/i.test(firstClause)) return 'not-reviewed';
+  if (/^\W*self-reviewed\b/i.test(firstClause)) return 'self-reviewed';
   const mark = /✅|⚠️|⚠|⏸|❌|⛔/.exec(lead);
   if (mark) {
     if (mark[0] === '✅') return 'reviewed';
@@ -404,25 +405,6 @@ function reviewState(value) {
   if (/\bstale\b|\bre-?staled\b/i.test(firstClause)) return 'not-clean';
   if (/\breviewed\b/i.test(firstClause) && DATE.test(firstClause)) return 'reviewed';
   return 'unknown';
-}
-
-function roundsOf(text, afterWord) {
-  let source = plain(text);
-  if (afterWord) {
-    const position = source.search(new RegExp(`\\b${afterWord}\\b`, 'i'));
-    if (position === -1) return [];
-    source = source.slice(position);
-  }
-  const sequence = /(\d+(?:\s*(?:·|→|->)\s*\d+)+)/.exec(source);
-  if (sequence) return sequence[1].split(/\s*(?:·|→|->)\s*/).map(Number);
-  const single = afterWord ? new RegExp(`\\b${afterWord}\\b\\s*:?\\s*(\\d+)\\b`, 'i').exec(source) : /^\s*(\d+)\s*$/.exec(source);
-  return single ? [Number(single[1])] : [];
-}
-
-function risingTrend(rounds) {
-  if (rounds.length < 3) return null;
-  const [first, second, third] = rounds.slice(-3);
-  return first <= second && second <= third && third > 0 ? `${first} · ${second} · ${third}` : null;
 }
 
 function documentKind(text, fileName) {
@@ -834,15 +816,6 @@ function omissionsRegisterOf(hubLines) {
   };
 }
 
-function spokeRounds(context, hubText, hubKind) {
-  if (hubKind === 'foundation') {
-    const alignment = spokeAlignment(context, hubText, hubKind);
-    const fromHub = alignment.value ? roundsOf(alignment.value, 'rounds') : [];
-    if (fromHub.length) return fromHub;
-  }
-  return alignmentRounds(context);
-}
-
 function groomingPosition(context, result) {
   const hubPath = locateHub(context);
   const hubText = hubPath === context.paths.hub ? context.hub.text : readText(hubPath);
@@ -881,10 +854,10 @@ function groomingPosition(context, result) {
         return;
       }
     }
-    if (hubReview && hubReviewState !== 'reviewed') {
+    if (hubReview && !HUB_CHECKED.includes(hubReviewState)) {
       result.stops.push(STOPS.hubReviewFirst);
       result.facts.push(`hub review: ${excerpt(hubReview.value)}`);
-      setNext(result, 'the hub', hubKind === 'hub' ? 'Step 2a — hub review' : 'the hub review (`do-grooming` → Step 2a)');
+      setNext(result, 'the hub', hubKind === 'hub' ? HUB_SELF_REVIEW : 'the hub\'s self-review (`do-grooming` → Step 2a)');
       return;
     }
   }
@@ -950,13 +923,13 @@ function groomingPosition(context, result) {
     return;
   }
 
-  const REVIEW_RAN = ['reviewed', 'not-clean'];
+  const REVIEW_RAN = ['self-reviewed', 'reviewed', 'not-clean'];
   const hubAlignmentLine = fieldValue(hubLines, /^hub alignment$/i, 0, Math.min(40, hubLines.length));
   const reviewDone = groomingSpoke
-    ? REVIEW_RAN.includes(spokeAlignment(context, hubText, hubKind).state) || spokeRounds(context, hubText, hubKind).length > 0
+    ? REVIEW_RAN.includes(spokeAlignment(context, hubText, hubKind).state)
     : REVIEW_RAN.includes(hubReviewState) ||
       REVIEW_RAN.includes(reviewState(hubAlignmentLine && hubAlignmentLine.value)) ||
-      (spokesOf(hubLines, context.featureDirectory) || []).some((spoke) => REVIEW_RAN.includes(spoke.state));
+      spokeListOf(hubLines, hubKind, context.featureDirectory).some((spoke) => REVIEW_RAN.includes(spoke.state));
   const writtenFromSkeleton = approved.length > 0 &&
     approved.every((section) => stampCommit(section.stamp) || UNCOMMITTED_STAMP.test(plain(section.stamp)));
   const missing = missingTemplateSections(sections, targetKind, foundationPart);
@@ -970,9 +943,9 @@ function groomingPosition(context, result) {
   }
 
   if (groomingSpoke) {
-    spokeCompletion(context, result, { hubPath, hubText, hubKind });
+    spokeCompletion(context, result, { hubPath, hubText, hubKind, hubReviewState });
   } else {
-    hubCompletion(context, result, { hubPath, hubLines, hubReview, hubReviewState, hubKind });
+    hubCompletion(context, result, { hubLines, hubReview, hubReviewState, hubKind });
   }
 }
 
@@ -980,12 +953,6 @@ function alignmentRowOf(context) {
   const lines = context.spoke.lines || [];
   const row = fieldValue(lines, /^hub alignment$/i, 0, Math.min(40, lines.length));
   return row || { value: null };
-}
-
-function alignmentRounds(context) {
-  const lines = context.spoke.lines || [];
-  const row = fieldValue(lines, /^alignment rounds$/i, 0, Math.min(40, lines.length));
-  return row && !isTemplateValue(row.value) ? roundsOf(row.value) : [];
 }
 
 function spokeAlignment(context, hubText, hubKind) {
@@ -1001,65 +968,96 @@ function spokeAlignment(context, hubText, hubKind) {
   return { value, state: value ? reviewState(value) : 'missing', source: 'the spoke header' };
 }
 
-function hubCompletion(context, result, { hubPath, hubLines, hubReview, hubReviewState, hubKind }) {
-  if (hubReview) {
-    const rounds = roundsOf(hubReview.value, 'rounds');
-    result.facts.push(`hub review: ${excerpt(hubReview.value)}`);
-    if (hubReviewState !== 'reviewed') {
-      const trend = risingTrend(rounds);
-      if (trend) result.stops.push(STOPS.rounds('Hub review', trend));
-      setNext(result, 'the hub', 'Step 2a — hub review (two dimensions, then the completeness critic)');
-      result.gate = GATES.review;
-      reread(result, path.join(pluginRoot, 'skills', 'do-grooming', 'grooming-review.md'), 'the review dimensions, rounds and stamps');
-      return;
-    }
+const HUB_CHECKED = ['self-reviewed', 'reviewed'];
+const HUB_SELF_REVIEW = 'Step 2a — the hub\'s self-review (hub points 12–16)';
+const SPOKE_SELF_REVIEW = 'Step 4 — the spoke\'s alignment self-review (points 1–11)';
+const GROOMING_REVIEW = 'Step 5 — the grooming review, once: the hub and every spoke (`review-packet.js <feature> all --kind groom`)';
+const GROOMING_REVIEW_DOC = path.join(pluginRoot, 'skills', 'do-grooming', 'grooming-review.md');
+
+function spokeListOf(hubLines, hubKind, featureDirectory) {
+  const table = spokesOf(hubLines, featureDirectory);
+  if (table !== null) return table;
+  const row = fieldValue(hubLines, /^spokes$/i, 0, Math.min(40, hubLines.length));
+  if (!row || isTemplateValue(row.value)) return [];
+  const platforms = [...new Set([...String(row.value).matchAll(/TRD-([\w-]+)\.md/gi)].map((match) => match[1].toLowerCase()))];
+  return platforms.map((platform) => {
+    const alignment = foundationSpokeEntry(row.value, platform) || '';
+    return {
+      name: platform,
+      path: path.join(featureDirectory, `TRD-${platform}.md`),
+      alignment,
+      state: alignment ? reviewState(alignment) : 'missing',
+    };
+  });
+}
+
+function hubCompletion(context, result, { hubLines, hubReview, hubReviewState, hubKind }) {
+  const spokes = spokeListOf(hubLines, hubKind, context.featureDirectory);
+  if (hubReview) result.facts.push(`hub review: ${excerpt(hubReview.value)}`);
+  if (hubReview && !HUB_CHECKED.includes(hubReviewState)) {
+    setNext(result, 'the hub', HUB_SELF_REVIEW);
+    result.gate = GATES.review;
+    reread(result, GROOMING_REVIEW_DOC, 'the self-reviews, the hub points and the stamps');
+    return;
   }
-  const spokes = spokesOf(hubLines, context.featureDirectory);
-  if (!hubReview && hubKind === 'hub') {
-    const groomedSpokes = (spokes || []).filter((spoke) => spoke.path && exists(spoke.path));
-    if (!groomedSpokes.length) {
-      setNext(result, 'the hub', 'Step 2a — hub review');
+  if (!hubReview) {
+    if (hubKind === 'hub' && !spokes.some((spoke) => spoke.path && exists(spoke.path))) {
+      setNext(result, 'the hub', HUB_SELF_REVIEW);
       result.gate = GATES.review;
-      result.notes.push('the hub has no `Hub review` row — add it from the template when the review stamps');
+      result.notes.push('the hub has no `Hub review` row — add it from the template when the self-review stamps');
       return;
     }
     result.notes.push('the hub has no `Hub review` row — it predates the row, and its spokes were groomed on it');
   }
-  if (spokes === null) {
-    const row = fieldValue(hubLines, /^spokes$/i, 0, Math.min(40, hubLines.length));
-    if (row) result.facts.push(`spokes: ${excerpt(row.value, 240)}`);
+  for (const spoke of spokes) {
+    const where = spoke.path && readText(spoke.path) !== null ? '' : ' (file not in this repository)';
+    result.facts.push(`spoke ${spoke.name}${where}: ${spoke.state} — ${excerpt(spoke.alignment, 120)}`);
+  }
+  if (!spokes.length && hubKind === 'foundation') {
     setNext(result, 'the spokes',
-      'every hub section is approved — groom or align each spoke (`next-step.js <feature-dir> <platform>`)');
-    const register = hubKind === 'foundation' ? omissionsRegisterOf(hubLines) : null;
-    if (register && register.state !== 'written') {
-      result.notes.push(`the omissions register (*Deliberate omissions & deferrals*) is ${register.state} — a spoke's ` +
-        'step-5 omissions gate writes it after that spoke\'s AC; the foundation is not complete without it');
-      return;
-    }
-    result.complete = true;
+      'the hub is self-reviewed — groom each spoke (`next-step.js <feature-dir> <platform>`), named in the hub\'s *Spokes* row');
+    result.gate = GATES.outline;
     return;
   }
-  for (const spoke of spokes) {
-    const spokeText = spoke.path ? readText(spoke.path) : null;
-    const where = spokeText === null ? ' (file not in this repository)' : '';
-    const roundsRow = spokeText === null ? null : fieldValue(linesOf(spokeText), /^alignment rounds$/i, 0, 40);
-    const rounds = roundsRow && !isTemplateValue(roundsRow.value) ? roundsOf(roundsRow.value) : [];
-    result.facts.push(`spoke ${spoke.name}${where}: ${spoke.state} — ${excerpt(spoke.alignment, 120)}` +
-      (rounds.length ? ` · alignment rounds ${rounds.join(' · ')}` : ''));
-  }
-  const waiting = spokes.find((spoke) => spoke.state !== 'reviewed');
+  const waiting = spokes.find((spoke) => !HUB_CHECKED.includes(spoke.state));
   if (waiting) {
     const groomed = waiting.path && exists(waiting.path);
-    setNext(result, `spoke ${waiting.name}`, groomed ? 'Step 4 — hub-alignment review' : 'groom the spoke (Gate 0)');
+    setNext(result, `spoke ${waiting.name}`, groomed ? SPOKE_SELF_REVIEW : 'groom the spoke (Gate 0)');
     result.gate = groomed ? GATES.review : GATES.outline;
     return;
   }
-  setNext(result, 'grooming',
-    'the hub is reviewed and every spoke is aligned — hand off to `do-planning`, one plan per platform');
+  const hubClosed = hubReviewState === 'reviewed' || !hubReview;
+  const unreviewed = spokes.filter((spoke) => spoke.state !== 'reviewed');
+  if (!hubClosed || unreviewed.length) {
+    setNext(result, 'grooming', !spokes.length
+      ? `${GROOMING_REVIEW} — no spoke, so the hub alone`
+      : hubClosed
+        ? groomingReviewScopedTo(unreviewed.map((spoke) => spoke.name))
+        : GROOMING_REVIEW);
+    result.gate = GATES.review;
+    reread(result, GROOMING_REVIEW_DOC, 'the grooming review: its packet, dimensions, critic and stamps');
+    return;
+  }
+  const register = hubKind === 'foundation' ? omissionsRegisterOf(hubLines) : null;
+  if (register && register.state !== 'written') {
+    setNext(result, 'the omissions register (hub)',
+      `*Deliberate omissions & deferrals* is ${register.state} — a spoke's step-5 omissions gate writes it after that ` +
+      'spoke\'s AC; the foundation is not complete without it');
+    return;
+  }
+  setNext(result, 'grooming', spokes.length
+    ? 'the grooming review closed: the hub and every spoke are reviewed — hand off to `do-planning`, one plan per platform'
+    : 'the grooming review closed — hand off to `do-planning`');
   result.complete = true;
 }
 
-function spokeCompletion(context, result, { hubPath, hubText, hubKind }) {
+function groomingReviewScopedTo(platforms) {
+  return `Step 5 — the grooming review, scoped to ${platforms.map((name) => `spoke ${name}`).join(', ')}, added after the ` +
+    `hub's review closed (\`review-packet.js <feature> ${platforms.length === 1 ? platforms[0] : '<platform>'} --kind groom ` +
+    '--items 1,2,3,4,5,6,7,8,9,10,11`)';
+}
+
+function spokeCompletion(context, result, { hubPath, hubText, hubKind, hubReviewState }) {
   if (hubKind === 'hub' && isClient(context)) {
     const screens = screenArtifacts(context.featureDirectory);
     if (!screens.length) {
@@ -1073,8 +1071,9 @@ function spokeCompletion(context, result, { hubPath, hubText, hubKind }) {
     if (unfinished.length) {
       const [first] = unfinished;
       const alignmentState = spokeAlignment(context, hubText, hubKind).state;
-      const alignmentStarted = spokeRounds(context, hubText, hubKind).length > 0 || !['missing', 'placeholder', 'not-reviewed'].includes(alignmentState);
-      if (alignmentStarted) result.stops.push(STOPS.screensFirst(unfinished.map((screen) => screen.name).join(', ')));
+      if (!['missing', 'placeholder', 'not-reviewed'].includes(alignmentState)) {
+        result.stops.push(STOPS.screensFirst(unfinished.map((screen) => screen.name).join(', ')));
+      }
       setNext(result, `screen ${first.name}`, `Step 3 — per-screen artifacts (${first.gaps.join(', ')})`);
       result.gate = GATES.screen;
       result.notes.push('screens are listed in file-name order; the spoke\'s §2 names any screen that has no doc yet');
@@ -1084,30 +1083,47 @@ function spokeCompletion(context, result, { hubPath, hubText, hubKind }) {
 
   const alignment = spokeAlignment(context, hubText, hubKind);
   const alignmentState = alignment.state;
-  const rounds = spokeRounds(context, hubText, hubKind);
   result.facts.push(`hub alignment (${alignment.source}): ${alignment.value ? excerpt(alignment.value) : 'not recorded'}`);
-  if (rounds.length) result.facts.push(`alignment rounds: ${rounds.join(' · ')}`);
-  reread(result, path.join(pluginRoot, 'skills', 'do-grooming', 'grooming-review.md'),
-    'the 11-point alignment checklist, its dimensions and stamps');
+  reread(result, GROOMING_REVIEW_DOC, 'the alignment points 1–11, the grooming review and the stamps');
+  const unit = `spoke ${context.platform}`;
 
+  if (!HUB_CHECKED.includes(alignmentState)) {
+    result.next = { unit, step: `${SPOKE_SELF_REVIEW} — the spoke's completion gate` };
+    result.gate = GATES.review;
+    return;
+  }
+  const revision = hubRevisionOf(alignment.value);
+  const moved = revision && hubText ? hubMovedSince(hubPath, revision) : { state: 'unverified', why: 'the stamp names no hub rev' };
+  if (moved.state === 'moved') {
+    result.facts.push(`stale: ${moved.why} — ${moved.changes.slice(0, 3).join(' · ')}`);
+    setNext(result, unit, alignmentState === 'reviewed'
+      ? 'Step 5 — the grooming review once more, scoped to the hub sections that moved (`--items` by grooming-review.md → *The hub moving*)'
+      : 'Step 4 — re-walk the self-review\'s points the moved hub sections feed, then rewrite the `self-reviewed` stamp');
+    result.gate = GATES.review;
+    return;
+  }
+  if (moved.state === 'unverified') result.notes.push(`alignment freshness not verified: ${moved.why}`);
+  if (moved.note) result.notes.push(moved.note);
   if (alignmentState === 'reviewed') {
-    const revision = hubRevisionOf(alignment.value);
-    const moved = revision && hubText ? hubMovedSince(hubPath, revision) : { state: 'unverified', why: 'the stamp names no hub rev' };
-    if (moved.state === 'moved') {
-      result.facts.push(`stale: ${moved.why} — ${moved.changes.slice(0, 3).join(' · ')}`);
-      setNext(result, `spoke ${context.platform}`, 'Step 4 — re-run the hub-alignment review, scoped to the hub sections that moved');
-      result.gate = GATES.review;
-      return;
-    }
-    if (moved.state === 'unverified') result.notes.push(`alignment freshness not verified: ${moved.why}`);
-    if (moved.note) result.notes.push(moved.note);
-    result.next = { unit: `spoke ${context.platform}`, step: 'aligned with the current hub — hand off to `do-planning`' };
+    result.next = { unit, step: 'reviewed with the current hub — hand off to `do-planning`' };
     result.complete = true;
     return;
   }
-  const trend = risingTrend(rounds);
-  if (trend) result.stops.push(STOPS.rounds('Alignment', trend));
-  result.next = { unit: `spoke ${context.platform}`, step: 'Step 4 — hub-alignment review (the completion gate)' };
+  const own = path.resolve(context.paths.spoke);
+  const others = spokeListOf(linesOf(hubText || ''), hubKind, context.featureDirectory)
+    .filter((spoke) => (spoke.path ? path.resolve(spoke.path) !== own : spoke.name.toLowerCase() !== context.platform.toLowerCase()));
+  for (const spoke of others) result.facts.push(`spoke ${spoke.name}: ${spoke.state}`);
+  const waiting = others.filter((spoke) => !HUB_CHECKED.includes(spoke.state));
+  if (waiting.length) {
+    result.next = {
+      unit: 'grooming',
+      step: 'this spoke is self-reviewed — the grooming review (Step 5) runs once every spoke is; still waiting for ' +
+        waiting.map((spoke) => `spoke ${spoke.name}`).join(', '),
+    };
+    return;
+  }
+  const scoped = hubReviewState === 'reviewed' && others.every((spoke) => spoke.state === 'reviewed');
+  setNext(result, 'grooming', scoped ? groomingReviewScopedTo([context.platform]) : GROOMING_REVIEW);
   result.gate = GATES.review;
 }
 
@@ -1423,6 +1439,8 @@ function planningPosition(context, result) {
       result.stops.push(STOPS.alignment(`missing${where}${alignment.state === 'placeholder' ? ' (still the template placeholder)' : ''}`));
     } else if (alignment.state === 'not-reviewed') {
       result.stops.push(STOPS.alignment(`\`NOT REVIEWED\`${where}`));
+    } else if (alignment.state === 'self-reviewed') {
+      result.stops.push(STOPS.alignment(`only \`self-reviewed\`${where} — the grooming review has not closed`));
     } else if (alignment.state !== 'reviewed') {
       result.stops.push(STOPS.alignment(`not a clean pass${where} (${excerpt(alignment.value, 100)})`));
     } else if (hubText && hubKind !== 'foundation') {
@@ -1433,6 +1451,13 @@ function planningPosition(context, result) {
       else if (moved.note) result.notes.push(moved.note);
     }
     result.facts.push(`hub alignment (${alignment.source}): ${alignment.value ? excerpt(alignment.value, 120) : 'not recorded'}`);
+  } else if (hubText && (hubKind === 'issue' || hubKind === 'tech-debt')) {
+    const hubLines = linesOf(hubText);
+    const hubReview = fieldValue(hubLines, /^hub review$/i, 0, Math.min(40, hubLines.length));
+    const state = hubReview ? reviewState(hubReview.value) : 'missing';
+    if (state === 'self-reviewed') result.stops.push(STOPS.hubOnlyReview('only `self-reviewed` — the grooming review has not closed'));
+    else if (hubReview && state !== 'reviewed') result.stops.push(STOPS.hubOnlyReview(`not ✅ (${excerpt(hubReview.value, 80)})`));
+    if (hubReview) result.facts.push(`hub review: ${excerpt(hubReview.value, 120)}`);
   }
 
   if (isClient(context)) {
@@ -1537,11 +1562,12 @@ function planningPosition(context, result) {
 
 function foundationSpokeEntry(cell, platform) {
   const source = String(cell);
-  const start = source.toLowerCase().indexOf(`trd-${platform}.md`);
+  const start = source.toLowerCase().indexOf(`trd-${platform.toLowerCase()}.md`);
   if (start === -1) return null;
   const rest = source.slice(start + `trd-${platform}.md`.length);
-  const next = rest.search(/TRD-[\w-]+\.md/i);
-  return (next === -1 ? rest : rest.slice(0, next)).replace(/^[`\])\s:—–-]+/, '').trim() || null;
+  const other = [...rest.matchAll(/TRD-([\w-]+)\.md/gi)].find((match) => match[1].toLowerCase() !== platform.toLowerCase());
+  const next = other ? other.index : -1;
+  return (next === -1 ? rest : rest.slice(0, next)).replace(/^[`\])(\s:—–-]+(?:TRD-[\w-]+\.md[`)\]\s:—–-]*)*/i, '').replace(/[\s·[(]+$/, '').trim() || null;
 }
 
 function breakdownStages(lines, breakdownLine) {
@@ -1630,9 +1656,29 @@ function developmentPosition(context, result) {
   describeCharter(context, result, charter);
 
   const nextEntry = progress.find((entry) => entry.state !== 'done');
+  const featureReview = fieldValue(context.plan.lines, /^feature review$/i, 0, Math.min(40, context.plan.lines.length));
+  if (featureReview) result.facts.push(`feature review: ${excerpt(featureReview.value, 120)}`);
+  else {
+    result.notes.push(nextEntry
+      ? 'the plan has no `Feature review` row — add it from plan-template.md; the feature review after the last stage fills it'
+      : 'the plan has no `Feature review` row — it predates the feature review, and its stages were reviewed one by one');
+  }
   if (!nextEntry) {
-    setNext(result, 'after the last stage',
-      'confirm every task/AC the plan covered is implemented and verified, report, then hand off to `do-testing`');
+    if (featureReview && reviewState(featureReview.value) !== 'reviewed') {
+      setNext(result, 'the feature review',
+        'once, after the last stage: confirm every task/AC the plan covered is implemented and verified, then review the whole ' +
+        'feature diff (`review-packet.js <feature> <platform> --base <the commit development started from>`, no `--stage`)',
+        at(context.paths.plan, featureReview.index));
+      result.gate = GATES.review;
+      reread(result, path.join(pluginRoot, 'skills', 'do-development', 'stage-steps.md'),
+        '§10 — the feature review: its packet, tier, reviewers, one fix pass and the row it fills');
+      reread(result, path.join(pluginRoot, 'skills', 'do-development', 'conformance-reviewer.md'),
+        'the reviewers\' checklist — read it yourself only to run the review inline');
+      return;
+    }
+    setNext(result, 'after the last stage', featureReview
+      ? 'the feature review closed — report what\'s done and anything deferred, then hand off to `do-testing`'
+      : 'confirm every task/AC the plan covered is implemented and verified, report, then hand off to `do-testing`');
     result.complete = true;
     return;
   }
@@ -1666,7 +1712,7 @@ function developmentPosition(context, result) {
     return;
   }
 
-  setNext(result, stage.title, 'build it: frame → red → green → refactor → conformance review → verify', location);
+  setNext(result, stage.title, 'build it: frame → red → green → refactor → self-review → verify', location);
   result.gate = GATES.stage;
   const register = acRegisterOf(registerTextOf(context));
   const covered = acIdsIn(String(stage.covers).split('⚠️')[0]);
@@ -1724,7 +1770,7 @@ function developmentPosition(context, result) {
   for (const doc of referencedDocs(context, stage)) reread(result, doc, 'a per-screen contract this stage builds');
   if (result.reread.length + (context.session.handoff ? 1 : 0) < MAX_REREAD) {
     reread(result, path.join(pluginRoot, 'skills', 'do-development', 'conformance-reviewer.md'),
-      'the reviewers\' checklist — read it yourself only to run the review inline');
+      'the self-review checklist — items 1–3, walked by you at step 5');
   }
 }
 
@@ -1778,6 +1824,7 @@ function testPlanOf(text) {
     planApproved: fieldValue(lines, /^plan approved$/i, 0, Math.min(40, lines.length)),
     environment: fieldValue(lines, /^environment approved$/i),
     review: fieldValue(lines, /^test review$/i),
+    fixReview: fieldValue(lines, /^fix review$/i),
     tests,
     procedures,
     bugs: bugsOf(lines, headings),
@@ -1825,10 +1872,18 @@ function bugsOf(lines, headings) {
       fix: fixColumn === -1 ? null : row.cells[fixColumn] || '',
       attempts: attemptsColumn === -1 ? 0 : Number((/(\d+)/.exec(plain(row.cells[attemptsColumn] || '')) || [0, 0])[1]),
       open: !CLOSED_BUG.test(lead) || STILL_OPEN.test(lead),
+      fixed: /\bfixed\b/i.test(lead) && !STILL_OPEN.test(lead),
       status: excerpt(status, 80),
     });
   });
   return { rows, hasFixColumn: fixColumn !== -1, line: heading.index };
+}
+
+function fixesNotReviewed(plan) {
+  if (!plan.fixReview || !plan.bugs) return [];
+  const value = isTemplateValue(plan.fixReview.value) ? '' : plain(plan.fixReview.value);
+  const named = new Set(value.match(/\b[A-Z][A-Z0-9-]*\d+[a-z]?\b/g) || []);
+  return plan.bugs.rows.filter((bug) => bug.fixed && !named.has(bug.id));
 }
 
 function triageOf(cell) {
@@ -1966,7 +2021,7 @@ function testingNext(context, result) {
   const reviewed = plan.review && !isTemplateValue(plan.review.value) && DATE.test(plan.review.value);
   result.facts.push(`test review: ${reviewed ? excerpt(plan.review.value, 80) : 'not recorded'}`);
   if (!reviewed) {
-    setNext(result, 'Step 3', 'test review (fresh eyes): `check-coverage.js --test-plan` first, then the reviewer dimensions');
+    setNext(result, 'Step 3', 'the test review, once (fresh eyes): `check-coverage.js --test-plan` first, then the reviewer dimensions — no second round');
     result.gate = GATES.review;
     if (!plan.review) {
       result.notes.push('no "Test review" line — test plans before it never recorded one; if the review already ran, ' +
@@ -2044,14 +2099,30 @@ function fixingPosition(context, result) {
 
   const ordered = toFix.map(({ bug }) => bug).sort((a, b) => severityRank(a.severity) - severityRank(b.severity) || a.order - b.order);
   if (!ordered.length) {
-    result.next = needsTriage.length
-      ? { unit: 'triage', step: 'no open bug is triaged to fix yet — ask the user which to fix' }
-      : { unit: 'after the last bug', step: 'hand back to `do-testing` to re-run and confirm the fixes hold and nothing regressed' };
+    if (needsTriage.length) {
+      result.next = { unit: 'triage', step: 'no open bug is triaged to fix yet — ask the user which to fix' };
+      return;
+    }
+    const unreviewed = fixesNotReviewed(plan);
+    if (plan.fixReview) result.facts.push(`fix review: ${excerpt(plan.fixReview.value, 120)}`);
+    else result.notes.push('no `Fix review` row — test plans before it never recorded one; add it from test-plan-template.md when a fix review closes');
+    if (unreviewed.length) {
+      const ids = unreviewed.map((bug) => bug.id);
+      setNext(result, 'the fix review',
+        `once, over every fix of the batch — ${ids.join(', ')} (\`review-packet.js <feature> <platform> --bug ${ids.join(',')} ` +
+        '--base <the commit before this batch\'s first fix>`); then hand back to `do-testing`',
+        at(context.paths.testPlan, plan.fixReview.index));
+      result.gate = GATES.review;
+      reread(result, path.join(pluginRoot, 'skills', 'do-fixing', 'fix-reviewer.md'),
+        'the fix-review checklist — read it yourself only to run the review inline');
+      return;
+    }
+    result.next = { unit: 'after the last bug', step: 'hand back to `do-testing` to re-run and confirm the fixes hold and nothing regressed' };
     return;
   }
   const bug = ordered[0];
   setNext(result, bug.id,
-    'frame → red (a failing test that reproduces it) → root-cause fix → conformance review → re-verify',
+    'frame → red (a failing test that reproduces it) → root-cause fix → self-review → re-verify',
     at(context.paths.testPlan, bug.line));
   result.gate = GATES.bug;
   result.block = { location: at(context.paths.testPlan, bug.line), text: context.testPlan.lines[bug.line] };
@@ -2064,7 +2135,7 @@ function fixingPosition(context, result) {
   }
   if (charter.state === 'fresh') reread(result, charter.path, 'the profile rules the fix is reviewed against');
   reread(result, path.join(pluginRoot, 'skills', 'do-fixing', 'fix-reviewer.md'),
-    'the fix-review checklist — read it only to run the review inline');
+    'the self-review checklist — its three parts, walked by you at step 4');
 }
 
 const POSITION_OF_PHASE = {
@@ -2081,12 +2152,18 @@ function detectPhase(context) {
     const plan = testPlanOf(context.testPlan.text);
     const fixable = plan.bugs ? plan.bugs.rows.filter((bug) => bug.open && triageOf(bug.fix) === 'yes') : [];
     if (fixable.length) return { phase: 'fixing', why: `${fixable.length} open bug(s) triaged to fix in ${relativeLabel(context.paths.testPlan)}` };
+    const unreviewed = fixesNotReviewed(plan);
+    if (unreviewed.length) return { phase: 'fixing', why: `the fix review has not covered ${unreviewed.map((bug) => bug.id).join(', ')}` };
     return { phase: 'testing', why: `${relativeLabel(context.paths.testPlan)} exists` };
   }
   if (context.plan.text) {
     const stages = stagesOf(context.plan.text);
     const done = stages.filter((stage) => stageProgress(stage) === 'done').length;
     if (stages.length && done === stages.length) {
+      const featureReview = fieldValue(context.plan.lines, /^feature review$/i, 0, Math.min(40, context.plan.lines.length));
+      if (featureReview && reviewState(featureReview.value) !== 'reviewed') {
+        return { phase: 'development', why: `every stage of ${relativeLabel(context.paths.plan)} is done and its feature review has not closed` };
+      }
       return { phase: 'testing', why: `every stage of ${relativeLabel(context.paths.plan)} is done and there is no test plan yet` };
     }
     if (done) return { phase: 'development', why: `${done} of ${stages.length} stages done` };
@@ -2100,7 +2177,7 @@ function detectPhase(context) {
     const probe = newResult(context, 'grooming', 'probe');
     groomingPosition(context, probe);
     return probe.complete
-      ? { phase: 'planning', why: `${relativeLabel(context.paths.spoke)} is aligned with the hub and there is no plan yet` }
+      ? { phase: 'planning', why: `${relativeLabel(context.paths.spoke)} is reviewed with the hub and there is no plan yet` }
       : { phase: 'grooming', why: `${relativeLabel(context.paths.spoke)} is not finished` };
   }
   return { phase: 'grooming', why: `no ${relativeLabel(context.paths.spoke)} yet` };

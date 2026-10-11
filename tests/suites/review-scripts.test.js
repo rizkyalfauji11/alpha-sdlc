@@ -307,7 +307,7 @@ const dataStage = (() => {
 const dataText = dataStage.run.text;
 
 report('review-packet.js', 'the packet is written under .alpha-sdlc/review and its path is printed first',
-  dataStage.run.exitCode === 0 && dataStage.run.packetPath === path.join(fs.realpathSync(dataStage.root), '.alpha-sdlc', 'review', 'feat-web-s1-r1.md') && dataText.length > 0,
+  dataStage.run.exitCode === 0 && dataStage.run.packetPath === path.join(fs.realpathSync(dataStage.root), '.alpha-sdlc', 'review', 'feat-web-s1.md') && dataText.length > 0,
   [`exit ${dataStage.run.exitCode}`, dataStage.run.stdout, dataStage.run.stderr]);
 report('review-packet.js', 'every covered AC row is copied verbatim and an uncovered one is left out',
   dataText.includes('| ID | AC | Source |\n|---|---|---|\n| AC-1 | one | hub §2 |\n| AC-2 | two | hub §3 |') && !sectionOf(dataText, 'Stage 1').includes('| AC-3 |'),
@@ -344,8 +344,8 @@ report('review-packet.js', 'the debt balance is settled in the packet, read agai
 report('review-packet.js', 'the author\'s verification log is verbatim', sectionOf(dataText, 'Author\'s verification').includes('npm test -- data\n2 passed, exit 0'),
   sectionOf(dataText, 'Author\'s verification'));
 report('review-packet.js', 'a light-tier stage goes to one reviewer that re-runs the tests, with no critic',
-  dataText.includes('- Launch: one `alpha-sdlc:sdlc-reviewer` runs every dimension below (light tier); it also re-runs the stage\'s own tests and the sabotage checks.') &&
-    !/^- critic/m.test(dataText) && /^- single · every dimension above \(a, b, c\) · items 1, 2, 3 · report .*feat-web-s1-r1-single\.md/m.test(dataText),
+  dataText.includes('- Launch: one `alpha-sdlc:sdlc-reviewer` runs every dimension below (light tier); it also re-runs the change\'s own tests and the sabotage checks.') &&
+    !/^- critic/m.test(dataText) && /^- single · every dimension above \(a, b, c\) · items 1, 2, 3 · report .*feat-web-s1-single\.md/m.test(dataText),
   sectionOf(dataText, 'Reviewers'));
 report('review-packet.js', 'the contents line gives each section\'s real line range', (() => {
   const lines = dataText.split('\n');
@@ -367,9 +367,9 @@ report('review-packet.js', 'building the packet leaves the working tree and the 
   report('review-packet.js', 'a full-tier stage launches each dimension, then the gaps script and the critic',
     /^- Launch: one reviewer per dimension, the whole round in one message, in the foreground \(at most 3 in flight\)/m.test(text) &&
       /^- a · profile and design system · items 1 · agent alpha-sdlc:sdlc-reviewer · checklist .*conformance-reviewer\.md|^- a · profile and design system · items 1 · agent alpha-sdlc:sdlc-reviewer · checklist .*SKILL\.md/m.test(text) &&
-      /^- b · principles and test quality · items 2 · re-runs the stage's own tests and the sabotage checks/m.test(text) &&
+      /^- b · principles and test quality · items 2 · re-runs the change's own tests and the sabotage checks/m.test(text) &&
       /^- c · plan\/AC and the mechanical checks · items 3/m.test(text) && /^- critic · `alpha-sdlc:sdlc-reviewer-critic`/m.test(text) &&
-      /^- Gaps: `node .*review-gaps\.js --packet .*feat-web-s1-r1\.md --reports .*-r1-a\.md .*-r1-b\.md .*-r1-c\.md`/m.test(text) &&
+      /^- Gaps: `node .*review-gaps\.js --packet .*feat-web-s1\.md --reports .*-s1-a\.md .*-s1-b\.md .*-s1-c\.md`/m.test(text) &&
       /- Tier: full — UI path: src\/components\/Band\.tsx/.test(text),
     sectionOf(text, 'Reviewers'));
   report('review-packet.js', 'a code packet names no TRD variant, and its critic is handed no section map',
@@ -393,20 +393,36 @@ report('review-packet.js', 'building the packet leaves the working tree and the 
     sectionOf(text, 'Principles this change can violate').slice(0, 600));
 }
 {
-  const { root, base } = featureRepo('round-two');
+  const { root, base } = featureRepo('retired-options');
   writeFiles(root, DATA_CHANGE);
-  const first = packetRun(root, [path.join(root, FEATURE), 'web', '--stage', '1', '--base', base]);
-  writeFiles(root, { 'src/data.ts': DATA.replace('fetchUser(id)', 'fetchUser(id, true)').replace('  verify(id)\n', '  verify(id, strict)\n'), '.alpha-sdlc/findings.md': 'findings:\n- item 2 · objective · measured · src/data.ts:2 · read · proof: npm test\n' });
-  const second = packetRun(root, [path.join(root, FEATURE), 'web', '--stage', '1', '--base', base, '--round', '2', '--prev', path.join(root, '.alpha-sdlc/findings.md')]);
-  const previous = sectionOf(second.text, 'Previous round');
-  report('review-packet.js', 'round 2 carries the previous findings and only the change since round 1',
-    first.exitCode === 0 && second.packetPath.endsWith('feat-web-s1-r2.md') && previous.includes('- item 2 · objective · measured · src/data.ts:2 · read · proof: npm test') &&
-      previous.includes('+  verify(id, strict)') && !previous.includes('+  return fetchUser(id, true)'),
-    previous || second.stderr);
-  const refused = packetRun(root, [path.join(root, FEATURE), 'web', '--stage', '1', '--base', base, '--round', '2']);
-  report('review-packet.js', 'a round after the first without previous findings is refused', refused.exitCode === 2, refused.stderr);
+  const round = packetRun(root, [path.join(root, FEATURE), 'web', '--base', base, '--round', '2', '--prev', 'x.md']);
+  const narrowed = packetRun(root, [path.join(root, FEATURE), 'web', '--base', base, '--dimensions', 'a']);
+  const oldKind = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'trd', '--base', base]);
+  report('review-packet.js', 'a second round, a fix round\'s dimensions and the old per-unit grooming kinds are refused by name',
+    round.exitCode === 2 && /--round is retired — one review per phase: there is no second round/.test(round.stderr) &&
+      narrowed.exitCode === 2 && /--dimensions is retired/.test(narrowed.stderr) &&
+      oldKind.exitCode === 2 && /--kind trd is retired — the hub and alignment reviews are one grooming review: --kind groom/.test(oldKind.stderr),
+    [round.stderr, narrowed.stderr, oldKind.stderr]);
 }
 {
+  const { root, base } = featureRepo('self-review');
+  writeFiles(root, { ...DATA_CHANGE, '.alpha-sdlc/verify.log': 'npm test -- data\n2 passed, exit 0\n' });
+  const self = packetRun(root, [path.join(root, FEATURE), 'web', '--stage', '1', '--base', base, '--self', '--verify', path.join(root, '.alpha-sdlc/verify.log')]);
+  report('review-packet.js', 'a stage\'s self-review packet runs the settled scripts and names no reviewer, no gaps check and no critic',
+    self.exitCode === 0 && self.packetPath.endsWith('feat-web-s1-self.md') &&
+      /^- Launch: no reviewer — the author's self-review\./m.test(self.text) && !/^- Gaps:/m.test(self.text) && !/^- critic/m.test(self.text) &&
+      /- Tier: self — the author's self-review/.test(self.text) && /^- a · profile and design system · items 1 · checklist /m.test(self.text) &&
+      /### check-coverage\.js — exit 0/.test(self.text) && /### debt-balance\.js --diff — exit \d/.test(self.text) &&
+      /\nreviewers: none — the author's self-review/.test(self.stdout) && self.text.startsWith('# Self-review packet — feat · web · stage 1 self-review'),
+    [self.stderr, sectionOf(self.text, 'Reviewers'), self.stdout]);
+  const again = packetRun(root, [path.join(root, FEATURE), 'web', '--stage', '1', '--base', base, '--self']);
+  report('review-packet.js', 'a self-review re-run after fixes overwrites its own packet', again.exitCode === 0 && again.packetPath === self.packetPath, again.stdout);
+  const noStage = packetRun(root, [path.join(root, FEATURE), 'web', '--base', base, '--self']);
+  const tests = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'tests', '--base', base, '--self']);
+  report('review-packet.js', 'a self-review is one stage\'s or one bug\'s, never a phase\'s',
+    noStage.exitCode === 2 && /--stage <n> --self/.test(noStage.stderr) && tests.exitCode === 2 && /not a tests review/.test(tests.stderr),
+    [noStage.stderr, tests.stderr]);
+}{
   const { root, base } = featureRepo('big-diff');
   writeFiles(root, { ...DATA_CHANGE, 'src/big.ts': numbered(1600, (index) => `export const value${index} = ${index}`) });
   const { text, packetPath } = packetRun(root, [path.join(root, FEATURE), 'web', '--stage', '1', '--base', base]);
@@ -418,19 +434,37 @@ report('review-packet.js', 'building the packet leaves the working tree and the 
 }
 {
   const { root, base } = featureRepo('refusals');
-  const noStage = packetRun(root, [path.join(root, FEATURE), 'web', '--base', base]);
-  const unknownStage = packetRun(root, [path.join(root, FEATURE), 'web', '--stage', '9', '--base', base]);
-  report('review-packet.js', 'a code review without a stage, or with an unknown one, is refused',
-    noStage.exitCode === 2 && unknownStage.exitCode === 2 && /no Stage 9/.test(unknownStage.stderr), [noStage.stderr, unknownStage.stderr]);
+  const unknownStage = packetRun(root, [path.join(root, FEATURE), 'web', '--stage', '9', '--base', base, '--self']);
+  report('review-packet.js', 'a stage the plan does not have is refused', unknownStage.exitCode === 2 && /no Stage 9/.test(unknownStage.stderr), unknownStage.stderr);
 }
 {
+  const { root, base } = featureRepo('feature-review');
+  writeFiles(root, UI_CHANGE);
+  const feature = packetRun(root, [path.join(root, FEATURE), 'web', '--base', base]);
+  const unit = sectionOf(feature.text, 'The feature');
+  report('review-packet.js', 'the feature review takes no stage: the whole diff, every stage of the plan and the whole AC register',
+    feature.exitCode === 0 && feature.packetPath.endsWith('feat-web-feature.md') && feature.text.startsWith('# Review packet — feat · web · feature review') &&
+      unit.includes('Stage 1 — [data] `W1` — load the list — covers `AC-1` · `AC-2`') && unit.includes('Stage 2 — [presentation] `W2` — the band — covers `AC-3`') &&
+      unit.includes('| AC-3 | three | hub §5 |') && unit.includes('section-slicing/home.md') &&
+      /- Kind: code — the feature review \(do-development · After the last stage/.test(feature.text) &&
+      /### check-coverage\.js — exit 0\n\n`node .*check-coverage\.js .* --table`/.test(feature.text) &&
+      /### debt-balance\.js --diff — exit \d\n\n`node .*debt-balance\.js .* --diff [0-9a-f]+`\n/.test(feature.text) &&
+      /^- Launch: one reviewer per dimension/m.test(feature.text) && /^- critic · /m.test(feature.text),
+    [feature.stderr, unit, sectionOf(feature.text, 'Settled script outputs').slice(0, 800)]);
+  const second = packetRun(root, [path.join(root, FEATURE), 'web', '--base', base]);
+  report('review-packet.js', 'a later review of the same unit gets its own packet instead of overwriting the first',
+    second.exitCode === 0 && second.packetPath.endsWith('feat-web-feature-2.md') && /--reports .*feat-web-feature-2-a\.md/.test(second.text), second.stdout);
+  const stage = packetRun(root, [path.join(root, FEATURE), 'web', '--stage', '2', '--base', base]);
+  report('review-packet.js', 'one stage reviewed alone is labelled as work built after the feature review',
+    stage.exitCode === 0 && /- Kind: code — one stage reviewed as its own change, built after the feature review closed/.test(stage.text), sectionOf(stage.text, 'Header'));
+}{
   const { root, base } = featureRepo('fix-review');
   writeFiles(root, { 'src/components/Band.tsx': 'export const Band = () => null\n', 'src/band.test.ts': "it('band never clips', () => {})\n" });
   const { text, exitCode, stderr } = packetRun(root, [path.join(root, FEATURE), 'web', '--bug', 'B1', '--base', base]);
   report('review-packet.js', 'a fix review copies the bug row and the AC it names, and runs fix quality on the deep reviewer',
     exitCode === 0 && text.includes('| B1 | the band clips | major | UI | AC-3 | 1. open home | yes | 0 | open |') && sectionOf(text, 'Bug B1').includes('| AC-3 | three | hub §5 |') &&
-      /^- a · fix quality · items 1 · re-runs the stage's own tests and the sabotage checks · agent alpha-sdlc:sdlc-reviewer-deep/m.test(text) &&
-      /^- b · scope discipline · items 2/m.test(text) && text.includes('feat-web-b1-r1.md'),
+      /^- a · fix quality · items 1 · re-runs the change's own tests and the sabotage checks · agent alpha-sdlc:sdlc-reviewer-deep/m.test(text) &&
+      /^- b · scope discipline · items 2/m.test(text) && text.includes('feat-web-b1.md'),
     [stderr, sectionOf(text, 'Reviewers')]);
 }
 {
@@ -444,35 +478,53 @@ report('review-packet.js', 'building the packet leaves the working tree and the 
     [stderr, sectionOf(text, 'Settled script outputs')]);
 }
 {
-  const { root, base } = featureRepo('alignment');
-  writeFiles(root, { [`${FEATURE}/TRD-web.md`]: SPOKE + '\nOne more line.\n' });
-  const { text, exitCode, stderr } = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'trd', '--base', base]);
-  report('review-packet.js', 'a single-spoke alignment drops the cross-spoke item and folds the decisions dimension into flow and coverage',
-    exitCode === 0 && /^- b · flow and coverage \+ decisions and siblings · items 3, 5, 7, 8, 9, 10/m.test(text) && !/^- c ·/m.test(text) &&
-      text.includes('item 11 needs two or more spokes') && /`docs\/development\/feat\/TRD-web\.md` → a, b/.test(text),
-    [stderr, sectionOf(text, 'Reviewers'), sectionOf(text, 'File → dimension map')]);
-  const hub = packetRun(root, [path.join(root, FEATURE), 'hub', '--kind', 'trd', '--base', base]);
-  const sectionMapCritic = /^- critic · .* · reads the reports, this map, the diff stat, the gaps output and the author's section map \(grooming-review\.md → \*How a round runs\*, step 3\) · the author files its report at /m;
-  report('review-packet.js', 'a feature TRD\'s packets name the variant, and their critic reads the author\'s section map',
-    exitCode === 0 && hub.exitCode === 0 && [text, hub.text].every((packet) =>
-      sectionOf(packet, 'Header').includes('- Variant: feature — no variant notes; the checklist reads as written') && sectionMapCritic.test(packet)),
-    [sectionOf(text, 'Header'), sectionOf(text, 'Reviewers'), sectionOf(hub.text, 'Header'), sectionOf(hub.text, 'Reviewers')]);
-  report('review-packet.js', 'the hub review runs the consistency dimension on the deep reviewer',
-    hub.exitCode === 0 && /^- b · consistency and flow · items 3, 4, 5 · agent alpha-sdlc:sdlc-reviewer-deep/m.test(hub.text) && hub.packetPath.endsWith('feat-hub-r1.md'),
-    [hub.stderr, sectionOf(hub.text, 'Reviewers')]);
-  report('review-packet.js', 'the hub review diffs the hub and its contract only, so a spoke edit is not in its map',
-    hub.exitCode === 0 && !sectionOf(hub.text, 'File → dimension map').includes('TRD-web.md') && !hub.text.includes('UNOWNED'),
-    sectionOf(hub.text, 'File → dimension map'));
-  const scoped = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'trd', '--base', base, '--items', '4,5,8,10', '--single']);
-  report('review-packet.js', 'a scoped re-review hands exactly the items in play to one reviewer, then the critic',
-    scoped.exitCode === 0 && /^- single · every dimension above \(b\) · items 4, 5, 8, 10 · report .*feat-web-align-r1-single\.md/m.test(scoped.text) &&
-      /^- critic · /m.test(scoped.text) && !/^- [ac] · /m.test(scoped.text),
-    sectionOf(scoped.text, 'Reviewers'));
-  const only = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'trd', '--base', base, '--dimensions', 'a']);
-  report('review-packet.js', '--dimensions keeps only the named dimensions', only.exitCode === 0 && /^- a · contract and data/m.test(only.text) && !/^- b ·/m.test(only.text),
-    sectionOf(only.text, 'Reviewers'));
+  const twoBugs = TEST_PLAN.replace('| B1 | the band clips | major | UI | AC-3 | 1. open home | yes | 0 | open |',
+    '| B1 | the band clips | major | UI | AC-3 | 1. open home | yes | 0 | fixed |\n| B2 | the list is empty | minor | API | AC-1 | 1. open list | yes | 0 | fixed |');
+  const { root, base } = featureRepo('fix-batch', { [`${FEATURE}/test-plan-web.md`]: twoBugs });
+  writeFiles(root, { 'src/components/Band.tsx': 'export const Band = () => null\n', 'src/data.ts': DATA.replace('fetchUser(id)', 'fetchUser(id, true)') });
+  const batch = packetRun(root, [path.join(root, FEATURE), 'web', '--bug', 'B1,B2', '--base', base]);
+  const unit = sectionOf(batch.text, 'Bugs B1, B2');
+  report('review-packet.js', 'the fix review takes every bug of the batch in one packet, each row with the AC it names',
+    batch.exitCode === 0 && batch.packetPath.endsWith('feat-web-bugs-b1-b2.md') && batch.text.startsWith('# Review packet — feat · web · fix review of B1, B2') &&
+      unit.includes('| B1 | the band clips |') && unit.includes('| B2 | the list is empty |') && unit.includes('| AC-3 | three | hub §5 |') && unit.includes('| AC-1 | one | hub §2 |') &&
+      sectionOf(batch.text, 'Header').includes('· bugs B1, B2'),
+    [batch.stderr, unit]);
+  const selfMany = packetRun(root, [path.join(root, FEATURE), 'web', '--bug', 'B1,B2', '--base', base, '--self']);
+  report('review-packet.js', 'a bug\'s self-review takes one bug', selfMany.exitCode === 2 && /one bug's: --bug <id> --self/.test(selfMany.stderr), selfMany.stderr);
 }
 {
+  const { root, base } = featureRepo('groom');
+  writeFiles(root, { [`${FEATURE}/TRD-web.md`]: SPOKE + '\nOne more line.\n' });
+  const { text, exitCode, stderr, packetPath } = packetRun(root, [path.join(root, FEATURE), 'all', '--kind', 'groom', '--base', base]);
+  report('review-packet.js', 'the grooming review is one packet for the hub and every spoke; with one spoke the cross-spoke item drops',
+    exitCode === 0 && packetPath.endsWith('feat-groom.md') && text.startsWith('# Review packet — feat · all · grooming review') &&
+      /^- a · contract and data · items 1, 2, 4, 6, 12, 13 · agent alpha-sdlc:sdlc-reviewer · /m.test(text) &&
+      /^- b · flow and coverage · items 3, 5, 7, 8, 9, 15 · agent alpha-sdlc:sdlc-reviewer · /m.test(text) &&
+      /^- c · consistency and decisions · items 10, 14, 16 · agent alpha-sdlc:sdlc-reviewer-deep/m.test(text) &&
+      text.includes('item 11 needs two or more spokes') && /`docs\/development\/feat\/TRD-web\.md` → a, b, c/.test(text) &&
+      sectionOf(text, 'Hub and spokes under review').includes(`Spoke under review: ${path.join(fs.realpathSync(root), FEATURE, 'TRD-web.md')}`),
+    [stderr, sectionOf(text, 'Reviewers'), sectionOf(text, 'File → dimension map')]);
+  const sectionMapCritic = /^- critic · .* · reads the reports, this map, the diff stat, the gaps output and the author's section map \(grooming-review\.md → \*How the grooming review runs\*, step 3\) · the author files its report at /m;
+  report('review-packet.js', 'a feature TRD\'s grooming packet names the variant, and its critic reads the author\'s section map',
+    exitCode === 0 && sectionOf(text, 'Header').includes('- Variant: feature — no variant notes; the checklist reads as written') && sectionMapCritic.test(text),
+    [sectionOf(text, 'Header'), sectionOf(text, 'Reviewers')]);
+  const scoped = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'groom', '--base', base, '--items', '4,5,8,10', '--single']);
+  report('review-packet.js', 'a scoped grooming review of one spoke hands exactly the items in play to one reviewer, then the critic',
+    scoped.exitCode === 0 && scoped.packetPath.endsWith('feat-web-groom.md') && /^- single · every dimension above \([a-c, ]+\) · items 4, 5, 8, 10 · report .*feat-web-groom-single\.md/m.test(scoped.text) &&
+      /^- critic · /m.test(scoped.text) && sectionOf(scoped.text, 'Hub and spokes under review').includes('Scoped to one spoke: web'),
+    sectionOf(scoped.text, 'Reviewers'));
+  const hubOnly = packetRun(root, [path.join(root, FEATURE), 'hub', '--kind', 'groom', '--base', base]);
+  report('review-packet.js', 'the grooming review has no hub-only form', hubOnly.exitCode === 2 && /platform "all"/.test(hubOnly.stderr), hubOnly.stderr);
+}
+{
+  const { root, base } = committedRepo('packet-groom-no-spoke', { [`${FEATURE}/TRD.md`]: HUB, 'docs/basics/01-overview.md': '# Overview\n' });
+  writeFiles(root, { [`${FEATURE}/TRD.md`]: HUB + '\nOne more line.\n' });
+  const { text, exitCode, stderr } = packetRun(root, [path.join(root, FEATURE), 'all', '--kind', 'groom', '--base', base]);
+  report('review-packet.js', 'a TRD with no spoke is reviewed on the hub items alone',
+    exitCode === 0 && text.includes('no spoke yet: alignment items 1–11 have nothing to check') &&
+      /^- a · contract and data \+ flow and coverage · items 12, 13, 15/m.test(text) && /^- c · consistency and decisions · items 14, 16/m.test(text),
+    [stderr, sectionOf(text, 'Reviewers')]);
+}{
   const prefixedSpoke = SPOKE.replace(/AC-(\d)/g, 'AC-DD-B$1');
   const { root, base } = featureRepo('prefixed-ids', {
     [`${FEATURE}/TRD-web.md`]: prefixedSpoke,
@@ -487,19 +539,18 @@ report('review-packet.js', 'building the packet leaves the working tree and the 
 {
   const { root, base } = featureRepo('foundation', { [`${FEATURE}/TRD.md`]: '# Foundation TRD — app\n\n## Shared decisions (hub-level)\n\nnone\n' });
   writeFiles(root, { [`${FEATURE}/TRD-web.md`]: SPOKE + '\nThe folder tree.\n' });
-  const { text, exitCode, stderr } = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'trd', '--base', base]);
-  report('review-packet.js', 'a foundation spoke merges the contract and flow dimensions',
-    exitCode === 0 && !/^- a · /m.test(text) && /^- b · flow and coverage \+ decisions and siblings \+ contract and data · items 1, 2, 3, 4, 5, 6, 7, 8, 9, 10/m.test(text) &&
-      text.includes('a foundation spoke: dimensions a and b merge'),
+  const { text, exitCode, stderr } = packetRun(root, [path.join(root, FEATURE), 'all', '--kind', 'groom', '--base', base]);
+  report('review-packet.js', 'a foundation merges the contract and flow dimensions',
+    exitCode === 0 && !/^- a · /m.test(text) && /^- b · flow and coverage \+ contract and data · items 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 15/m.test(text) &&
+      text.includes('a foundation: dimensions a and b merge'),
     [stderr, sectionOf(text, 'Reviewers')]);
-  report('review-packet.js', 'a foundation spoke\'s packet names its variant and sends the reviewers to *Variants* first',
+  report('review-packet.js', 'a foundation\'s packet names its variant and sends the reviewers to *Variants* first',
     exitCode === 0 && sectionOf(text, 'Header').includes('- Variant: foundation — read grooming-review.md → *Variants* before the checklist'),
     sectionOf(text, 'Header'));
-}
-for (const [variant, title] of [['tech-debt', '# Tech-Debt TRD: feat'], ['issue', '# Issue TRD: feat']]) {
+}for (const [variant, title] of [['tech-debt', '# Tech-Debt TRD: feat'], ['issue', '# Issue TRD: feat']]) {
   const { root, base } = featureRepo('variant-' + variant, { [`${FEATURE}/TRD.md`]: HUB.replace('# TRD: feat', title) });
   writeFiles(root, { [`${FEATURE}/TRD.md`]: HUB.replace('# TRD: feat', title) + '\nOne more line.\n' });
-  const hub = packetRun(root, [path.join(root, FEATURE), 'hub', '--kind', 'trd', '--base', base]);
+  const hub = packetRun(root, [path.join(root, FEATURE), 'all', '--kind', 'groom', '--base', base]);
   report('review-packet.js', `a ${variant} hub's packet names its variant and sends the reviewers to *Variants* first`,
     hub.exitCode === 0 && sectionOf(hub.text, 'Header').includes(`- Variant: ${variant} — read grooming-review.md → *Variants* before the checklist`),
     [hub.stderr, sectionOf(hub.text, 'Header')]);
@@ -508,7 +559,7 @@ for (const [variant, title] of [['tech-debt', '# Tech-Debt TRD: feat'], ['issue'
   const quoting = HUB + '\n```markdown\n# Foundation TRD — an example title\n```\n';
   const { root, base } = featureRepo('variant-quoted-title', { [`${FEATURE}/TRD.md`]: quoting });
   writeFiles(root, { [`${FEATURE}/TRD-web.md`]: SPOKE + '\nOne more line.\n' });
-  const { text, exitCode, stderr } = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'trd', '--base', base]);
+  const { text, exitCode, stderr } = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'groom', '--base', base]);
   report('review-packet.js', 'the variant is read from the hub\'s title alone, so a quoted foundation title merges no dimensions',
     exitCode === 0 && sectionOf(text, 'Header').includes('- Variant: feature') && !text.includes('dimensions a and b merge'),
     [stderr, sectionOf(text, 'Header'), sectionOf(text, 'Reviewers')]);
@@ -590,9 +641,9 @@ for (const [variant, title] of [['tech-debt', '# Tech-Debt TRD: feat'], ['issue'
   const webSpoke = SPOKE.replace('# Spoke', `# Spoke\n\n| | |\n|---|---|\n| **Hub** | [TRD.md](../../../../cross-hub-backend/${FEATURE}/TRD.md) |`);
   const { root, base } = committedRepo('cross-hub-web', { [`${FEATURE}/TRD-web.md`]: webSpoke, [`${FEATURE}/test-plan-web.md`]: TEST_PLAN, 'src/data.ts': DATA });
   writeFiles(root, { [`${FEATURE}/TRD-web.md`]: webSpoke + '\nOne more line.\n' });
-  const alignment = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'trd', '--base', base]);
-  const unit = sectionOf(alignment.text, 'Spoke under review');
-  report('review-packet.js', 'a spoke whose hub lives in another repository is aligned against that hub, with every spoke the hub lists',
+  const alignment = packetRun(root, [path.join(root, FEATURE), 'web', '--kind', 'groom', '--base', base]);
+  const unit = sectionOf(alignment.text, 'Hub and spokes under review');
+  report('review-packet.js', 'a spoke whose hub lives in another repository is reviewed against that hub, with every spoke the hub lists',
     alignment.exitCode === 0 && unit.includes(`Hub: ${path.join(fs.realpathSync(hubRepo.root), FEATURE, 'TRD.md')} — in another repository`) &&
       unit.includes('Spokes in this feature: backend, web') && !alignment.text.includes('item 11 needs two or more spokes') &&
       /^- c · /m.test(alignment.text),
@@ -864,7 +915,7 @@ report('agents', 'sdlc-reviewer runs on Opus at effort high with Bash',
   JSON.stringify(reviewer.fields));
 report('agents', 'sdlc-reviewer-deep is the same body at effort max',
   deep.fields.name === 'sdlc-reviewer-deep' && deep.fields.model === 'opus' && deep.fields.effort === 'max' && deep.body === reviewer.body &&
-    /hub-review consistency dimension \(b\)/.test(deep.fields.description || '') && /fix-quality dimension/.test(deep.fields.description || ''),
+    /grooming review's consistency dimension \(c\)/.test(deep.fields.description || '') && /fix-quality dimension/.test(deep.fields.description || ''),
   JSON.stringify(deep.fields));
 report('agents', 'sdlc-reviewer-critic runs on Opus at effort medium without Bash',
   critic.fields.name === 'sdlc-reviewer-critic' && critic.fields.model === 'opus' && critic.fields.effort === 'medium' &&
@@ -877,11 +928,12 @@ const reviewerDuties = [
   'review-packet.js',
   'Open `principles.md` only by section, for a rule the packet names but withholds',
   'nobody re-runs plugin scripts unless',
-  'The stage\'s own tests and the sabotage checks are re-run only by',
+  'The change\'s own tests and the sabotage checks are re-run only by',
   'the test-quality dimension or the single light-tier reviewer',
   'Anyone re-runs what they doubt, and\n  lists each re-run with why',
   'together in one message',
-  'One round is the target: report everything you find now; never defer a finding to a later\n  round.',
+  'One round, and only one: report everything you find now; never defer a finding to a later\n  round.',
+  'Report only what would cause a real problem.',
   'The packet is the minimum, not the boundary — but the change is the boundary.',
   'Hold the work to the hub\'s boundary.',
   'Label every finding measured or inferred.',
@@ -916,15 +968,19 @@ for (const [kind, definition] of Object.entries(dimensions)) {
   }
 }
 const flagged = (kind, key) => dimensions[kind].dimensions.filter((dimension) => dimension[key]).map((dimension) => dimension.id).join(',');
-report('review-dimensions.json', 'every kind names its dimensions, items, owned files and checklist', !dimensionProblems.length && ['code', 'fix', 'tests', 'hub', 'trd'].every((kind) => dimensions[kind]),
+report('review-dimensions.json', 'every kind names its dimensions, items, owned files and checklist', !dimensionProblems.length && ['code', 'fix', 'tests', 'groom'].every((kind) => dimensions[kind]) && !dimensions.hub && !dimensions.trd,
   dimensionProblems);
 report('review-dimensions.json', 'tests and sabotage belong to one test-quality dimension per kind',
-  flagged('code', 'testQuality') === 'b' && flagged('fix', 'testQuality') === 'a' && flagged('tests', 'testQuality') === 'b' && !flagged('hub', 'testQuality') && !flagged('trd', 'testQuality'),
+  flagged('code', 'testQuality') === 'b' && flagged('fix', 'testQuality') === 'a' && flagged('tests', 'testQuality') === 'b' && !flagged('groom', 'testQuality'),
   ['code', 'fix', 'tests'].map((kind) => `${kind}: ${flagged(kind, 'testQuality')}`));
-report('review-dimensions.json', 'only hub consistency and fix quality run on the deep reviewer',
+report('review-dimensions.json', 'only grooming consistency and fix quality run on the deep reviewer',
   Object.entries(dimensions).flatMap(([kind, definition]) => definition.dimensions.filter((dimension) => dimension.agent).map((dimension) => `${kind}.${dimension.id}=${dimension.agent}`)).sort().join(' ') ===
-    'fix.a=alpha-sdlc:sdlc-reviewer-deep hub.b=alpha-sdlc:sdlc-reviewer-deep',
-  JSON.stringify(dimensions.hub));
+    'fix.a=alpha-sdlc:sdlc-reviewer-deep groom.c=alpha-sdlc:sdlc-reviewer-deep',
+  JSON.stringify(dimensions.groom));
+report('review-dimensions.json', 'the grooming review owns every alignment point 1–11 and every hub point 12–16, each once',
+  dimensions.groom.dimensions.flatMap((dimension) => dimension.items).sort((a, b) => a - b).join(',') === '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16' &&
+    dimensions.groom.alignmentItems.join(',') === '1,2,3,4,5,6,7,8,9,10,11',
+  JSON.stringify(dimensions.groom.dimensions.map((dimension) => dimension.items)));
 
 const checklist = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-development', 'conformance-reviewer.md'), 'utf8');
 report('conformance-reviewer.md', 'the header describes the packet file, not principles.md and the touched docs',

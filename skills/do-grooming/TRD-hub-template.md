@@ -17,7 +17,7 @@
 | **Author** | <engineer> |
 | **Platforms in scope** | <Backend / Android / iOS / Web> |
 | **Spokes** | <see the *Spokes & alignment* table below> |
-| **Hub review** | <❌ not reviewed · rounds `n · n` while rounds run — every round appends its objective-violation count; a clean pass makes it ✅ reviewed YYYY-MM-DD · rev `<hash>` · rounds `n · n · 0`. No spoke is groomed before ✅> |
+| **Hub review** | <❌ not reviewed — then `self-reviewed YYYY-MM-DD · rev <hash>` after the hub's self-review (no spoke is groomed before it), then ✅ reviewed YYYY-MM-DD · rev `<hash>` · findings n · needs-eyes n when the grooming review closes> |
 | **PRD/BRD** | <link to source> |
 | **Figma** | <link, if any> |
 | **Date** | <YYYY-MM-DD> |
@@ -25,19 +25,20 @@
 ## Spokes & alignment
 
 > Each spoke's **hub-alignment** state, visible from the hub so drift is obvious here rather than
-> discovered in development. **Editing any hub section below makes every ✅ stale** — re-run the
-> hub-alignment review per spoke and re-stamp. `do-planning` won't plan a spoke that isn't aligned
-> with the hub's current state.
+> discovered in development: `self-reviewed` after the spoke's self-review, ✅ after the grooming
+> review. **Editing any hub section below moves every stamp** — re-check what moved, scoped
+> (`grooming-review.md` → *The hub moving*), and re-stamp. `do-planning` won't plan a spoke that
+> isn't aligned with the hub's current state.
 
 | Spoke | Repo | Link | Hub alignment | Platform exceptions (decided divergences) |
 |-------|------|------|---------------|-------------------------------------------|
-| <backend> | <— for this repo (the default) — or the `<org/repo>` that holds it, whose **Link** is then a full URL> | [TRD-backend.md](./TRD-backend.md) | <✅ reviewed YYYY-MM-DD · hub rev `<hash/date>` · or ⚠️ stale · or ❌ not reviewed> | <none — or the decided exception + why, recorded here so the next spoke and `do-development` see it> |
+| <backend> | <— for this repo (the default) — or the `<org/repo>` that holds it, whose **Link** is then a full URL> | [TRD-backend.md](./TRD-backend.md) | <self-reviewed YYYY-MM-DD · hub rev `<hash/date>` · then ✅ reviewed YYYY-MM-DD · hub rev `<hash/date>` · or ⚠️ stale · or ❌ not reviewed> | <none — or the decided exception + why, recorded here so the next spoke and `do-development` see it> |
 | <android> | | <…> | | |
 
 ## Open Decisions
 
-> Hub-level decisions still open — anything a spoke would otherwise have to decide (hub review
-> point 5) and a spoke's Open Decision escalated to the hub. **The hub-wrong findings gathered from
+> Hub-level decisions still open — anything a spoke would otherwise have to decide (hub
+> point 16) and a spoke's Open Decision escalated to the hub. **The hub-wrong findings gathered from
 > the spokes awaiting alignment are one row with the status `pending hub change`**, written before
 > the user is asked so they outlive the session; on a yes it becomes `decided: <the change> ·
 > <date>` in the same message as the Edits that fix the hub, on a no it records why the hub stands.

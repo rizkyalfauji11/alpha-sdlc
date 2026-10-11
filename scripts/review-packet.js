@@ -12,26 +12,33 @@ const { stateDirectoryFor } = require('../hooks/lib/sdlc-context');
 const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || path.join(__dirname, '..');
 
 const USAGE =
-  'usage: review-packet.js <feature-dir> <platform> --base <sha> [--kind code|fix|tests|trd|hub]\n' +
-  '         [--stage <n>] [--bug <id>] [--round <r> --prev <findings.md>] [--verify <log>] [--head <rev>]\n' +
-  '         [--repo <dir>] [--dimensions <ids>] [--items <n,...>] [--single] [--report <runner report>...]\n' +
-  '         [--settled <output file>...] [--since <tree-ish>] [--applicability <file>] [--exclude <path>...]\n' +
-  '  writes <repo>/.alpha-sdlc/review/<feature>-<platform>-<unit>-r<round>.md and prints its path first\n' +
+  'usage: review-packet.js <feature-dir> <platform|all> --base <sha> [--kind code|fix|tests|groom]\n' +
+  '         [--stage <n>] [--bug <id>[,<id>...]] [--self] [--verify <log>] [--head <rev>] [--repo <dir>]\n' +
+  '         [--items <n,...>] [--single] [--report <runner report>...] [--settled <output file>...]\n' +
+  '         [--applicability <file>] [--exclude <path>...]\n' +
+  '  writes <repo>/.alpha-sdlc/review/<feature>-<platform>-<unit>.md and prints its path first\n' +
   '  --exclude leaves another session\'s uncommitted paths out of the tier, the diff and the sweeps; the\n' +
   '  packet header lists every excluded path\n' +
-  '  code (default) needs --stage; --bug or --kind fix is a do-fixing review; tests is the test review;\n' +
-  '  trd is a spoke\'s hub-alignment review, and trd with platform "hub" (or --kind hub) the hub review\n' +
-  '  --dimensions keeps only those dimensions · --items keeps only those checklist items ·\n' +
+  '  code (default) is the feature review, the whole feature diff; with --stage and --self, a stage\'s\n' +
+  '  self-review; with --stage alone, a stage built after the feature review closed\n' +
+  '  --bug (one id or a comma list) or --kind fix is the fix review of a batch; one bug with --self, its\n' +
+  '  self-review · tests is the test review · groom is the grooming review: the hub and every spoke\n' +
+  '  with platform "all", the hub and that spoke with a platform\n' +
+  '  --self runs the settled scripts and names no reviewer · --items keeps only those checklist items ·\n' +
   '  --single hands every remaining dimension to one reviewer (the light tier always does)\n';
 
 const INLINE_DIFF_LIMIT = 1500;
 const BACKEND_PLATFORM = /^(backend|be|api|server|services?|bridge|daemon|worker|cli)$/i;
 const KIND_LABEL = {
-  code: 'code — the stage conformance review',
-  fix: 'fix — the bug-fix conformance review',
+  code: 'code — the feature review',
+  stage: 'code — one stage reviewed as its own change, built after the feature review closed',
+  fix: 'fix — the fix review',
   tests: 'tests — the test review',
-  hub: 'hub — the hub review',
-  trd: 'trd — the hub-alignment review',
+  groom: 'groom — the grooming review',
+};
+const SELF_LABEL = {
+  code: 'code — a stage\'s self-review',
+  fix: 'fix — a bug\'s self-review',
 };
 const TRIGGER_ABSENT = {
   code: 'no code or config file changed',
@@ -52,15 +59,14 @@ function inputError(message) {
 
 function parseArguments(argv) {
   const options = {
-    positional: [], kind: null, stage: null, bug: null, base: null, head: null, round: 1, prev: null,
-    verify: null, repo: null, dimensions: null, items: null, single: false, reports: [], settled: [],
-    since: null, applicability: null, exclude: [],
+    positional: [], kind: null, stage: null, bug: null, bugs: [], base: null, head: null, self: false,
+    verify: null, repo: null, items: null, single: false, reports: [], settled: [], applicability: null, exclude: [],
   };
   const valued = {
-    '--kind': 'kind', '--stage': 'stage', '--bug': 'bug', '--base': 'base', '--head': 'head', '--round': 'round',
-    '--prev': 'prev', '--verify': 'verify', '--repo': 'repo', '--dimensions': 'dimensions', '--items': 'items',
-    '--since': 'since', '--applicability': 'applicability',
+    '--kind': 'kind', '--stage': 'stage', '--bug': 'bug', '--base': 'base', '--head': 'head', '--verify': 'verify',
+    '--repo': 'repo', '--items': 'items', '--applicability': 'applicability',
   };
+  const retired = { '--round': 'one review per phase: there is no second round', '--prev': 'one review per phase: there is no second round', '--since': 'one review per phase: there is no second round', '--dimensions': 'one review per phase: there is no fix round to narrow' };
   for (let index = 0; index < argv.length; index++) {
     const argument = argv[index];
     if (valued[argument]) {
@@ -68,40 +74,46 @@ function parseArguments(argv) {
       if (value === undefined) inputError(`${argument} needs a value`);
       options[valued[argument]] = value;
     } else if (argument === '--single') options.single = true;
+    else if (argument === '--self') options.self = true;
     else if (argument === '--report' || argument === '--settled' || argument === '--exclude') {
       const target = argument === '--report' ? options.reports : argument === '--settled' ? options.settled : options.exclude;
       const before = target.length;
       while (argv[index + 1] && !argv[index + 1].startsWith('--')) target.push(argv[++index]);
       if (argument === '--exclude' && target.length === before) inputError('--exclude needs at least one path');
-    } else if (argument.startsWith('--')) inputError(`unknown option ${argument}`);
+    } else if (retired[argument]) inputError(`${argument} is retired — ${retired[argument]}`);
+    else if (argument.startsWith('--')) inputError(`unknown option ${argument}`);
     else options.positional.push(argument);
   }
   if (options.positional.length !== 2) inputError('expected a feature directory and a platform');
   if (!options.base) inputError('--base <sha> is required');
-  options.round = Number(options.round);
-  if (!Number.isInteger(options.round) || options.round < 1) inputError('--round takes a whole number from 1');
-  if (options.round > 1 && !options.prev) inputError('a round after the first needs --prev <findings.md>');
   const [featureArgument, platform] = options.positional;
   options.featureDirectory = path.resolve(featureArgument);
   options.platform = platform;
+  options.bugs = options.bug ? options.bug.split(/[\s,]+/).filter(Boolean) : [];
   options.kind = resolveKind(options);
-  if (options.kind === 'code' && options.stage === null) inputError('a code review needs --stage <n>');
-  if (options.kind === 'fix' && !options.bug) inputError('a fix review needs --bug <id>');
+  if (options.kind === 'fix' && !options.bugs.length) inputError('a fix review needs --bug <id>[,<id>...]');
   if (options.stage !== null) {
     options.stage = Number(options.stage);
     if (!Number.isInteger(options.stage)) inputError('--stage takes a stage number');
   }
-  options.dimensions = options.dimensions ? options.dimensions.split(/[\s,]+/).filter(Boolean) : null;
+  if (options.self) {
+    if (options.kind === 'code' && options.stage === null) inputError('a self-review is one stage\'s: --stage <n> --self');
+    if (options.kind === 'fix' && options.bugs.length !== 1) inputError('a self-review is one bug\'s: --bug <id> --self');
+    if (!['code', 'fix'].includes(options.kind)) inputError(`--self is a stage's or a bug's self-review, not a ${options.kind} review`);
+  }
+  if (options.kind === 'groom' && platform === 'hub') inputError('the grooming review covers the hub and its spokes: platform "all", or one spoke\'s platform');
   options.items = options.items ? options.items.split(/[\s,]+/).filter(Boolean).map(Number) : null;
   if (options.items && options.items.some((item) => !Number.isInteger(item))) inputError('--items takes item numbers, e.g. 4,5,8');
   return options;
 }
 
 function resolveKind(options) {
-  const requested = options.kind || (options.bug ? 'fix' : 'code');
-  if (!['code', 'fix', 'tests', 'trd', 'hub'].includes(requested)) inputError(`unknown --kind ${requested}`);
-  if (requested === 'code' && options.bug) return 'fix';
-  if (requested === 'trd' && options.platform === 'hub') return 'hub';
+  const requested = options.kind || (options.bugs.length ? 'fix' : 'code');
+  if (requested === 'hub' || requested === 'trd') {
+    inputError(`--kind ${requested} is retired — the hub and alignment reviews are one grooming review: --kind groom`);
+  }
+  if (!['code', 'fix', 'tests', 'groom'].includes(requested)) inputError(`unknown --kind ${requested}`);
+  if (requested === 'code' && options.bugs.length) return 'fix';
   return requested;
 }
 
@@ -145,12 +157,6 @@ function keepStateOutOfGit(repo) {
 
 function readOptional(filePath) {
   try { return fs.readFileSync(filePath, 'utf8'); } catch { return null; }
-}
-
-function readRequired(filePath, what) {
-  const text = readOptional(filePath);
-  if (text === null) inputError(`cannot read ${what} ${filePath}`);
-  return text;
 }
 
 function scriptPath(name) {
@@ -238,12 +244,16 @@ function foldDimension(dimensions, thin) {
 function shapeDimensions(definition, { kind, spokeCount, foundation, options, tier }) {
   let dimensions = definition.dimensions;
   const notes = [];
-  if (options.dimensions) {
-    const unknown = options.dimensions.filter((id) => !dimensions.some((dimension) => dimension.id === id));
-    if (unknown.length) inputError(`unknown dimension(s) ${unknown.join(', ')} for ${kind}: ${dimensions.map((dimension) => dimension.id).join(', ')}`);
-    dimensions = dimensions.filter((dimension) => options.dimensions.includes(dimension.id));
-  }
-  if (kind === 'trd' && spokeCount < 2) {
+  if (kind === 'groom' && spokeCount === 0) {
+    const alignment = definition.alignmentItems || [];
+    for (const dimension of dimensions) {
+      const dropped = dimension.items.filter((item) => alignment.includes(item));
+      if (!dropped.length) continue;
+      dimension.items = dimension.items.filter((item) => !dropped.includes(item));
+      dimension.thinned = true;
+    }
+    notes.push('no spoke yet: alignment items 1–11 have nothing to check — the hub items alone');
+  } else if (kind === 'groom' && spokeCount < 2) {
     for (const dimension of dimensions) {
       const dropped = (dimension.multiSpokeItems || []).filter((item) => dimension.items.includes(item));
       if (!dropped.length) continue;
@@ -261,16 +271,16 @@ function shapeDimensions(definition, { kind, spokeCount, foundation, options, ti
     notes.push(`items in play: ${options.items.join(', ')}`);
   }
   dimensions = dimensions.filter((dimension) => dimension.items.length);
-  if (!dimensions.length) inputError('no checklist item is left to review — check --items and --dimensions');
+  if (!dimensions.length) inputError('no checklist item is left to review — check --items');
   for (const thin of dimensions.filter((dimension) => dimension.thinned && dimension.items.length === 1)) {
     if (dimensions.length < 2) break;
     notes.push(`dimension ${thin.id} is down to item ${thin.items[0]} and folds into its neighbour`);
     dimensions = foldDimension(dimensions, thin);
   }
-  if (kind === 'trd' && foundation) {
+  if (kind === 'groom' && foundation) {
     const contract = dimensions.find((dimension) => dimension.id === 'a');
     if (contract && dimensions.length > 1) {
-      notes.push('a foundation spoke: dimensions a and b merge');
+      notes.push('a foundation: dimensions a and b merge');
       dimensions = foldDimension(dimensions, contract);
     }
   }
@@ -296,24 +306,25 @@ function activeTriggers({ kind, measure, platform }) {
   if (code.length) active.set('code', `code or config changed: ${first(code)}`);
   const ui = files.filter((file) => file.class !== 'docs' && file.flags.includes('ui'));
   if (ui.length) active.set('ui', `UI path changed: ${first(ui)}`);
-  else if (kind === 'hub') active.set('ui', 'the hub feeds every spoke, client ones included');
-  else if (kind === 'trd' && !BACKEND_PLATFORM.test(platform)) active.set('ui', `a ${platform} spoke`);
+  else if (kind === 'groom' && (platform === 'all' || !BACKEND_PLATFORM.test(platform))) {
+    active.set('ui', platform === 'all' ? 'the hub feeds every spoke, client ones included' : `a ${platform} spoke`);
+  }
   const logic = files.filter((file) => (file.class === 'production' || file.class === 'generated') && file.behaviourChange && !file.styleOnly);
   const schema = files.filter((file) => file.flags.includes('schema'));
   if (logic.length || schema.length) active.set('data', `logic or data file changed: ${first(logic.length ? logic : schema)}`);
-  else if (['tests', 'hub', 'trd'].includes(kind)) active.set('data', `a ${kind} review`);
+  else if (['tests', 'groom'].includes(kind)) active.set('data', `a ${kind} review`);
   const contract = files.filter((file) => file.flags.includes('contract'));
   if (contract.length) active.set('contract', `contract path changed: ${first(contract)}`);
   else if (logic.length) active.set('contract', `logic file changed: ${first(logic)}`);
-  else if (['tests', 'hub', 'trd'].includes(kind)) active.set('contract', `a ${kind} review`);
+  else if (['tests', 'groom'].includes(kind)) active.set('contract', `a ${kind} review`);
   const tests = files.filter((file) => file.class === 'test');
   if (tests.length) active.set('tests', `test changed: ${first(tests)}`);
   else if (['code', 'fix', 'tests'].includes(kind)) active.set('tests', `a ${kind} review`);
   const docs = files.filter((file) => file.class === 'docs');
   if (docs.length) active.set('docs', `document changed: ${first(docs)}`);
-  else if (['hub', 'trd'].includes(kind)) active.set('docs', 'a TRD review');
+  else if (kind === 'groom') active.set('docs', 'a TRD review');
   const trds = files.filter((file) => /(^|\/)TRD[^/]*\.md$/.test(file.path));
-  if (['hub', 'trd'].includes(kind)) active.set('trd', 'a TRD review');
+  if (kind === 'groom') active.set('trd', 'a TRD review');
   else if (trds.length) active.set('trd', `TRD changed: ${first(trds)}`);
   return active;
 }
@@ -380,7 +391,7 @@ function registerTableHeader(spoke) {
 
 function locatedHub(options) {
   const localPath = path.join(options.featureDirectory, 'TRD.md');
-  if (fs.existsSync(localPath) || options.platform === 'hub') return { path: localPath, text: readOptional(localPath), local: true };
+  if (fs.existsSync(localPath) || options.platform === 'hub' || options.platform === 'all') return { path: localPath, text: readOptional(localPath), local: true };
   let hubPath = localPath;
   try {
     const { contextFor, locateHub } = require('./next-step');
@@ -454,6 +465,32 @@ function stageUnit(options) {
   return { title: `Stage ${options.stage}`, lines, namedDocs };
 }
 
+function featureUnit(options) {
+  const lines = [];
+  const planPath = path.join(options.featureDirectory, `plan-${options.platform}.md`);
+  const spokePath = coverage.registerDocumentPath(options.featureDirectory, options.platform);
+  const plan = readOptional(planPath);
+  if (plan === null) return { title: 'The feature', lines: [`Cannot read ${planPath}: read the plan, its AC and its slices yourself.`], namedDocs: [] };
+  const spoke = readOptional(spokePath) || '';
+  const slices = coverage.parseSlices(spoke);
+  const { stages } = coverage.parsePlan(plan, slices);
+  lines.push(`The plan: ${planPath} — every stage below is in this diff; read a stage's block there when your dimension needs it.`, '');
+  for (const stage of stages) {
+    const covers = coverage.bulletText(stage.block, 'Covers').replace(/^.*?\*\*Covers:?\*\*\s*/, '').trim();
+    lines.push(`- line ${stage.line}: ${stage.heading.replace(/^#+\s*/, '')}${covers ? ` — covers ${covers}` : ''}`);
+  }
+  if (!stages.length) lines.push('(no "Stage N" heading found in the plan)');
+  lines.push('', `The acceptance criteria — ${spokePath}, verbatim:`, '');
+  const register = coverage.acceptanceLinesOf(spoke).filter((line) => /^\|/.test(line));
+  lines.push(...(register.length ? register : ['(no acceptance-criteria table found)']));
+  const namedDocs = docsNamedIn(stages.map((stage) => stage.block.join('\n')).join('\n'), options.featureDirectory);
+  if (namedDocs.length) {
+    lines.push('', 'Documents the stages name (read the ones your dimension needs):', '');
+    for (const doc of namedDocs) lines.push(`- ${doc.path}${doc.exists ? '' : ' — named but missing'}`);
+  }
+  return { title: 'The feature', lines, namedDocs };
+}
+
 function docsNamedIn(text, featureDirectory) {
   const found = new Set();
   for (const match of text.matchAll(/\b((?:section-slicing|widget-spec)\/[\w.-]+\.md|design\/[\w./-]+\.(?:png|jpe?g|webp|svg))\b/g)) found.add(match[1]);
@@ -472,36 +509,40 @@ function tableHeaderBefore(lines, index) {
 }
 
 function bugUnit(options) {
+  const title = options.bugs.length === 1 ? `Bug ${options.bugs[0]}` : `Bugs ${options.bugs.join(', ')}`;
   const testPlanPath = path.join(options.featureDirectory, `test-plan-${options.platform}.md`);
   const testPlan = readOptional(testPlanPath);
   const lines = [];
-  if (testPlan === null) return { title: `Bug ${options.bug}`, lines: [`Cannot read ${testPlanPath}; read the bug entry yourself.`] };
+  if (testPlan === null) return { title, lines: [`Cannot read ${testPlanPath}; read the bug entries yourself.`] };
   const planLines = testPlan.split('\n');
   const start = planLines.findIndex((line) => /^##\s+Bugs found/i.test(line));
-  const wanted = options.bug.replace(/[*`~]/g, '').trim().toLowerCase();
-  let rowIndex = -1;
-  for (let index = Math.max(start, 0); index < planLines.length; index++) {
-    if (index > start && start >= 0 && /^##\s/.test(planLines[index])) break;
-    if (!/^\|/.test(planLines[index])) continue;
-    const first = coverage.cellsOf(planLines[index])[0] || '';
-    if (first.replace(/[*`~]/g, '').trim().toLowerCase() === wanted) { rowIndex = index; break; }
-  }
-  if (rowIndex === -1) {
-    lines.push(`Bug ${options.bug} is not a row of the Bugs found table in ${testPlanPath}; read the entry yourself.`);
-    return { title: `Bug ${options.bug}`, lines };
-  }
-  lines.push(`From ${testPlanPath}, line ${rowIndex + 1} — verbatim:`, '', ...tableHeaderBefore(planLines, rowIndex), planLines[rowIndex], '');
   const spokePath = coverage.registerDocumentPath(options.featureDirectory, options.platform);
   const spoke = readOptional(spokePath);
-  if (spoke !== null) {
-    const register = coverage.generalRegisterOf(spoke);
-    const ids = coverage.generalAcIdsIn(planLines[rowIndex], register.scheme);
-    if (ids.length) {
-      lines.push(`The acceptance criteria it names — ${spokePath}, verbatim:`, '');
-      for (const id of ids) lines.push(...(register.rows.get(id) || [`${id}: not in the register`]));
+  const register = spoke === null ? null : coverage.generalRegisterOf(spoke);
+  for (const bug of options.bugs) {
+    const wanted = bug.replace(/[*`~]/g, '').trim().toLowerCase();
+    let rowIndex = -1;
+    for (let index = Math.max(start, 0); index < planLines.length; index++) {
+      if (index > start && start >= 0 && /^##\s/.test(planLines[index])) break;
+      if (!/^\|/.test(planLines[index])) continue;
+      const first = coverage.cellsOf(planLines[index])[0] || '';
+      if (first.replace(/[*`~]/g, '').trim().toLowerCase() === wanted) { rowIndex = index; break; }
+    }
+    if (rowIndex === -1) {
+      lines.push(`Bug ${bug} is not a row of the Bugs found table in ${testPlanPath}; read the entry yourself.`, '');
+      continue;
+    }
+    lines.push(`Bug ${bug} — from ${testPlanPath}, line ${rowIndex + 1}, verbatim:`, '', ...tableHeaderBefore(planLines, rowIndex), planLines[rowIndex], '');
+    if (register) {
+      const ids = coverage.generalAcIdsIn(planLines[rowIndex], register.scheme);
+      if (ids.length) {
+        lines.push(`The acceptance criteria it names — ${spokePath}, verbatim:`, '');
+        for (const id of ids) lines.push(...(register.rows.get(id) || [`${id}: not in the register`]));
+        lines.push('');
+      }
     }
   }
-  return { title: `Bug ${options.bug}`, lines };
+  return { title, lines };
 }
 
 function testsUnit(options) {
@@ -529,7 +570,7 @@ function testsUnit(options) {
   return { title: 'Tests under review', lines };
 }
 
-function trdUnit(options, kind, docsRepo) {
+function groomUnit(options, docsRepo) {
   const lines = [];
   const hub = locatedHub(options);
   const hubPath = hub.path;
@@ -537,12 +578,17 @@ function trdUnit(options, kind, docsRepo) {
   const hubWhere = hub.text === null ? ' — missing'
     : hub.local ? '' : ' — in another repository, so its edits are not in this diff: read it whole';
   lines.push(`Hub: ${hubPath}${hubWhere}`);
-  if (kind === 'trd') {
-    const spokePath = path.join(options.featureDirectory, `TRD-${options.platform}.md`);
-    lines.push(`Spoke under review: ${spokePath}${fs.existsSync(spokePath) ? '' : ' — missing'}`);
-  }
+  const reviewed = options.platform === 'all' ? spokes : [options.platform.toLowerCase()];
   lines.push(`Spokes in this feature: ${spokes.length ? spokes.join(', ') : 'none yet'}` +
     (hub.text !== null ? ' (this directory\'s TRD-<platform>.md files and the hub\'s Spokes table)' : ''));
+  if (options.platform !== 'all') lines.push(`Scoped to one spoke: ${options.platform} — the hub and that spoke`);
+  const spokeTexts = [];
+  for (const name of reviewed) {
+    const spokePath = path.join(options.featureDirectory, `TRD-${name}.md`);
+    const text = readOptional(spokePath);
+    spokeTexts.push(text || '');
+    lines.push(`Spoke under review: ${spokePath}${text === null ? ' — not in this directory: read it where the hub\'s Spokes table links it' : ''}`);
+  }
   const folders = ['contract', 'widget-spec', 'section-slicing'].map((folder) => path.join(options.featureDirectory, folder));
   if (!hub.local && hub.text !== null) folders.unshift(path.join(path.dirname(hubPath), 'contract'));
   for (const directory of folders) {
@@ -550,16 +596,16 @@ function trdUnit(options, kind, docsRepo) {
     const entries = fs.readdirSync(directory).sort();
     lines.push(`${path.basename(directory)}/: ${entries.length ? entries.map((name) => path.join(directory, name)).join(', ') : 'empty'}`);
   }
-  const texts = [readOptional(hubPath) || '', kind === 'trd' ? readOptional(path.join(options.featureDirectory, `TRD-${options.platform}.md`)) || '' : ''].join('\n');
+  const texts = [readOptional(hubPath) || '', ...spokeTexts].join('\n');
   const profileDocs = new Set();
   for (const match of texts.matchAll(/\b(\d\d-[a-z][a-z0-9-]*[a-z0-9])\b/g)) {
     const candidate = path.join(docsRepo, 'docs', 'basics', `${match[1]}.md`);
     if (fs.existsSync(candidate)) profileDocs.add(candidate);
   }
-  lines.push('', 'Profile docs the TRD references:', '', ...([...profileDocs].sort().map((doc) => `- ${doc}`)));
-  if (!profileDocs.size) lines.push('- none found by name; map the TRD to docs/basics yourself');
+  lines.push('', 'Profile docs the TRDs reference:', '', ...([...profileDocs].sort().map((doc) => `- ${doc}`)));
+  if (!profileDocs.size) lines.push('- none found by name; map the TRDs to docs/basics yourself');
   const variant = variantOf(hub.text);
-  return { title: kind === 'hub' ? 'Hub under review' : 'Spoke under review', lines, spokeCount: spokes.length, foundation: variant === 'foundation', variant };
+  return { title: 'Hub and spokes under review', lines, spokeCount: spokes.length, foundation: variant === 'foundation', variant };
 }
 
 function charterLines(options, docsRepo) {
@@ -587,8 +633,10 @@ function settledRuns(options, kind, codeRepo, measure, excluded) {
   const runs = [];
   const testFiles = measure.files.filter((file) => file.class === 'test' && file.status !== 'D').map((file) => path.join(measure.repo, file.path));
   if (kind === 'code') {
-    const args = [options.featureDirectory, options.platform, '--stage', String(options.stage), '--base', options.base];
-    if (testFiles.length) args.push('--tests', ...testFiles);
+    const args = options.stage === null
+      ? [options.featureDirectory, options.platform, '--table']
+      : [options.featureDirectory, options.platform, '--stage', String(options.stage), '--base', options.base];
+    if (options.stage !== null && testFiles.length) args.push('--tests', ...testFiles);
     runs.push({ label: 'check-coverage.js', ...runScript('check-coverage.js', args, codeRepo) });
   }
   if (kind === 'tests') {
@@ -599,7 +647,7 @@ function settledRuns(options, kind, codeRepo, measure, excluded) {
   if (kind === 'code' || kind === 'fix') {
     const exclusions = excluded.length ? ['--exclude', ...excluded] : [];
     runs.push({ label: 'find-orphans.js --diff', ...runScript('find-orphans.js', [codeRepo, '--diff', options.base, ...exclusions], codeRepo) });
-    const planClaims = kind === 'code'
+    const planClaims = kind === 'code' && options.stage !== null
       ? ['--plan', path.join(options.featureDirectory, `plan-${options.platform}.md`), '--stage', String(options.stage)]
       : [];
     runs.push({ label: 'debt-balance.js --diff', ...runScript('debt-balance.js', [codeRepo, '--diff', options.base, ...planClaims, ...exclusions], codeRepo) });
@@ -611,19 +659,22 @@ function settledRuns(options, kind, codeRepo, measure, excluded) {
   return runs;
 }
 
-function previousSnapshot(packetDirectory, stem, round) {
-  const previous = readOptional(path.join(packetDirectory, `${stem}-r${round - 1}.md`));
-  if (!previous) return null;
-  const match = previous.match(/^- Snapshot: ([0-9a-f]{40,64})\b/m);
-  return match ? match[1] : null;
+function slug(text) {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
 function unitLabel(kind, options) {
-  if (kind === 'code') return `s${options.stage}`;
-  if (kind === 'fix') return options.bug.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'bug';
+  if (kind === 'code') return options.stage === null ? 'feature' : `s${options.stage}`;
+  if (kind === 'fix') return options.bugs.length === 1 ? slug(options.bugs[0]) || 'bug' : `bugs-${options.bugs.map(slug).join('-')}`;
   if (kind === 'tests') return 'tests';
-  if (kind === 'trd') return 'align';
-  return '';
+  return 'groom';
+}
+
+function packetStem(packetDirectory, stem, self) {
+  if (self) return `${stem}-self`;
+  let candidate = stem;
+  for (let index = 2; fs.existsSync(path.join(packetDirectory, `${candidate}.md`)); index++) candidate = `${stem}-${index}`;
+  return candidate;
 }
 
 function patchFiles(diff, patchDirectory) {
@@ -658,13 +709,11 @@ function build(options) {
   const kind = options.kind;
   const docsRepo = repositoryOf(options.featureDirectory);
   const codeRepo = options.repo ? repositoryOf(path.resolve(options.repo)) : docsRepo;
-  const diffRepo = kind === 'hub' || kind === 'trd' ? docsRepo : codeRepo;
+  const diffRepo = kind === 'groom' ? docsRepo : codeRepo;
   const relativeFeature = path.relative(docsRepo, options.featureDirectory) || '.';
-  const featureSpec = kind === 'hub'
-    ? [`${relativeFeature}/TRD.md`, `${relativeFeature}/contract`]
-    : kind === 'trd'
-      ? [`:(glob)${relativeFeature}/TRD*.md`, ...['widget-spec', 'section-slicing', 'design', 'contract'].map((folder) => `${relativeFeature}/${folder}`)]
-      : null;
+  const featureSpec = kind === 'groom'
+    ? [`:(glob)${relativeFeature}/TRD*.md`, ...['widget-spec', 'section-slicing', 'design', 'contract'].map((folder) => `${relativeFeature}/${folder}`)]
+    : null;
   const excluded = options.exclude.map((entry) => {
     const relative = repositoryRelative(diffRepo, entry);
     if (relative === null) inputError(`--exclude ${entry} is not inside ${diffRepo}`);
@@ -672,9 +721,11 @@ function build(options) {
   });
   const pathspec = [...(featureSpec || ['.', ':(exclude).alpha-sdlc']), ...excluded.map((entry) => `:(exclude)${entry}`)];
   const feature = path.basename(options.featureDirectory);
-  const stem = [feature, kind === 'hub' ? 'hub' : options.platform, unitLabel(kind, options)].filter(Boolean).join('-');
+  const self = options.self;
   const packetDirectory = path.join(stateDirectoryFor(diffRepo), 'review');
-  const packetPath = path.join(packetDirectory, `${stem}-r${options.round}.md`);
+  const platformPart = kind === 'groom' && options.platform === 'all' ? null : options.platform;
+  const stem = packetStem(packetDirectory, [feature, platformPart, unitLabel(kind, options)].filter(Boolean).join('-'), self);
+  const packetPath = path.join(packetDirectory, `${stem}.md`);
 
   let measure;
   try {
@@ -683,14 +734,15 @@ function build(options) {
     if (error instanceof TierInputError) inputError(error.message);
     throw error;
   }
-  const tiered = kind === 'code' || kind === 'fix';
-  const tier = tiered ? measure.tier : 'full';
-  const tierReasons = tiered ? measure.reasons : [kind === 'tests'
-    ? 'test reviews keep both dimensions on every diff'
-    : 'grooming reviews keep their dimensions on every diff'];
+  const tiered = (kind === 'code' || kind === 'fix') && !self;
+  const tier = self ? 'self' : tiered ? measure.tier : 'full';
+  const tierReasons = self ? ['the author\'s self-review — no reviewer; the phase is reviewed once, at its end']
+    : tiered ? measure.reasons : [kind === 'tests'
+      ? 'test reviews keep both dimensions on every diff'
+      : 'grooming reviews keep their dimensions on every diff'];
 
-  const unit = kind === 'code' ? stageUnit(options) : kind === 'fix' ? bugUnit(options)
-    : kind === 'tests' ? testsUnit(options) : trdUnit(options, kind, docsRepo);
+  const unit = kind === 'code' ? (options.stage === null ? featureUnit(options) : stageUnit(options))
+    : kind === 'fix' ? bugUnit(options) : kind === 'tests' ? testsUnit(options) : groomUnit(options, docsRepo);
   const definition = loadDimensions(kind);
   const shaped = shapeDimensions(definition, {
     kind, spokeCount: unit.spokeCount || 0, foundation: Boolean(unit.foundation), options, tier,
@@ -702,25 +754,28 @@ function build(options) {
   const snapshot = options.head ? null : snapshotTree(diffRepo);
   const target = options.head || snapshot;
   const headCommit = git(diffRepo, ['rev-parse', 'HEAD']).stdout.trim();
-  const reportPath = (id) => path.join(packetDirectory, `${stem}-r${options.round}-${id}.md`);
+  const reportPath = (id) => path.join(packetDirectory, `${stem}-${id}.md`);
   const scriptOnly = tier === 'script-only';
-  const withCritic = !scriptOnly && tier !== 'light';
-  const reRuns = (kind === 'code' || kind === 'fix') ? '; it also re-runs the stage\'s own tests and the sabotage checks' : '';
+  const noReviewer = scriptOnly || self;
+  const withCritic = !noReviewer && tier !== 'light';
+  const reRuns = (kind === 'code' || kind === 'fix') ? '; it also re-runs the change\'s own tests and the sabotage checks' : '';
+  const scope = kind === 'code' ? (options.stage === null ? ' · the whole feature' : ` · stage ${options.stage}`)
+    : kind === 'fix' ? ` · ${options.bugs.length === 1 ? 'bug' : 'bugs'} ${options.bugs.join(', ')}` : '';
 
   const header = {
     title: 'Header',
     lines: [
-      `- Kind: ${KIND_LABEL[kind]} (${definition.skill} · ${definition.step})`,
+      `- Kind: ${self ? SELF_LABEL[kind] : kind === 'code' && options.stage !== null ? KIND_LABEL.stage : KIND_LABEL[kind]} (${definition.skill} · ${definition.step})`,
       ...(unit.variant ? [unit.variant === 'feature'
         ? '- Variant: feature — no variant notes; the checklist reads as written'
         : `- Variant: ${unit.variant} — read grooming-review.md → *Variants* before the checklist`] : []),
-      `- Feature: ${options.featureDirectory} · platform ${options.platform}${kind === 'code' ? ` · stage ${options.stage}` : ''}${kind === 'fix' ? ` · bug ${options.bug}` : ''} · round ${options.round}`,
+      `- Feature: ${options.featureDirectory} · platform ${options.platform}${scope}`,
       `- Repository: ${diffRepo}`,
       `- Base: ${measure.base} · HEAD: ${headCommit || 'none'} · compared with: ${options.head ? `${options.head} (${measure.head})` : 'the working tree, untracked files included'}`,
       treeHash.tree
         ? `- Tree hash: ${treeHash.tree} (\`scan-record.js --hash\`). Re-run a plugin script only if \`node ${scriptPath('scan-record.js')} --hash ${diffRepo}\` prints another tree.`
         : `- Tree hash: unavailable (${treeHash.why}) — the settled outputs below are not pinned to a tree: the owning dimension re-runs what it relies on.`,
-      `- Snapshot: ${snapshot || 'none'}${snapshot ? ' (this round\'s working tree, for the next round\'s diff)' : ''}`,
+      `- Snapshot: ${snapshot || 'none'}${snapshot ? ' (the working tree this packet diffs)' : ''}`,
       `- Tier: ${tier} — ${tierReasons.join('; ')}`,
       ...(excluded.length
         ? [`- Excluded by the author (another session's work — out of the tier, the map, the diff and the sweeps): ${excluded.map((entry) => `\`${entry}\``).join(', ')}`]
@@ -730,8 +785,10 @@ function build(options) {
   };
 
   const dimensionLines = [];
-  if (scriptOnly) {
-    dimensionLines.push('- Launch: no reviewer. The diff cannot change reachable production behaviour — close on the settled outputs and the stage\'s own suite.');
+  if (self) {
+    dimensionLines.push('- Launch: no reviewer — the author\'s self-review. Walk the checklist items below yourself against this packet, each answered with the line or the command that settles it. The phase is reviewed once, at its end.');
+  } else if (scriptOnly) {
+    dimensionLines.push('- Launch: no reviewer. The diff cannot change reachable production behaviour — close on the settled outputs and its own suite.');
   } else if (shaped.single) {
     dimensionLines.push(`- Launch: one \`alpha-sdlc:sdlc-reviewer\` runs every dimension below${tier === 'light' ? ' (light tier)' : ''}${reRuns}. Then \`review-gaps.js\`${withCritic ? ', then `alpha-sdlc:sdlc-reviewer-critic` with the report and the gaps output' : ''}.`);
   } else {
@@ -739,26 +796,26 @@ function build(options) {
   }
   for (const dimension of shaped.dimensions) {
     const checklist = checklistPathOf(dimension, definition.skill);
-    dimensionLines.push(
-      `- ${dimension.id} · ${dimension.name} · items ${dimension.items.join(', ')}` +
-        (dimension.testQuality ? ' · re-runs the stage\'s own tests and the sabotage checks' : '') +
+    dimensionLines.push(self
+      ? `- ${dimension.id} · ${dimension.name} · items ${dimension.items.join(', ')} · checklist ${checklist.path}`
+      : `- ${dimension.id} · ${dimension.name} · items ${dimension.items.join(', ')}` +
+        (dimension.testQuality ? ' · re-runs the change\'s own tests and the sabotage checks' : '') +
         ` · agent ${shaped.single ? 'alpha-sdlc:sdlc-reviewer' : dimension.agent || 'alpha-sdlc:sdlc-reviewer'}` +
-        ` · checklist ${checklist.path}` + (shaped.single ? '' : ` · report ${reportPath(dimension.id)}`),
-    );
+        ` · checklist ${checklist.path}` + (shaped.single ? '' : ` · report ${reportPath(dimension.id)}`));
     if (checklist.note) dimensionLines.push(`  - ${checklist.note}`);
   }
   const reportIds = shaped.single ? ['single'] : shaped.dimensions.map((dimension) => dimension.id);
-  if (!scriptOnly && shaped.single) {
+  if (!noReviewer && shaped.single) {
     dimensionLines.push(`- single · every dimension above (${shaped.dimensions.map((dimension) => dimension.id).join(', ')}) · items ${[...new Set(shaped.dimensions.flatMap((dimension) => dimension.items))].sort((a, b) => a - b).join(', ')} · report ${reportPath('single')}`);
   }
   if (withCritic) {
-    const reads = kind === 'hub' || kind === 'trd'
-      ? 'the reports, this map, the diff stat, the gaps output and the author\'s section map (grooming-review.md → *How a round runs*, step 3)'
+    const reads = kind === 'groom'
+      ? 'the reports, this map, the diff stat, the gaps output and the author\'s section map (grooming-review.md → *How the grooming review runs*, step 3)'
       : 'the reports, this map, the diff stat and the gaps output';
     dimensionLines.push(`- critic · \`alpha-sdlc:sdlc-reviewer-critic\` after \`review-gaps.js\` · reads ${reads} · the author files its report at ${reportPath('critic')}`);
   }
   for (const note of shaped.notes) dimensionLines.push(`- Note: ${note}`);
-  if (!scriptOnly) {
+  if (!noReviewer) {
     dimensionLines.push(`- Gaps: \`node ${scriptPath('review-gaps.js')} --packet ${packetPath} --reports ${reportIds.map(reportPath).join(' ')}\``);
   }
 
@@ -785,9 +842,9 @@ function build(options) {
     title: 'Author\'s verification',
     lines: options.verify
       ? (verify === null ? [`cannot read ${path.resolve(options.verify)}`] : [`From ${path.resolve(options.verify)} — verbatim:`, '', ...fenced(verify)])
-      : kind === 'hub' || kind === 'trd'
+      : kind === 'groom'
         ? ['None supplied — a TRD review runs no suite; the doc checks arrive as settled outputs (--settled).']
-        : ['None supplied: the author\'s runs are unverified, so the test-quality dimension (or the single reviewer) runs the stage\'s own tests.'],
+        : ['None supplied: the author\'s runs are unverified, so the test-quality dimension (or the single reviewer) runs the change\'s own tests.'],
   });
   const runs = settledRuns(options, kind, codeRepo, measure, excluded);
   const settledLines = [treeHash.tree
@@ -805,19 +862,6 @@ function build(options) {
         ? [`From ${rules.principlesPath} lines ${mapRule.range[0]}–${mapRule.range[1]} — verbatim:`, '', ...mapRule.text.replace(/\s+$/, '').split('\n')]
         : ['No change → doc map found in principles.md: map the change to docs/basics by the doc titles.'],
     });
-  }
-
-  if (options.round > 1) {
-    const prevText = readRequired(path.resolve(options.prev), 'the previous findings');
-    const since = options.since || previousSnapshot(packetDirectory, stem, options.round);
-    const previousLines = [`Findings and closing proofs of round ${options.round - 1} — ${path.resolve(options.prev)}, verbatim:`, '', ...fenced(prevText)];
-    if (since && target) {
-      const sinceDiff = git(diffRepo, ['diff', '-M', since, target, ...spec]);
-      previousLines.push('', `The change since round ${options.round - 1} (\`git diff ${since.slice(0, 12)} ${target.slice(0, 12)}\`):`, '', ...(sinceDiff.ok && sinceDiff.stdout.trim() ? fenced(sinceDiff.stdout, 'diff') : [sinceDiff.ok ? '(nothing changed since that round)' : `unavailable: ${sinceDiff.stderr}`]));
-    } else {
-      previousLines.push('', `The change since round ${options.round - 1} is unavailable (no snapshot of that round): review the full diff below.`);
-    }
-    sections.push({ title: `Previous round`, lines: previousLines });
   }
 
   const ruleLines = [];
@@ -846,7 +890,7 @@ function build(options) {
       diffText += spawnSync('git', ['-C', diffRepo, 'diff', '--no-index', '--', '/dev/null', file.path], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 }).stdout || '';
     }
   }
-  if ((kind === 'hub' || kind === 'trd') && diffText) {
+  if (kind === 'groom' && diffText) {
     const pieces = diffText.split(/^(?=diff --git )/m).filter((piece) => piece.startsWith('diff --git '));
     const isNew = (piece) => /^new file mode/m.test(piece.split('@@')[0]);
     const created = pieces.filter(isNew).map((piece) => (piece.split('\n')[0].match(/ b\/(.+)$/) || [])[1]).filter(Boolean);
@@ -858,26 +902,29 @@ function build(options) {
   if (!diffLineCount) diffLines.push('(empty)');
   else if (diffLineCount <= INLINE_DIFF_LIMIT) diffLines.push(...fenced(diffText, 'diff'));
   else {
-    const patches = patchFiles(diffText, path.join(packetDirectory, `${stem}-r${options.round}.patches`));
+    const patches = patchFiles(diffText, path.join(packetDirectory, `${stem}.patches`));
     diffLines.push(`Over ${INLINE_DIFF_LIMIT} lines, so it is split per file — read the ones your dimension owns:`, '');
     for (const patch of patches) diffLines.push(`- \`${patch.name}\` → ${patch.file} (${patch.lines} lines)`);
   }
   sections.push({ title: 'Diff', lines: diffLines });
 
-  const subject = kind === 'code' ? `stage ${options.stage}` : kind === 'fix' ? `bug ${options.bug}` : kind === 'tests' ? 'tests' : kind === 'hub' ? 'hub review' : 'hub alignment';
-  const packet = assemble(`Review packet — ${feature} · ${options.platform} · ${subject} · round ${options.round}`, sections);
+  const subject = kind === 'code' ? (options.stage === null ? 'feature review' : `stage ${options.stage} self-review`)
+    : kind === 'fix' ? `${self ? 'self-review of' : 'fix review of'} ${options.bugs.join(', ')}`
+      : kind === 'tests' ? 'test review' : 'grooming review';
+  const packet = assemble(`${self ? 'Self-review packet' : 'Review packet'} — ${feature} · ${options.platform} · ${subject}`, sections);
   fs.mkdirSync(packetDirectory, { recursive: true });
   fs.writeFileSync(packetPath, packet.endsWith('\n') ? packet : packet + '\n');
 
   const summary = [
     packetPath,
     `tier: ${tier} — ${tierReasons.join('; ')}`,
-    scriptOnly ? 'reviewers: none — close on the settled outputs'
+    self ? 'reviewers: none — the author\'s self-review: walk the checklist against this packet'
+      : scriptOnly ? 'reviewers: none — close on the settled outputs'
       : shaped.single ? `reviewers: one alpha-sdlc:sdlc-reviewer for ${shaped.dimensions.map((dimension) => dimension.id).join(', ')} → ${reportPath('single')}${withCritic ? ', then the critic' : ''}`
         : `reviewers: ${shaped.dimensions.map((dimension) => `${dimension.id} (${dimension.agent || 'alpha-sdlc:sdlc-reviewer'})`).join(', ')} → ${reportPath('<id>')}, then the critic`,
     `settled: ${runs.map((run) => `${run.label} exit ${run.exitCode}`).join(' · ') || 'none'}`,
     excluded.length ? `excluded: ${excluded.join(', ')}` : null,
-    unowned.length ? `UNOWNED: ${unowned.join(', ')}` : null,
+    unowned.length && !self ? `UNOWNED: ${unowned.join(', ')}` : null,
   ].filter(Boolean);
   return summary.join('\n') + '\n';
 }

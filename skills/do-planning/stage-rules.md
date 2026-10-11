@@ -68,7 +68,7 @@ draft (Step 4) follow these rules; `plan-template.md` is the block each stage fi
     (build/run/test/lint) → repo hygiene**, each marked `Layer: n/a (scaffolding)`. Don't force
     layer stages onto work that creates the layers.
   - **Every stage declares its `Layer`, and its diff must stay inside it.** That declaration is what
-    lets `do-development`'s conformance review check layer placement mechanically (business logic in
+    lets `do-development`'s self-review and feature review check layer placement mechanically (business logic in
     a ViewModel, or a presentation stage reaching into data, is a violation) instead of guessing.
 
 ## Presentation — shell → sections → assembly
@@ -125,8 +125,8 @@ draft (Step 4) follow these rules; `plan-template.md` is the block each stage fi
   path the layout names>` lists the open register rows that name those files; each is its own
   question, ★ *pay it in this feature* — unless paying changes behaviour or a contract (→
   `do-grooming`) or edits a file beyond the footprint, where ★ keeps it. A kept row's status is
-  written in the register at this gate — `accepted — <why + revisit trigger>` — or the stage review
-  measures it again. A row grooming already decided is not asked again: its answer is recorded. A
+  written in the register at this gate — `accepted — <why + revisit trigger>` — or the stage's
+  self-review measures it again. A row grooming already decided is not asked again: its answer is recorded. A
   `decided` row whose revisit trigger this plan meets is asked again. A row found only because a
   directory the layout names holds its file, which no stage will edit, is recorded *not edited*.
 - **No register** (a `lite` profile) → offer the single-doc setup of `20-tech-debt-register`;
@@ -191,5 +191,6 @@ draft (Step 4) follow these rules; `plan-template.md` is the block each stage fi
 ## Review docs — named per stage
 
 - **Per stage, also name the profile docs that stage must be reviewed against** (the plan
-  template's *Conformance review* line) — `do-development` audits each stage's diff against them
-  before presenting it, so naming them here is what makes that review targeted instead of a guess.
+  template's *Conformance review* line) — `do-development`'s self-review audits each stage's diff
+  against them before presenting it, and its feature review the whole feature's, so naming them
+  here is what makes both targeted instead of a guess.

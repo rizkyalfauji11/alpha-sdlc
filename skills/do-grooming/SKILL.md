@@ -33,19 +33,18 @@ plain layer in the org's language per its `../../plain-language/` guide (`princi
 
 - No `docs/basics/` → **STOP**: ask for `do-project-setup` first; groom without it only on the
   user's explicit choice, noting that decisions are ungrounded.
-- A spoke with no hub, an unapproved hub contract or a Hub review row not ✅ → **STOP**: finish the
-  hub and its review first.
+- A spoke with no hub, an unapproved hub contract, or no `self-reviewed` or ✅ Hub review row →
+  **STOP**: finish the hub and its self-review first.
 - Gate 0 → **STOP** for the outline, no content before it; then write the skeleton.
 - Each section → ask first, propose, **STOP** for approve / edit / regenerate — one at a time, never
   a batch; only then write it, stamped `_Approved: <YYYY-MM-DD> · <commit>_`.
 - A depended-on feature not built → Open Decision, its slice blocked. A domain-model contradiction →
   Open Decision + a Contradictions entry.
-- Step 2a → the hub-review verdict, **STOP**; only a clean pass stamps ✅ and opens the first spoke.
+- Step 2a → the hub's self-review, **STOP**; its `self-reviewed` stamp opens the first spoke.
 - Step 3, client spokes → one gate per widget spec, one per slicing section with its crop.
 - Step 4 → a screen missing either doc or its checked Coverage checklist → **STOP**, back to Step 3;
-  the alignment verdict, **STOP**; only a clean pass is stamped.
-- Each review round records its count; **flat or rising across three rounds is a STOP** — escalate
-  to the user with the trend instead of launching another round.
+  the spoke's self-review, **STOP**. Step 5 → the grooming review, once every spoke is
+  self-reviewed: its verdict, **STOP**; only its close stamps ✅.
 - A hub-wrong finding is its own decision: the hub changes once, on a yes to that change.
 
 ## Flow
@@ -146,13 +145,12 @@ The last section is **structured** (it feeds downstream ticket-slicing and monit
 When grooming a spoke, also update the hub's **Spokes** field to link the new spoke — and when it
 lives in a sibling repository, its `Repo` cell names that repo (same repo is the default: a dash).
 
-### Step 2a — Hub review (hub only) — the gate before any spoke
+### Step 2a — The hub's self-review (hub only) — the gate before any spoke
 
-Once the hub's last section is written, read `grooming-review.md` and run its *Hub review* —
-points 1–5 in two dimensions, the gaps check and the critic, fixes closed on their proofs. Every
-round appends its objective-violation count to the **Hub review** row. On a clean pass stamp the
-hub's **Hub review** row (`reviewed <date> · rev <commit>` plus its round counts), and only then
-offer the first spoke. Present the verdict and STOP. Then a session boundary.
+Once the hub's last section is written, walk `grooming-review.md`'s hub points 12–16 yourself,
+after the doc checks and the contract checker (*Self-reviews*). Fix what you find, stamp the **Hub
+review** row `self-reviewed <date> · rev <commit>`, and only then offer the first spoke. Present the
+result and STOP. Then a session boundary.
 
 ### Step 3 — Per-screen artifacts (client spokes only)
 
@@ -167,35 +165,39 @@ their rules are in `client-spoke.md`. For **each screen** in the spoke, in order
    section-slicing screen + per-section stamps), then run the doc's *Coverage checklist* in full.
    Unchecked lines block development, so resolve them here. Then a session boundary.
 
-### Step 4 — Hub-alignment review (spokes only) — the completion gate
+### Step 4 — The spoke's alignment self-review (spokes only)
 
 A spoke's last approved section does **not** finish it. **First, the mechanical precondition —
 per-screen artifacts complete:** every screen in the spoke has BOTH `widget-spec/<screen>.md` AND
 `section-slicing/<screen>.md` with the slicing doc's *Coverage checklist* fully checked. Any screen
-missing either doc → **STOP, back to Step 3** — do not run the review, do not call the spoke
-complete (this is the hole where a run that drifts after the widget-spec gates used to sail
-through). **The artifacts are frozen once the review starts:** a new screen frame, crop, case or
-state during alignment is a design change, not a fix — it goes back to its Step 3 gate first.
+missing either doc → **STOP, back to Step 3** — do not run the self-review, do not call the spoke
+complete. **The artifacts are frozen once the self-review starts:** a new screen frame, crop, case
+or state is a design change, not a fix — it goes back to its Step 3 gate first.
 
-1. Read `grooming-review.md` and run its *Hub-alignment review* — the 11-point checklist in the
-   packet's dimensions, the gaps check and the critic — never beside another spoke's review.
-2. **Resolve by direction** and close each finding on its proof, per that file — a hub-wrong finding
-   is its own decision, gathered with every awaiting spoke's into one hub Open Decision `pending hub
-   change` and fixed once, on a yes. Only needs-eyes findings go to a next round.
-3. **Present the verdict and STOP** — what was checked, findings by direction, what you fixed, what
-   needs the user's decision. A spoke with unresolved objective misalignment is **not done**, and
-   nothing downstream should plan against it.
-4. **Every** round, clean or dirty, appends its objective-violation count to the spoke's `Alignment
-   rounds` row; only a clean pass stamps both sides (`grooming-review.md` → *Stamps*) — a user who
-   chooses to proceed anyway is taking `principles.md`'s recorded override at that downstream STOP,
-   with the gap named and recorded there — the spoke is still not stamped. Then a session boundary.
+1. Walk `grooming-review.md`'s alignment points 1–11 yourself, after the AC ↔ slice lookup and the
+   contract checker.
+2. **Resolve by direction**, per that file — a hub-wrong finding is its own decision, gathered with
+   every other spoke's into one hub Open Decision `pending hub change` and fixed once, on a yes.
+3. **Present the result and STOP** — which points a command settled and which you judged by
+   reading, what you fixed, what needs the user's decision. Stamp
+   `self-reviewed <date> · hub rev <commit>` on the spoke's `Hub alignment` row and its hub
+   *Spokes* cell. Then a session boundary.
 
-Then tell the user the TRD is complete and should be reviewed as a PR.
+### Step 5 — The grooming review — once, the hub and every spoke
+
+Once every spoke in the hub's *Spokes* table is self-reviewed, run `grooming-review.md` → *How the grooming review runs*: one packet, one merged verdict,
+each fix closed on its proof. **Present the verdict and STOP** — what was checked, findings by
+direction, what you fixed, and every needs-eyes and judgment finding for the user to decide. A spoke with unresolved objective misalignment is
+**not done**, and nothing downstream should plan against it. On the close, stamp the hub's `Hub
+review` row ✅ and every spoke's alignment (`grooming-review.md` → *Stamps*) — a user who proceeds
+anyway takes `principles.md`'s recorded override at that downstream STOP, the gap named there; the
+spoke stays unstamped. Then tell the user the TRD is complete
+and should be reviewed as a PR.
 
 ## Resume (fresh session)
 
-**Session boundaries** fall after the Gate-0 skeleton, the hub review ✅, each spoke's alignment ✅,
-each closed screen and the phase end (every spoke aligned): persist first, then write
+**Session boundaries** fall after the Gate-0 skeleton, the hub's self-review, each spoke's
+self-review, each closed screen and the phase end (the grooming review ✅): persist first, then write
 `.alpha-sdlc/next/<feature>--<platform>.json` (`<feature>--hub` at a hub boundary) and, for
 session-only facts, its handoff, and offer the fresh session in the Next paragraph — "/clear, then
 'lanjut'" or `/alpha-sdlc:do-grooming <feature> [<platform>]`; at the phase end both name
@@ -210,7 +212,7 @@ answers*, Open Decisions and review rows, with the per-screen docs. To resume, f
 Exit 0 names the next unit, 1 a STOP to present, 2 an older or unknown format — read the files it
 lists. Then read the next-file and its handoff, set its `status` to `"consumed"`, state the
 recorded understanding (§1's *Gate-0 notes*) in one line, and re-read what the next unit needs: its
-template and branch file, `grooming-review.md` at Step 2a or 4, the approved sections it builds on.
+template and branch file, `grooming-review.md` at Step 2a, 4 or 5, the approved sections it builds on.
 Never re-run Gate 0 or a stamped step — an answered question is not asked again (`principles.md` →
 *Ask, don't assume*).
 
@@ -230,21 +232,21 @@ dir if needed; an existing file → *Resume* above).
 - **Groom the spoke that owns the contract and the data first** — normally backend — because the
   schema, its foreign keys and the contract's real form surface there; client spokes follow.
 - **The hub is groomed first — hard gate, no spoke without an approved hub contract.** If a user
-  asks to groom a spoke and there's no hub — or its contract isn't approved, or the hub review
-  hasn't passed — **STOP and finish the hub and its review first.** Never start a spoke on a
-  missing, unapproved or unreviewed hub; that's exactly how spokes drift and produce the 405 /
-  wrong-shape bugs.
+  asks to groom a spoke and there's no hub — or its contract isn't approved, or the hub's
+  self-review isn't stamped — **STOP and finish the hub and its self-review first.** Never start a
+  spoke on a missing, unapproved or unreviewed hub; that's exactly how spokes drift and produce the
+  405 / wrong-shape bugs.
 
 ## Rules
 
 - **Stay inside the hub, and show the growth.** Every AC, case, state, screen frame and Open
   Decision a spoke adds cites its hub anchor (`principles.md` → *Build only what's specified*); one
   without an anchor is asked as a scope question whose ★ is *not in this feature, recorded as a
-  follow-up*. Every gate after the spoke's first approval, and every alignment verdict, carries one
-  line of growth against the last approved version — AC, Open Decisions, cases and frames, then and
-  now, with the additions split into behavior and bookkeeping — so a widening is seen at the gate,
-  not discovered three phases later.
-- **A hub edit after any spoke exists stales every spoke's stamp** — each spoke is re-reviewed,
+  follow-up*. Every gate after the spoke's first approval, every self-review and the grooming
+  review's verdict carry one line of growth against the last approved version — AC, Open
+  Decisions, cases and frames, then and now, with the additions split into behavior and
+  bookkeeping — so a widening is seen at the gate, not discovered three phases later.
+- **A hub edit after any spoke exists moves every spoke's stamp** — each spoke is re-checked,
   scoped to what moved (`grooming-review.md` → *The hub moving*); announce that at the hub edit,
   don't leave it for someone to discover in development.
 - **One approval gate per section.** Never write a section's prose to the TRD file until the user

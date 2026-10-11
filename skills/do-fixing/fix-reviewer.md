@@ -1,15 +1,17 @@
-# Fix review — the reviewer's checklist
+# Fix review — the checklist
 
-> Handed to the reviewer subagent by `do-fixing` (flow step 4) inside the review packet that
-> `scripts/review-packet.js` writes: the fix diff, the bug row and the AC rows it names (verbatim;
-> on the issue-TRD path, the audit-table row the author attached as a settled file), the review
-> charter's path and currency, the principles rules this diff can violate (the withheld
-> ones named by line range), the change → doc map, and `find-orphans.js --diff` marked settled.
-> `SKILL.md` keeps the dispatch rule and what the author does with the findings; this file is the
-> brief the reviewer works from — the same three parts as `do-development`'s, re-aimed at what
-> actually goes wrong in fixing. Each dimension owns its item by number — (a) item 1 on
-> `alpha-sdlc:sdlc-reviewer-deep`, re-running the regression test and the sabotage check; (b) item
-> 2; (c) item 3 — and the light tier hands all three to one `alpha-sdlc:sdlc-reviewer`.
+> Two readers work from it. The author runs it on each bug's fix as the self-review (`do-fixing`
+> flow step 4). The reviewer subagents run it once on every fix of the batch — the fix review after
+> the batch's last bug, the fixing phase's one review — inside the packet `scripts/review-packet.js`
+> writes: the batch's diff, each bug row and the AC rows it names (verbatim; on the issue-TRD path,
+> the audit-table rows the author attached as a settled file), the review charter's path and
+> currency, the principles rules this diff can violate (the withheld ones named by line range), the
+> change → doc map, and `find-orphans.js --diff` and `debt-balance.js --diff` marked settled.
+> `SKILL.md` keeps the dispatch rule and what the author does with the findings — the same three
+> parts as `do-development`'s, re-aimed at what actually goes wrong in fixing. Each dimension owns
+> its item by number — (a) item 1 on `alpha-sdlc:sdlc-reviewer-deep`, re-running the regression
+> tests and the sabotage checks; (b) item 2; (c) item 3 — and the light tier hands all three to one
+> `alpha-sdlc:sdlc-reviewer`. "The fix" below reads "each fix" in the fix review.
 
 1. **Fix quality** — **root cause, not symptom**: the fix lands at the **shared source** every
    caller routes through, not on the one path the report named (the reviewer greps the sibling

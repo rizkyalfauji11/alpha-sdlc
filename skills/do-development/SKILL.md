@@ -5,8 +5,9 @@ description: Implement a feature stage-by-stage by executing its development pla
 
 You are **implementing a feature by executing its development plan**, one stage at a time. The plan
 (`plan-<platform>.md` from `do-planning`) already decided the stages, order, package layout, and
-checkpoints — you follow it. **The whole discipline is: implement one stage → review it against the
-profile + principles → verify → stop at the checkpoint → wait for approval.** Never run past a
+checkpoints — you follow it. **The whole discipline is: implement one stage → self-review it against the
+profile + principles → verify → stop at the checkpoint → wait for approval — and after the last
+stage, the feature review: the development phase's one review.** Never run past a
 checkpoint unattended — **unless the user explicitly opted into auto-run mode** (*Auto-run* below).
 If there's no plan, point the user to `do-planning` first — this skill executes a plan, it doesn't
 invent one.
@@ -33,8 +34,7 @@ Why it matters → Options ★ → Context → Details (for engineers) → Next 
   conventions lack, an off-scale value used systematically, an uncovered case) → stop the stage,
   Open Decision, back to `do-grooming`. Ask first before installing tooling, booting a device,
   swapping a component, extracting a scaffold component, or creating an asset no search found.
-- 5: never skipped (no subagent → the checklist inline, said so). Judgment/scope finding → hard
-  STOP, Open Decision. Objective-violation count flat or rising over three rounds → STOP.
+- 5: the self-review is never skipped. Judgment/scope finding → hard STOP, Open Decision.
 - 6: render tooling fails → STOP, report a fix, wait. Case crop `pending export` → STOP, report.
   Assembly with nothing to measure → STOP, back to `do-grooming`.
 - 7: the stack can't boot → STOP and say so; never pass on isolated tests alone.
@@ -42,6 +42,8 @@ Why it matters → Options ★ → Context → Details (for engineers) → Next 
   STOP: approve / request changes / stop here; never touch the next stage before the answer.
 - 9: never commit an unapproved stage; the session boundary only after verdict, `Status: done`,
   commit.
+- Feature review, after the last stage: never skipped (no subagent → the checklist inline, said so);
+  its verdict ⏸ STOP — needs-eyes and judgment findings are the user's; `do-testing` only after it.
 - Auto-run (marker `running`): each ⏸ is a report, verdict `auto <date>`, commit, next stage; every
   other stop takes ★, recorded — except the five halting cases.
 
@@ -98,36 +100,23 @@ Why it matters → Options ★ → Context → Details (for engineers) → Next 
    handling/edge cases the AC needs): clearer names, smaller functions, dead code out, the stage's
    `Pays debt:` rows paid, comments a better name makes unnecessary deleted. Re-run to confirm still green. The doc/principle
    **auditing happens in step 5** — don't half-do it here and call it checked.
-5. **Conformance review (fresh eyes) — before verifying, before presenting** (in full:
-   `stage-steps.md` §5). Log your verification commands with exit codes and summary lines under
-   `.alpha-sdlc/`, never the repo root, and save the doc-check output and, on client UI, the
-   raw-literal output there. Run `node ../../scripts/review-packet.js
-   docs/development/<feature-name> <platform> --stage <n> --base <the stage's base commit> --verify
-   <log> --settled <each output>` (another session's uncommitted paths: `--exclude`,
-   `stage-steps.md` §5); its first stdout lines give the packet path, the tier (`review-tier.js`,
-   by measure), the reviewers and the settled exit codes. **Reviewers run in the foreground, the
-   whole round in one message, at most 3 in flight**, each handed only the packet path and its
-   dimension id (on a UI stage, also the section-slicing doc the packet lacks) — never your build
-   reasoning. The tier sets the round (`stage-steps.md` §5): **script-only** — no
-   reviewer, close on the settled scripts and the stage's own suite; **light** — one
-   `alpha-sdlc:sdlc-reviewer` for every dimension, then `review-gaps.js`; **full** — one reviewer
-   per `conformance-reviewer.md` item, then, **before you fix anything**, `review-gaps.js` and
-   `alpha-sdlc:sdlc-reviewer-critic`, whose findings join the round's.
-   Merge every report, the gaps output and the file → dimension map into `<packet stem>-merged.md`
-   — the same file:line counts once: one verdict, one objective-violation count. Then **fix every
-   objective violation in this stage and re-verify green** — each one **verified** at its cited file
-   and line first. **STOP on any judgment/scope finding** — record it as an **Open Decision** and
+5. **Self-review — before verifying, before presenting** (in full: `stage-steps.md` §5). Log your
+   verification commands with exit codes and summary lines under `.alpha-sdlc/`, never the repo
+   root, and save the doc-check output and, on client UI, the raw-literal output there. Run `node
+   ../../scripts/review-packet.js docs/development/<feature-name> <platform> --stage <n> --base <the
+   stage's base commit> --self --verify <log> --settled <each output>` (another session's
+   uncommitted paths: `--exclude`): it runs the plugin's checks once and writes them, with the
+   rules this diff can violate, into one packet. Then walk `conformance-reviewer.md` items 1–3
+   yourself against the stage diff, each answered with the line or the command that settles it, and
+   **fix every objective violation in this stage and re-verify green**. No reviewer runs per stage
+   (`principles.md` → *Each phase is reviewed once*).
+   **STOP on any judgment/scope finding** — record it as an **Open Decision** and
    hand back to the user/`do-grooming` rather than resolving it yourself. A design gap filled with
    invented behavior/UI, scope beyond the plan, a deviation from a decided convention, or a
    simplification that trades away correctness is one — **never fix-and-continue on those**, because
-   self-approving a scope change is exactly the gate this step exists to hold. **Close the stage on
-   the findings' closing proofs, not on another round**: every named command's output in the
-   packet, needs-eyes zero, no fix that changed product behaviour; a correction that changes what
-   the code *does* is written **test-first** and that test is its proof (`principles.md` → *One
-   round, closed by proof*). **A second round is owed only** for a needs-eyes finding, a fix that
-   added product behaviour, or a proof that would not go green. If no subagent can run, run the
-   identical checklist inline as an explicit self-review and say that's what happened — never skip
-   the step.
+   self-approving a scope change is exactly the gate this step exists to hold. A correction that
+   changes what the code *does* is written **test-first**. Never skip the step, and never call it
+   clean without saying what each item was checked by.
 6. **Visual parity + content-fit (UI stages with a design ref)** — **what you compare depends on the
    stage's kind** (the plan's *Stage kind*): the dispatch for a `shell` / `section` / `assembly`
    stage, the content extremes, the section-slicing doc's Interactions (`X`) rows, and where each
@@ -153,7 +142,7 @@ Why it matters → Options ★ → Context → Details (for engineers) → Next 
    org's language per its guide in `../../plain-language/` when one exists. The structured packet is
    the **Details (for engineers)** section — not the opening — and the report **ends with what
    happens next** (`principles.md` → *Next*): the next stage and whether it starts now, or what the
-   review's verdict leaves to fix or to decide. Its slots: `stage-steps.md` §8. **Section cases (UI
+   self-review leaves to decide. Its slots: `stage-steps.md` §8. **Section cases (UI
    stages)** — the case-coverage table and its totals for **the cases this stage claims**; its shape
    is in **`client-ui.md` §5 — read it now if you have not**. "n/a" only for a **legacy screen this
    feature's grooming never touched** — a screen with a widget spec in this feature's directory but
@@ -171,9 +160,18 @@ Why it matters → Options ★ → Context → Details (for engineers) → Next 
    `Status` is not done; continue in place only when the user asks or little work remains, or stop
    if the user wants (honoring safe-stop).
 
-**After the last stage** — confirm every task/AC the plan covered is implemented and verified,
-report what's done and anything deferred, and hand off to `do-testing` — the AC are its input. Write
-the next-file for `do-testing` and offer the fresh session; in auto-run, go straight into it.
+**After the last stage — the feature review, once** (in full: `stage-steps.md` §10 — read it now).
+Confirm every task/AC the plan covered is implemented and verified, then run `node
+../../scripts/review-packet.js docs/development/<feature-name> <platform> --base <the commit
+development started from> --verify <log> --settled <each output>` — no `--stage`: the whole feature
+diff. **Reviewers run in the foreground, the whole round in one message, at most 3 in flight**, each
+handed only the packet path and its dimension id — never your build reasoning; the tier the packet
+names sets who runs. Fix every objective finding in one pass, each **verified** at its cited line
+first and closed on its proof. **Present the verdict and ⏸ STOP** — every needs-eyes and judgment
+finding is the user's; there is no second round. On the close, fill the plan's `Feature review`
+row, commit, report what's done and anything deferred, and hand off to `do-testing` — the AC are its
+input. Write the next-file for `do-testing` and offer the fresh session; in auto-run, go straight
+into it.
 
 ## Resume (fresh session)
 
@@ -193,13 +191,14 @@ The plan is the state; `.alpha-sdlc/next/<feature>--<platform>.json` and its han
    on from them; never discard them. Other uncommitted paths belong to another session or stage:
    leave them.
 5. Never redo a done stage. A verdict without `Status: done` means step 9 is unfinished: finish it
-   first.
+   first. Every stage done and the plan's `Feature review` row not filled → the feature review is
+   next.
 
 ## Auto-run
 
 Only on the user's explicit opt-in (`principles.md` → *Auto-run mode*): each checkpoint emits its
 full packet as a **report**, stamps `Checkpoint verdict: auto <date>`, commits, and continues —
-through every stage and **onward into `do-testing`** when the last stage lands — while questions
+through every stage and the feature review, and **onward into `do-testing`** when it closes — while questions
 auto-answer with the ★ recommendation (recorded) and the chain halts only where nothing can be
 decided: failed mandatory tooling, physically missing inputs, external writes, a fix that has
 failed three times, and a change the hub would need. **On opt-in, write
@@ -223,8 +222,8 @@ One line each; `stage-steps.md` states them in full, `client-ui-rules.md` the UI
 - **One stage at a time. Hard stop at each ⏸ checkpoint.** Implement the current stage, verify it,
   present it, and **wait for approval** before the next stage. "Approved stage 1" is not approval
   for stage 2.
-- **Stages built together are recorded** — `Built with:` on each block, each with its own review
-  round and checkpoint verdict · **respect "safe to stop after"** · **follow the codebase, not your
+- **Stages built together are recorded** — `Built with:` on each block, each with its own
+  self-review and checkpoint verdict · **respect "safe to stop after"** · **follow the codebase, not your
   taste** · **reuse lookup** in `19-code-inventory.md`, wiring per `02-architecture.md` · **consume
   the backend via the contract's generated types** · **asset search flow, then register-on-create**.
 - **UI (client plans):** don't trust code-from-image — render and compare every ref row, per

@@ -8,6 +8,7 @@
 | **Author** | <engineer> |
 | **Date** | <YYYY-MM-DD> |
 | **Scope confirmed** | <YYYY-MM-DD — the Step 1 gate> |
+| **Feature review** | <pending — then `reviewed YYYY-MM-DD · base <commit development started from> · findings n · needs-eyes n · verdict`, filled by `do-development` when the feature review — the phase's one review, after the last stage — closes> |
 
 > Stages are small and ordered for **incremental review**. Implement one stage, stop at its
 > ⏸ checkpoint, review, then continue. You can stop after any stage marked **safe to stop**.
@@ -102,12 +103,12 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 - **Pays debt:** <the `TD-<n>` rows this stage pays, behaviour-preserving, its characterization
   test named under *Test first* — or "nothing">
 - **Built with:** <only when this stage lands in the same change as another: `Stage N` — each of
-  them names the others, and each keeps its own review round and checkpoint verdict>
+  them names the others, and each keeps its own self-review and checkpoint verdict>
 - **Moved in:** <only when this stage claims an AC that §9 gives another slice: `AC-n` from
   `<slice>` — why it is provable only here · who decided and when. `scripts/check-coverage.js`
   fails a cross-slice claim without this line>
 - **Layer:** <contract / domain / data / presentation — or UI / data-integration if the project
-  isn't layered. The diff **stays inside this layer**; `do-development`'s conformance review checks
+  isn't layered. The diff **stays inside this layer**; `do-development`'s self-review and feature review check
   the diff against this declaration>
 - **Files / modules:** <paths>
 - **Approach:** <what / ladder rung · world-wide standard (agrees, or the surfaced conflict) — reuse
@@ -144,14 +145,14 @@ standard: agrees" — conflicts surfaced per the tiered rule>
 - **Conformance review — docs this stage must be checked against:** <the `docs/basics/` docs the
   stage's changes touch, e.g. `02-architecture` (layer placement) · `10-conventions` (error
   handling/logging) · `08-data-cache` (query keys + invalidation) · `18-design-tokens` (zero raw
-  literals) — so the reviewer audits the right ones instead of guessing. Principles + plan/AC
-  conformance are always checked>
+  literals) — so the stage's self-review and the feature review audit the right ones instead of
+  guessing. Principles + plan/AC conformance are always checked>
 - **Approved (plan gate):** <commit `<hash>` · approved <YYYY-MM-DD> — set by do-planning when this
   stage's draft passes its gate; `do-development` reads it before building the stage>
 - **Status:** <pending / done <YYYY-MM-DD> — set by `do-development` at step 9; this is what a
   resumed run reads to find the first unfinished stage>
-- **Checkpoint verdict:** <pending — set by do-development when the built stage passes review:
-  `approved <date>` or `auto <date>`; separate from *done*>
+- **Checkpoint verdict:** <pending — set by do-development when the self-reviewed stage is
+  approved: `approved <date>` or `auto <date>`; separate from *done*>
 - **Carry-forward:** <only when an earlier gate or checkpoint left a remark this stage must honor —
   one line each, with its date: do-planning moves it here from *Carry-forward answers*;
   `do-development` adds a checkpoint remark here>

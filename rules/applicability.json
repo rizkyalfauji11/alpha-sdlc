@@ -112,7 +112,7 @@
     "gated-documents-are-written-with-the-edit-or-write-tool-never-th": {
       "bundles": ["*"], "digest": false, "review": ["docs"]
     },
-    "every-change-is-reviewed-before-it-s-presented-fresh-eyes-not-th": {
+    "each-phase-is-reviewed-once-before-it-closes-fresh-eyes-not-the": {
       "bundles": ["execute", "groom", "plan"], "digest": false, "review": ["always"]
     },
     "parallel-work-fills-the-time-behind-a-gate-it-never-runs-past-on": {

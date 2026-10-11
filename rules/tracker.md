@@ -184,9 +184,9 @@ missing acceptance criterion: a defect, not a detail.
   take over — fall at every phase end and where a unit closes: development — a stage closed
   (verdict, `Status: done`, commit); fixing — a bug closed; testing — the bug report with its
   triage recorded; planning — a stamped stage; grooming — the Gate-0 skeleton written, the hub
-  review ✅, each spoke's alignment ✅, each closed screen; slicing and uploading — a stamped part or
-  verified batch. **At a boundary, persist first, then write the next-file:** every pending
-  answer, decision and finding goes into its artifact; then
+  self-review, each spoke's self-review, each closed screen, the grooming review ✅;
+  slicing and uploading — a stamped part or verified batch. **At a boundary, persist first, then
+  write the next-file:** every pending answer, decision and finding goes into its artifact; then
   `.alpha-sdlc/next/<feature>--<platform>.json` (`<feature>--hub` at a hub-level grooming
   boundary, `<feature>--tasks` in slicing and uploading, `profile--<repo>` inside a setup run)
   goes into the session's working directory — the workspace parent when the session
@@ -234,8 +234,8 @@ missing acceptance criterion: a defect, not a detail.
   5. **Details (for engineers)** — the technical evidence (diff, test output, files, coverage,
      screenshots) demoted near the end.
   6. **Next** — **always the last paragraph**, in plain words: what happens next and who does it.
-     After a gate: what the user's answer unlocks. After a review: what its verdict means — a fix
-     round on which dimensions, the stage closing, or a decision the user owes. In auto-run: what
+     After a gate: what the user's answer unlocks. After a review: what its verdict means — its
+     fixes, the phase closing, or a decision the user owes. In auto-run: what
      the chain does next, continuing now. At a halt: what would let it continue. A report that ends
      without it leaves the reader to guess whether anything is waiting on them.
 
@@ -408,6 +408,6 @@ Not in this bundle (they do not govern these skills, or bind through the add-on 
 - *The verification ladder*
 - *Component fidelity*
 - *Visual values are tokens*
-- *Every change is reviewed before it's presented*
+- *Each phase is reviewed once, before it closes*
 - *Comments: none*
 - *Naming is the documentation*
