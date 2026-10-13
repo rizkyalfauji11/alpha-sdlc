@@ -41,11 +41,13 @@ plain layer in the org's language per its `../../plain-language/` guide (`princi
 - A depended-on feature not built → Open Decision, its slice blocked. A domain-model contradiction →
   Open Decision + a Contradictions entry.
 - Step 2a → the hub's self-review, **STOP**; its `self-reviewed` stamp opens the first spoke.
-- Step 3, client spokes → one gate per widget spec, one per slicing section with its crop.
+- Step 3, client spokes → one gate per widget spec, one per slicing section with its crop; a
+  re-gate → one per screen.
 - Step 4 → a screen missing either doc or its checked Coverage checklist → **STOP**, back to Step 3;
   the spoke's self-review, **STOP**. Step 5 → the grooming review, once every spoke is
-  self-reviewed: its verdict, **STOP**; only its close stamps ✅.
-- A hub-wrong finding is its own decision: the hub changes once, on a yes to that change.
+  self-reviewed: its verdict, **STOP**; `review ran`, and only its close stamps ✅.
+- A hub-wrong finding is its own decision, held as `pending hub change` until the review's close:
+  the hub changes once, on a yes.
 
 ## Flow
 
@@ -59,10 +61,8 @@ that re-implements a registered job is a duplicate, not work), tech-stack, datab
 data-cache, conventions, ux-conventions as the section needs them — as your grounding reference
 before scanning code from scratch. If a section looks stale (repo moved past its commit stamp), note
 it and suggest a refresh. **If there's no `docs/basics/` (project not set up yet), STOP and ask the
-user to run `do-project-setup` first** — grooming grounds in that profile, and skipping it means
-grooming on an ungrounded view. Wait for their answer: recommend setting up first; proceed to groom
-without it only if the user explicitly chooses to (then fall back to scanning the repo, and note
-that decisions are ungrounded).
+user to run `do-project-setup` first** — grooming grounds in that profile. Proceed without it only
+if the user explicitly chooses to (then scan the repo, and note that decisions are ungrounded).
 
 1. Confirm the **feature name** (slugify to kebab-case) and **what is being groomed**: the **hub**,
    or a **platform spoke** (which one)? Check `docs/development/<feature-name>/` for an existing
@@ -160,7 +160,7 @@ their rules are in `client-spoke.md`. For **each screen** in the spoke, in order
 1. **Widget spec** → `widget-spec/<screen>.md`, per `widget-spec-template.md` — one gate per screen.
 2. **Section slicing** → `section-slicing/<screen>.md`, per `section-slicing-template.md` — the
    section tree, then **one gate per section**: its cases, how the logic runs, and its **approved
-   crop**. Never batch sections.
+   crop**. Never batch sections; a re-gate is one gate per screen.
 3. **Close the loop per screen** — set both docs' **`Approved` fields** (widget-spec header ·
    section-slicing screen + per-section stamps), then run the doc's *Coverage checklist* in full.
    Unchecked lines block development, so resolve them here. Then a session boundary.
@@ -177,7 +177,8 @@ or state is a design change, not a fix — it goes back to its Step 3 gate first
 1. Walk `grooming-review.md`'s alignment points 1–11 yourself, after the AC ↔ slice lookup and the
    contract checker.
 2. **Resolve by direction**, per that file — a hub-wrong finding is its own decision, gathered with
-   every other spoke's into one hub Open Decision `pending hub change` and fixed once, on a yes.
+   every other spoke's into one hub Open Decision `pending hub change`, fixed once at the review's
+   close.
 3. **Present the result and STOP** — which points a command settled and which you judged by
    reading, what you fixed, what needs the user's decision. Stamp
    `self-reviewed <date> · hub rev <commit>` on the spoke's `Hub alignment` row and its hub
@@ -187,12 +188,12 @@ or state is a design change, not a fix — it goes back to its Step 3 gate first
 
 Once every spoke in the hub's *Spokes* table is self-reviewed, run `grooming-review.md` → *How the grooming review runs*: one packet, one merged verdict,
 each fix closed on its proof. **Present the verdict and STOP** — what was checked, findings by
-direction, what you fixed, and every needs-eyes and judgment finding for the user to decide. A spoke with unresolved objective misalignment is
+direction, what you fixed, and every needs-eyes and judgment finding for the user to decide, the
+held hub change as one. Stamp `review ran` before any fix; the close re-runs nothing. A spoke with unresolved objective misalignment is
 **not done**, and nothing downstream should plan against it. On the close, stamp the hub's `Hub
 review` row ✅ and every spoke's alignment (`grooming-review.md` → *Stamps*) — a user who proceeds
-anyway takes `principles.md`'s recorded override at that downstream STOP, the gap named there; the
-spoke stays unstamped. Then tell the user the TRD is complete
-and should be reviewed as a PR.
+anyway takes `principles.md`'s recorded override downstream; the spoke stays unstamped. Then tell
+the user the TRD is complete and to review it as a PR.
 
 ## Resume (fresh session)
 
@@ -246,9 +247,9 @@ dir if needed; an existing file → *Resume* above).
   review's verdict carry one line of growth against the last approved version — AC, Open
   Decisions, cases and frames, then and now, with the additions split into behavior and
   bookkeeping — so a widening is seen at the gate, not discovered three phases later.
-- **A hub edit after any spoke exists moves every spoke's stamp** — each spoke is re-checked,
-  scoped to what moved (`grooming-review.md` → *The hub moving*); announce that at the hub edit,
-  don't leave it for someone to discover in development.
+- **A hub edit after any spoke exists moves every spoke's stamp** — each spoke's author re-walks
+  what moved, never a second review (`grooming-review.md` → *The hub moving*); announce it at the
+  edit.
 - **One approval gate per section.** Never write a section's prose to the TRD file until the user
   approves that section's *decisions*. The gate is on the **decisions**, not the wording. After
   approval, expanding to prose is mechanical — no second gate.

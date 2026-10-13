@@ -48,8 +48,8 @@ dimensions* and are never tiered.
 1. **One packet, written by script** —
    `node ../../scripts/review-packet.js docs/development/<feature> all --kind groom --base <sha>`.
    `--base` is the parent of the commit that first added the hub — that commit itself when it is the
-   repo's first, `HEAD` while the hub is uncommitted; a re-review after the hub moved takes the hub
-   rev of the stamps (*The hub moving*). `--base` names a real commit, never an invented one: a hub
+   repo's first, `HEAD` while the hub is uncommitted; the review of a spoke added after ✅ takes the
+   hub rev of the ✅ stamps (*The hub moving*). `--base` names a real commit, never an invented one: a hub
    rev recorded as a date is the hub's last commit by that day, from
    `git log -1 --format=%h --until='<date> 23:59:59' -- <hub>` (none → the first-review base), and
    a repo with no commit yet gets one first — the user commits the profile. The repo's doc-check
@@ -70,11 +70,16 @@ dimensions* and are never tiered.
 4. **The author verifies before acting** — open every cited file at the cited line, in one batch,
    before editing anything on a report's authority: a review that is wrong in one finding is not
    wrong in all of them, and acting on the wrong one ships a fix nobody reviews.
-5. If no subagent can run, run the identical checklist inline and say so; never skip the gate.
+5. **Stamp the run before fixing anything** — the hub's `Hub review` row becomes
+   `review ran <date> · rev <the hub commit the packet read>`. From then on the review only closes
+   (*Closing on proofs*): no second packet, and nothing its fixes move sends a spoke back to its
+   self-review.
+6. If no subagent can run, run the identical checklist inline and say so; never skip the gate.
 
 **Three dimensions, one reviewer each**, launched together: **(a) contract and data** — points 1,
 2, 4, 6, 12 and 13, the half a checker and the migrations can settle; **(b) flow and coverage** —
-points 3, 5, 7, 8, 9 and 15; **(c) consistency and decisions** — points 10, 11, 14 and 16, the half
+points 3, 5, 7, 8, 9 and 15, and every spoke's widget specs and section slicings read whole, in
+whichever repository the spoke lives; **(c) consistency and decisions** — points 10, 11, 14 and 16, the half
 only a reader holding the hub and every spoke at once can judge, run on
 `alpha-sdlc:sdlc-reviewer-deep`. **A thin dimension folds into its neighbour**, and the packet does
 the folding and says so: with one spoke, point 11 does not apply; with no spoke, points 1–11 do not;
@@ -167,17 +172,20 @@ and it surfaces as a bug three phases later. Every point is checked for every sp
 **Findings resolve by direction, and the direction matters** — in a self-review and in the
 grooming review alike:
 - **Spoke is wrong** → fix the spoke, re-present the affected section for approval (it's a
-  decision change, so it re-gates).
+  decision change, so it re-gates; a screen's moved sections re-gate together, once per screen).
 - **Hub is wrong** (a spoke exposed a real hub error) → **fix it in the hub, once for all spokes —
   never spoke by spoke — and only on a yes to the hub change itself.** Present it as its own
   decision, never folded into "apply all recommendations": the hub sections it moves and the
   spokes it touches. A blanket approval — "all recommendations", "continue" — covers spoke fixes
-  only. Gather every hub-wrong finding — from each spoke's self-review, and from the grooming
-  review — as one row of the hub's *Open Decisions* with the status `pending hub change` before you
-  ask, so they outlive the session; take them to the user as **one** hub change, fix the hub once,
-  then re-walk the points the moved sections feed (*The hub moving*). A hub fixed after each
-  spoke's check moves the spokes already checked, so the work multiplies — spokes × hub edits.
-  Never patch a spoke to match a hub you know is wrong.
+  only. Gather every hub-wrong finding — from each spoke's self-review, from another session (a
+  spoke or a plan groomed alongside), and from the grooming review — as rows of the hub's *Open
+  Decisions* with the status `pending hub change`, so they outlive the session, and **leave the
+  hub's sections as they are until the grooming review's closing gate**: there they go to the user
+  as **one** hub change, and the hub is fixed once. A `pending hub change` row moves no stamp; a
+  spoke that needs it cites the row and follows its ★ meanwhile. A hub fixed after each finding
+  moves the spokes already checked, so the work multiplies — spokes × hub edits. Never patch a spoke
+  to match a hub you know is wrong. After the review has closed, a hub-wrong finding is gathered the
+  same way and asked when found (*The hub moving*).
 - **Deliberate divergence** (this platform genuinely must differ) → it's an **Open Decision**, and
   once decided it's recorded **in the hub** as a platform exception, so the next spoke and
   `do-development` both see it. Silent divergence is never acceptable.
@@ -199,15 +207,20 @@ settle. Judgment findings are the user's decision. A finding **only a code chang
 can close is not a grooming finding** — record it as a numbered AC (§8) and hand it to
 `do-development`.
 
+**The held hub change is applied here, once**, on the user's yes at the verdict gate, with the
+spoke fixes, and closes on the same proofs. It sends no spoke back to its self-review and runs no
+second review: the review already read each finding and its fix. A screen whose approved sections
+the close moves re-gates once per screen (`client-spoke.md` → *Slice every screen*).
+
 ## Stamps
 
 **Stamp the result once, after the grooming review closes.** The hub's `Hub review` row becomes
 `` ✅ reviewed <YYYY-MM-DD> · rev `<hash>` · findings <n> · needs-eyes <n> ``; each spoke's header
-records `Hub alignment: reviewed <date> · hub rev <commit / hub's last approval date>`, and the
+records `Hub alignment: reviewed <date> · hub rev <the hub commit after the close>`, and the
 hub's *Spokes* table the same per spoke — a **foundation** spoke, which has no header table of its
 own, carries it in the hub's *Spokes* cell. **The exit is never a dirty stamp** — `reviewed` means
 the review's objective findings are closed on their proofs and its needs-eyes answered; until then
-the rows keep their `self-reviewed` stamps.
+the hub's row stays `review ran` and the spokes keep their `self-reviewed` stamps.
 
 Spokes may be groomed in parallel sessions, one per platform, each owning its `TRD-<platform>.md`
 (per `principles.md` → *Parallel work*): each session self-reviews its own spoke, and the grooming
@@ -217,20 +230,27 @@ hub fix breaks.
 
 ### The hub moving
 
-**A hub edit moves every stamp, and the re-check is scoped to what moved.** Before the grooming
-review, a hub edit after a spoke's self-review re-walks that spoke's points the changed sections
-feed, and its `self-reviewed` stamp is rewritten. After the grooming review, the hub moving runs the
-grooming review once more, over the hub and every spoke, with `--items` set to the points the
-changed sections feed: §1 context or §4 system design → 2 · §2 dependencies and entities → 4, 5, 8,
-13 · §3 feature flow → 7, 8, 15 · §5 contract → 1, 2, 12 · §6 cross-cutting → 6 · §7 change
-manifest and release ordering → 3, 9 — plus 10, 14 and 16 always, and 11 when two or more spokes
-exist. A hub edit that adds, removes, or renumbers a section gets the full checklist. A variant hub
-maps its moved sections by what they hold — its contract, its AC registry, its change manifest —
-and when unsure, the full checklist. The reviewer names the items it ran; an item it judges the
-change also reaches, it runs and says why. A spoke added after the grooming review gets the same
-two steps of its own: its self-review, then the grooming review scoped to it — its platform in
-place of `all`, `--items 1,2,3,4,5,6,7,8,9,10,11`. `do-planning` refuses to plan a spoke whose stamp
-is missing, only self-reviewed, or older than the hub's last change.
+**The review runs once per feature, and nothing the hub moves is reviewed twice.** A `pending hub
+change` row moves no stamp — `next-step.js` skips it.
+- **Before the grooming review**, any other hub edit moves every stamp: each spoke re-walks the
+  points the changed sections feed, and its `self-reviewed` stamp is rewritten.
+- **While it closes** (`review ran`), its held hub change and its fixes move nothing back
+  (*Closing on proofs*).
+- **After ✅**, a hub change is asked once and, on the yes, fixed once. Each spoke's author then
+  re-walks the points the moved sections feed and restamps
+  `reviewed <date> · hub rev <commit> · amended <date>`. The hub's author re-walks the hub points
+  the change touches and appends `· amended <date>` to the `Hub review` row. No reviewer runs: the
+  feature's next fresh eyes are its feature review in `do-development`.
+
+The points a moved section feeds: §1 context or §4 system design → 2 · §2 dependencies and
+entities → 4, 5, 8, 13 · §3 feature flow → 7, 8, 15 · §5 contract → 1, 2, 12 · §6 cross-cutting →
+6 · §7 change manifest and release ordering → 3, 9 — plus 10, 14 and 16 always, and 11 when two or
+more spokes exist. A hub edit that adds, removes, or renumbers a section → every point. A variant
+hub maps its moved sections by what they hold — its contract, its AC registry, its change
+manifest — and when unsure, every point. A spoke added after ✅ gets its self-review, then the
+grooming review scoped to it — its platform in place of `all`, `--items 1,2,3,4,5,6,7,8,9,10,11` —
+its first review, not a second. `do-planning` refuses to plan a spoke whose stamp is missing, only
+self-reviewed, or older than the hub's last change.
 
 ## Variants
 
@@ -269,7 +289,7 @@ the verdict — never reported passed.
    packet takes `--items 2,3,5,6,8,9,10,11,14,16`.
 
 **Stamps per variant.** Every hub carries a `Hub review` row — `self-reviewed` after its
-self-review, ✅ after the grooming review. A tech-debt or issue spoke uses `TRD-spoke-template.md`,
+self-review, `review ran` once the grooming review has run, ✅ at its close. A tech-debt or issue spoke uses `TRD-spoke-template.md`,
 so its `Hub alignment` row carries its side, and the hub's *Spokes* row is the hub's one home for
 the stamp — no hub-level `Hub alignment` row. A foundation spoke has no header table: its stamp sits
 in the hub's *Spokes* row alone, and every spoke is re-checked when a hub decision changes.

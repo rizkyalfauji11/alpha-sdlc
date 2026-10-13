@@ -116,7 +116,12 @@ using `section-slicing-template.md`.
   every section lists the elements it contains — either half missing is a gap the slicing doc's
   *Coverage checklist* catches.
 - **One approval gate per section** (its tree row, cases, logic, and crop together). Never batch
-  sections.
+  sections the first time.
+- **A re-gate is one gate per screen.** When a hub change or the grooming review's fixes move
+  sections already approved, the screen's widget spec and every moved section go to the user
+  together, each with its diff and any new crop, and their stamps are rewritten at once. One hub
+  change that touches six screens is six gates, not one per section. A new section, frame, case or
+  state is a design change and keeps its own gate.
 
 ## Multi-step flows
 

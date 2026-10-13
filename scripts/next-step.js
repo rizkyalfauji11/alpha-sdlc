@@ -43,9 +43,9 @@ const STOPS = {
   screensFirst: (screens) =>
     `${screens}: any screen missing either doc, or with its Coverage checklist unchecked → STOP, back to Step 3 — ` +
     'do not run the self-review, do not call the spoke complete.',
-  alignment: (why) =>
-    `The spoke's \`Hub alignment\` stamp is ${why} → STOP and send it back to \`do-grooming\` for the ` +
-    'grooming review. Planning a spoke that disagrees with the hub bakes the disagreement into stages.',
+  alignment: (why, remedy = 'the grooming review') =>
+    `The spoke's \`Hub alignment\` stamp is ${why} → STOP and send it back to \`do-grooming\` for ${remedy}. ` +
+    'Planning a spoke that disagrees with the hub bakes the disagreement into stages.',
   hubOnlyReview: (why) =>
     `The hub's \`Hub review\` row is ${why} → STOP and send it back to its grooming skill for the grooming review. ` +
     'A TRD with no spoke is planned only after that review closes.',
@@ -85,7 +85,8 @@ const GATES = {
   review: 'Present the verdict and STOP.',
   screen:
     'One gate per screen for the widget spec, one gate per section for the slicing; then set both docs\' Approved ' +
-    'fields and run the Coverage checklist in full.',
+    'fields and run the Coverage checklist in full. A re-gate — a hub change or the grooming review\'s fixes moved ' +
+    'approved sections — is one gate per screen: its moved sections and their diffs together.',
   scope: 'Present the summary, then STOP and wait for confirmation before the architecture layout.',
   layout: 'Present the layout, then STOP — end your turn and wait for approval. Do not start the stage breakdown in the same turn.',
   breakdown: 'Present it, then STOP and wait for approval. Do not detail any stage until the user approves the shape.',
@@ -396,6 +397,7 @@ function reviewState(value) {
   const firstClause = lead.split(/\s[—–]\s|\.\s/)[0];
   if (/\bnot\s+(?:reviewed|stamped)\b/i.test(firstClause)) return 'not-reviewed';
   if (/^\W*self-reviewed\b/i.test(firstClause)) return 'self-reviewed';
+  if (/^\W*review ran\b/i.test(firstClause)) return 'review-ran';
   const mark = /✅|⚠️|⚠|⏸|❌|⛔/.exec(lead);
   if (mark) {
     if (mark[0] === '✅') return 'reviewed';
@@ -500,6 +502,7 @@ const HUB_BOOKKEEPING = [
   /^_Pending(?![A-Za-z])/i,
   /^\|.*\]\([^)]*TRD-[\w.-]+\.md\)/,
   /^\|.*`[^`]*TRD-[\w.-]+\.md`/,
+  /^\|.*\|\s*pending hub change\b[^|]*\|\s*$/i,
 ];
 
 const WORK_ITEM_CHECKBOX = /^(\s*[-*+]\s+)\[[ xX]\]\s+/;
@@ -598,6 +601,19 @@ function locateHub(context) {
   return found || context.paths.hub;
 }
 
+function siblingCheckoutOf(url, featureDirectory) {
+  const link = /^https?:\/\/[^/]+\/(?:[^/]+\/)*?([^/]+)\/(?:-\/)?blob\/(.+)$/.exec(url.split(/[?#]/)[0]);
+  const top = link ? git(featureDirectory, ['rev-parse', '--show-toplevel']) : null;
+  if (!top || !top.ok) return null;
+  const sibling = path.join(path.dirname(top.stdout.trim()), link[1]);
+  const segments = link[2].split('/');
+  for (let start = 1; start < segments.length; start++) {
+    const candidate = path.join(sibling, ...segments.slice(start));
+    if (exists(candidate)) return candidate;
+  }
+  return null;
+}
+
 function spokesOf(hubLines, featureDirectory) {
   const headings = outlineOf(hubLines);
   const heading = headings.find((candidate) => candidate.level === 2 && /^spokes\b/i.test(plain(candidate.text)));
@@ -612,9 +628,10 @@ function spokesOf(hubLines, featureDirectory) {
     .map((row) => {
       const linkCell = linkColumn === -1 ? '' : row.cells[linkColumn] || '';
       const target = /\]\(([^)]+)\)/.exec(linkCell) || /`([^`]+\.md)`/.exec(linkCell) || /([\w./-]+\.md)/.exec(linkCell);
-      const spokePath = target ? path.resolve(featureDirectory, target[1]) : null;
+      const spokePath = !target ? null
+        : /^https?:\/\//i.test(target[1]) ? siblingCheckoutOf(target[1], featureDirectory) : path.resolve(featureDirectory, target[1]);
       const alignment = alignmentColumn === -1 ? '' : row.cells[alignmentColumn] || '';
-      return { name: plain(row.cells[nameColumn]), path: spokePath, alignment, state: reviewState(alignment) };
+      return { name: plain(row.cells[nameColumn]), path: spokePath, link: target ? target[1] : null, alignment, state: reviewState(alignment) };
     });
 }
 
@@ -895,8 +912,9 @@ function groomingPosition(context, result) {
   if (answers.length) result.facts.push(`carry-forward answers waiting to be folded in: ${answers.join(' | ')}`);
   const pendingHubChange = pendingHubChangeRows(hubLines);
   if (pendingHubChange.length) {
-    result.facts.push(`hub-wrong findings gathered as "pending hub change": ${pendingHubChange.length} — ` +
-      'fix the hub once, on a yes to the hub change itself');
+    result.facts.push(`hub-wrong findings gathered as "pending hub change": ${pendingHubChange.length} — ` + (hubReviewState === 'reviewed'
+      ? 'the grooming review has closed: ask it now as one hub change; on the yes fix the hub once, then each spoke re-walks what it moved'
+      : 'held until the grooming review\'s closing gate: the hub\'s sections stay as they are, and the change is asked there, once'));
   }
 
   if (foundationPart === 'spoke') {
@@ -923,7 +941,7 @@ function groomingPosition(context, result) {
     return;
   }
 
-  const REVIEW_RAN = ['self-reviewed', 'reviewed', 'not-clean'];
+  const REVIEW_RAN = ['self-reviewed', 'review-ran', 'reviewed', 'not-clean'];
   const hubAlignmentLine = fieldValue(hubLines, /^hub alignment$/i, 0, Math.min(40, hubLines.length));
   const reviewDone = groomingSpoke
     ? REVIEW_RAN.includes(spokeAlignment(context, hubText, hubKind).state)
@@ -968,10 +986,14 @@ function spokeAlignment(context, hubText, hubKind) {
   return { value, state: value ? reviewState(value) : 'missing', source: 'the spoke header' };
 }
 
-const HUB_CHECKED = ['self-reviewed', 'reviewed'];
+const HUB_CHECKED = ['self-reviewed', 'review-ran', 'reviewed'];
 const HUB_SELF_REVIEW = 'Step 2a — the hub\'s self-review (hub points 12–16)';
 const SPOKE_SELF_REVIEW = 'Step 4 — the spoke\'s alignment self-review (points 1–11)';
 const GROOMING_REVIEW = 'Step 5 — the grooming review, once: the hub and every spoke (`review-packet.js <feature> all --kind groom`)';
+const GROOMING_CLOSE = 'Step 5 — close the grooming review, which has run: fix its findings, apply its held hub change once on ' +
+  'the user\'s yes, close on the proofs, then stamp ✅ on the hub and every spoke — no second review, no re-walk';
+const AMENDED_REWALK = 'Step 4 — the hub changed after the grooming review closed: re-walk the self-review\'s points the moved ' +
+  'hub sections feed (no new review), then restamp `reviewed <date> · hub rev <commit> · amended <date>`';
 const GROOMING_REVIEW_DOC = path.join(pluginRoot, 'skills', 'do-grooming', 'grooming-review.md');
 
 function spokeListOf(hubLines, hubKind, featureDirectory) {
@@ -1012,6 +1034,12 @@ function hubCompletion(context, result, { hubLines, hubReview, hubReviewState, h
   for (const spoke of spokes) {
     const where = spoke.path && readText(spoke.path) !== null ? '' : ' (file not in this repository)';
     result.facts.push(`spoke ${spoke.name}${where}: ${spoke.state} — ${excerpt(spoke.alignment, 120)}`);
+  }
+  if (hubReviewState === 'review-ran') {
+    setNext(result, 'grooming', GROOMING_CLOSE);
+    result.gate = GATES.review;
+    reread(result, GROOMING_REVIEW_DOC, 'closing the grooming review: proofs, the held hub change and the stamps');
+    return;
   }
   if (!spokes.length && hubKind === 'foundation') {
     setNext(result, 'the spokes',
@@ -1092,12 +1120,17 @@ function spokeCompletion(context, result, { hubPath, hubText, hubKind, hubReview
     result.gate = GATES.review;
     return;
   }
+  if (hubReviewState === 'review-ran' && alignmentState !== 'reviewed') {
+    setNext(result, 'grooming', GROOMING_CLOSE);
+    result.gate = GATES.review;
+    return;
+  }
   const revision = hubRevisionOf(alignment.value);
   const moved = revision && hubText ? hubMovedSince(hubPath, revision) : { state: 'unverified', why: 'the stamp names no hub rev' };
   if (moved.state === 'moved') {
     result.facts.push(`stale: ${moved.why} — ${moved.changes.slice(0, 3).join(' · ')}`);
     setNext(result, unit, alignmentState === 'reviewed'
-      ? 'Step 5 — the grooming review once more, scoped to the hub sections that moved (`--items` by grooming-review.md → *The hub moving*)'
+      ? AMENDED_REWALK
       : 'Step 4 — re-walk the self-review\'s points the moved hub sections feed, then rewrite the `self-reviewed` stamp');
     result.gate = GATES.review;
     return;
@@ -1446,7 +1479,10 @@ function planningPosition(context, result) {
     } else if (hubText && hubKind !== 'foundation') {
       const revision = hubRevisionOf(alignment.value);
       const moved = revision ? hubMovedSince(hubPath, revision) : { state: 'unverified', why: 'the stamp names no hub rev' };
-      if (moved.state === 'moved') result.stops.push(STOPS.alignment(`older than the hub's last change — ${moved.why}`));
+      if (moved.state === 'moved') {
+        result.stops.push(STOPS.alignment(`older than the hub's last change — ${moved.why}`,
+          'the re-walk of the points the moved hub sections feed (no new review)'));
+      }
       else if (moved.state === 'unverified') result.notes.push(`hub alignment freshness not verified: ${moved.why}`);
       else if (moved.note) result.notes.push(moved.note);
     }
@@ -1456,6 +1492,7 @@ function planningPosition(context, result) {
     const hubReview = fieldValue(hubLines, /^hub review$/i, 0, Math.min(40, hubLines.length));
     const state = hubReview ? reviewState(hubReview.value) : 'missing';
     if (state === 'self-reviewed') result.stops.push(STOPS.hubOnlyReview('only `self-reviewed` — the grooming review has not closed'));
+    else if (state === 'review-ran') result.stops.push(STOPS.hubOnlyReview('`review ran` — the grooming review ran and has not closed'));
     else if (hubReview && state !== 'reviewed') result.stops.push(STOPS.hubOnlyReview(`not ✅ (${excerpt(hubReview.value, 80)})`));
     if (hubReview) result.facts.push(`hub review: ${excerpt(hubReview.value, 120)}`);
   }
