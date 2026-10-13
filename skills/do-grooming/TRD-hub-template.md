@@ -17,7 +17,7 @@
 | **Author** | <engineer> |
 | **Platforms in scope** | <Backend / Android / iOS / Web> |
 | **Spokes** | <see the *Spokes & alignment* table below> |
-| **Hub review** | <❌ not reviewed — then `self-reviewed YYYY-MM-DD · rev <hash>` after the hub's self-review (no spoke is groomed before it), then ✅ reviewed YYYY-MM-DD · rev `<hash>` · findings n · needs-eyes n when the grooming review closes> |
+| **Hub review** | <❌ not reviewed — then `self-reviewed YYYY-MM-DD · rev <hash>` after the hub's self-review (no spoke is groomed before it), then `review ran YYYY-MM-DD · rev <hash>` once the grooming review has run, then ✅ reviewed YYYY-MM-DD · rev `<hash>` · findings n · needs-eyes n when it closes, `· amended YYYY-MM-DD` added after a hub change past ✅> |
 | **PRD/BRD** | <link to source> |
 | **Figma** | <link, if any> |
 | **Date** | <YYYY-MM-DD> |
@@ -26,9 +26,10 @@
 
 > Each spoke's **hub-alignment** state, visible from the hub so drift is obvious here rather than
 > discovered in development: `self-reviewed` after the spoke's self-review, ✅ after the grooming
-> review. **Editing any hub section below moves every stamp** — re-check what moved, scoped
-> (`grooming-review.md` → *The hub moving*), and re-stamp. `do-planning` won't plan a spoke that
-> isn't aligned with the hub's current state.
+> review. **Editing any hub section below moves every stamp** — each spoke's author re-walks what
+> moved and re-stamps, never a second review (`grooming-review.md` → *The hub moving*); a `pending
+> hub change` row moves nothing. `do-planning` won't plan a spoke that isn't aligned with the hub's
+> current state.
 
 | Spoke | Repo | Link | Hub alignment | Platform exceptions (decided divergences) |
 |-------|------|------|---------------|-------------------------------------------|
@@ -39,9 +40,10 @@
 
 > Hub-level decisions still open — anything a spoke would otherwise have to decide (hub
 > point 16) and a spoke's Open Decision escalated to the hub. **The hub-wrong findings gathered from
-> the spokes awaiting alignment are one row with the status `pending hub change`**, written before
-> the user is asked so they outlive the session; on a yes it becomes `decided: <the change> ·
-> <date>` in the same message as the Edits that fix the hub, on a no it records why the hub stands.
+> the spokes awaiting alignment are one row with the status `pending hub change`**, held until the
+> grooming review's closing gate so they outlive the session and the hub moves once; on a yes it
+> becomes `decided: <the change> · <date>` in the same message as the Edits that fix the hub, on a
+> no it records why the hub stands.
 
 | # | Gap / ambiguity | Why it's a gap (what a spoke would otherwise decide) | Options (★ = recommended — always the product-quality / world-standard option, never the cheapest) | Status |
 |---|-----------------|------------------------------------------------------|---------------------------|--------|

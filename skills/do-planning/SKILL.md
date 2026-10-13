@@ -190,8 +190,8 @@ scanning the repo, and note the layout is ungrounded).
 - **Inputs:** the feature's approved TRD (`docs/development/<feature-name>/` hub + the relevant
   spoke) — its **work slices + AC are the source of work**. **Check the spoke's `Hub alignment`
   stamp first (hub/spoke feature TRD) — missing, `NOT REVIEWED`, only `self-reviewed` (the grooming
-  review has not run), or older than the hub's last change → STOP** and send it back to
-  `do-grooming` for the grooming review. Feature, issue and
+  review has not closed), or older than the hub's last change → STOP** and send it back to
+  `do-grooming` — for the grooming review, or for its author's re-walk when the hub moved after ✅. Feature, issue and
   tech-debt spokes carry their own `Hub alignment` row and are read there; only a **foundation**
   spoke, which is cut from *Per-platform sections* and has no header table, is read in the hub's
   *Spokes* row instead (spelled `❌ not reviewed` there). Planning a spoke that disagrees with the

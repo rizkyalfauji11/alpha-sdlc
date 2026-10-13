@@ -16,7 +16,7 @@
 | **Platform** | <Backend / Android / iOS / Web> |
 | **Author** | <engineer> |
 | **Hub** | [./TRD.md](./TRD.md) |
-| **Hub alignment** | <`NOT REVIEWED` — then `self-reviewed YYYY-MM-DD · hub rev <commit / hub's last approval date>` after the spoke's self-review, then `reviewed YYYY-MM-DD · hub rev <…>` when the grooming review closes; **stale the moment a hub section changes**. `do-planning` won't plan a spoke whose stamp is missing, only self-reviewed, or older than the hub's last change.> |
+| **Hub alignment** | <`NOT REVIEWED` — then `self-reviewed YYYY-MM-DD · hub rev <commit / hub's last approval date>` after the spoke's self-review, then `reviewed YYYY-MM-DD · hub rev <…>` when the grooming review closes, `· amended YYYY-MM-DD` added when the author re-walks a hub change made after it; **stale the moment a hub section changes**. `do-planning` won't plan a spoke whose stamp is missing, only self-reviewed, or older than the hub's last change.> |
 | **Date** | <YYYY-MM-DD> |
 
 ## Open Decisions

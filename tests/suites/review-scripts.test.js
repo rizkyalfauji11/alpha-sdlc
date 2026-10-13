@@ -517,6 +517,42 @@ report('review-packet.js', 'building the packet leaves the working tree and the 
   report('review-packet.js', 'the grooming review has no hub-only form', hubOnly.exitCode === 2 && /platform "all"/.test(hubOnly.stderr), hubOnly.stderr);
 }
 {
+  const elsewhere = 'web/docs/development/feat';
+  const hub = HUB.replace('## 5. API contracts', '## Spokes & alignment\n\n| Spoke | Repo | Link | Hub alignment |\n|---|---|---|---|\n' +
+    `| web | web | [TRD-web.md](../../../${elsewhere}/TRD-web.md) | self-reviewed 2026-10-01 · hub rev 2026-10-01 |\n\n## 5. API contracts`);
+  const { root, base } = committedRepo('packet-groom-spoke-elsewhere', {
+    [`${FEATURE}/TRD.md`]: hub,
+    [`${elsewhere}/TRD-web.md`]: SPOKE,
+    [`${elsewhere}/widget-spec/cart.md`]: '# Widget Spec — cart\n',
+    [`${elsewhere}/section-slicing/cart.md`]: '# Section Slicing — cart\n',
+    'docs/basics/01-overview.md': '# Overview\n',
+  });
+  writeFiles(root, { [`${FEATURE}/TRD.md`]: hub + '\nOne more line.\n' });
+  const { text, exitCode, stderr } = packetRun(root, [path.join(root, FEATURE), 'all', '--kind', 'groom', '--base', base]);
+  const unit = sectionOf(text, 'Hub and spokes under review');
+  const real = fs.realpathSync(root);
+  report('review-packet.js', 'a spoke outside the feature directory is reviewed where the hub links it, its screen docs read whole in the one review',
+    exitCode === 0 && unit.includes(`Spoke under review: ${path.join(real, elsewhere, 'TRD-web.md')} — outside this feature directory`) &&
+      unit.includes(path.join(real, elsewhere, 'widget-spec', 'cart.md')) && unit.includes(path.join(real, elsewhere, 'section-slicing', 'cart.md')) &&
+      unit.includes('Screen docs: dimension b reads every widget spec and section-slicing doc above whole'),
+    [stderr, unit]);
+}
+{
+  const hub = HUB.replace('## 5. API contracts', '## Spokes & alignment\n\n| Spoke | Repo | Link | Hub alignment |\n|---|---|---|---|\n' +
+    '| web | `acme/packet-sibling-web` | [TRD-web.md](https://github.com/acme/packet-sibling-web/blob/feat/x/docs/development/feat/TRD-web.md) | ' +
+    'self-reviewed 2026-10-01 · hub rev 2026-10-01 |\n\n## 5. API contracts');
+  const { root, base } = committedRepo('packet-groom-spoke-url', { [`${FEATURE}/TRD.md`]: hub, 'docs/basics/01-overview.md': '# Overview\n' });
+  const sibling = path.join(path.dirname(root), 'packet-sibling-web', FEATURE);
+  writeFiles(path.dirname(sibling), { 'feat/TRD-web.md': SPOKE, 'feat/section-slicing/cart.md': '# Section Slicing — cart\n' });
+  writeFiles(root, { [`${FEATURE}/TRD.md`]: hub + '\nOne more line.\n' });
+  const { text, exitCode, stderr } = packetRun(root, [path.join(root, FEATURE), 'all', '--kind', 'groom', '--base', base]);
+  const unit = sectionOf(text, 'Hub and spokes under review');
+  report('review-packet.js', 'a spoke linked by its repository URL is read from the sibling checkout, with its screen docs',
+    exitCode === 0 && unit.includes(`Spoke under review: ${path.join(fs.realpathSync(sibling), 'TRD-web.md')} — outside this feature directory`) &&
+      unit.includes(path.join(fs.realpathSync(sibling), 'section-slicing', 'cart.md')),
+    [stderr, unit]);
+}
+{
   const { root, base } = committedRepo('packet-groom-no-spoke', { [`${FEATURE}/TRD.md`]: HUB, 'docs/basics/01-overview.md': '# Overview\n' });
   writeFiles(root, { [`${FEATURE}/TRD.md`]: HUB + '\nOne more line.\n' });
   const { text, exitCode, stderr } = packetRun(root, [path.join(root, FEATURE), 'all', '--kind', 'groom', '--base', base]);

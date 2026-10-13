@@ -366,8 +366,8 @@ missing acceptance criterion: a defect, not a detail.
      root configs — change only through a targeted Edit of the exact section, re-read from disk
      first and committed at once; an Edit that no longer matches means the other session changed it
      — re-read and re-apply, never overwrite. **Commit by explicit path**, never `git add -A` or
-     `commit -a`, which would sweep in the other session's unfinished work. A hub change still goes
-     through grooming's gather-then-fix-once rule. Only one session boots the full stack at a time;
+     `commit -a`, which would sweep in the other session's unfinished work. A hub change is held for
+     grooming's gather-then-fix-once rule. Only one session boots the full stack at a time;
      the other waits or drives the running one. A stage that needs the other platform's half before
      it is built stops and reports, as the integrated smoke already requires.
 - **Diagrams target the oldest renderer in the toolchain — Mermaid 9.x is the floor.** Docs get read

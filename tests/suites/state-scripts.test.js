@@ -397,6 +397,13 @@ for (const [kind, title] of [['tech-debt', '# Tech-Debt TRD: Checkout'], ['issue
     { exit: 0, step: /^Step 5 — the grooming review, scoped to spoke backend/ });
   expectNext('planning refuses a spoke that is only self-reviewed', nextStep(added, ['backend', '--phase', 'planning']),
     { exit: 1, stop: /stamp is only `self-reviewed` — the grooming review has not closed/ });
+  const ran = project('grooming-review-ran', 'review ran 2026-10-03 · rev `a1b2c3d`', selfReviewed, selfReviewed);
+  expectNext('a grooming review that ran is closed, never run again', nextStep(ran),
+    { exit: 0, unit: /^grooming$/, step: /^Step 5 — close the grooming review, which has run: .*no second review, no re-walk$/, gate: /Present the verdict and STOP/, reread: /grooming-review\.md$/ });
+  expectNext('a spoke session finds the same close', nextStep(ran, ['web', '--phase', 'grooming']),
+    { exit: 0, unit: /^grooming$/, step: /^Step 5 — close the grooming review, which has run/ });
+  expectNext('planning refuses a spoke while the grooming review that ran has not closed', nextStep(ran, ['backend', '--phase', 'planning']),
+    { exit: 1, stop: /stamp is only `self-reviewed` — the grooming review has not closed/ });
 }
 
 {
@@ -409,6 +416,12 @@ for (const [kind, title] of [['tech-debt', '# Tech-Debt TRD: Checkout'], ['issue
   expectNext('an issue TRD with no spoke and a closed grooming review is planned',
     nextStep(hubOnly('plan-hub-only-reviewed', '✅ reviewed 2026-10-02 · rev `a1b2c3d` · findings 1 · needs-eyes 0'), ['backend', '--phase', 'planning']),
     { check: (json) => !json.stops.some((stop) => /`Hub review` row/.test(stop)), fact: /^hub review: ✅ reviewed 2026-10-02/ });
+  expectNext('planning refuses an issue TRD with no spoke whose grooming review ran and has not closed',
+    nextStep(hubOnly('plan-hub-only-ran', 'review ran 2026-10-02 · rev `a1b2c3d`'), ['backend', '--phase', 'planning']),
+    { exit: 1, stop: /^The hub's `Hub review` row is `review ran` — the grooming review ran and has not closed/ });
+  expectNext('an issue TRD with no spoke whose grooming review ran is closed',
+    nextStep(hubOnly('groom-hub-only-ran', 'review ran 2026-10-02 · rev `a1b2c3d`')),
+    { exit: 0, step: /^Step 5 — close the grooming review, which has run/ });
 }
 
 {
@@ -543,10 +556,10 @@ function issueDocument({ notes = [], outline = [] } = {}) {
   const hubPath = path.join(featureDirectory, 'TRD.md');
   write(hubPath, fs.readFileSync(hubPath, 'utf8').replace('Decisions for 5. API contracts.', 'Decisions for 5. API contracts, now paged.'));
   commitAll(projectRoot, 'hub moves', '2026-10-03T10:00:00');
-  expectNext('a hub edited after the grooming review runs it once more, scoped to what moved', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
-    { exit: 0, step: /^Step 5 — the grooming review once more, scoped to the hub sections that moved/, fact: /stale: the hub changed since rev/ });
+  expectNext('a hub edited after the grooming review closed is re-walked by the spoke\'s author, with no new review', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
+    { exit: 0, step: /^Step 4 — the hub changed after the grooming review closed: re-walk .*\(no new review\), then restamp `reviewed <date> · hub rev <commit> · amended <date>`$/, fact: /stale: the hub changed since rev/ });
   expectNext('planning refuses a spoke whose stamp is older than the hub\'s last change', nextStep(featureDirectory, ['backend', '--phase', 'planning']),
-    { exit: 1, stop: /older than the hub's last change/ });
+    { exit: 1, stop: /older than the hub's last change .*send it back to `do-grooming` for the re-walk of the points the moved hub sections feed \(no new review\)/ });
   const reviewedSpoke = fs.readFileSync(path.join(featureDirectory, 'TRD-backend.md'), 'utf8');
   write(path.join(featureDirectory, 'TRD-backend.md'), spokeDocument({ alignment: `self-reviewed 2026-10-02 · hub rev \`${hubRevision.slice(0, 7)}\`` }));
   expectNext('a hub edited after a spoke\'s self-review re-walks that self-review', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
@@ -705,7 +718,42 @@ function issueDocument({ notes = [], outline = [] } = {}) {
     'TRD.md': hubDocument({ extra: openDecisions('| H2 | the contract misses a field | ★ add it | pending hub change |') }),
   });
   expectNext('an Open Decisions row whose status is pending hub change is counted', nextStep(pending.featureDirectory),
-    { exit: 0, fact: /"pending hub change": 1/ });
+    { exit: 0, fact: /"pending hub change": 1 — the grooming review has closed: ask it now as one hub change/ });
+  const held = featureProject('pending-row-held', {
+    'TRD.md': hubDocument({ review: 'self-reviewed 2026-10-01 · rev `a1b2c3d`', extra: openDecisions('| H2 | the contract misses a field | ★ add it | pending hub change |') }),
+  });
+  expectNext('before the grooming review closes, a pending hub change is held for its closing gate', nextStep(held.featureDirectory),
+    { exit: 0, fact: /"pending hub change": 1 — held until the grooming review's closing gate/ });
+}
+
+{
+  const openDecisions = (rows) => '\n## Open Decisions\n\n| # | Decision | Options | Status |\n|---|---|---|---|\n' + rows + '\n';
+  const settled = '| H1 | page size | ★ 50 | decided: 50 · 2026-10-01 |';
+  const { projectRoot, featureDirectory } = featureProject('pending-row-moves-nothing', {
+    'TRD.md': hubDocument({ review: 'review ran 2026-10-03 · rev `a1b2c3d`', extra: openDecisions(settled) }),
+  });
+  initRepository(projectRoot);
+  const hubRevision = commitAll(projectRoot, 'hub', '2026-10-01T10:00:00');
+  const spokePath = path.join(featureDirectory, 'TRD-backend.md');
+  write(spokePath, spokeDocument({ alignment: `self-reviewed 2026-10-02 · hub rev \`${hubRevision.slice(0, 7)}\`` }));
+  commitAll(projectRoot, 'spoke', '2026-10-02T10:00:00');
+  const hubPath = path.join(featureDirectory, 'TRD.md');
+  write(hubPath, fs.readFileSync(hubPath, 'utf8').replace(settled, `${settled}\n| H2 | the contract misses a field | ★ add it | pending hub change |`));
+  commitAll(projectRoot, 'record the hub change', '2026-10-03T10:00:00');
+  const reviewed = `✅ reviewed 2026-10-04 · hub rev \`${hubRevision.slice(0, 7)}\``;
+  write(spokePath, spokeDocument({ alignment: reviewed }));
+  expectNext('a pending hub change row moves no stamp', nextStep(featureDirectory, ['backend', '--phase', 'planning']),
+    { check: (json) => !json.stops.some((stop) => /older than the hub's last change/.test(stop)), fact: /hub alignment/ });
+  write(spokePath, spokeDocument({ alignment: `self-reviewed 2026-10-02 · hub rev \`${hubRevision.slice(0, 7)}\`` }));
+  write(hubPath, fs.readFileSync(hubPath, 'utf8')
+    .replace('| H2 | the contract misses a field | ★ add it | pending hub change |', '| H2 | the contract misses a field | ★ add it | decided: add it · 2026-10-04 |')
+    .replace('Decisions for 5. API contracts.', 'Decisions for 5. API contracts, the field added.'));
+  commitAll(projectRoot, 'apply the hub change at the close', '2026-10-04T10:00:00');
+  expectNext('the review\'s own hub change, applied at its close, sends no spoke back to its self-review', nextStep(featureDirectory, ['backend', '--phase', 'grooming']),
+    { exit: 0, unit: /^grooming$/, step: /^Step 5 — close the grooming review, which has run/ });
+  write(spokePath, spokeDocument({ alignment: reviewed }));
+  expectNext('the applied hub change is a hub change once the review has closed', nextStep(featureDirectory, ['backend', '--phase', 'planning']),
+    { exit: 1, stop: /older than the hub's last change/ });
 }
 
 {

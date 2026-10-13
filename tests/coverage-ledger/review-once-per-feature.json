@@ -1,0 +1,40 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "On the close, stamp the hub's `Hub review` row ✅ and every spoke's alignment (`grooming-review.md` → *Stamps*) — a user who proceeds anyway takes `principles.md`'s recorded override at that downstream STOP, the gap named there",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "reworded",
+      "reason": "FEAT-4: size trim — the override still happens at the downstream skill's own STOP (do-planning, do-slicing), which names the gap; this line only points there",
+      "where": "skills/do-planning/SKILL.md → *Hub alignment* STOP; principles.md → *Missing-prerequisite STOPs accept an explicit user override*"
+    },
+    {
+      "clause": "announce that at the hub edit, don't leave it for someone to discover in development.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "reworded",
+      "reason": "FEAT-4: size trim — \"announce it at the edit\" keeps the duty; the reason is the rule's own lead",
+      "where": "skills/do-grooming/SKILL.md → ## Rules, *A hub edit after any spoke exists moves every spoke's stamp*"
+    },
+    {
+      "clause": "**Editing any hub section below moves every stamp** — re-check what moved, scoped (`grooming-review.md` → *The hub moving*), and re-stamp. `do-planning` won't plan a spoke that isn't aligned with the hub's current state.",
+      "file": "skills/do-grooming/TRD-hub-template.md",
+      "verdict": "changed",
+      "reason": "FEAT-1: the re-check after a hub move is each spoke's author re-walking what moved, never a second review; a pending hub change row moves nothing (FEAT-2)",
+      "where": "skills/do-grooming/TRD-hub-template.md → *Spokes & alignment* note; skills/do-grooming/grooming-review.md → *The hub moving*"
+    },
+    {
+      "clause": "**The hub-wrong findings gathered from the spokes awaiting alignment are one row with the status `pending hub change`**, written before the user is asked so they outlive the session",
+      "file": "skills/do-grooming/TRD-hub-template.md",
+      "verdict": "changed",
+      "reason": "FEAT-2: the row is held until the grooming review's closing gate, so the hub moves once; it is still written before the user is asked and outlives the session",
+      "where": "skills/do-grooming/TRD-hub-template.md → *Open Decisions* note; skills/do-grooming/grooming-review.md → *Resolve by direction*"
+    },
+    {
+      "clause": "After the grooming review, the hub moving runs the grooming review once more, over the hub and every spoke, with `--items` set to the points the changed sections feed: §1 context or §4 system design → 2 · §2 dependencies and entities → 4, 5, 8, 13 · §3 feature flow → 7, 8, 15 · §5 contract → 1, 2, 12 · §6 cross-cutting → 6 · §7 change manifest and release ordering → 3, 9 — plus 10, 14 and 16 always, and 11 when two or more spokes exist.",
+      "file": "skills/do-grooming/grooming-review.md",
+      "verdict": "changed",
+      "reason": "FEAT-3: the review runs once per feature — a hub change after ✅ is re-walked by each spoke's author and approved by the user, no reviewer (the owner's choice, 2026-10-13); the section → points map is kept and now scopes that re-walk",
+      "where": "skills/do-grooming/grooming-review.md → *The hub moving*; principles.md → *Work that changes after its phase review*"
+    }
+  ]
+}

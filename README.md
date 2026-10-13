@@ -167,6 +167,17 @@ other side: its 5.0.6 release dropped its subagent reviews of specs and plans af
 tested five times each, showed no quality difference, while those reviews cost about 25 minutes and
 the author's own checklist found three to five bugs in about 30 seconds.
 
+**Grooming is reviewed once per feature.** The review runs once the hub and every spoke are
+self-reviewed, and the hub moves once, at its close. Every hub-wrong finding — from a spoke, a
+plan groomed alongside or the review itself — waits as a `pending hub change` row, which moves no
+stamp. The review is stamped `review ran` before any fix, so what its fixes move sends no spoke
+back to its self-review and runs no second review. A hub change after ✅ is re-walked by each
+spoke's author and approved by you, with no reviewer. Screens that a hub change moves re-gate once
+per screen, every moved section and its diff together. On a real feature the hub changed five
+times in one day while the web spoke was groomed: the grooming review ran three times, and one hub
+change re-gated 33 screen sections one by one. The review packet now also lists every spoke's
+screen docs, in whichever repository the spoke lives, so the one review reads them whole.
+
 If you track work in Jira or GitHub Issues, `/do-slicing` and `/do-uploading` turn an approved
 requirements doc into a story-pointed task list and create it sample-first in small batches (tracker
 chosen once, at setup). Skip both otherwise — nothing downstream depends on them.
@@ -234,8 +245,7 @@ for, so you spend less time watching it think:
   module, database or CI/CD area — and drafts the next *factual* profile doc while you review the
   current one. The scan is recorded with the commit and working tree it read
   (`scripts/scan-record.js`), so a later run re-scans only the areas that changed since.
-- **Grooming gathers the next section's code facts while you review this one**, and after a hub
-  fix the grooming review runs once more over the hub and every spoke, scoped to what the fix moved.
+- **Grooming gathers the next section's code facts while you review this one.**
 - **A review launches at once** — every dimension reviewer in one message, in the foreground, at
   most three at a time. Two reviews never share a message.
 
@@ -581,6 +591,12 @@ the row hands off to testing after its last stage, as before. A test plan gets t
 same way, from its `Fix review` row. `review-packet.js` refuses the retired options by name:
 `--round`, `--prev`, `--since`, `--dimensions`, `--kind hub` and `--kind trd` (now
 `--kind groom`).
+
+From 0.39.0 the grooming review runs once per feature. A feature whose grooming review already ran
+but has not closed: write `review ran <date> · rev <hub commit the review read>` on its hub's
+`Hub review` row, and `next-step.js` sends it to the close instead of another review. Hub changes
+still waiting are applied there, once. A ✅ spoke whose hub moved since its stamp is re-walked by
+its author, not reviewed again.
 
 ## Roadmap
 

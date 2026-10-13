@@ -419,12 +419,26 @@ function spokeNamesOf(options, hub) {
     try {
       const { spokesOf } = require('./next-step');
       listed = (spokesOf(hub.text.split('\n'), path.dirname(hub.path)) || []).map((spoke) => {
-        const linked = spoke.path ? /^TRD-(.+)\.md$/i.exec(path.basename(spoke.path)) : null;
+        const target = spoke.path || spoke.link;
+        const linked = target ? /^TRD-(.+)\.md$/i.exec(path.basename(target)) : null;
         return (linked ? linked[1] : spoke.name.split(/\s+/)[0] || '').toLowerCase();
       }).filter(Boolean);
     } catch {}
   }
   return [...new Set([...local, ...listed])].sort();
+}
+
+function linkedSpokePaths(hub) {
+  const found = new Map();
+  if (hub.text === null) return found;
+  try {
+    const { spokesOf } = require('./next-step');
+    for (const spoke of spokesOf(hub.text.split('\n'), path.dirname(hub.path)) || []) {
+      const linked = spoke.path ? /^TRD-(.+)\.md$/i.exec(path.basename(spoke.path)) : null;
+      if (linked && fs.existsSync(spoke.path)) found.set(linked[1].toLowerCase(), spoke.path);
+    }
+  } catch {}
+  return found;
 }
 
 function stageUnit(options) {
@@ -582,19 +596,32 @@ function groomUnit(options, docsRepo) {
   lines.push(`Spokes in this feature: ${spokes.length ? spokes.join(', ') : 'none yet'}` +
     (hub.text !== null ? ' (this directory\'s TRD-<platform>.md files and the hub\'s Spokes table)' : ''));
   if (options.platform !== 'all') lines.push(`Scoped to one spoke: ${options.platform} — the hub and that spoke`);
+  const linked = linkedSpokePaths(hub);
   const spokeTexts = [];
+  const elsewhere = [];
   for (const name of reviewed) {
-    const spokePath = path.join(options.featureDirectory, `TRD-${name}.md`);
+    const localPath = path.join(options.featureDirectory, `TRD-${name}.md`);
+    const spokePath = fs.existsSync(localPath) || !linked.has(name) ? localPath : linked.get(name);
     const text = readOptional(spokePath);
     spokeTexts.push(text || '');
-    lines.push(`Spoke under review: ${spokePath}${text === null ? ' — not in this directory: read it where the hub\'s Spokes table links it' : ''}`);
+    if (text !== null && path.dirname(spokePath) !== options.featureDirectory) elsewhere.push(path.dirname(spokePath));
+    lines.push(`Spoke under review: ${spokePath}${text === null ? ' — not in this directory: read it where the hub\'s Spokes table links it'
+      : spokePath === localPath ? '' : ' — outside this feature directory, so its edits are not in this diff: read it whole'}`);
   }
   const folders = ['contract', 'widget-spec', 'section-slicing'].map((folder) => path.join(options.featureDirectory, folder));
   if (!hub.local && hub.text !== null) folders.unshift(path.join(path.dirname(hubPath), 'contract'));
+  for (const directory of new Set(elsewhere)) folders.push(...['widget-spec', 'section-slicing'].map((folder) => path.join(directory, folder)));
+  let screenDocs = 0;
   for (const directory of folders) {
     if (!fs.existsSync(directory)) continue;
     const entries = fs.readdirSync(directory).sort();
-    lines.push(`${path.basename(directory)}/: ${entries.length ? entries.map((name) => path.join(directory, name)).join(', ') : 'empty'}`);
+    if (path.basename(directory) !== 'contract') screenDocs += entries.length;
+    lines.push(`${path.relative(options.featureDirectory, directory) || path.basename(directory)}/: ` +
+      (entries.length ? entries.map((name) => path.join(directory, name)).join(', ') : 'empty'));
+  }
+  if (screenDocs) {
+    lines.push('Screen docs: dimension b reads every widget spec and section-slicing doc above whole, against the hub and its ' +
+      'spoke — they are part of this one review, never a later pass.');
   }
   const texts = [readOptional(hubPath) || '', ...spokeTexts].join('\n');
   const profileDocs = new Set();
