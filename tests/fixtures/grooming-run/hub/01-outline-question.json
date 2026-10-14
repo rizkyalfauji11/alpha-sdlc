@@ -1,0 +1,153 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "4c1d9e2",
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The rows before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "being fixed",
+      "settled": false,
+      "tone": "progress",
+      "description": "The review is fixing it",
+      "unsticks": "The fix closing on its proof"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "onlyWhatChanged": false,
+  "step": {
+    "ordinal": 1,
+    "total": 1
+  },
+  "documents": [
+    {
+      "key": "outline@1",
+      "ordinal": 1,
+      "name": "Outline",
+      "description": "The understanding and the section outline, before anything is written",
+      "group": "TRD.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "outline:approach",
+      "documentKey": "outline@1",
+      "title": "Extend the existing share service, or add sharing to the recipes service?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "Why",
+            "text": "The outline depends on where sharing lives: one service changes, or two."
+          },
+          {
+            "label": "What I found",
+            "text": "A share service already sends collection links; recipes have no sharing yet."
+          }
+        ],
+        "needFromYou": "Pick where recipe sharing lives"
+      },
+      "options": [
+        {
+          "id": "extend-share-service",
+          "label": "Extend the share service",
+          "why": "It already signs links, rate-limits and records who shared what",
+          "trade": "The share service learns about recipes",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "recipes-service",
+          "label": "Add sharing to the recipes service",
+          "why": "Recipes stay in one service",
+          "trade": "A second copy of link signing and rate limits",
+          "recommended": false,
+          "requiresReason": false
+        },
+        {
+          "id": "ask-the-teams",
+          "label": "Ask the two service owners first",
+          "why": "Neither owner has been asked",
+          "trade": "The outline waits on their answer",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [
+        "Your answer shapes the outline; nothing is written yet"
+      ],
+      "evidence": {
+        "caption": "Read while proposing",
+        "groups": [
+          {
+            "heading": "The share service",
+            "rows": [
+              {
+                "label": "Link signing",
+                "count": null,
+                "lines": [
+                  "internal/share/links.go:41"
+                ]
+              },
+              {
+                "label": "Rate limit",
+                "count": null,
+                "lines": [
+                  "internal/share/limit.go:18"
+                ]
+              }
+            ]
+          },
+          {
+            "heading": "The recipes service",
+            "rows": [
+              {
+                "label": "No share route",
+                "count": "0 matches",
+                "lines": [
+                  "internal/recipes/routes.go"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "outline@1"
+      ],
+      "notes": [
+        {
+          "label": "Requirement",
+          "text": "From requirements/recipe-sharing-prd.md",
+          "engineer": null
+        }
+      ],
+      "askedAt": "2026-10-14T02:10:00Z"
+    }
+  ],
+  "gate": null
+}

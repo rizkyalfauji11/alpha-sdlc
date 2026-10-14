@@ -1,0 +1,298 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "b7e1c42",
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The rows before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "being fixed",
+      "settled": false,
+      "tone": "progress",
+      "description": "The review is fixing it",
+      "unsticks": "The fix closing on its proof"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "onlyWhatChanged": false,
+  "step": {
+    "ordinal": 12,
+    "total": 12
+  },
+  "documents": [
+    {
+      "key": "scope@1",
+      "ordinal": 1,
+      "name": "Scope (this platform)",
+      "description": "What the web builds of the hub",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "design@1",
+      "ordinal": 2,
+      "name": "Design",
+      "description": "Screens, flows and states on the web",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "assets@1",
+      "ordinal": 3,
+      "name": "Assets",
+      "description": "Icons and images, reused or added",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "data-persistence@1",
+      "ordinal": 4,
+      "name": "Data / persistence",
+      "description": "What the web stores and how it stays fresh",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "performance-impact@1",
+      "ordinal": 5,
+      "name": "Performance impact",
+      "description": "Budgets and what this feature spends of them",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "release-considerations@1",
+      "ordinal": 6,
+      "name": "Release considerations",
+      "description": "Order, flags and rollback on the web",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "risks-dependencies@1",
+      "ordinal": 7,
+      "name": "Risks / dependencies (this platform)",
+      "description": "What could stop or break the web work",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "acceptance-criteria@1",
+      "ordinal": 8,
+      "name": "Acceptance criteria",
+      "description": "The numbered, testable criteria",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "work-slices@1",
+      "ordinal": 9,
+      "name": "Work slices",
+      "description": "Slices that claim the criteria by ID",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "share-sheet/widget-spec@1",
+      "ordinal": 10,
+      "name": "Share sheet widget spec",
+      "description": "Every element of the share sheet, with its Test ID",
+      "group": "widget-spec/share-sheet.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "share-sheet/hdr@1",
+      "ordinal": 11,
+      "name": "Header · Share sheet",
+      "description": "The sheet header and its cases",
+      "group": "section-slicing/share-sheet.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "share-sheet/body.recipients@1",
+      "ordinal": 12,
+      "name": "Recipients · Share sheet",
+      "description": "The recipient list, empty, loading and full",
+      "group": "section-slicing/share-sheet.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "push",
+      "documentKey": "share-sheet/body.recipients@1",
+      "title": "Push TRD-web.md and the hub side to feat/recipe-sharing?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "Why",
+            "text": "The alignment self-review is clean; the spoke and its hub side are committed but not pushed."
+          },
+          {
+            "label": "What goes",
+            "text": "TRD-web.md and its per-screen docs first, then the hub Spokes row, summary line and stamp in acme/recipes-api"
+          }
+        ],
+        "needFromYou": "Say whether to push now"
+      },
+      "options": [
+        {
+          "id": "push-now",
+          "label": "Push now",
+          "why": "The review is clean and the hub can link the spoke",
+          "trade": "Teammates see the spoke on the remote at once",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "not-now",
+          "label": "Not now",
+          "why": "Something has to happen before teammates see it",
+          "trade": "The session ends; Continue asks again",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [
+        "Pushes acme/recipes-web, then acme/recipes-api, both on feat/recipe-sharing"
+      ],
+      "evidence": {
+        "caption": "What would be pushed",
+        "groups": [
+          {
+            "heading": "acme/recipes-web",
+            "rows": [
+              {
+                "label": "Commits ahead of origin",
+                "count": "14",
+                "lines": [
+                  "git log origin/feat/recipe-sharing..HEAD"
+                ]
+              }
+            ]
+          },
+          {
+            "heading": "acme/recipes-api",
+            "rows": [
+              {
+                "label": "Commits ahead of origin",
+                "count": "2",
+                "lines": [
+                  "docs/development/recipe-sharing/TRD.md"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "share-sheet/body.recipients@1"
+      ],
+      "notes": [],
+      "askedAt": "2026-10-15T03:30:00Z"
+    }
+  ],
+  "gate": null,
+  "reviewRounds": [
+    {
+      "round": 1,
+      "findings": 2,
+      "trend": "first"
+    },
+    {
+      "round": 2,
+      "findings": 0,
+      "trend": "clean"
+    }
+  ]
+}

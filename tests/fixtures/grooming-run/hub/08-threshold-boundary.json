@@ -1,0 +1,29 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "91b4c07",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 4,
+    "total": 7
+  },
+  "documents": [
+    {
+      "key": "system-design@2",
+      "ordinal": 4,
+      "name": "System design",
+      "description": "The design across platforms, with its diagram",
+      "group": "TRD.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "sessionEnded": true
+}

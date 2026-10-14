@@ -1,0 +1,135 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "7a2e0b1",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 3,
+    "total": 7
+  },
+  "documents": [
+    {
+      "key": "context-scope@1",
+      "ordinal": 1,
+      "name": "Context / scope",
+      "description": "Why the feature exists, who it serves, what is in and out",
+      "group": "TRD.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "feature-dependencies@1",
+      "ordinal": 2,
+      "name": "Feature dependencies",
+      "description": "The features, entities and flows this one depends on",
+      "group": "TRD.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "feature-flow@1",
+      "ordinal": 3,
+      "name": "Feature flow",
+      "description": "What the member does and what the system does, step by step",
+      "group": "TRD.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "feature-flow:expired-link",
+      "documentKey": "feature-flow@1",
+      "title": "What does a member see when a shared link has expired?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "Why",
+            "text": "The PRD says links expire after 30 days and says nothing about what happens then."
+          }
+        ],
+        "needFromYou": "Pick what an expired link shows"
+      },
+      "options": [
+        {
+          "id": "ask-the-sharer",
+          "label": "A page that offers to ask the sharer for a new link",
+          "why": "The member is not stranded",
+          "trade": "One more screen and one notification",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "plain-error",
+          "label": "A plain \"link expired\" page",
+          "why": "Nothing new to build",
+          "trade": "The member has no way forward",
+          "recommended": false,
+          "requiresReason": false
+        },
+        {
+          "id": "product-decides",
+          "label": "Leave it to product, recorded as an Open Decision",
+          "why": "Product owns the PRD",
+          "trade": "The flow section waits",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [
+        "Your answer is written into Feature flow when it is approved"
+      ],
+      "evidence": {
+        "caption": "What the requirements and the code say",
+        "groups": [
+          {
+            "heading": "Requirements",
+            "rows": [
+              {
+                "label": "Expiry",
+                "count": null,
+                "lines": [
+                  "requirements/recipe-sharing-prd.md: \"links expire after 30 days\""
+                ]
+              }
+            ]
+          },
+          {
+            "heading": "Code",
+            "rows": [
+              {
+                "label": "Collection links today",
+                "count": null,
+                "lines": [
+                  "internal/share/links.go:77 returns 410 and no page"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "feature-flow@1"
+      ],
+      "notes": [],
+      "askedAt": "2026-10-14T05:42:00Z"
+    }
+  ],
+  "gate": null
+}

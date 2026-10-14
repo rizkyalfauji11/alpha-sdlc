@@ -1,0 +1,57 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "5d0b7e9",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 12,
+    "total": 12
+  },
+  "documents": [
+    {
+      "key": "share-sheet/widget-spec@1",
+      "ordinal": 10,
+      "name": "Share sheet widget spec",
+      "description": "Every element of the share sheet, with its Test ID",
+      "group": "widget-spec/share-sheet.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "share-sheet/hdr@1",
+      "ordinal": 11,
+      "name": "Header · Share sheet",
+      "description": "The sheet header and its cases",
+      "group": "section-slicing/share-sheet.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "share-sheet/body.recipients@1",
+      "ordinal": 12,
+      "name": "Recipients · Share sheet",
+      "description": "The recipient list, empty, loading and full",
+      "group": "section-slicing/share-sheet.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "sessionEnded": true
+}

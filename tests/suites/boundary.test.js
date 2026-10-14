@@ -250,6 +250,29 @@ const describe = (result) => `exit ${result.exitCode}, stdout ${result.stdout ||
 }
 
 {
+  const DECISION_LINE = '{"target":"document","key":"feature-flow@1","actionId":"approve","optionId":null,"reason":null,"body":null}';
+  const CARRY_ON_LINE = 'The platform: your last report asked nothing, and nothing is open for the reader.';
+  const PAST_THRESHOLD = 'past the session-size threshold of 200K. Under a grooming-run schema that declares sessionEnded, end this session at the next section stamp';
+  const platform = guardProject();
+  const told = prompt(platform, 'platform-run', DECISION_LINE);
+  report(GUARD, 'a platform decision line past the threshold is told to end at the next section stamp, with no next-file',
+    adviceOf(told).startsWith('alpha-sdlc: this session carries about 305K tokens.') && adviceOf(told).includes(PAST_THRESHOLD),
+    describe(told));
+  report(GUARD, 'tells a platform session once', isSilent(prompt(platform, 'platform-run', DECISION_LINE)));
+  report(GUARD, "the platform's own carry-on line counts as a platform line",
+    adviceOf(prompt(guardProject(), 'platform-carry-on', CARRY_ON_LINE)).includes(PAST_THRESHOLD));
+  const enforced = prompt(guardProject({ next: nextFile(), settings: { sessionBoundaries: 'enforce' } }), 'platform-enforce', DECISION_LINE);
+  report(GUARD, 'enforce never blocks a platform line, which would lose the decision',
+    enforced.output && enforced.output.decision === undefined && adviceOf(enforced).includes(PAST_THRESHOLD), describe(enforced));
+  report(GUARD, 'a platform line below the threshold is silent',
+    isSilent(prompt(guardProject({ transcript: usageLine(SMALL_CONTEXT, 1) }), 'platform-small', DECISION_LINE)));
+  report(GUARD, 'a platform line is silent when sessionBoundaries is off',
+    isSilent(prompt(guardProject({ settings: { sessionBoundaries: 'off' } }), 'platform-off', DECISION_LINE)));
+  report(GUARD, 'a typed JSON prompt without target and key is not a platform line',
+    isSilent(prompt(guardProject(), 'platform-other-json', '{"note":"hello"}')));
+}
+
+{
   const hooks = JSON.parse(fs.readFileSync(path.join(pluginRoot, 'hooks', 'hooks.json'), 'utf8')).hooks;
   const command = `node "\${CLAUDE_PLUGIN_ROOT}/hooks/${GUARD}"`;
   const registered = (event, matcher) => (hooks[event] || [])
