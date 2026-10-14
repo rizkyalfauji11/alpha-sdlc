@@ -1,0 +1,42 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "e0d2b19",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 7,
+    "total": 7
+  },
+  "documents": [
+    {
+      "key": "api-contracts@2",
+      "ordinal": 5,
+      "name": "API contracts",
+      "description": "Every route and field, with its machine-checkable delta",
+      "group": "TRD.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "reviewRounds": [
+    {
+      "round": 1,
+      "findings": 3,
+      "trend": "first"
+    },
+    {
+      "round": 2,
+      "findings": 0,
+      "trend": "clean"
+    }
+  ],
+  "trdComplete": true,
+  "sessionEnded": true
+}

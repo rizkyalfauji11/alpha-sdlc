@@ -1,0 +1,14 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "b7e1c42",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 12,
+    "total": 12
+  },
+  "documents": [],
+  "questions": [],
+  "gate": null,
+  "sessionEnded": true
+}

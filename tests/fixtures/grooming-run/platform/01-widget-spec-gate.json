@@ -1,0 +1,289 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "3f8a6d0",
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The rows before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "being fixed",
+      "settled": false,
+      "tone": "progress",
+      "description": "The review is fixing it",
+      "unsticks": "The fix closing on its proof"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "onlyWhatChanged": false,
+  "step": {
+    "ordinal": 10,
+    "total": 12
+  },
+  "documents": [
+    {
+      "key": "scope@1",
+      "ordinal": 1,
+      "name": "Scope (this platform)",
+      "description": "What the web builds of the hub",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "design@1",
+      "ordinal": 2,
+      "name": "Design",
+      "description": "Screens, flows and states on the web",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "assets@1",
+      "ordinal": 3,
+      "name": "Assets",
+      "description": "Icons and images, reused or added",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "data-persistence@1",
+      "ordinal": 4,
+      "name": "Data / persistence",
+      "description": "What the web stores and how it stays fresh",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "performance-impact@1",
+      "ordinal": 5,
+      "name": "Performance impact",
+      "description": "Budgets and what this feature spends of them",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "release-considerations@1",
+      "ordinal": 6,
+      "name": "Release considerations",
+      "description": "Order, flags and rollback on the web",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "risks-dependencies@1",
+      "ordinal": 7,
+      "name": "Risks / dependencies (this platform)",
+      "description": "What could stop or break the web work",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "acceptance-criteria@1",
+      "ordinal": 8,
+      "name": "Acceptance criteria",
+      "description": "The numbered, testable criteria",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "work-slices@1",
+      "ordinal": 9,
+      "name": "Work slices",
+      "description": "Slices that claim the criteria by ID",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "share-sheet/widget-spec@1",
+      "ordinal": 10,
+      "name": "Share sheet widget spec",
+      "description": "Every element of the share sheet, with its Test ID",
+      "group": "widget-spec/share-sheet.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    },
+    {
+      "key": "share-sheet/hdr@1",
+      "ordinal": 11,
+      "name": "Header · Share sheet",
+      "description": "The sheet header and its cases",
+      "group": "section-slicing/share-sheet.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    },
+    {
+      "key": "share-sheet/body.recipients@1",
+      "ordinal": 12,
+      "name": "Recipients · Share sheet",
+      "description": "The recipient list, empty, loading and full",
+      "group": "section-slicing/share-sheet.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "share-sheet/widget-spec@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "widget-spec/share-sheet.md · Share sheet widget spec",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "Seven elements, each with a Test ID: title, close, recipient search, recipient row, copy link, send, error"
+        },
+        {
+          "label": "Why it matters",
+          "text": "These IDs are what the web tests find the sheet by"
+        }
+      ],
+      "needFromYou": "Approve Share sheet widget spec, approve it with edits, or regenerate it with feedback"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written",
+          "body": "| Element | Test ID |\n|---|---|\n| Title | `recipe_sharing_share_sheet_title` |\n| Send | `recipe_sharing_share_sheet_send` |",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "pending in widget-spec/share-sheet.md",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Design",
+          "rows": [
+            {
+              "label": "Share sheet frame",
+              "count": null,
+              "lines": [
+                "design/share-sheet.png"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes widget-spec/share-sheet.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed until the review is clean and you say yes"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Share sheet widget spec",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "regenerate",
+        "label": "Regenerate with feedback",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  }
+}

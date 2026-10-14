@@ -5,6 +5,9 @@ after a compaction. It holds what only the hub decides. `SKILL.md` keeps the flo
 the two hard rules this file applies — a dependency on a feature not built yet, and a need that
 contradicts the domain model.
 
+If the PRD describes a tiny change, say so and offer to skip the TRD and go straight to planning (or
+tickets, if you use Jira) instead.
+
 ## Contents
 
 - **Evolution and possibilities** — Step 0.5, recorded in §1's *Gate-0 notes*

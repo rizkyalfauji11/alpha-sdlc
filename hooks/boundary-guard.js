@@ -144,6 +144,28 @@ function sessionFacts(usage, idleMinutes) {
     (idleMinutes > IDLE_MINUTES ? ', and the cache went cold after ' + idleMinutes + ' min' : '') + '.';
 }
 
+function isPlatformLine(prompt) {
+  const text = String(prompt || '').trim();
+  if (text.startsWith('The platform:')) return true;
+  try {
+    const line = JSON.parse(text);
+    return Boolean(line) && typeof line.target === 'string' && typeof line.key === 'string';
+  } catch {
+    return false;
+  }
+}
+
+function platformAdvice(facts, threshold) {
+  return {
+    hookSpecificOutput: {
+      hookEventName: 'UserPromptSubmit',
+      additionalContext: facts + ' That is past the session-size threshold of ' + Math.round(threshold / 1000) +
+        'K. Under a grooming-run schema that declares sessionEnded, end this session at the next section stamp ' +
+        '(do-grooming grooming-run-schema.md → The session); otherwise, carry on.',
+    },
+  };
+}
+
 function respond(isSkillCall, mode, skill, facts) {
   if (isSkillCall) {
     return {
@@ -190,6 +212,12 @@ function main() {
   const firedScope = isSkillCall ? 'skill' : 'prompt';
   const stateFile = stateFileFor(payload.session_id);
   const state = loadState(stateFile);
+  if (!isSkillCall && isPlatformLine(payload.prompt)) {
+    if (state.fired.includes('platform:threshold')) return;
+    if (!saveState(stateFile, { ...state, fired: [...state.fired, 'platform:threshold'] }, now)) return;
+    process.stdout.write(JSON.stringify(platformAdvice(sessionFacts(usage, 0), threshold)));
+    return;
+  }
   const unfired = boundaryTriggers(cwd, usage, idleMinutes, now)
     .map((trigger) => firedScope + ':' + trigger)
     .filter((key) => !state.fired.includes(key));

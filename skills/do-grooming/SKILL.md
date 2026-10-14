@@ -27,7 +27,8 @@ for auto mode here, decline in one line ("this phase decides — gates apply; au
 Every gate you present: header `<development> · <phase> · <step> · ✅/⏸/⚠️`, then Bottom line →
 Why it matters → Options ★ → Context → Details (for engineers) → Next as the last paragraph, the
 plain layer in the org's language per its `../../plain-language/` guide (`principles.md` →
-*Present every step bottom line first*).
+*Present every step bottom line first*). Under a grooming-run schema (`--json-schema`), read
+`grooming-run-schema.md` before the first report.
 
 ## Gates
 
@@ -101,9 +102,6 @@ if the user explicitly chooses to (then scan the repo, and note that decisions a
 8. **Write the skeleton** once the outline is approved, as the template's opening note lays out:
    §1's **Gate-0 notes** (understanding, approach, evolution answers) and every approved heading
    marked `_Pending_`. They are Gate 0's record, not section prose. Then a session boundary.
-
-If the PRD describes a tiny change, say so and offer to skip the TRD and go straight to planning (or
-tickets, if you use Jira) instead.
 
 ### Step 1 — Per-section loop
 

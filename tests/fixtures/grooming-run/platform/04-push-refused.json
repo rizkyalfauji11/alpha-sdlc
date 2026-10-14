@@ -1,0 +1,79 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "b7e1c42",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 12,
+    "total": 12
+  },
+  "documents": [],
+  "questions": [
+    {
+      "id": "push:refused",
+      "documentKey": "share-sheet/body.recipients@1",
+      "title": "The push of acme/recipes-web was refused again after one rebase",
+      "summary": {
+        "blocks": [
+          {
+            "label": "Why",
+            "text": "Someone pushed feat/recipe-sharing first; the rebase onto it conflicted, so it was aborted and nothing local changed."
+          }
+        ],
+        "needFromYou": "Resolve it in a terminal, or try again"
+      },
+      "options": [
+        {
+          "id": "resolve-in-terminal",
+          "label": "I'll resolve it in a terminal",
+          "why": "The conflict is in TRD-web.md and needs a person",
+          "trade": "The session ends; Continue finds the push done",
+          "recommended": true,
+          "requiresReason": true
+        },
+        {
+          "id": "try-again",
+          "label": "Try the push again",
+          "why": "The other push may have been a fast-forward this clone can take now",
+          "trade": "A conflict asks you again",
+          "recommended": false,
+          "requiresReason": false
+        }
+      ],
+      "consequences": [
+        "The run is not finished until both pushes succeed"
+      ],
+      "evidence": {
+        "caption": "git's reason",
+        "groups": [
+          {
+            "heading": "git push origin feat/recipe-sharing",
+            "rows": [
+              {
+                "label": "Refused",
+                "count": null,
+                "lines": [
+                  "! [rejected] feat/recipe-sharing -> feat/recipe-sharing (non-fast-forward)",
+                  "CONFLICT (content): Merge conflict in docs/development/recipe-sharing/TRD-web.md"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "share-sheet/body.recipients@1"
+      ],
+      "notes": [
+        {
+          "label": "Retried",
+          "text": "Fetched, rebased once, aborted on the conflict",
+          "engineer": "git rebase --abort left HEAD at b7e1c42"
+        }
+      ],
+      "askedAt": "2026-10-15T03:34:00Z"
+    }
+  ],
+  "gate": null
+}

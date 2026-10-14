@@ -1,0 +1,226 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "91b4c07",
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The rows before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "being fixed",
+      "settled": false,
+      "tone": "progress",
+      "description": "The review is fixing it",
+      "unsticks": "The fix closing on its proof"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "onlyWhatChanged": false,
+  "step": {
+    "ordinal": 4,
+    "total": 7
+  },
+  "documents": [
+    {
+      "key": "context-scope@1",
+      "ordinal": 1,
+      "name": "Context / scope",
+      "description": "Why the feature exists, who it serves, what is in and out",
+      "group": "TRD.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "feature-dependencies@1",
+      "ordinal": 2,
+      "name": "Feature dependencies",
+      "description": "The features, entities and flows this one depends on",
+      "group": "TRD.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "feature-flow@1",
+      "ordinal": 3,
+      "name": "Feature flow",
+      "description": "What the member does and what the system does, step by step",
+      "group": "TRD.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "system-design@2",
+      "ordinal": 4,
+      "name": "System design",
+      "description": "The design across platforms, with its diagram",
+      "group": "TRD.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    },
+    {
+      "key": "api-contracts@1",
+      "ordinal": 5,
+      "name": "API contracts",
+      "description": "Every route and field, with its machine-checkable delta",
+      "group": "TRD.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    },
+    {
+      "key": "cross-cutting-concerns@1",
+      "ordinal": 6,
+      "name": "Cross-cutting concerns",
+      "description": "Auth, errors, versioning and the rest every platform shares",
+      "group": "TRD.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    },
+    {
+      "key": "change-manifest@1",
+      "ordinal": 7,
+      "name": "Change manifest",
+      "description": "What each repository changes, retires and ships in which order",
+      "group": "TRD.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "system-design@2",
+    "statusLabel": "waiting on you",
+    "stampLine": "TRD.md · System design",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "The web calls the recipes service, which asks the share service to sign · rung 2, reuse · standard: agrees"
+        },
+        {
+          "label": "Why it matters",
+          "text": "The web keeps one backend; the share service stays internal"
+        }
+      ],
+      "needFromYou": "Approve System design, approve it with edits, or regenerate it with feedback"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written",
+          "body": "```mermaid\nsequenceDiagram\n  participant W as Web\n  participant R as Recipes service\n  participant S as Share service\n  W->>R: share a recipe\n  R->>S: sign the link\n```",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "pending in TRD.md",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Approved sections and code",
+          "rows": [
+            {
+              "label": "Approved Feature flow",
+              "count": null,
+              "lines": [
+                "TRD.md Feature flow, step 2"
+              ]
+            },
+            {
+              "label": "Web API client",
+              "count": null,
+              "lines": [
+                "src/api/client.ts:12"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes System design into TRD.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve System design",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "regenerate",
+        "label": "Regenerate with feedback",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  }
+}

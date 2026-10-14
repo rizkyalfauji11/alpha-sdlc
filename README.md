@@ -468,6 +468,16 @@ questions and the gate. The consumer keeps every row a report does not name. A r
 turn under a schema, so the skill reports only when it asks something or the setup is finished;
 progress between those moments is plain text.
 
+A consumer that passes `/do-grooming` a grooming-run schema gets reports in the same shape, mapped
+by `skills/do-grooming/grooming-run-schema.md`: one row per TRD section (and per widget spec and
+slicing section on a client spoke), keyed `<section>@<revision>` so a regenerated proposal is
+decided on its own key, plus an "Outline" row until the outline is approved. Each approved unit is
+committed by explicit path. A session ends at the skill's boundaries, and at a section stamp once
+it passes `sessionBoundaryTokens`, with `sessionEnded: true` on its last report; the boundary hook
+tells it once, and never holds a line from the platform. The run finishes on `trdComplete: true`,
+once the TRD's self-review is clean and, for a session that pushes, the push you approved has
+succeeded. `tests/fixtures/grooming-run/` holds one report per case.
+
 ### The mobile driver loads only where there is a mobile app
 
 The plugin declares one MCP server, `mobile-mcp`, which drives a real Android or iOS app — install,
@@ -597,6 +607,12 @@ but has not closed: write `review ran <date> · rev <hub commit the review read>
 `Hub review` row, and `next-step.js` sends it to the close instead of another review. Hub changes
 still waiting are applied there, once. A ✅ spoke whose hub moved since its stamp is re-walked by
 its author, not reviewed again.
+
+From 0.40.0 `do-grooming` reports under a grooming-run schema, so the adp platform can run it
+through its bridge as it runs project setup. 0.40.0 is the minimum version for grooming there: the
+platform refuses Start, Start grooming, Continue and Add a platform on an older plugin and names
+this version.
+Grooming in a terminal is unchanged.
 
 ## Roadmap
 

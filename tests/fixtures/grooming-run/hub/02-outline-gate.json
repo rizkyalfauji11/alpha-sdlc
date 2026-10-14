@@ -1,0 +1,103 @@
+{
+  "pluginVersion": "0.40.0",
+  "commitRead": "4c1d9e2",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 1,
+    "total": 1
+  },
+  "documents": [],
+  "questions": [],
+  "gate": {
+    "documentKey": "outline@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "TRD.md · outline",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "Seven sections: context, dependencies, flow, system design, API contracts, cross-cutting, change manifest"
+        },
+        {
+          "label": "Understanding",
+          "text": "Members share a recipe by link; the share service signs it and the web shows a share sheet"
+        },
+        {
+          "label": "Approach",
+          "text": "Extend the share service (your answer) · rung 2, reuse · standard: agrees"
+        },
+        {
+          "label": "Evolution",
+          "text": "Sharing to a group later; nothing here blocks it"
+        },
+        {
+          "label": "Possibilities",
+          "text": "The same signed link could share a meal plan"
+        }
+      ],
+      "needFromYou": "Approve the outline, approve it with edits, or regenerate it"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written",
+          "body": "## 1. Context / scope\n## 2. Feature dependencies\n## 3. Feature flow\n## 4. System design\n## 5. API contracts\n## 6. Cross-cutting concerns\n## 7. Change manifest",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "pending in TRD.md",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Requirements",
+          "rows": [
+            {
+              "label": "PRD",
+              "count": null,
+              "lines": [
+                "requirements/recipe-sharing-prd.md"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the skeleton of TRD.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve the outline",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "regenerate",
+        "label": "Regenerate",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  }
+}
