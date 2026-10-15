@@ -1,0 +1,102 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 2,
+    "total": 3
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "scope@2",
+      "ordinal": 1,
+      "name": "Scope",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "layout@1",
+      "ordinal": 2,
+      "name": "Architecture & package layout",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "layout:debt-td-12",
+      "documentKey": "layout@1",
+      "title": "Pay TD-12 in this feature?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "What",
+            "text": "TD-12, the recipe store's untyped errors, sits in a file this plan edits"
+          }
+        ],
+        "needFromYou": "Pay TD-12 in this feature?"
+      },
+      "options": [
+        {
+          "id": "pay",
+          "label": "Pay it in this feature",
+          "why": "The store is open anyway",
+          "trade": "One more stage",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "keep",
+          "label": "Keep it, with a revisit trigger",
+          "why": "The feature stays small",
+          "trade": "The debt stays",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [],
+      "evidence": {
+        "caption": "Read while proposing",
+        "groups": [
+          {
+            "heading": "Read",
+            "rows": [
+              {
+                "label": "docs/basics/20-tech-debt-register.md",
+                "lines": [
+                  "TD-12 · internal/recipes/store.go"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "layout@1"
+      ],
+      "notes": [
+        {
+          "label": "Standing",
+          "text": "Asked once; the answer is recorded in the plan"
+        }
+      ],
+      "askedAt": "2026-10-15T08:12:00Z"
+    }
+  ],
+  "gate": null,
+  "onlyWhatChanged": true
+}

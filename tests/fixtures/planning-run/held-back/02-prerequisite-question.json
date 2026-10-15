@@ -1,0 +1,144 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 1,
+    "total": 3
+  },
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The steps before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "documents": [
+    {
+      "key": "scope@1",
+      "ordinal": 1,
+      "name": "Scope",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    },
+    {
+      "key": "layout@1",
+      "ordinal": 2,
+      "name": "Architecture & package layout",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    },
+    {
+      "key": "breakdown@1",
+      "ordinal": 3,
+      "name": "Stage breakdown",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "scope:prerequisite-recipe-collections",
+      "documentKey": "scope@1",
+      "title": "Recipe collections is not built: hold S3 back?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "What",
+            "text": "S3 shares a whole collection, and recipe-collections is not built yet"
+          }
+        ],
+        "needFromYou": "Recipe collections is not built: hold S3 back?"
+      },
+      "options": [
+        {
+          "id": "hold-back",
+          "label": "Hold S3 back and plan the rest",
+          "why": "Never plan on a phantom",
+          "trade": "The plan finishes only once it is built",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "stop",
+          "label": "Stop until it is built",
+          "why": "One plan, all at once",
+          "trade": "Nothing is planned now",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [],
+      "evidence": {
+        "caption": "Read while proposing",
+        "groups": [
+          {
+            "heading": "Read",
+            "rows": [
+              {
+                "label": "TRD.md",
+                "lines": [
+                  "§2 Feature dependencies: recipe-collections, prerequisite"
+                ]
+              },
+              {
+                "label": "docs/basics/16-feature-map.md",
+                "lines": [
+                  "recipe-collections · status: groomed"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "scope@1"
+      ],
+      "notes": [
+        {
+          "label": "Standing",
+          "text": "Asked once; the answer is recorded in the plan"
+        }
+      ],
+      "askedAt": null
+    }
+  ],
+  "gate": null,
+  "onlyWhatChanged": false
+}

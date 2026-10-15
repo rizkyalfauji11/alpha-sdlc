@@ -1,0 +1,12 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "a row whose proposal was reported but never decided is proposed again under the next revision;",
+      "file": "skills/do-grooming/grooming-run-schema.md",
+      "verdict": "changed",
+      "reason": "planning-platform H1 review: the platform records a decision while no session runs and serves it on the next checkpoint, so an undecided proposal keeps its key and body; a new revision would make that decision stale and lose it",
+      "where": "skills/do-grooming/grooming-run-schema.md → *The run ledger*; skills/do-planning/planning-run-schema.md → *The run ledger*"
+    }
+  ]
+}

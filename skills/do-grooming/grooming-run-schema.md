@@ -78,11 +78,14 @@ So:
 `id` already has an answer, so a key or an `id` never stands for two things in one run — across
 sessions too, and after a session that stopped mid-section. Keep
 `.alpha-sdlc/grooming-run/<feature>--<spoke name>.json` in the session's working directory:
-`{ "rows": { "<row id>": <its last revision> }, "questions": { "<id>": "open" | "answered" },
-"reviewRounds": [ … ] }`, written before every report that carries a new key, `id` or round, and
-again when a question's answer arrives. A session reads it first:
-- a row keeps its recorded revision; a row whose proposal was reported but never decided is
-  proposed again under the next revision;
+`{ "rows": { "<row id>": <its last revision> }, "open": { "<key>": <its Proposed body> },
+"questions": { "<id>": "open" | "answered" }, "reviewRounds": [ … ] }`, written before every report
+that carries a new key, gate, `id` or round, and again when a decision or an answer arrives. A
+session reads it first:
+- a row keeps its recorded revision. A proposal reported but never decided is reported again under
+  the same key with the body the ledger keeps, because the platform may hold a decision on it,
+  recorded while no session ran, that it serves on the first checkpoint; it takes the next revision
+  only when what it was drawn from changed since;
 - a question asked again, whether its earlier `id` is open or answered, takes the next free suffix
   — `push`, then `push-2`; `feature-flow:expired-link`, then `feature-flow:expired-link-2`;
 - an answer that still arrives on an earlier `id` of a question that is open is taken as its answer.

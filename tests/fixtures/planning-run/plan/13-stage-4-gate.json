@@ -1,0 +1,129 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 7,
+    "total": 7
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "stage-3@2",
+      "ordinal": 6,
+      "name": "[data] the share-link table and its migration",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-4@1",
+      "ordinal": 7,
+      "name": "[data] expiry swept by the scheduler",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "stage-4@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-backend.md · Stage 4 of 4",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "The scheduler job that expires links past 7 days; test first: a link one second past expiry is gone"
+        },
+        {
+          "label": "Why",
+          "text": "The last stage: the plan is whole once it is approved"
+        }
+      ],
+      "needFromYou": "Approve Stage 4, or re-split the breakdown"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written into plan-backend.md · it has nothing here yet",
+          "body": "### Stage 4 — [data] `S3` — expiry swept by the scheduler\n- **Covers:** AC-8, AC-9\n- **Layer:** data",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "in plan-backend.md now",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "Approved steps",
+              "lines": [
+                "Scope",
+                "Architecture & package layout",
+                "Stage breakdown",
+                "Stage 1",
+                "Stage 2",
+                "Stage 3"
+              ]
+            },
+            {
+              "label": "internal/recipes/store.go:88",
+              "lines": [
+                "the store the share link sits beside"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the step into plan-backend.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed until every stage is approved"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Stage 4",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "re-split",
+        "label": "Re-split",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": true
+}

@@ -1,0 +1,96 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 1,
+    "total": 3
+  },
+  "states": [],
+  "documents": [],
+  "questions": [],
+  "gate": {
+    "documentKey": "scope@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-web.md · scope · before anything is written",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "The share client and the share sheet, S1 and S2; S3 held back until recipe-collections is built"
+        },
+        {
+          "label": "Why",
+          "text": "Every later step plans from this scope"
+        }
+      ],
+      "needFromYou": "Confirm the scope, or send it back with what to change"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written into plan-web.md · it has nothing here yet",
+          "body": "# Dev Plan (Web): recipe sharing\n\n| | |\n|---|---|\n| **Platform** | Web |\n| **TRD** | [hub](./TRD.md) · [spoke](./TRD-web.md) |\n| **Tasks** | the spoke's work slices `S1`–`S3` |\n| **Author** | rizkyalfauji |\n| **Date** | 2026-10-15 |\n| **Feature review** | pending |\n\n## Design references\n\n| Screen / step / state | Design (Figma link / image path) | Specific needs |\n|---|---|---|\n| share-sheet — full frame | `docs/development/recipe-sharing/design/share-sheet.png` | `1440×900` · one link, 6 days left |\n| share-sheet · expired | flagged: platform default | |\n\n> S3 is held back until recipe-collections is built.",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "in plan-web.md now",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "TRD-web.md",
+              "lines": [
+                "§8 AC-1 to AC-12",
+                "§9 work slices S1–S3"
+              ]
+            },
+            {
+              "label": "src/features/recipes/RecipePage.tsx:120",
+              "lines": [
+                "the share button"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the step into plan-web.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed until every stage is approved"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Confirm the scope",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Confirm with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "regenerate",
+        "label": "Regenerate",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": true
+}

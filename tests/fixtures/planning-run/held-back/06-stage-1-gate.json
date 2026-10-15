@@ -1,0 +1,168 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 4,
+    "total": 7
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "breakdown@1",
+      "ordinal": 3,
+      "name": "Stage breakdown",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-1@1",
+      "ordinal": 4,
+      "name": "[data-integration] the share client and its query keys",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    },
+    {
+      "key": "stage-2@1",
+      "ordinal": 5,
+      "name": "[UI] the share sheet's shell",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    },
+    {
+      "key": "stage-3@1",
+      "ordinal": 6,
+      "name": "[UI] the share sheet's link section",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    },
+    {
+      "key": "stage-4@1",
+      "ordinal": 7,
+      "name": "[UI] the share sheet assembled",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "stage-1@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-web.md · Stage 1 of 4",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "The generated client and the share link's query keys; test first: the fixture from the contract"
+        },
+        {
+          "label": "Why",
+          "text": "The sheet reads through this client"
+        }
+      ],
+      "needFromYou": "Approve Stage 1, or re-split the breakdown"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written into plan-web.md · it has nothing here yet",
+          "body": "### Stage 1 — [data-integration] `S1` — the share client and its query keys\n- **Covers:** AC-1, AC-2, AC-30\n- **Layer:** data-integration",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "in plan-web.md now",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "Approved steps",
+              "lines": [
+                "Scope",
+                "Architecture & package layout",
+                "Stage breakdown"
+              ]
+            },
+            {
+              "label": "src/features/recipes/RecipePage.tsx:120",
+              "lines": [
+                "where the share button sits"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the step into plan-web.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed until every stage is approved"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Stage 1",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "re-split",
+        "label": "Re-split",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": true
+}

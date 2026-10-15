@@ -1,0 +1,95 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 2,
+    "total": 3
+  },
+  "states": [],
+  "documents": [],
+  "questions": [],
+  "gate": {
+    "documentKey": "layout@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-backend.md · layout",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "One new package `internal/sharing`, beside the recipe store; TD-12 paid by its own stage"
+        },
+        {
+          "label": "Why",
+          "text": "The stages slot into this map"
+        }
+      ],
+      "needFromYou": "Approve the layout, or send it back with feedback"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written into plan-backend.md · it has nothing here yet",
+          "body": "## Architecture & package layout\n\n| Concern | Package / directory | New or existing? | Notes |\n|---|---|---|---|\n| share links | `internal/sharing/` | new | beside `internal/recipes` |\n\n## Debt in the footprint\n\n| Row | File it names | Decision |\n|---|---|---|\n| TD-12 — untyped store errors | `internal/recipes/store.go` | paid by its own stage |",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "in plan-backend.md now",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "Approved steps",
+              "lines": [
+                "Scope"
+              ]
+            },
+            {
+              "label": "internal/recipes/store.go:88",
+              "lines": [
+                "the store the share link sits beside"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the step into plan-backend.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed until every stage is approved"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve the layout",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "regenerate",
+        "label": "Regenerate with feedback",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": true
+}

@@ -252,10 +252,10 @@ const describe = (result) => `exit ${result.exitCode}, stdout ${result.stdout ||
 {
   const DECISION_LINE = '{"target":"document","key":"feature-flow@1","actionId":"approve","optionId":null,"reason":null,"body":null}';
   const CARRY_ON_LINE = 'The platform: your last report asked nothing, and nothing is open for the reader.';
-  const PAST_THRESHOLD = 'past the session-size threshold of 200K. Under a grooming-run schema that declares sessionEnded, end this session at the next section stamp';
+  const PAST_THRESHOLD = 'past the session-size threshold of 200K. Under a grooming-run or planning-run schema that declares sessionEnded, end this session at the next section or stage stamp';
   const platform = guardProject();
   const told = prompt(platform, 'platform-run', DECISION_LINE);
-  report(GUARD, 'a platform decision line past the threshold is told to end at the next section stamp, with no next-file',
+  report(GUARD, 'a platform decision line past the threshold is told to end at the next section or stage stamp, with no next-file',
     adviceOf(told).startsWith('alpha-sdlc: this session carries about 305K tokens.') && adviceOf(told).includes(PAST_THRESHOLD),
     describe(told));
   report(GUARD, 'tells a platform session once', isSilent(prompt(platform, 'platform-run', DECISION_LINE)));

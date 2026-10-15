@@ -1,0 +1,28 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 6,
+    "total": 6
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "stage-2@1",
+      "ordinal": 5,
+      "name": "[domain] share links and their expiry",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "onlyWhatChanged": true,
+  "sessionEnded": true
+}

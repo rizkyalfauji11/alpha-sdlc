@@ -24,7 +24,8 @@ happened + what I need from you) → Why it matters (never omitted when a questi
 Options ★ → Context (only where it adds something) → Details (for engineers) → Next as the last
 paragraph (rules → *Present every step bottom line first*). The plain layer is in the org's
 language and follows its guide in `../../plain-language/` when one exists (`id.md` for Bahasa
-Indonesia) — at every gate, in every phase.
+Indonesia) — at every gate, in every phase. Under a planning-run schema (`--json-schema`), read
+`planning-run-schema.md` before the first report.
 
 ## Gates
 

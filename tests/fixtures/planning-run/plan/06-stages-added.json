@@ -1,0 +1,154 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 4,
+    "total": 6
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "breakdown@1",
+      "ordinal": 3,
+      "name": "Stage breakdown",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-1@1",
+      "ordinal": 4,
+      "name": "[contract] the share endpoints in the OpenAPI spec",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    },
+    {
+      "key": "stage-2@1",
+      "ordinal": 5,
+      "name": "[domain] share links and their expiry",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    },
+    {
+      "key": "stage-3@1",
+      "ordinal": 6,
+      "name": "[data] share links stored and expired",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "stage-1@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-backend.md · Stage 1 of 3",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "Merge the approved contract delta and regenerate the typed client; test first: the contract test of both routes"
+        },
+        {
+          "label": "Why",
+          "text": "Every later stage builds against this contract"
+        }
+      ],
+      "needFromYou": "Approve Stage 1, or re-split the breakdown"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written into plan-backend.md · it has nothing here yet",
+          "body": "### Stage 1 — [contract] `S1` — the share endpoints in the OpenAPI spec\n- **Covers:** AC-1, AC-2\n- **Layer:** contract",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "in plan-backend.md now",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "Approved steps",
+              "lines": [
+                "Scope",
+                "Architecture & package layout",
+                "Stage breakdown"
+              ]
+            },
+            {
+              "label": "internal/recipes/store.go:88",
+              "lines": [
+                "the store the share link sits beside"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the step into plan-backend.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed until every stage is approved"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Stage 1",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "re-split",
+        "label": "Re-split",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": true
+}
