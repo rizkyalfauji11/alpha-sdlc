@@ -1,0 +1,220 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 4,
+    "total": 7
+  },
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The steps before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "documents": [
+    {
+      "key": "scope@1",
+      "ordinal": 1,
+      "name": "Scope",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "layout@1",
+      "ordinal": 2,
+      "name": "Architecture & package layout",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "breakdown@1",
+      "ordinal": 3,
+      "name": "Stage breakdown",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-1@2",
+      "ordinal": 4,
+      "name": "[data-integration] the share client and its query keys",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      },
+      "notes": [
+        {
+          "label": "Coverage",
+          "text": "check-coverage.js: Stage 1 claims AC-30, which is not in §8 of TRD-web.md"
+        }
+      ]
+    },
+    {
+      "key": "stage-2@1",
+      "ordinal": 5,
+      "name": "[UI] the share sheet's shell",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-3@1",
+      "ordinal": 6,
+      "name": "[UI] the share sheet's link section",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-4@1",
+      "ordinal": 7,
+      "name": "[UI] the share sheet assembled",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "stage-1@2",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-web.md · Stage 1 of 4",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "Stage 1 claims AC-10 in place of AC-30, which the register does not hold"
+        },
+        {
+          "label": "Why",
+          "text": "The coverage check prints clean only once every claim names a real criterion"
+        }
+      ],
+      "needFromYou": "Approve Stage 1, or re-split the breakdown"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written into plan-web.md",
+          "body": "### Stage 1 — [data-integration] `S1` — the share client and its query keys\n- **Covers:** AC-1, AC-2, AC-10\n- **Layer:** data-integration",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "in plan-web.md now",
+          "body": "### Stage 1 — [data-integration] `S1` — the share client and its query keys\n- **Covers:** AC-1, AC-2, AC-30\n- **Layer:** data-integration\n- **Approved (plan gate):** commit `4b1c2d0` · approved 2026-10-15",
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "check-coverage.js",
+              "lines": [
+                "coverage: 4 problem(s) — 12 acceptance criteria (0 retired) · 3 work slices · 4 stages",
+                "- Stage 1 claims AC-30, which is not in §8 of TRD-web.md",
+                "- AC-9 is claimed by no stage",
+                "- AC-11 is claimed by no stage",
+                "- AC-12 is claimed by no stage"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the step into plan-web.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed until every stage is approved"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Stage 1",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "re-split",
+        "label": "Re-split",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": false
+}

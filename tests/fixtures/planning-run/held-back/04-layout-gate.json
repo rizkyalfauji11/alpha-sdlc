@@ -1,0 +1,124 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 2,
+    "total": 3
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "scope@1",
+      "ordinal": 1,
+      "name": "Scope",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "layout@1",
+      "ordinal": 2,
+      "name": "Architecture & package layout",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "layout@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-web.md · layout",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "A `sharing` feature folder beside `recipes`; no debt in the footprint"
+        },
+        {
+          "label": "Why",
+          "text": "The stages slot into this map"
+        }
+      ],
+      "needFromYou": "Approve the layout, or send it back with feedback"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written into plan-web.md · it has nothing here yet",
+          "body": "## Architecture & package layout\n\n| Concern | Package / directory | New or existing? | Notes |\n|---|---|---|---|\n| share sheet | `src/features/sharing/` | new | |\n\n## Debt in the footprint\n\nnone",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "in plan-web.md now",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "Approved steps",
+              "lines": [
+                "Scope"
+              ]
+            },
+            {
+              "label": "src/features/recipes/RecipePage.tsx:120",
+              "lines": [
+                "where the share button sits"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the step into plan-web.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed until every stage is approved"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve the layout",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "regenerate",
+        "label": "Regenerate with feedback",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": true
+}

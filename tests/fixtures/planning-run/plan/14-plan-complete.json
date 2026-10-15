@@ -1,0 +1,34 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 7,
+    "total": 7
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "stage-4@1",
+      "ordinal": 7,
+      "name": "[data] expiry swept by the scheduler",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "onlyWhatChanged": true,
+  "sessionEnded": true,
+  "planComplete": true,
+  "planCoverage": {
+    "acceptanceCriteria": 9,
+    "workSlices": 3,
+    "stages": 4
+  }
+}

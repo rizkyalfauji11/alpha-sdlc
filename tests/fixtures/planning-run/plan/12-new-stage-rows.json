@@ -1,0 +1,220 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 6,
+    "total": 7
+  },
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The steps before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "documents": [
+    {
+      "key": "scope@2",
+      "ordinal": 1,
+      "name": "Scope",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "layout@1",
+      "ordinal": 2,
+      "name": "Architecture & package layout",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "breakdown@2",
+      "ordinal": 3,
+      "name": "Stage breakdown",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-1@1",
+      "ordinal": 4,
+      "name": "[contract] the share endpoints in the OpenAPI spec",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-2@1",
+      "ordinal": 5,
+      "name": "[domain] share links and their expiry",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-3@2",
+      "ordinal": 6,
+      "name": "[data] the share-link table and its migration",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    },
+    {
+      "key": "stage-4@1",
+      "ordinal": 7,
+      "name": "[data] expiry swept by the scheduler",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "stage-3@2",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-backend.md · Stage 3 of 4",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "The share-link table, its migration and the repository; test first: the repository against a real database"
+        },
+        {
+          "label": "Why",
+          "text": "The expiry job reads this table"
+        }
+      ],
+      "needFromYou": "Approve Stage 3, or re-split the breakdown"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written into plan-backend.md · it has nothing here yet",
+          "body": "### Stage 3 — [data] `S3` — the share-link table and its migration\n- **Covers:** AC-5, AC-6, AC-7\n- **Layer:** data",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "in plan-backend.md now",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "Approved steps",
+              "lines": [
+                "Scope",
+                "Architecture & package layout",
+                "Stage breakdown",
+                "Stage 1",
+                "Stage 2"
+              ]
+            },
+            {
+              "label": "internal/recipes/store.go:88",
+              "lines": [
+                "the store the share link sits beside"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the step into plan-backend.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed until every stage is approved"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Stage 3",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "re-split",
+        "label": "Re-split",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": false
+}

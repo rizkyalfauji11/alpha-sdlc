@@ -1,0 +1,48 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 7,
+    "total": 7
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "breakdown@1",
+      "ordinal": 3,
+      "name": "Stage breakdown",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      },
+      "notes": [
+        {
+          "label": "Held back",
+          "text": "S3 waits for recipe-collections: AC-9, AC-11 and AC-12 are claimed by no stage until it is built. Continue then plans it through the breakdown's next revision."
+        }
+      ]
+    },
+    {
+      "key": "stage-1@2",
+      "ordinal": 4,
+      "name": "[data-integration] the share client and its query keys",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "onlyWhatChanged": true,
+  "sessionEnded": true
+}

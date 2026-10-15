@@ -1,0 +1,125 @@
+{
+  "pluginVersion": "0.41.0",
+  "step": {
+    "ordinal": 3,
+    "total": 3
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "layout@1",
+      "ordinal": 2,
+      "name": "Architecture & package layout",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "breakdown@1",
+      "ordinal": 3,
+      "name": "Stage breakdown",
+      "description": "plan-web.md",
+      "group": "plan-web.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "breakdown@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-web.md · breakdown",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "One screen, unlayered → 4 stages: data-integration, then the share sheet as shell, one section and assembly; S3 held back"
+        },
+        {
+          "label": "Why",
+          "text": "You see how many checkpoints you agree to before any stage is detailed"
+        }
+      ],
+      "needFromYou": "Approve the breakdown, or re-split it"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written into plan-web.md · it has nothing here yet",
+          "body": "## Screen stage map\n\n| Screen | Shell | Section stages (top-down) | Assembly | Cases claimed |\n|---|---|---|---|---|\n| share-sheet | Stage 2 | 3: `body.link` (C1–C4) | Stage 4 — full screen + `X1` | 5 of 5 |\n\n## Stage breakdown — approved\n\n| Stage | Layer | Slice | Goal | Detail |\n|---|---|---|---|---|\n| 1 | [data-integration] | `S1` | the share client and its query keys | pending |\n| 2 | [UI] | `S2` | the share sheet's shell | pending |\n| 3 | [UI] | `S2` | the share sheet's link section | pending |\n| 4 | [UI] | `S2` | the share sheet assembled | pending |",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "in plan-web.md now",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "Approved steps",
+              "lines": [
+                "Scope",
+                "Architecture & package layout"
+              ]
+            },
+            {
+              "label": "src/features/recipes/RecipePage.tsx:120",
+              "lines": [
+                "where the share button sits"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the step into plan-web.md and commits it to feat/recipe-sharing",
+      "Nothing is pushed until every stage is approved"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve the breakdown",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "re-split",
+        "label": "Re-split",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": true
+}

@@ -478,6 +478,15 @@ tells it once, and never holds a line from the platform. The run finishes on `tr
 once the TRD's self-review is clean and, for a session that pushes, the push you approved has
 succeeded. `tests/fixtures/grooming-run/` holds one report per case.
 
+A consumer that passes `/do-planning` a planning-run schema gets the same shape, mapped by
+`skills/do-planning/planning-run-schema.md`: one row per step with a gate — `scope`, `layout`,
+`breakdown`, then `stage-<n>` once the breakdown is approved — keyed `<step>@<revision>`, each
+gate's proposal the step's own Markdown. Each approved step is committed by explicit path, and the
+run never pushes. A refusal to plan, a stamped stage past `sessionBoundaryTokens` and the phase end
+end the session with `sessionEnded: true`. The run finishes on `planComplete: true` with
+`planCoverage`, the clean coverage check's counts, once every stage is approved and the review
+charter is written. `tests/fixtures/planning-run/` holds one report per case.
+
 ### The mobile driver loads only where there is a mobile app
 
 The plugin declares one MCP server, `mobile-mcp`, which drives a real Android or iOS app — install,
@@ -613,6 +622,11 @@ through its bridge as it runs project setup. 0.40.0 is the minimum version for g
 platform refuses Start, Start grooming, Continue and Add a platform on an older plugin and names
 this version.
 Grooming in a terminal is unchanged.
+
+From 0.41.0 `do-planning` reports under a planning-run schema, so the adp platform can run it
+through its bridge as it runs grooming. 0.41.0 is the minimum version for planning there: the
+platform refuses Start planning and Continue planning on an older plugin and names this version.
+Planning in a terminal is unchanged.
 
 ## Roadmap
 

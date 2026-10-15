@@ -160,8 +160,8 @@ function platformAdvice(facts, threshold) {
     hookSpecificOutput: {
       hookEventName: 'UserPromptSubmit',
       additionalContext: facts + ' That is past the session-size threshold of ' + Math.round(threshold / 1000) +
-        'K. Under a grooming-run schema that declares sessionEnded, end this session at the next section stamp ' +
-        '(do-grooming grooming-run-schema.md → The session); otherwise, carry on.',
+        'K. Under a grooming-run or planning-run schema that declares sessionEnded, end this session at the next ' +
+        "section or stage stamp (the skill's run-schema guide → The session); otherwise, carry on.",
     },
   };
 }
