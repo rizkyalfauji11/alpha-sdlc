@@ -17,6 +17,8 @@ const RFC3339 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/;
 const TONES = ['neutral', 'progress', 'attention', 'blocked', 'done', 'skipped'];
 const VOCABULARY = { pending: false, 'waiting on you': false, 'being fixed': false, approved: true };
 const GATE_ACTIONS = ['approve', 'approve-with-edits', 'regenerate'];
+const DESIGN_QUESTION = /^Do you have a design for the screen “[^”]+”\?$/;
+const DRAFT_PATH = /^design\/[A-Za-z0-9._-]+\.html$/;
 
 const isString = (value) => typeof value === 'string';
 const isInteger = (value) => Number.isInteger(value);
@@ -27,6 +29,7 @@ const isBlock = (block) => block && isString(block.label) && isString(block.text
 function groupFor(id, group) {
   if (!id.includes('/')) return /^TRD(?:-[A-Za-z0-9-]+)?\.md$/.test(group || '');
   const [screen, part] = id.split('/');
+  if (part === 'draft') return group === `design/${screen}.html`;
   return group === (part === 'widget-spec' ? `widget-spec/${screen}.md` : `section-slicing/${screen}.md`);
 }
 const revisionOf = (key) => Number(key.slice(key.lastIndexOf('@') + 1));
@@ -163,6 +166,13 @@ function replay(files) {
       if (gate.actions.filter((action) => action.role === 'primary').length !== 1 || (byId.approve || {}).role !== 'primary') fail('approve is the one primary action');
       if (!(byId['approve-with-edits'] || {}).requiresBody || !((gate.detail || {}).panes || []).some((pane) => pane.editable && isString(pane.body))) fail('approve-with-edits needs a body and an editable pane holding the proposal');
       if (!(byId.regenerate || {}).requiresReason) fail('regenerate needs the feedback as its reason');
+      const drafted = rowIdOf(gate.documentKey).endsWith('/draft');
+      if (!drafted && 'draft' in gate) fail('draft is sent only on a design draft\'s gate');
+      if (drafted) {
+        const screen = rowIdOf(gate.documentKey).split('/')[0];
+        const draftPath = (gate.draft || {}).path;
+        if (!DRAFT_PATH.test(draftPath || '') || draftPath !== `design/${screen}.html`) fail(`a draft's gate names its draft, design/${screen}.html`);
+      }
     }
 
     for (const question of report.questions) {
@@ -173,6 +183,15 @@ function replay(files) {
       if (!question.evidence) fail(`question ${question.id} carries evidence`);
       if (![...question.options, ...question.actions].some((choice) => choice.requiresReason)) fail(`question ${question.id} offers a way out that requires a reason`);
       if (!RFC3339.test(question.askedAt || '')) fail(`question ${question.id} has an RFC 3339 askedAt`);
+      if (/^design:/.test(question.id)) {
+        const [draft, figma] = question.options;
+        if (!DESIGN_QUESTION.test(question.title)) fail(`question ${question.id} reads "Do you have a design for the screen “<screen>”?"`);
+        if (question.options.map((option) => option.id).join('|') !== 'draft|figma') fail(`question ${question.id} offers draft then figma`);
+        else if (draft.label !== 'Claude drafts it' || !draft.recommended || draft.requiresReason ||
+          figma.label !== 'I have a Figma link' || figma.recommended || !figma.requiresReason) {
+          fail(`question ${question.id}: "Claude drafts it" recommended, "I have a Figma link" requiring the link`);
+        }
+      }
       if (askedAt.has(question.id) && askedAt.get(question.id) !== question.askedAt) fail(`question ${question.id} keeps its askedAt`);
       const asked = mirror.get(question.documentKey);
       if (/^push/.test(question.id) && asked && asked.state.label !== 'approved') fail(`the ${question.id} question leaves its row approved`);
@@ -206,7 +225,7 @@ function replay(files) {
   return problems;
 }
 
-const stories = ['hub', 'platform'].map((story) => ({ story, files: storyFiles(story) }));
+const stories = ['hub', 'platform', 'draft'].map((story) => ({ story, files: storyFiles(story) }));
 for (const { story, files } of stories) {
   const problems = replay(files);
   report('fixtures', `the ${story} story conforms to the grooming-run guide`, problems.length === 0, problems.join('\n'));
@@ -229,6 +248,10 @@ covers("a client screen's rows grouped by their own files", (sent) => sent.docum
   sent.documents.some((row) => row.group === `section-slicing/${row.key.split('/')[0]}.md`));
 covers('a review fix re-gating its row under the next revision', (sent) => sent.onlyWhatChanged === false && sent.gate &&
   revisionOf(sent.gate.documentKey) > 1 && sent.documents.some((row) => (row.notes || []).some((note) => note.label === 'Fixed by the review')));
+covers("every screen's design question in one report", (sent) => sent.questions.filter((question) => /^design:/.test(question.id)).length > 1);
+covers("a draft's gate naming its draft", (sent) => sent.gate && rowIdOf(sent.gate.documentKey).endsWith('/draft') && sent.gate.draft);
+covers('a redrawn draft shown again under its next revision', (sent) => sent.onlyWhatChanged === false && sent.gate &&
+  rowIdOf(sent.gate.documentKey).endsWith('/draft') && revisionOf(sent.gate.documentKey) > 1);
 covers('a row being fixed while its fix waits on an answer', (sent) => sent.documents.some((row) => row.state.label === 'being fixed') && sent.questions.length > 0);
 
 {
@@ -253,6 +276,22 @@ covers('a row being fixed while its fix waits on an answer', (sent) => sent.docu
   }];
   report('checker', 'catches an answered push:refused asked again under the same id',
     replay(askedAgain).some((problem) => problem.includes('push:refused was answered before')));
+  const draftStory = storyFiles('draft');
+  const changed = (name, change) => draftStory.map((file) => file.name.endsWith(name) ? { ...file, report: change(JSON.parse(JSON.stringify(file.report))) } : file);
+  report('checker', 'catches draft on a gate that is not a draft\'s',
+    replay(changed('03-widget-spec-gate.json', (sent) => ({ ...sent, gate: { ...sent.gate, draft: { path: 'design/reminder-list.html' } } })))
+      .some((problem) => problem.includes('draft is sent only on a design draft')));
+  report('checker', 'catches a draft\'s gate without its draft',
+    replay(changed('04-draft-gate.json', (sent) => { delete sent.gate.draft; return sent; })).some((problem) => problem.includes('names its draft')));
+  report('checker', 'catches a draft path that is not the screen\'s',
+    replay(changed('04-draft-gate.json', (sent) => ({ ...sent, gate: { ...sent.gate, draft: { path: '../design/reminder-list.html' } } })))
+      .some((problem) => problem.includes('names its draft')));
+  report('checker', 'catches the design question worded with straight quotes',
+    replay(changed('01-design-questions.json', (sent) => { sent.questions[0].title = 'Do you have a design for the screen "Reminder list"?'; return sent; }))
+      .some((problem) => problem.includes('reads "Do you have a design')));
+  report('checker', 'catches a design question whose draft option is renamed',
+    replay(changed('01-design-questions.json', (sent) => { sent.questions[0].options[0].id = 'claude'; return sent; }))
+      .some((problem) => problem.includes('offers draft then figma')));
 }
 
 {

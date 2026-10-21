@@ -7,7 +7,7 @@ decide and when to ask. `SKILL.md` keeps the flow and every gate.
 
 ## Contents
 
-- **Capture design** — the moment the user shares it
+- **Capture design** — the moment the user shares it; the question for a screen with none
 - **Widget spec per screen** — Step 3.1
 - **Section slicing per screen** — Step 3.2
 - **Multi-step flows** — §2 Design
@@ -32,6 +32,20 @@ frame shows the layout between sections, which is what `do-development`'s assemb
 than estimated — and a section's crop box is then that section's measured box, not one typed by
 eye. `do-planning` reads these forward into its *Design references* for the visual-parity loop
 — it should not re-ask for anything grooming already captured.
+
+**A screen with no design is asked about, never skipped.** At §2 Design's *Ask first*, every
+screen the spoke draws that has no design recorded yet — none shared, none in the requirements,
+the hub or its widget spec — gets this question, all screens in one batch, worded exactly:
+`Do you have a design for the screen “{screen}”?` (`{screen}` the screen's name, as its widget
+spec will title it). Options:
+- `draft` — **Claude drafts it**, recommended: Step 3 draws the screen after its widget spec is
+  approved, by `design-draft.md`, and the draft's gate decides it.
+- `figma` — **I have a Figma link**, requires a reason: the reason is the frame link, recorded as
+  any Figma link is. One that is not a Figma frame link is asked again.
+- Other — the member's own answer: images they share or will add, another link.
+
+A terminal asks the same question with the question tool, one question per screen, and asks for
+the frame link after *I have a Figma link* when the answer did not carry it.
 
 ## Widget spec per screen
 
@@ -105,7 +119,8 @@ using `section-slicing-template.md`.
 - **Crop each section (and each case that looks different) from the design.** Propose the crop
   **box** on the design image, produce the crop with what's installed (`sips` on macOS,
   ImageMagick if present — **ask before installing anything**), and **show the crop inside that
-  section's approval gate** so the box is human-checked, since it's estimated by eye. Approved
+  section's approval gate** so the box is human-checked, since it's estimated by eye; a drafted
+  screen's crops come from its draft (`design-draft.md` → *Sections of a draft*). Approved
   crops go to
   **`docs/development/<feature-name>/design/sections/<screen>/<section-id>[--<case>].png`**. Never
   leave a case silently crop-less, and never invent a crop.

@@ -5,10 +5,10 @@ tool) — at the start of every such session, before the first report, and again
 Everything in `SKILL.md` still applies; this file maps it onto the report and says where a run on
 the platform differs. The report is the setup-run report's shape, so
 `../do-project-setup/setup-run-schema.md` binds here too — *When to report*, *Every question*, *Only
-what changed* — except where this file says otherwise. Three optional fields go beyond setup's
-report: `reviewRounds` and `trdComplete` (*The review*) and `sessionEnded` (*The session*). Each is
-sent only when the consumer's schema declares it; without `sessionEnded`, a session carries on past
-every boundary instead of ending there.
+what changed* — except where this file says otherwise. Four optional fields go beyond setup's
+report: `reviewRounds` and `trdComplete` (*The review*), `sessionEnded` (*The session*) and the
+gate's `draft` (*The design draft*). Each is sent only when the consumer's schema declares it;
+without `sessionEnded`, a session carries on past every boundary instead of ending there.
 
 ## Contents
 
@@ -17,6 +17,7 @@ every boundary instead of ending there.
 - **Rows** — keys, the outline, groups, order, states
 - **The gate**
 - **Questions**
+- **The design draft** — its question, its row, its gate and `draft`
 - **Decisions on stdin**
 - **The review** — `reviewRounds` and `trdComplete`
 - **Platform TRDs and Add a platform**
@@ -26,6 +27,8 @@ every boundary instead of ending there.
 This guide ships in alpha-sdlc **0.40.0**, the minimum version the platform accepts for Start,
 Start grooming, Continue and Add a platform. `pluginVersion` is the `version` in the plugin root's
 `.claude-plugin/plugin.json` (two levels above this skill's base directory), read once per session.
+The design draft needs 0.42.0: an older plugin never asks the design question, and none of its
+gates carries `draft`.
 
 ## The session
 
@@ -109,7 +112,8 @@ are the files the unit wrote: the TRD, the contract delta, the profile docs a se
 per-screen docs and crops. Before the first commit of a session, each clone it commits in must be
 on `feat/<feature>` (`git rev-parse --abbrev-ref HEAD`); one that is not is a question, and nothing
 is committed there. The message follows the repository's `11-git-management.md` and names the TRD
-file and the section. The stamp's commit is `HEAD` before that commit, as `SKILL.md` says.
+file and the section. The stamp's commit is `HEAD` before that commit, as `SKILL.md` says. A design
+draft is the one unit committed before its gate (*The design draft*).
 
 **Pushes.** The hub's own run never pushes; the member pushes once it ends. A platform TRD's run and
 an *Add a platform* run push once their review is clean, and only on the member's yes: a question
@@ -135,7 +139,8 @@ and `next-step.js` then reads that stamp as unverified — a named limit.
   every run of other characters one hyphen: `## 3. Feature flow` → `feature-flow`,
   `## 1. Scope (this platform)` → `scope`;
 - a client spoke's widget spec — `<screen>/widget-spec`; each section of its slicing —
-  `<screen>/<section-id>`, both as their files write them;
+  `<screen>/<section-id>`, both as their files write them; a screen's design draft —
+  `<screen>/draft`;
 - the outline — `outline`, reserved: a row named "Outline", from the session's first report until
   the outline is approved.
 
@@ -144,14 +149,15 @@ review fix that changes its decisions, an added platform's manifest — takes th
 approved row keeps its key. A correction to an approved row is that next revision with its own
 gate, never setup's `<key>:correction` question.
 
-- `name` — the heading's text without its number (`Feature flow`), `<Screen> widget spec`, or
-  `<section name> · <Screen>`.
+- `name` — the heading's text without its number (`Feature flow`), `<Screen> widget spec`,
+  `<Screen> design draft`, or `<section name> · <Screen>`.
 - `group` — the file the row writes: `TRD.md`, `TRD-web.md`, `widget-spec/<screen>.md`,
-  `section-slicing/<screen>.md`.
+  `design/<screen>.html`, `section-slicing/<screen>.md`.
 - `description` — one line on what the row decides.
 - `ordinal` — the row's place, from 1: the TRD's sections in heading order, then each screen's
-  widget spec followed by its slicing sections. Rows are always sent in ascending `ordinal`. Neither
-  `ordinal` nor `step` is a section number; the consumer counts a row's place from the rows. `step` is
+  widget spec, its draft if it has one, then its slicing sections. Rows are always sent in
+  ascending `ordinal`. Neither `ordinal` nor `step` is a section number; the consumer counts a
+  row's place from the rows. `step` is
   `{ "ordinal": <the ordinal of the row the run is on>, "total": <the row count> }`.
 - `notes` — as in setup: what a review fixed on the row, a pending hub change it cites.
 
@@ -223,7 +229,7 @@ Each decision arrives as one line of JSON: `target`, `key`, `actionId`, `optionI
 - `document`, on the open gate's key — `approve`: write the section and stamp it, then commit;
   `approve-with-edits`: `body` is the edited *Proposed* pane, and it is what gets written;
   `regenerate`: `reason` is the feedback, and the next proposal comes under the next revision, in a
-  full snapshot.
+  full snapshot. A draft's gate differs: *The design draft*.
 - `question`, on its `id` — `optionId` is the answer and `actionId` is `""`; `reason` comes with an
   option that requires one, and is the answer itself for `other`. Or `actionId` names one of the
   question's own actions.
@@ -231,6 +237,51 @@ Each decision arrives as one line of JSON: `target`, `key`, `actionId`, `optionI
   ledger*): say so in plain text and act on nothing. The `plan` target is never used.
 - The platform's own lines — *your last report asked nothing…*, *your last turn ended on an API
   error…* — are not decisions. They say "setup" on every run, and apply to grooming as written.
+
+## The design draft
+
+A web, Android or iOS spoke asks `client-spoke.md` → *Capture design*'s question and draws by
+`design-draft.md`. On the platform:
+
+**The question** — one per screen with no design, all of them in one report, on the Design row
+(`## 2. Design`):
+- `id` `design:<screen>`, `<screen>` the file name the screen's widget spec will take;
+  `documentKey` and `blocks` the Design row's key;
+- `title` `Do you have a design for the screen “<screen name>”?`, exactly, its curly quotes
+  included;
+- `options`, in this order: `draft`, label `Claude drafts it`, `recommended` true,
+  `requiresReason` false; `figma`, label `I have a Figma link`, `recommended` false,
+  `requiresReason` true, its `reason` the frame link. The consumer adds `other`.
+
+**The row** — `<screen>/draft`, named `<Screen> design draft`, its group `design/<screen>.html`,
+its `ordinal` between the screen's widget spec and its first slicing section. Only a screen
+answered `draft` has one.
+
+**The gate** — reported only once the draft and its widget spec are committed (`design-draft.md`
+→ *Recording and committing*), shaped as a section's gate except:
+- `stampLine` — `design/<screen>.html · <Screen> design draft`;
+- `summary` — *What* (the frame size, the regions, the states drawn) then *Why it matters*;
+  `needFromYou` asks the member to open the draft and decide it;
+- `detail` — pane *Proposed* (note *the drawing's notes — edit them to have it redrawn*, `body`
+  the notes, `editable` true) and pane *Current* (note *the drawing before this one*, its notes,
+  `body` null on the first drawing, `editable` false);
+- `evidence` — caption *Read while drawing*: the hub sections, the widget spec and the profile
+  docs it was drawn from, with `file:line`, and `check-draft.js`'s result;
+- `consequences` — *Approve makes this drawing the screen's design and commits its widget spec*
+  and *The draft is committed on `feat/<feature>` already; nothing is pushed*;
+- `actions` — the gate's three: `approve` (`Approve <Screen> design draft`),
+  `approve-with-edits` (requires a body), `regenerate` (requires a reason);
+- **`draft`** — `{ "path": "design/<screen>.html" }`: the draft's path relative to the feature
+  folder, as the widget spec's `Design` field names it without its `../`, matching
+  `^design/[A-Za-z0-9._-]+\.html$`. The web opens the draft tab from it, reading the clone at
+  `feat/<feature>` through the bridge's `GET /v1/repos/design`. Sent on every draft's gate and on
+  no other gate.
+
+**Its decisions** — `approve`: the `Design` field takes its stamp, the widget spec is committed,
+the row is approved. `approve-with-edits` (`body` the edited notes) and `regenerate` (`reason` the
+feedback): redraw over the same file, run the proof, commit both, then the same gate under the
+row's next revision, in a full snapshot. Neither approves the row: the member approves only a
+drawing they have seen.
 
 ## The review
 

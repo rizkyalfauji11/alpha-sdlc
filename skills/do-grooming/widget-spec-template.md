@@ -5,7 +5,7 @@
 | **Screen** | <screen / page name> |
 | **Platforms** | <Android / iOS / Web — those in scope> |
 | **TRD** | [spoke](../TRD-<platform>.md) |
-| **Design** | <Figma frame link *or* `../design/<screen>.png` — the full frame this screen must match, and its size (e.g. `1768×1020`); an HTML canvas also names the file and the frame's selector — its elements carry the Test IDs below> |
+| **Design** | <Figma frame link *or* `../design/<screen>.png` *or* a Claude draft, `../design/<screen>.html` (`design-draft.md`), as a Markdown link first in the cell — the full frame this screen must match, and its size (e.g. `1768×1020`); an HTML canvas or draft also names the file and the frame's selector — its elements carry the Test IDs below> |
 | **Scaffold · slicing** | <which scaffold from `docs/basics/03-ui-architecture.md` → *Screen scaffolds* this screen instantiates, + its body slicing — e.g. `feature-page · 1:2:1`. Deviation from the scaffold → Open Decision; a new pattern → ask, then register it there.> |
 | **Approved** | <commit `<hash>` · approved <YYYY-MM-DD> — set when this screen's gate passes; an edit after that **commit** makes it stale → re-approve (a bare date can't decide a same-day edit)> |
 | **Date** | <YYYY-MM-DD> |

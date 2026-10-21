@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reminder list — Claude draft</title>
+<style>
+  body { margin: 0; background: #e9ecef; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1c2430; }
+  [data-frame] { width: 1440px; height: 900px; background: #f7f8fa; box-sizing: border-box; padding: 32px 48px; margin-bottom: 48px; overflow: hidden; }
+  .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 24px; border-bottom: 1px solid #dfe3e8; }
+  .header h1 { font-size: 24px; line-height: 32px; margin: 0; font-weight: 600; }
+  .add { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 8px; background: #1f6feb; color: #fff; font-size: 14px; font-weight: 600; border: 0; }
+  .list { margin-top: 24px; display: grid; gap: 12px; }
+  .item { display: flex; justify-content: space-between; padding: 16px 20px; border-radius: 8px; background: #fff; border: 1px solid #dfe3e8; font-size: 14px; }
+  .overdue { color: #b42318; font-weight: 600; }
+  .empty { margin-top: 160px; text-align: center; color: #5b6573; font-size: 16px; }
+</style>
+</head>
+<body>
+<main data-frame="reminder-list">
+  <header class="header" data-testid="reminders_list_header">
+    <h1 data-testid="reminders_list_title">Payment reminders</h1>
+    <button class="add" data-testid="reminders_list_add_button" aria-label="Add a reminder"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>Add reminder</button>
+  </header>
+  <section class="list" data-testid="reminders_list_list" aria-label="Reminders">
+    <div class="item" data-testid="reminders_list_item"><span>Electricity — PLN</span><span>Due 25 Oct</span></div>
+    <div class="item" data-testid="reminders_list_item"><span>Internet — IndiHome</span><span class="overdue">Overdue 18 Oct</span></div>
+    <div class="item" data-testid="reminders_list_item"><span>Water — PDAM</span><span>Due 2 Nov</span></div>
+  </section>
+</main>
+<main data-frame="reminder-list--empty">
+  <header class="header" data-testid="reminders_list_header">
+    <h1 data-testid="reminders_list_title">Payment reminders</h1>
+    <button class="add" data-testid="reminders_list_add_button" aria-label="Add a reminder"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>Add reminder</button>
+  </header>
+  <section class="list" data-testid="reminders_list_list" aria-label="Reminders">
+    <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true" style="margin: 120px auto 0; display: block"><circle cx="48" cy="48" r="44" fill="#e3e8ef"/><path d="M30 40h36M30 52h24" stroke="#8a94a3" stroke-width="4" stroke-linecap="round"/></svg>
+    <p class="empty" style="margin-top: 16px" data-testid="reminders_list_empty_text">No reminders yet</p>
+  </section>
+</main>
+</body>
+</html>

@@ -541,6 +541,22 @@ function issueDocument({ notes = [], outline = [] } = {}) {
   expectNext('a screen left incomplete after the spoke\'s self-review is a STOP back to Step 3',
     nextStep(started.featureDirectory, ['web', '--phase', 'grooming']),
     { exit: 1, unit: /screen cart/, step: /1 Coverage checklist line\(s\) unchecked/, stop: /cart: any screen missing either doc, or with its Coverage checklist unchecked → STOP, back to Step 3/ });
+  const slicing = '# Section Slicing — cart\n\n| | |\n|---|---|\n| **Approved (screen)** | commit `abc1234` · approved 2026-10-01 |\n\n' +
+    '## Coverage checklist\n\n- [x] Every section has a block.\n';
+  const drafted = (design) => featureProject(`screens-draft-${design.length}`, {
+    'TRD.md': hubDocument(),
+    'TRD-web.md': spokeDocument({ platform: 'Web', alignment: '`NOT REVIEWED`' }),
+    'widget-spec/cart.md': widgetSpec + `| **Design** | ${design} |\n`,
+    'section-slicing/cart.md': slicing,
+  }).featureDirectory;
+  expectNext('a screen whose Claude draft awaits its gate goes back to Step 3, with the draft step re-read',
+    nextStep(drafted('Claude draft, awaiting approval — [../design/cart.html](../design/cart.html) · frame `[data-frame="cart"]` · 1440×900'),
+      ['web', '--phase', 'grooming']),
+    { exit: 0, unit: /screen cart/, step: /Step 3 .*design draft not approved/, reread: /do-grooming\/design-draft\.md$/, noStop: true });
+  expectNext('an approved Claude draft leaves its screen finished',
+    nextStep(drafted('Claude draft · commit abc1234 · approved 2026-10-01 — [../design/cart.html](../design/cart.html) · frame `[data-frame="cart"]` · 1440×900'),
+      ['web', '--phase', 'grooming']),
+    { exit: 0, fact: /screen cart: widget spec \+ slicing approved, checklist complete/, notReread: /design-draft\.md$/ });
 }
 
 {

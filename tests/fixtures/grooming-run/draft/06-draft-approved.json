@@ -1,0 +1,120 @@
+{
+  "pluginVersion": "0.42.0",
+  "commitRead": "b41c9e2",
+  "states": [],
+  "onlyWhatChanged": true,
+  "questions": [],
+  "gate": {
+    "documentKey": "reminder-list/hdr@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "section-slicing/reminder-list.md · Header · Reminder list",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "One case; its crop box is the header measured on the approved draft"
+        },
+        {
+          "label": "Why it matters",
+          "text": "The header is built and compared against this box"
+        }
+      ],
+      "needFromYou": "Approve Header · Reminder list, approve it with edits, or regenerate it with feedback"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "what would be written",
+          "body": "**Crop:** `../design/reminder-list.html` · `[data-testid=\"reminders_list_header\"]` · `pending export`",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "pending in section-slicing/reminder-list.md",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while proposing",
+      "groups": [
+        {
+          "heading": null,
+          "rows": [
+            {
+              "label": "Design",
+              "count": null,
+              "lines": [
+                "design/reminder-list.html — approved draft"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving writes the header into section-slicing/reminder-list.md and commits it to feat/payment-reminder",
+      "Nothing is pushed until the review is clean and you say yes"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Header · Reminder list",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "regenerate",
+        "label": "Regenerate with feedback",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "step": {
+    "ordinal": 12,
+    "total": 13
+  },
+  "documents": [
+    {
+      "key": "reminder-list/draft@2",
+      "ordinal": 11,
+      "name": "Reminder list design draft",
+      "description": "The reminder list drawn by Claude, for you to approve",
+      "group": "design/reminder-list.html",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "reminder-list/hdr@1",
+      "ordinal": 12,
+      "name": "Header · Reminder list",
+      "description": "The title and the add button",
+      "group": "section-slicing/reminder-list.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    }
+  ]
+}

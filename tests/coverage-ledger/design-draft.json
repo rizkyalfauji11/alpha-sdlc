@@ -1,0 +1,26 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "**If there's no `docs/basics/` (project not set up yet), STOP and ask the user to run `do-project-setup` first** — grooming grounds in that profile.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "duplicate",
+      "reason": "requirement-text-and-design-draft H1: SKILL.md sat at 18,960 of its 19,000-char limit, and Step 0 restated the first line of ## Gates word for word; Step 0 now points to it",
+      "where": "skills/do-grooming/SKILL.md → ## Gates: \"No `docs/basics/` → **STOP**: ask for `do-project-setup` first; groom without it only on the user's explicit choice, noting that decisions are ungrounded.\""
+    },
+    {
+      "clause": "UI design is product-owned — carry a Figma/link reference only, do not generate UI.",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "requirement-text-and-design-draft H1: a member with no design tool could not finish a client spoke; the rule keeps \"never generate UI\" with one exception, a screen with no design whose member picks \"Claude drafts it\", drawn to the platform sandbox's rules and approved at its own gate",
+      "where": "skills/do-grooming/SKILL.md → ## Rules; skills/do-grooming/client-spoke.md → *Capture design*; skills/do-grooming/design-draft.md"
+    },
+    {
+      "clause": "**Design the user shares is saved the moment they share it**, in any run — image(s) → `design/<screen>.png`, Figma → the frame link (`client-spoke.md` → *Capture design*).",
+      "file": "skills/do-grooming/SKILL.md",
+      "verdict": "reworded",
+      "reason": "requirement-text-and-design-draft H1: the pointer to client-spoke.md → *Capture design* moved to the rule just above it, which now names the design question there; the rule is unchanged",
+      "where": "skills/do-grooming/SKILL.md → ## Rules, \"UI design is product-owned … (`client-spoke.md` → *Capture design*)\""
+    }
+  ]
+}

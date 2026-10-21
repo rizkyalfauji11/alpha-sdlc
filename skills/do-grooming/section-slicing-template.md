@@ -51,7 +51,8 @@ ftr                      <purpose>
 **Purpose:** <what this region is for, in one line.>
 **Crop:** `../design/sections/<screen>/<section-id>.png` — box `<x,y,w,h>` on `<design file>` ·
 approved <YYYY-MM-DD>
-<or `pending export` — Figma-only design, no local image to crop. **This is a gap, not a default**:
+<or `pending export` — Figma-only design, or a Claude draft not rendered yet (its box named as
+`../design/<screen>.html` · `[data-testid="<container>"]`), no local image to crop. **This is a gap, not a default**:
 record it and resolve before development.>
 **Components:** <canonical components from `docs/basics/03-ui-architecture.md` this section is built
 from.>

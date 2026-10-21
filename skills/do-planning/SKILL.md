@@ -66,8 +66,9 @@ Indonesia) — at every gate, in every phase. Under a planning-run schema (`--js
    becoming one giant stage, and no case may go unassigned to a stage. **Carry the Design references
    into the plan's *Design references* section.** First read what **grooming already captured** —
    the **`Design` field in each screen's widget-spec** and any images in
-   `docs/development/<feature-name>/design/`; reuse those, don't re-ask. Only for anything still
-   missing:
+   `docs/development/<feature-name>/design/`; reuse those, don't re-ask. A Claude draft
+   (`design/<screen>.html`) is read as an HTML canvas; one still `awaiting approval` → **STOP**, back
+   to `do-grooming`. Only for anything still missing:
    - **Image(s) provided now** → **save each into
      `docs/development/<feature-name>/design/<screen>.png`** (create the `design/` folder), record
      the path.
