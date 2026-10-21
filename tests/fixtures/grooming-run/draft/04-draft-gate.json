@@ -1,0 +1,130 @@
+{
+  "pluginVersion": "0.42.0",
+  "commitRead": "b41c9e2",
+  "states": [],
+  "onlyWhatChanged": true,
+  "questions": [],
+  "gate": {
+    "documentKey": "reminder-list/draft@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "design/reminder-list.html · Reminder list design draft",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "The reminder list at 1440×900: a header with Add reminder, three reminders, one overdue"
+        },
+        {
+          "label": "Why it matters",
+          "text": "Once approved, this drawing is the design the web is built and compared against"
+        }
+      ],
+      "needFromYou": "Open the draft, then approve it, approve it with edits, or regenerate it with feedback"
+    },
+    "detail": {
+      "caption": "The proposal",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "the drawing's notes — edit them to have it redrawn",
+          "body": "- Frame `[data-frame=\"reminder-list\"]`, 1440×900\n- Header: title, Add reminder (`reminders_list_add_button`)\n- Reminders: three rows, one overdue\n- States drawn: loaded",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "the drawing before this one",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while drawing",
+      "groups": [
+        {
+          "heading": null,
+          "rows": [
+            {
+              "label": "Widget spec",
+              "count": "6",
+              "lines": [
+                "widget-spec/reminder-list.md:16 six elements with Test IDs"
+              ]
+            },
+            {
+              "label": "Proof",
+              "count": null,
+              "lines": [
+                "check-draft.js: clean — 3033 bytes, 1 frame"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approve makes this drawing the screen's design and commits its widget spec",
+      "The draft is committed on feat/payment-reminder already; nothing is pushed"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Reminder list design draft",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "regenerate",
+        "label": "Regenerate with feedback",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ],
+    "draft": {
+      "path": "design/reminder-list.html"
+    }
+  },
+  "step": {
+    "ordinal": 11,
+    "total": 13
+  },
+  "documents": [
+    {
+      "key": "reminder-list/widget-spec@1",
+      "ordinal": 10,
+      "name": "Reminder list widget spec",
+      "description": "Every element of the reminder list, with its Test ID",
+      "group": "widget-spec/reminder-list.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "reminder-list/draft@1",
+      "ordinal": 11,
+      "name": "Reminder list design draft",
+      "description": "The reminder list drawn by Claude, for you to approve",
+      "group": "design/reminder-list.html",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    }
+  ]
+}

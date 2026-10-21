@@ -42,8 +42,8 @@ plain layer in the org's language per its `../../plain-language/` guide (`princi
 - A depended-on feature not built → Open Decision, its slice blocked. A domain-model contradiction →
   Open Decision + a Contradictions entry.
 - Step 2a → the hub's self-review, **STOP**; its `self-reviewed` stamp opens the first spoke.
-- Step 3, client spokes → one gate per widget spec, one per slicing section with its crop; a
-  re-gate → one per screen.
+- Step 3, client spokes → one gate per widget spec, one per draft, one per slicing section with
+  its crop; a re-gate → one per screen.
 - Step 4 → a screen missing either doc or its checked Coverage checklist → **STOP**, back to Step 3;
   the spoke's self-review, **STOP**. Step 5 → the grooming review, once every spoke is
   self-reviewed: its verdict, **STOP**; `review ran`, and only its close stamps ✅.
@@ -61,9 +61,8 @@ those terms), `19-code-inventory.md` (**reuse existing units before proposing ne
 that re-implements a registered job is a duplicate, not work), tech-stack, database, api-reference,
 data-cache, conventions, ux-conventions as the section needs them — as your grounding reference
 before scanning code from scratch. If a section looks stale (repo moved past its commit stamp), note
-it and suggest a refresh. **If there's no `docs/basics/` (project not set up yet), STOP and ask the
-user to run `do-project-setup` first** — grooming grounds in that profile. Proceed without it only
-if the user explicitly chooses to (then scan the repo, and note that decisions are ungrounded).
+it and suggest a refresh. No `docs/basics/` → **STOP**, as *Gates* says: grooming grounds in that
+profile.
 
 1. Confirm the **feature name** (slugify to kebab-case) and **what is being groomed**: the **hub**,
    or a **platform spoke** (which one)? Check `docs/development/<feature-name>/` for an existing
@@ -152,10 +151,11 @@ result and STOP. Then a session boundary.
 
 ### Step 3 — Per-screen artifacts (client spokes only)
 
-The **per-screen contracts** are separate artifacts, and a spoke is not finished without them —
-their rules are in `client-spoke.md`. For **each screen** in the spoke, in order:
+A spoke is not finished without its **per-screen contracts**, ruled by `client-spoke.md`. For
+**each screen**, in order:
 
-1. **Widget spec** → `widget-spec/<screen>.md`, per `widget-spec-template.md` — one gate per screen.
+1. **Widget spec** → `widget-spec/<screen>.md`, per `widget-spec-template.md` — one gate per screen;
+   then a screen answered "Claude drafts it" gets its **draft** and its gate (`design-draft.md`).
 2. **Section slicing** → `section-slicing/<screen>.md`, per `section-slicing-template.md` — the
    section tree, then **one gate per section**: its cases, how the logic runs, and its **approved
    crop**. Never batch sections; a re-gate is one gate per screen.
@@ -252,9 +252,10 @@ dir if needed; an existing file → *Resume* above).
   approves that section's *decisions*. The gate is on the **decisions**, not the wording. After
   approval, expanding to prose is mechanical — no second gate.
 - Technical design sections use **Mermaid** code blocks (```mermaid), never images. UI design is
-  product-owned — carry a Figma/link reference only, do not generate UI.
+  product-owned — carry a Figma/link reference, never generate UI, except a draft of a screen with
+  no design whose member picks "Claude drafts it" (`client-spoke.md` → *Capture design*).
 - **Design the user shares is saved the moment they share it**, in any run — image(s) →
-  `design/<screen>.png`, Figma → the frame link (`client-spoke.md` → *Capture design*).
+  `design/<screen>.png`, Figma → the frame link.
 - **Hard rule: if this feature depends on a feature that isn't built yet, that's an Open Decision →
   the prerequisite must be built/decided first and the dependent slice is blocked** — never design
   around a phantom.

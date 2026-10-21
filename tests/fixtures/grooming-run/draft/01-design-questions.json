@@ -1,0 +1,300 @@
+{
+  "pluginVersion": "0.42.0",
+  "commitRead": "b41c9e2",
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The rows before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "being fixed",
+      "settled": false,
+      "tone": "progress",
+      "description": "The review is fixing it",
+      "unsticks": "The fix closing on its proof"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "onlyWhatChanged": false,
+  "questions": [
+    {
+      "id": "design:reminder-list",
+      "documentKey": "design@1",
+      "title": "Do you have a design for the screen “Reminder list”?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "Why",
+            "text": "No design for the reminder list is in the requirements, the hub or a widget spec, and the web is built to match one."
+          }
+        ],
+        "needFromYou": "Say where the reminder list's design comes from"
+      },
+      "options": [
+        {
+          "id": "draft",
+          "label": "Claude drafts it",
+          "why": "You get a design to approve without a design tool",
+          "trade": "One more gate per screen: you open the draft and approve or redraw it",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "figma",
+          "label": "I have a Figma link",
+          "why": "The screen matches a design the team already made",
+          "trade": "The frame must be shared with whoever builds it",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [
+        "Your answer decides how the screen gets its design: drawn by Claude after its widget spec, or the Figma frame you link"
+      ],
+      "evidence": {
+        "caption": "Where a design was looked for",
+        "groups": [
+          {
+            "heading": null,
+            "rows": [
+              {
+                "label": "Requirements",
+                "count": null,
+                "lines": [
+                  "requirements/payment-reminder.md: no image and no design link"
+                ]
+              },
+              {
+                "label": "Hub",
+                "count": null,
+                "lines": [
+                  "TRD.md feature flow: names the screen, no frame"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "design@1"
+      ],
+      "notes": [],
+      "askedAt": "2026-10-21T03:10:00Z"
+    },
+    {
+      "id": "design:reminder-detail",
+      "documentKey": "design@1",
+      "title": "Do you have a design for the screen “Reminder detail”?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "Why",
+            "text": "No design for the reminder detail is in the requirements, the hub or a widget spec, and the web is built to match one."
+          }
+        ],
+        "needFromYou": "Say where the reminder detail's design comes from"
+      },
+      "options": [
+        {
+          "id": "draft",
+          "label": "Claude drafts it",
+          "why": "You get a design to approve without a design tool",
+          "trade": "One more gate per screen: you open the draft and approve or redraw it",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "figma",
+          "label": "I have a Figma link",
+          "why": "The screen matches a design the team already made",
+          "trade": "The frame must be shared with whoever builds it",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [
+        "Your answer decides how the screen gets its design: drawn by Claude after its widget spec, or the Figma frame you link"
+      ],
+      "evidence": {
+        "caption": "Where a design was looked for",
+        "groups": [
+          {
+            "heading": null,
+            "rows": [
+              {
+                "label": "Requirements",
+                "count": null,
+                "lines": [
+                  "requirements/payment-reminder.md: no image and no design link"
+                ]
+              },
+              {
+                "label": "Hub",
+                "count": null,
+                "lines": [
+                  "TRD.md feature flow: names the screen, no frame"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "design@1"
+      ],
+      "notes": [],
+      "askedAt": "2026-10-21T03:10:00Z"
+    }
+  ],
+  "gate": null,
+  "step": {
+    "ordinal": 2,
+    "total": 9
+  },
+  "documents": [
+    {
+      "key": "scope@1",
+      "ordinal": 1,
+      "name": "Scope (this platform)",
+      "description": "What the web builds of the hub",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "design@1",
+      "ordinal": 2,
+      "name": "Design",
+      "description": "Screens, flows and states on the web",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    },
+    {
+      "key": "assets@1",
+      "ordinal": 3,
+      "name": "Assets",
+      "description": "Icons and images, reused or added",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    },
+    {
+      "key": "data-persistence@1",
+      "ordinal": 4,
+      "name": "Data / persistence",
+      "description": "What the web stores and how it stays fresh",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    },
+    {
+      "key": "performance-impact@1",
+      "ordinal": 5,
+      "name": "Performance impact",
+      "description": "Budgets and what this feature spends of them",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    },
+    {
+      "key": "release-considerations@1",
+      "ordinal": 6,
+      "name": "Release considerations",
+      "description": "Order, flags and rollback on the web",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    },
+    {
+      "key": "risks-dependencies@1",
+      "ordinal": 7,
+      "name": "Risks / dependencies (this platform)",
+      "description": "What could stop or break the web work",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    },
+    {
+      "key": "acceptance-criteria@1",
+      "ordinal": 8,
+      "name": "Acceptance criteria",
+      "description": "The numbered, testable criteria",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    },
+    {
+      "key": "work-slices@1",
+      "ordinal": 9,
+      "name": "Work slices",
+      "description": "Slices that claim the criteria by ID",
+      "group": "TRD-web.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The rows before it being approved"
+      }
+    }
+  ]
+}

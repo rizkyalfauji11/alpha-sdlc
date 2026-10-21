@@ -655,11 +655,13 @@ function screenArtifacts(featureDirectory) {
     const widgetText = readText(path.join(widgetDirectory, name + '.md'));
     const slicingText = readText(path.join(slicingDirectory, name + '.md'));
     const widgetApproval = widgetText ? fieldValue(linesOf(widgetText), /^approved$/i, 0, 40) : null;
+    const design = widgetText ? fieldValue(linesOf(widgetText), /^design$/i, 0, 40) : null;
     const slicingApproval = slicingText ? fieldValue(linesOf(slicingText), /^approved \(screen\)$|^approved$/i, 0, 40) : null;
     const unchecked = slicingText ? uncheckedChecklistLines(linesOf(slicingText)) : 0;
     const gaps = [];
     if (!widgetText) gaps.push('no widget spec');
     else if (stampState(widgetApproval && widgetApproval.value) !== 'stamped') gaps.push('widget spec not approved');
+    else if (design && /design\/[^\s)`]+\.html/.test(design.value) && /awaiting approval/i.test(design.value)) gaps.push('design draft not approved');
     if (!slicingText) gaps.push('no section-slicing doc');
     else if (stampState(slicingApproval && slicingApproval.value) !== 'stamped') gaps.push('section slicing not approved');
     if (unchecked) gaps.push(`${unchecked} Coverage checklist line(s) unchecked`);
@@ -1103,6 +1105,10 @@ function spokeCompletion(context, result, { hubPath, hubText, hubKind, hubReview
         result.stops.push(STOPS.screensFirst(unfinished.map((screen) => screen.name).join(', ')));
       }
       setNext(result, `screen ${first.name}`, `Step 3 — per-screen artifacts (${first.gaps.join(', ')})`);
+      if (first.gaps.includes('design draft not approved')) {
+        reread(result, path.join(pluginRoot, 'skills', 'do-grooming', 'design-draft.md'),
+          'the draft step — the screen\'s draft is committed and waits on its gate');
+      }
       result.gate = GATES.screen;
       result.notes.push('screens are listed in file-name order; the spoke\'s §2 names any screen that has no doc yet');
       return;

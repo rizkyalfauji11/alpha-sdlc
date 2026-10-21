@@ -628,6 +628,14 @@ through its bridge as it runs grooming. 0.41.0 is the minimum version for planni
 platform refuses Start planning and Continue planning on an older plugin and names this version.
 Planning in a terminal is unchanged.
 
+From 0.42.0 a web, Android or iOS spoke asks, for each screen with no design, *Do you have a design
+for the screen “{screen}”?* — **Claude drafts it** (recommended), **I have a Figma link**, or your
+own answer. A draft is one self-contained HTML file, `design/<screen>.html`, drawn after the
+screen's widget spec and checked by `scripts/check-draft.js` (no script, no outside file, under
+1 MiB). It is committed, then shown at its own gate. Approve with edits or Regenerate redraws it and
+shows the gate again. On the adp platform that gate carries `draft`, and the web opens the drawing
+in a sandboxed tab. A terminal asks the same question with the question tool.
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and

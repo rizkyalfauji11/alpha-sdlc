@@ -22,7 +22,9 @@
 ## Design references *(UI platforms)*
 
 > The design each screen must match 1:1 (within platform-best-practice tolerance). Figma → paste
-> the frame link; image → commit it to `docs/development/<feature-name>/design/<screen>.png`.
+> the frame link; image → commit it to `docs/development/<feature-name>/design/<screen>.png`; an
+> HTML canvas or an approved Claude draft → its `design/<screen>.html` and the frame's selector,
+> whose boxes the assembly measures with `collect-boxes.mjs`.
 > **One row per screen, per flow step, and per specced state** — carry everything grooming
 > captured; a state with no ref carries its explicit marker (Open Decision / platform default per
 > `04-ux-conventions`). **The reference is what to build, not where the numbers come from:**
@@ -31,7 +33,7 @@
 > the design's boxes, to find where the layout differs; the fix still comes from the token, never
 > from the measured number.
 
-| Screen / step / state | Design (Figma link / image path) | Specific needs |
+| Screen / step / state | Design (Figma link / image / HTML path) | Specific needs |
 |-----------------------|----------------------------------|----------------|
 | <screen> — full frame | `docs/development/<feature-name>/design/<screen>.png` *or* `<figma-frame-url>` | <frame size, e.g. `1768×1020` · the content it shows (e.g. 20 documents, 3 waiting) — the assembly's fixture mirrors it · breakpoints, motion, dark mode — spacing/type by **token name**, e.g. edge `space.lg`> |
 | <flow step 2 of 3> | <ref> | |
