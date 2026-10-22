@@ -422,9 +422,23 @@ stays invisible forever; a test fails instead. No Node? Everything still install
 open and simply don't enforce. The plain-language judge also calls the `claude` CLI — set
 `ALPHA_JUDGE_CLAUDE_BIN` where it isn't on your `PATH`.
 
+### Claude Code
+
 ```
 /plugin marketplace add rizkyalfauji11/alpha-sdlc
 /plugin install alpha-sdlc@alpha
+```
+
+### Google Gemini CLI
+
+```bash
+gemini extensions install https://github.com/rizkyalfauji11/alpha-sdlc
+```
+
+### Google Antigravity (`agy`)
+
+```bash
+agy plugin install https://github.com/rizkyalfauji11/alpha-sdlc
 ```
 
 ### Recommended settings

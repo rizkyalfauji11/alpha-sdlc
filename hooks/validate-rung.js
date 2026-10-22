@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { sdlcRootOf } = require('./lib/sdlc-context');
 const { postEditDocument } = require('./validate-doc-tables');
+const { parseToolPayload, blockTool, allowTool } = require('./lib/payload');
 
 const SKILL_OWNED_TEMPLATE = /(^|\/)skills\//;
 const TEMPLATE_FILENAME = /-template\.md$/;
@@ -199,47 +200,39 @@ function main() {
   let payload;
   try { payload = JSON.parse(fs.readFileSync(0, 'utf8')); } catch { return 0; }
 
-  const toolName = payload.tool_name || '';
-  const toolInput = payload.tool_input || {};
-  const filePath = typeof toolInput.file_path === 'string' ? toolInput.file_path : '';
+  const { isAntigravity, toolName, toolInput, filePath, writtenContent, cwd } = parseToolPayload(payload);
 
-  if (SKILL_OWNED_TEMPLATE.test(filePath) || TEMPLATE_FILENAME.test(filePath)) return 0;
+  if (SKILL_OWNED_TEMPLATE.test(filePath) || TEMPLATE_FILENAME.test(filePath)) return allowTool(isAntigravity);
   const isPlan = PLAN_ARTIFACT.test(filePath);
-  if (!isPlan && !TRD_ARTIFACT.test(filePath)) return 0;
-  const absolutePath = path.resolve(payload.cwd || process.cwd(), filePath);
-  if (!sdlcRootOf(absolutePath)) return 0;
+  if (!isPlan && !TRD_ARTIFACT.test(filePath)) return allowTool(isAntigravity);
+  const absolutePath = path.resolve(cwd || process.cwd(), filePath);
+  if (!sdlcRootOf(absolutePath)) return allowTool(isAntigravity);
 
-  const writtenContent =
-    toolName === 'Write' ? (toolInput.content || '')
-    : toolName === 'Edit' ? (toolInput.new_string || '')
-    : '';
   const leftoverPlaceholder = writtenContent.match(UNMISTAKABLE_LEFTOVER_PLACEHOLDER) || stampCommitPlaceholder(writtenContent);
   if (leftoverPlaceholder) {
-    process.stderr.write(
+    const message =
       `Unfilled template placeholder in the artifact ("${leftoverPlaceholder[0]}") — this doc still carries ` +
       `template scaffolding. Fill every placeholder (dates, names, hashes) before writing; a TRD/plan ` +
-      `with leftover <...> tokens is an incomplete section, not a finished one.\n`
-    );
-    return 2;
+      `with leftover <...> tokens is an incomplete section, not a finished one.\n`;
+    return blockTool(message, isAntigravity);
   }
 
   const document = postEditDocument(toolName, toolInput, absolutePath) ||
     (toolName === 'Edit' && writtenContent ? { text: writtenContent, spans: [[0, writtenContent.length]] } : null);
-  if (!document || !document.text.trim()) return 0;
+  if (!document || !document.text.trim()) return allowTool(isAntigravity);
 
   const problems = rungProblems(document, isPlan);
-  if (!problems.length) return 0;
+  if (!problems.length) return allowTool(isAntigravity);
 
   const listed = problems.slice(0, LISTED_PROBLEMS).join('; ');
   const overflow = problems.length > LISTED_PROBLEMS ? ` (+${problems.length - LISTED_PROBLEMS} more)` : '';
-  process.stderr.write(
+  const message =
     `Ladder rung missing in ${filePath} — ${listed}${overflow}. ` +
     'Per principles.md the rung is mandatory: name the rung you stopped at ' +
     '(1=skip/YAGNI, 2=reuse, 3=stdlib, 4=native, 5=installed dep, 6=one line, 7=build new) ' +
     'and name the world-wide standard beside it (agrees, or the surfaced conflict per the tiered rule) ' +
-    'before writing this artifact. A proposal without a named rung is incomplete.\n'
-  );
-  return 2;
+    'before writing this artifact. A proposal without a named rung is incomplete.\n';
+  return blockTool(message, isAntigravity);
 }
 
 process.exitCode = main();

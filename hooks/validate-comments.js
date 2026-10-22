@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { ancestorsOf, sdlcRootOf } = require('./lib/sdlc-context');
 const { postEditDocument } = require('./validate-doc-tables');
+const { parseToolPayload, blockTool, allowTool } = require('./lib/payload');
 
 const JAVASCRIPT_FAMILY = new Set(['js', 'jsx', 'mjs', 'cjs', 'ts', 'tsx', 'vue', 'svelte']);
 const SLASH_COMMENT_LANGUAGES = new Set([
@@ -436,24 +437,18 @@ function main() {
   let payload;
   try { payload = JSON.parse(fs.readFileSync(0, 'utf8')); } catch { return 0; }
 
-  const toolName = payload.tool_name || '';
-  const toolInput = payload.tool_input || {};
-  const filePath = typeof toolInput.file_path === 'string' ? toolInput.file_path : '';
+  const { isAntigravity, toolName, toolInput, filePath, writtenContent, cwd } = parseToolPayload(payload);
   const syntax = syntaxFor(extensionOf(filePath));
-  if (!syntax) return 0;
-  if (GENERATED_DIRECTORY.test(filePath) || GENERATED_FILENAME.test(filePath)) return 0;
-  const absolutePath = path.resolve(payload.cwd || process.cwd(), filePath);
-  if (!sdlcRootOf(absolutePath)) return 0;
+  if (!syntax) return allowTool(isAntigravity);
+  if (GENERATED_DIRECTORY.test(filePath) || GENERATED_FILENAME.test(filePath)) return allowTool(isAntigravity);
+  const absolutePath = path.resolve(cwd || process.cwd(), filePath);
+  if (!sdlcRootOf(absolutePath)) return allowTool(isAntigravity);
 
-  const writtenContent =
-    toolName === 'Write' ? (toolInput.content || '')
-    : toolName === 'Edit' ? (toolInput.new_string || '')
-    : '';
-  if (!writtenContent.trim()) return 0;
+  if (!writtenContent.trim()) return allowTool(isAntigravity);
 
   const document = postEditDocument(toolName, toolInput, absolutePath) ||
     { text: writtenContent, spans: [[0, writtenContent.length]] };
-  if (GENERATED_MARKER.test(document.text.split(/\r?\n/).slice(0, 5).join('\n'))) return 0;
+  if (GENERATED_MARKER.test(document.text.split(/\r?\n/).slice(0, 5).join('\n'))) return allowTool(isAntigravity);
 
   const { comments, code } = lexSource(document.text, syntax);
   if (syntax.go && !GO_TEST_FILE.test(filePath)) markGoDocComments(comments, code);
@@ -469,10 +464,9 @@ function main() {
     !licenseHeader.has(comment) &&
     !(allowlist.allowPublicApiDocstrings === true && comment.isDoc)
   );
-  if (!findings.length) return 0;
+  if (!findings.length) return allowTool(isAntigravity);
 
-  process.stderr.write(blockMessage(filePath, findings));
-  return 2;
+  return blockTool(blockMessage(filePath, findings), isAntigravity);
 }
 
 process.exitCode = main();

@@ -6,6 +6,7 @@ const os = require('os');
 const path = require('path');
 const { isSdlcContext } = require('./lib/sdlc-context');
 const { resolveGuide } = require('./lib/plain-language');
+const { isAntigravitySession } = require('./lib/payload');
 
 const RULES_PATH = path.join(__dirname, 'stop-judge-rules.md');
 const DEFAULT_MODEL = 'claude-opus-5-5';
@@ -546,13 +547,21 @@ function run() {
   entry.ms = Date.now() - startedAt;
   appendLog(dataDirectory, entry);
 
+  const isAntigravity = isAntigravitySession(payload);
   if (outcome.block) {
-    process.stdout.write(JSON.stringify({ decision: 'block', reason: outcome.block }));
+    const decision = isAntigravity ? 'continue' : 'block';
+    process.stdout.write(JSON.stringify({ decision, reason: outcome.block }));
     return;
   }
   if (outcome.notice) {
-    const systemMessage = noticeOncePerSession(dataDirectory, payload.session_id, outcome.notice);
-    if (systemMessage) process.stdout.write(JSON.stringify({ systemMessage }));
+    const systemMessage = noticeOncePerSession(dataDirectory, payload.session_id || payload.conversationId, outcome.notice);
+    if (systemMessage) {
+      if (isAntigravity) {
+        process.stdout.write(JSON.stringify({ injectSteps: [{ systemMessage: { systemMessage } }] }));
+      } else {
+        process.stdout.write(JSON.stringify({ systemMessage }));
+      }
+    }
   }
 }
 
