@@ -150,15 +150,17 @@ function resumeNotice(payload, cwd) {
 
 function main() {
   const payload = readPayload();
-  const cwd = path.resolve(payload.cwd || process.cwd());
+  const cwd = path.resolve(payload.cwd || (Array.isArray(payload.workspacePaths) && payload.workspacePaths[0]) || process.cwd());
   if (!isSdlcContext(cwd)) return;
   const parts = [pointerText()];
   if (RESUME_SOURCES.has(payload.source || 'startup')) {
     const notice = resumeNotice(payload, cwd);
     if (notice) parts.push(notice);
   }
+  const context = parts.join('\n\n');
   process.stdout.write(JSON.stringify({
-    hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: parts.join('\n\n') },
+    hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: context },
+    injectSteps: [{ systemMessage: { systemMessage: context } }],
   }));
 }
 

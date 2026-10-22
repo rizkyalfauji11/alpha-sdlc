@@ -4,6 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { ancestorsOf, sdlcRootOf } = require('./lib/sdlc-context');
+const { parseToolPayload, blockTool, allowTool } = require('./lib/payload');
 
 const MARKDOWN_MENTION = /\.md\b/i;
 const MARKDOWN_PATH = /\.md$/i;
@@ -953,19 +954,18 @@ function blockMessage(finding) {
 function main() {
   let payload;
   try { payload = JSON.parse(fs.readFileSync(0, 'utf8')); } catch { return 0; }
-  if ((payload.tool_name || '') !== 'Bash') return 0;
-  const command = String((payload.tool_input || {}).command || '');
-  if (!MARKDOWN_MENTION.test(command)) return 0;
+  const { isAntigravity, toolName, command, cwd } = parseToolPayload(payload);
+  if (toolName !== 'Bash') return allowTool(isAntigravity);
+  if (!MARKDOWN_MENTION.test(command)) return allowTool(isAntigravity);
 
   let finding = null;
   try {
-    finding = docWriteIn(command, path.resolve(payload.cwd || process.cwd()), 0);
+    finding = docWriteIn(command, path.resolve(cwd || process.cwd()), 0);
   } catch {
-    return 0;
+    return allowTool(isAntigravity);
   }
-  if (!finding) return 0;
-  process.stderr.write(blockMessage(finding));
-  return 2;
+  if (!finding) return allowTool(isAntigravity);
+  return blockTool(blockMessage(finding), isAntigravity);
 }
 
 process.exitCode = main();

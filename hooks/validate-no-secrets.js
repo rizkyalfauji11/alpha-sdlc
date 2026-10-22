@@ -1,22 +1,17 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const { parseToolPayload, blockTool, allowTool } = require('./lib/payload');
 
 let payload;
 try { payload = JSON.parse(fs.readFileSync(0, 'utf8')); } catch { process.exit(0); }
 
-const toolName = payload.tool_name || '';
-const toolInput = payload.tool_input || {};
-const filePath = toolInput.file_path || '';
+const { isAntigravity, filePath, writtenContent } = parseToolPayload(payload);
 
 const PLUGIN_DOC_ARTIFACT = /(^|\/)docs\/.*\.md$/;
-if (!PLUGIN_DOC_ARTIFACT.test(filePath)) process.exit(0);
+if (!PLUGIN_DOC_ARTIFACT.test(filePath)) process.exit(allowTool(isAntigravity));
 
-const writtenContent =
-  toolName === 'Write' ? (toolInput.content || '')
-  : toolName === 'Edit' ? (toolInput.new_string || '')
-  : '';
-if (!writtenContent) process.exit(0);
+if (!writtenContent) process.exit(allowTool(isAntigravity));
 
 const HIGH_CONFIDENCE_SECRET_VALUES = [
   [/-----BEGIN (?:RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----/, 'private key block'],
@@ -32,12 +27,11 @@ const HIGH_CONFIDENCE_SECRET_VALUES = [
 
 for (const [secretPattern, secretLabel] of HIGH_CONFIDENCE_SECRET_VALUES) {
   if (secretPattern.test(writtenContent)) {
-    process.stderr.write(
+    const message =
       `Secret detected in a docs artifact (${secretLabel}) — per principles.md, never write secret values ` +
       `into docs. Record the name/location only (env-var name, config file, secret-manager key), ` +
-      `never the value. Remove it and reference where it lives instead.\n`
-    );
-    process.exit(2);
+      `never the value. Remove it and reference where it lives instead.\n`;
+    process.exit(blockTool(message, isAntigravity));
   }
 }
-process.exit(0);
+process.exit(allowTool(isAntigravity));

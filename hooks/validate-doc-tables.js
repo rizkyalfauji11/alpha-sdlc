@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { sdlcRootOf } = require('./lib/sdlc-context');
+const { parseToolPayload, blockTool, allowTool } = require('./lib/payload');
 
 const MARKDOWN_FILE = /\.md$/i;
 const CURLY_SINGLE_QUOTES = /[‘’]/g;
@@ -17,17 +18,17 @@ function readTextOrNull(filePath) {
 }
 
 function postEditDocument(toolName, toolInput, filePath) {
-  if (toolName === 'Write') {
-    const text = typeof toolInput.content === 'string' ? toolInput.content : '';
+  if (toolName === 'Write' || toolName === 'write_file') {
+    const text = typeof toolInput.content === 'string' ? toolInput.content : (typeof toolInput.Content === 'string' ? toolInput.Content : '');
     return { text, spans: [[0, text.length]] };
   }
-  if (toolName !== 'Edit') return null;
-  const oldString = typeof toolInput.old_string === 'string' ? toolInput.old_string : '';
-  const newString = typeof toolInput.new_string === 'string' ? toolInput.new_string : '';
+  if (toolName !== 'Edit' && toolName !== 'edit_file') return null;
+  const oldString = typeof toolInput.old_string === 'string' ? toolInput.old_string : (typeof toolInput.Target === 'string' ? toolInput.Target : '');
+  const newString = typeof toolInput.new_string === 'string' ? toolInput.new_string : (typeof toolInput.Replacement === 'string' ? toolInput.Replacement : '');
   const originalText = readTextOrNull(filePath);
   if (!oldString) return originalText ? null : { text: newString, spans: [[0, newString.length]] };
   if (originalText === null) return null;
-  const replaceAll = toolInput.replace_all === true;
+  const replaceAll = toolInput.replace_all === true || toolInput.replaceAll === true;
   const replaced = replacedDocument(originalText, oldString, newString, replaceAll);
   if (replaced || !originalText.includes('\r\n')) return replaced;
   return replacedDocument(withLineFeeds(originalText), withLineFeeds(oldString), withLineFeeds(newString), replaceAll);
@@ -411,14 +412,13 @@ function main() {
   let payload;
   try { payload = JSON.parse(fs.readFileSync(0, 'utf8')); } catch { return 0; }
 
-  const toolInput = payload.tool_input || {};
-  const filePath = typeof toolInput.file_path === 'string' ? toolInput.file_path : '';
-  if (!MARKDOWN_FILE.test(filePath)) return 0;
-  const absolutePath = path.resolve(payload.cwd || process.cwd(), filePath);
-  if (!sdlcRootOf(absolutePath)) return 0;
+  const { isAntigravity, toolName, toolInput, filePath, cwd } = parseToolPayload(payload);
+  if (!MARKDOWN_FILE.test(filePath)) return allowTool(isAntigravity);
+  const absolutePath = path.resolve(cwd || process.cwd(), filePath);
+  if (!sdlcRootOf(absolutePath)) return allowTool(isAntigravity);
 
-  const document = postEditDocument(payload.tool_name || '', toolInput, absolutePath);
-  if (!document || !document.text.trim()) return 0;
+  const document = postEditDocument(toolName, toolInput, absolutePath);
+  if (!document || !document.text.trim()) return allowTool(isAntigravity);
   const documentText = document.text;
 
   const exactLineRanges = document.spans.map(([spanStart, spanEnd]) => [
@@ -432,7 +432,7 @@ function main() {
   if (PROFILE_DOC.test(absolutePath) || FEATURE_DOC.test(absolutePath)) {
     findings.push(...historyNoteFindings(documentText, new Date().toISOString().slice(0, 10)));
   }
-  if (!findings.length) return 0;
+  if (!findings.length) return allowTool(isAntigravity);
 
   const editedFindings = findings.filter((finding) => {
     if (finding.always) return true;
@@ -455,14 +455,12 @@ function main() {
       `${untouchedFindings[0].heading.toLowerCase()}: ${untouchedFindings[0].message}` +
       (untouchedFindings.length > 1 ? ` (+${untouchedFindings.length - 1} more)` : '') + '.\n'
     );
-    return 0;
+    return allowTool(isAntigravity);
   }
 
   const [first] = editedFindings;
-  process.stderr.write(
-    `${first.heading} in ${filePath} — ${first.message}${moreInEdit}. ${first.remedy} ${first.consequence}${elsewhere}\n`
-  );
-  return 2;
+  const message = `${first.heading} in ${filePath} — ${first.message}${moreInEdit}. ${first.remedy} ${first.consequence}${elsewhere}\n`;
+  return blockTool(message, isAntigravity);
 }
 
 if (require.main === module) process.exitCode = main();

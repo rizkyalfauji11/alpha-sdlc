@@ -33,11 +33,13 @@ function guideContext(guide, cwd) {
 
 function main() {
   const payload = readPayload();
-  const cwd = path.resolve(payload.cwd || process.cwd());
+  const cwd = path.resolve(payload.cwd || (Array.isArray(payload.workspacePaths) && payload.workspacePaths[0]) || process.cwd());
   const guide = resolveGuide(cwd, pluginRoot);
   if (!guide) return;
+  const context = guideContext(guide, cwd);
   process.stdout.write(JSON.stringify({
-    hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: guideContext(guide, cwd) },
+    hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: context },
+    injectSteps: [{ systemMessage: { systemMessage: context } }],
   }));
 }
 

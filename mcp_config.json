@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "alpha-sdlc-mobile-mcp": {
+      "command": "node",
+      "args": [
+        "./scripts/mobile-mcp-gate.js"
+      ]
+    }
+  }
+}

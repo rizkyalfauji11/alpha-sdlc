@@ -114,7 +114,7 @@ function anchoredRootOf(cwd) {
 }
 
 function sessionRootFor(cwd) {
-  const launched = process.env.CLAUDE_PROJECT_DIR;
+  const launched = process.env.CLAUDE_PROJECT_DIR || process.env.GEMINI_PROJECT_DIR || process.env.WORKSPACE_ROOT;
   if (launched && path.isAbsolute(launched)) {
     const root = outsideProjectDocs(launched);
     if (isDirectory(root) && !isHomeOrFilesystemRoot(root) && isSdlcContext(root)) return root;
