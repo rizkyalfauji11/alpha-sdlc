@@ -450,7 +450,7 @@ function main() {
     : '';
 
   if (!editedFindings.length) {
-    process.stdout.write(
+    process.stderr.write(
       `Note — finding(s) in ${filePath} outside the region this edit touches, not blocking: ` +
       `${untouchedFindings[0].heading.toLowerCase()}: ${untouchedFindings[0].message}` +
       (untouchedFindings.length > 1 ? ` (+${untouchedFindings.length - 1} more)` : '') + '.\n'

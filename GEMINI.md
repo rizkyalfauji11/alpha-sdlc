@@ -75,3 +75,54 @@ Climb the ladder for every architectural, design, logic, and code decision. Stop
 - **`sdlc-reviewer`**: Fast verification of diffs, rungs, acceptance criteria, and basic conformance.
 - **`sdlc-reviewer-deep`**: Deep architectural and safety audit, failure mode checks, debt register audit.
 - **`sdlc-reviewer-critic`**: Meta-evaluator that inspects review reports for contradictions, gaps, and missing context.
+
+---
+
+## 6. Client Spoke Grooming & Widget Spec Contract
+
+When grooming Android, iOS, or Web client spokes, write widget specs at `docs/development/<feature>/widget-spec/<screen>.md`:
+
+| Requirement | Rule | Standard |
+| :--- | :--- | :--- |
+| **Elements Scope** | List only interactive or asserted elements; skip purely decorative UI | QA Locator Contract |
+| **Test ID Convention** | Read `03-ui-architecture.md`; use registered convention (e.g., `btnLoginSubmit`) | Never rename once shipped |
+| **Shared Elements** | Search-before-create for bottom-nav, app-bar, global dialogs; carry ONE ID | No duplicate IDs |
+| **Container Sizing** | Fill container sizing & overflow table; must fit content or scroll | Never clip unexpectedly |
+| **Style Bindings** | Resolve regions against `18-design-tokens.md` by token name | Token-driven styling |
+| **Components** | Resolve components against `03-ui-architecture.md` inventory | Canonical reuse |
+
+---
+
+## 7. The Design Draft Contract (`design/<screen>.html`)
+
+When a screen requires a draft (`draft` selected at *Capture design*), draw the screen at `docs/development/<feature>/design/<screen>.html`:
+
+| Check | Constraint | Failure Impact |
+| :--- | :--- | :--- |
+| **File Structure** | Single standalone file matching `^[A-Za-z0-9._-]+\.html$`, under 1 MiB | PreTool hook blocks write |
+| **Dimensions** | Full screen element carries `data-frame="<screen>"` at exact target size | Layout parity fails |
+| **Standard Sizes** | Web: 1440×900, Android: 360×800, iOS: 393×852 (CSS px for dp/pt) | Pixel mismatch |
+| **Styling** | Inline CSS only in `<style>` tag or `style` attributes; system font stack | External font blocked |
+| **Graphics** | Inline `<svg>` only for icons, illustrations, charts, and avatars | External image blocked |
+| **Forbidden Tags** | Never use `<script>`, `<img>`, `<link>`, `<iframe>`, `<frame>`, `<object>`, `<embed>` | Sandbox violation |
+| **Forbidden URIs** | No `on*` attributes, no `javascript:`, `data:`, or external URLs | Sandbox CSP violation |
+| **Test ID Parity** | Every Test ID from `widget-spec/<screen>.md` MUST exist as `id` or `data-testid` | Missing locator failure |
+
+### Verification Before Gate
+Before proposing gate approval to the user, run the draft validator:
+```bash
+node scripts/check-draft.js docs/development/<feature>/design/<screen>.html --spec docs/development/<feature>/widget-spec/<screen>.md
+```
+Fix all reported problems in the draft. A gate may only be opened when `check-draft.js` exits 0 clean.
+
+---
+
+## 8. Antigravity Reviewer Execution
+
+Antigravity executes subagents via native `invoke_subagent` and tool hooks:
+
+1. **Step 5 Independent Review**: Never approve your own grooming or design draft without review.
+2. **Review Options**:
+   - Launch subagent: invoke `invoke_subagent` with Role `sdlc-reviewer`, `sdlc-reviewer-deep`, or `sdlc-reviewer-critic`.
+   - Script verification: run `node scripts/review-packet.js docs/development/<feature>/review-packet.json`.
+3. **No Review Bypass**: Address all high-severity findings and surface open decisions before requesting human gate approval.

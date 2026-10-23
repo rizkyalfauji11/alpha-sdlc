@@ -96,4 +96,43 @@ const principlesStart = runHookInput('inject-principles.js', {
 report('inject-principles.js', 'outputs injectSteps for Antigravity SessionStart',
   principlesStart.status === 0 && principlesStart.parsed && Array.isArray(principlesStart.parsed.injectSteps));
 
+const badDraftCall = runHookInput('validate-draft.js', {
+  toolCall: {
+    name: 'write_file',
+    args: {
+      Path: 'docs/development/feature/design/screen.html',
+      Content: '<html><body><script>alert(1)</script></body></html>',
+    },
+  },
+  workspacePaths: [testProject],
+});
+report('validate-draft.js', 'denies invalid design draft with script or missing data-frame',
+  badDraftCall.status === 0 && badDraftCall.parsed && badDraftCall.parsed.decision === 'deny');
+
+const cleanDraftCall = runHookInput('validate-draft.js', {
+  toolCall: {
+    name: 'write_file',
+    args: {
+      Path: 'docs/development/feature/design/screen.html',
+      Content: '<!doctype html><html><head><meta charset="utf-8"><style>[data-frame]{width:1440px;height:900px;}</style></head><body><main data-frame="screen"><h1 id="title">Hello</h1></main></body></html>',
+    },
+  },
+  workspacePaths: [testProject],
+});
+report('validate-draft.js', 'allows clean design draft with valid frame',
+  cleanDraftCall.status === 0 && cleanDraftCall.parsed && cleanDraftCall.parsed.decision === 'allow');
+
+const nonDraftCall = runHookInput('validate-draft.js', {
+  toolCall: {
+    name: 'write_file',
+    args: {
+      Path: 'docs/development/feature/TRD.md',
+      Content: '# Technical Requirements Document',
+    },
+  },
+  workspacePaths: [testProject],
+});
+report('validate-draft.js', 'passes non-draft writes immediately',
+  nonDraftCall.status === 0 && nonDraftCall.parsed && nonDraftCall.parsed.decision === 'allow');
+
 finish();

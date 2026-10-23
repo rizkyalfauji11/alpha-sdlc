@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { stateDirectoryFor } = require('./lib/sdlc-context');
 const { isAntigravitySession } = require('./lib/payload');
@@ -8,7 +9,9 @@ const { isAntigravitySession } = require('./lib/payload');
 const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT || path.join(__dirname, '..');
 
 let payload;
-try { payload = JSON.parse(fs.readFileSync(0, 'utf8')); } catch { process.exit(0); }
+try {
+  payload = JSON.parse(fs.readFileSync(0, 'utf8'));
+} catch { process.exit(0); }
 
 const isAntigravity = isAntigravitySession(payload);
 const allowStop = () => {
@@ -55,15 +58,59 @@ const TOOL_USE = '"type":"tool_use"';
 const FIRST_LINES_BYTES = 64 * 1024;
 const LIVE_SESSION_SLACK_MS = 2000;
 const LIVE_SESSION_WINDOW_MS = 60 * 60 * 1000;
-const transcriptPath = payload.transcript_path ? path.resolve(payload.transcript_path) : null;
-const sessionId = typeof payload.session_id === 'string' && payload.session_id ? payload.session_id : null;
+const sessionId = typeof payload.session_id === 'string' && payload.session_id
+  ? payload.session_id
+  : (typeof payload.conversationId === 'string' && payload.conversationId
+      ? payload.conversationId
+      : (typeof payload.sessionId === 'string' && payload.sessionId ? payload.sessionId : null));
+const transcriptPath = payload.transcript_path
+  ? path.resolve(payload.transcript_path)
+  : (sessionId && fs.existsSync(path.join(os.homedir(), '.gemini/antigravity/brain', sessionId, '.system_generated/logs/transcript.jsonl'))
+      ? path.join(os.homedir(), '.gemini/antigravity/brain', sessionId, '.system_generated/logs/transcript.jsonl')
+      : null);
+
+function isSubagentSession() {
+  if (isAntigravity) {
+    try {
+      const brain = path.join(os.homedir(), '.gemini/antigravity/brain');
+      if (fs.existsSync(brain)) {
+        const entries = fs.readdirSync(brain)
+          .map((dir) => path.join(brain, dir, '.system_generated/logs/transcript.jsonl'))
+          .filter((file) => fs.existsSync(file))
+          .map((file) => ({ file, mtime: fs.statSync(file).mtimeMs }))
+          .sort((a, b) => b.mtime - a.mtime);
+        if (entries.length && Date.now() - entries[0].mtime < 15000) {
+          const text = fs.readFileSync(entries[0].file, 'utf8');
+          if (text.includes('<subagent_reminder>') || text.includes('You are running as a subagent') || text.includes('sdlc-reviewer') || text.includes('Reviewer')) {
+            return true;
+          }
+        }
+      }
+    } catch {}
+  }
+  if (!transcriptPath) return false;
+  try {
+    const handle = fs.openSync(transcriptPath, 'r');
+    const buffer = Buffer.alloc(FIRST_LINES_BYTES);
+    const length = fs.readSync(handle, buffer, 0, FIRST_LINES_BYTES, 0);
+    fs.closeSync(handle);
+    const text = buffer.subarray(0, length).toString('utf8');
+    return text.includes('<subagent_reminder>') || text.includes('You are running as a subagent');
+  } catch {
+    return false;
+  }
+}
+
+if (isSubagentSession()) {
+  allowStop();
+}
 
 function transcriptSize() {
   try { return fs.statSync(transcriptPath).size; } catch { return null; }
 }
 
 function toolUsedSince(offset) {
-  if (offset === null || offset === undefined || !transcriptPath) return true;
+  if (offset === null || offset === undefined || !transcriptPath) return false;
   let handle;
   try {
     handle = fs.openSync(transcriptPath, 'r');
@@ -72,9 +119,10 @@ function toolUsedSince(offset) {
     const length = Math.min(size - offset, 64 * 1024 * 1024);
     const buffer = Buffer.alloc(length);
     fs.readSync(handle, buffer, 0, length, size - length);
-    return buffer.toString('utf8').includes(TOOL_USE);
+    const content = buffer.toString('utf8');
+    return content.includes(TOOL_USE) || content.includes('"tool_calls"');
   } catch {
-    return true;
+    return false;
   } finally {
     if (handle !== undefined) fs.closeSync(handle);
   }
@@ -95,7 +143,7 @@ function firstEntryTime() {
     for (const line of buffer.subarray(0, length).toString('utf8').split('\n')) {
       let entry;
       try { entry = JSON.parse(line); } catch { continue; }
-      const time = entry && Date.parse(entry.timestamp);
+      const time = entry && Date.parse(entry.timestamp || entry.created_at);
       if (Number.isFinite(time)) return time;
     }
     return null;
