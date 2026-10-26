@@ -19,7 +19,7 @@ without `sessionEnded`, a session carries on past every boundary instead of endi
 - **Questions**
 - **The design draft** — its question, its row, its gate and `draft`
 - **Decisions on stdin**
-- **The review** — `reviewRounds` and `trdComplete`
+- **The review** — `reviewRounds` and `trdComplete`; the grooming review in the hub's run
 - **Platform TRDs and Add a platform**
 
 ## Version
@@ -28,7 +28,8 @@ This guide ships in alpha-sdlc **0.40.0**, the minimum version the platform acce
 Start grooming, Continue and Add a platform. `pluginVersion` is the `version` in the plugin root's
 `.claude-plugin/plugin.json` (two levels above this skill's base directory), read once per session.
 The design draft needs 0.42.0: an older plugin never asks the design question, and none of its
-gates carries `draft`.
+gates carries `draft`. The grooming review and the spokes' re-walk in the hub's run need **0.44.0**
+(`grooming-run-review.md`): an older plugin sends both to a terminal.
 
 ## The session
 
@@ -63,10 +64,13 @@ the files.
 
 Then *Resume* as `SKILL.md` says.
 
-**What a run on the platform cannot do.** It has no subagents, and its Bash is only what the
-platform allows: git's `add`, `commit`, `push`, `fetch`, `rebase`, `status`, `diff`, `log`,
-`rev-parse` and `show`, the plugin's scripts, and the repository's own doc checks as exact strings.
-So:
+**What a run on the platform cannot do.** It has no subagents — save the hub's run, which launches
+the grooming review's three reviewers once `run-reach.js` says it may (`grooming-run-review.md`) —
+and its Bash is only what the platform allows: git's `add`, `commit`, `push`, `fetch`, `rebase`,
+`status`, `diff`, `log`, `rev-parse` and `show`, the plugin's scripts, and the repository's own doc
+checks as exact strings. A platform TRD's run edits its own clone and the hub's feature folder and
+lasts 30 minutes; a run on the hub's `TRD.md` may also edit each spoke clone's feature folder (the
+platform's `featureFolders`) and lasts two hours. So:
 - run a plugin script by its absolute path under the plugin root; a relative `node ../../scripts/…`
   matches no rule the platform allows;
 - the next section's facts (Step 1.4) are gathered at that section's step 1, not in the background;
@@ -115,10 +119,11 @@ is committed there. The message follows the repository's `11-git-management.md` 
 file and the section. The stamp's commit is `HEAD` before that commit, as `SKILL.md` says. A design
 draft is the one unit committed before its gate (*The design draft*).
 
-**Pushes.** The hub's own run never pushes; the member pushes once it ends. A platform TRD's run and
-an *Add a platform* run push once their review is clean, and only on the member's yes: a question
-`push` on the run's last row, options *Push now* (recommended) and *Not now* (requires a reason,
-and ends the session; Continue asks again). Then:
+**Pushes.** The hub's own run pushes only after a grooming review it closed
+(`grooming-run-review.md` → *The close*); otherwise the member pushes once it ends. A platform
+TRD's run and an *Add a platform* run push once their review is clean, and only on the member's
+yes: a question `push` on the run's last row, options *Push now* (recommended) and *Not now*
+(requires a reason, and ends the session; Continue asks again). Then:
 - a push refused because the remote moved: `git fetch origin`, `git rebase origin/feat/<feature>`,
   push again — once; a rebase that conflicts is aborted (`git rebase --abort`), leaving the clone as
   it was;
@@ -287,10 +292,12 @@ drawing they have seen.
 
 **A run closes on its TRD's self-review**: the hub's (Step 2a) for `TRD.md`, the spoke's alignment
 self-review (Step 4) for a platform TRD, and for *Add a platform* the hub points its change touches.
-The grooming review of Step 5 runs in no platform run, because it writes every spoke's repository
-and a run writes only its own clone and the hub's feature folder. It runs from a terminal session
-in the workspace parent, once every spoke is self-reviewed, as `SKILL.md` says; so does each
-spoke's re-walk after the hub moves.
+**The grooming review of Step 5** — once every spoke is self-reviewed, its close, a spoke's first
+review — writes every spoke's repository, so it runs in the hub's run only when `run-reach.js` says
+that run reaches every spoke, by `grooming-run-review.md`; otherwise it runs from a terminal session
+in the workspace parent, as `SKILL.md` says, and that file says what the run reports. A platform
+TRD's run never runs it; a spoke's re-walk after the hub moves runs from a terminal, save *Add a
+platform*'s.
 
 **`reviewRounds`** — the closing review's rounds so far, oldest first, sent whole whenever a round
 is added; a report that omits it keeps the list the consumer holds, and the ledger keeps it for the
@@ -332,6 +339,9 @@ and started again — resumes at step 4.
    are none), the hub's *Spokes* row for it, not yet groomed, and its line in §7.
 3. On approval, write all three and commit them by explicit path.
 4. Re-walk the hub points the change touches (`grooming-review.md` → *The hub moving*), reported in
-   `reviewRounds`, and restamp the `Hub review` row (`· amended <date>` once it is ✅). The spokes
-   that exist re-walk from a terminal.
-5. The `push` question, the push of `feat/<feature>`, then `trdComplete`.
+   `reviewRounds`, and restamp the `Hub review` row (`· amended <date>` once it is ✅). Then the
+   spokes that exist are re-walked in this run when `run-reach.js --for rewalk` says it reaches
+   them, from a terminal when not (`grooming-run-review.md` → *The spokes' re-walk in Add a
+   platform*).
+5. The `push` question, the push of `feat/<feature>` — the hub's clone, then each spoke clone the
+   re-walk wrote — then `trdComplete`.

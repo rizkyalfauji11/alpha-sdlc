@@ -490,7 +490,10 @@ committed by explicit path. A session ends at the skill's boundaries, and at a s
 it passes `sessionBoundaryTokens`, with `sessionEnded: true` on its last report; the boundary hook
 tells it once, and never holds a line from the platform. The run finishes on `trdComplete: true`,
 once the TRD's self-review is clean and, for a session that pushes, the push you approved has
-succeeded. `tests/fixtures/grooming-run/` holds one report per case.
+succeeded. On the hub's `TRD.md` the run also holds the grooming review and an added platform's
+spoke re-walk, when `scripts/run-reach.js` finds every spoke's clone writable in it
+(`skills/do-grooming/grooming-run-review.md`); otherwise both run from a terminal.
+`tests/fixtures/grooming-run/` holds one report per case.
 
 A consumer that passes `/do-planning` a planning-run schema gets the same shape, mapped by
 `skills/do-planning/planning-run-schema.md`: one row per step with a gate — `scope`, `layout`,
@@ -660,6 +663,17 @@ From 0.43.3 `scripts/check-coverage.js` reads prefixed ids in a plan check: `AC-
 `AC-<PREFIX>-<letter><n>` criteria (`AC-PG-B50`) and `S-<PREFIX><n>` slices (`S-PG5`, with
 `S-PG5a` stage tokens). Each prefix is its own id space, so `AC-3`, `AC-B3` and `AC-PG-B3` are
 three criteria. A plan written with prefixed ids no longer needs a renumbered copy.
+
+From 0.44.0 the grooming review can run inside the adp platform's run on a feature's hub `TRD.md`,
+and so can each spoke's re-walk after *Add a platform*. Before it writes anything, the run checks
+with `scripts/run-reach.js` that it has every spoke's clone, may edit each spoke's feature folder
+(the bridge's `featureFolders`) and, for the review, may launch the three reviewer agents. When it
+can, the verdict is a gate whose needs-eyes and judgment findings are questions, the close stamps
+and commits each clone by explicit path, and every clone is pushed on your yes; the re-walk
+restamps each spoke `· amended <date>`. When it cannot — an older bridge, a clone not on the
+machine, no reviewer rule — nothing is written and the run says to run the review from a terminal,
+as before. A run on a platform TRD keeps no subagents and its 30 minutes, and a terminal session is
+unchanged. 0.44.0 is the minimum for the platform's grooming review.
 
 ## Roadmap
 

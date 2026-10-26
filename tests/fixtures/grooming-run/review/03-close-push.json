@@ -1,0 +1,130 @@
+{
+  "pluginVersion": "0.44.0",
+  "commitRead": "a41c9e0",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 8,
+    "total": 8
+  },
+  "documents": [
+    {
+      "key": "grooming-review@1",
+      "ordinal": 8,
+      "name": "Grooming review",
+      "description": "The hub and every spoke, reviewed once by fresh eyes",
+      "group": "TRD.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      },
+      "notes": [
+        {
+          "label": "Closed",
+          "text": "Hub review ✅ and both spokes reviewed, committed in recipes-api, recipes-web and recipes-android",
+          "engineer": "git -C <clone> add <paths>; git -C <clone> commit"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "push",
+      "documentKey": "grooming-review@1",
+      "title": "Push feat/recipe-sharing in every clone the review wrote?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "Why",
+            "text": "The review is clean and its stamps are committed in each clone; nothing is pushed yet."
+          }
+        ],
+        "needFromYou": "Pick one; the close writes your answer"
+      },
+      "options": [
+        {
+          "id": "push-now",
+          "label": "Push now",
+          "why": "Each spoke and the hub can see their reviewed stamps on the remote",
+          "trade": "Teammates see the stamps at once",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "not-now",
+          "label": "Not now",
+          "why": "Something has to happen before teammates see it",
+          "trade": "The session ends; Continue asks again",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [
+        "Pushes acme/recipes-api, then acme/recipes-web and acme/recipes-android, each on feat/recipe-sharing"
+      ],
+      "evidence": {
+        "caption": "What would be pushed",
+        "groups": [
+          {
+            "heading": "acme/recipes-api",
+            "rows": [
+              {
+                "label": "Commits ahead of origin",
+                "count": "2",
+                "lines": [
+                  "git log origin/feat/recipe-sharing..HEAD"
+                ]
+              }
+            ]
+          },
+          {
+            "heading": "acme/recipes-web",
+            "rows": [
+              {
+                "label": "Commits ahead of origin",
+                "count": "1",
+                "lines": [
+                  "git log origin/feat/recipe-sharing..HEAD"
+                ]
+              }
+            ]
+          },
+          {
+            "heading": "acme/recipes-android",
+            "rows": [
+              {
+                "label": "Commits ahead of origin",
+                "count": "1",
+                "lines": [
+                  "git log origin/feat/recipe-sharing..HEAD"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "grooming-review@1"
+      ],
+      "notes": [],
+      "askedAt": "2026-10-26T04:40:00Z"
+    }
+  ],
+  "gate": null,
+  "reviewRounds": [
+    {
+      "round": 1,
+      "findings": 5,
+      "trend": "first"
+    },
+    {
+      "round": 2,
+      "findings": 0,
+      "trend": "clean"
+    }
+  ]
+}
