@@ -656,6 +656,11 @@ cell, and `· amended <date>` on the `Hub review` row. `amended <date>` anywhere
 history note. `next-step.js` compares a date-rev stamp's `amended` date with the hub's last change;
 a commit-rev stamp compares its commit, so restamp it with the hub's current commit.
 
+From 0.43.3 `scripts/check-coverage.js` reads prefixed ids in a plan check: `AC-<PREFIX>-<n>` and
+`AC-<PREFIX>-<letter><n>` criteria (`AC-PG-B50`) and `S-<PREFIX><n>` slices (`S-PG5`, with
+`S-PG5a` stage tokens). Each prefix is its own id space, so `AC-3`, `AC-B3` and `AC-PG-B3` are
+three criteria. A plan written with prefixed ids no longer needs a renumbered copy.
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and
