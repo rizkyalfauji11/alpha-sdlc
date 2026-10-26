@@ -121,6 +121,8 @@ const STAMP_LEAD = new RegExp(
 );
 const DECIDED_LEAD = /(?<![\w-]|was )decided\b([^|~]{0,60})$/i;
 const STAMP_TAIL = /^[\s*_)]{0,4}·\s*(?:hub\s+)?rev\b/i;
+const AMENDED_STAMP_LEAD = /(?<![a-z])(?:re-)?reviewed\s+\d{4}-\d{2}-\d{2}\s*·\s*(?:hub\s+)?rev\s[^|]*·[\s*_]*amended[\s*_]*$/i;
+const AMENDED_STAMP_END = /^[\s*_`)]*(?:$|[|·])/;
 const UPDATE_ENTRY = /(?:_\**|\*\*)\+\s[^|\n]{0,200}?(?<!\d)\d{4}-\d{2}-\d{2}(?!\d)/;
 const RETIRED_AC_ROW = /^\s*\|\s*~~\s*\**\s*`?(?:AC|A)[-\w]*`?\s*\**\s*~~/;
 const NOTE_WINDOW_CHARS = 40;
@@ -342,6 +344,7 @@ function proseLineIndexes(lines, firstIndex) {
 function isStampDate(line, start, end) {
   const before = line.slice(Math.max(0, start - 80), start);
   if (STAMP_LEAD.test(before) || STAMP_TAIL.test(line.slice(end, end + 20))) return true;
+  if (AMENDED_STAMP_LEAD.test(line.slice(0, start)) && AMENDED_STAMP_END.test(line.slice(end))) return true;
   const decided = DECIDED_LEAD.exec(before);
   return Boolean(decided) && !decided[1].match(ISO_DATE) && !decided[1].match(HISTORY_WORD);
 }
@@ -388,8 +391,8 @@ function historyNoteFindings(text, today) {
         'State the current fact in its place and delete the note — the old value, the date it changed, the ' +
         'feature, stage or round that changed it; the commit message says what changed, and git keeps it. ' +
         'The stamps and statuses the pipeline writes stay (`_Approved: <date> · <commit>_`, `Status: done ' +
-        '<date>`, `Checkpoint verdict`, `reviewed <date> · hub rev`, a `decided:` outcome, a triage cell, a ' +
-        'retired AC\'s struck row).',
+        '<date>`, `Checkpoint verdict`, `reviewed <date> · hub rev <commit>` and its trailing `· amended ' +
+        '<date>`, a `decided:` outcome, a triage cell, a retired AC\'s struck row).',
     });
   }
   return findings;

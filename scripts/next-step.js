@@ -18,6 +18,7 @@ const USAGE =
 const PHASES = ['grooming', 'planning', 'development', 'testing', 'fixing'];
 const CLIENT_PLATFORM = /\b(web|android|ios)\b/i;
 const DATE = /\b\d{4}-\d{2}-\d{2}\b/;
+const AMENDED_DATE = /·\s*amended\s+(\d{4}-\d{2}-\d{2})\b/i;
 const UNCOMMITTED_STAMP = /\b\d{4}-\d{2}-\d{2}\s*·\s*uncommitted\b/i;
 const MAX_REREAD = 8;
 const SHOWN_LINES = 400;
@@ -555,7 +556,8 @@ function hubMovedSince(hubPath, revisionText) {
     const changes = substantiveChanges(diff.stdout);
     return changes.length ? { state: 'moved', why: `the hub changed since rev ${commit}`, changes } : { state: 'unchanged' };
   }
-  const date = firstDate(revisionText);
+  const amended = AMENDED_DATE.exec(revisionText);
+  const date = amended ? amended[1] : firstDate(revisionText);
   if (!date) return { state: 'unverified', why: 'the stamp names no hub rev' };
   if (!git(directory, ['ls-files', '--error-unmatch', '--', file]).ok) {
     return { state: 'unverified', why: 'the hub is not committed — its edits since the stamp cannot be read from git' };

@@ -881,6 +881,10 @@ const featureStamps = [
   '| **Hub alignment** | ✅ re-reviewed 2026-09-07 · hub rev 2026-09-07 |',
   '| **Hub review** | ✅ reviewed 2026-09-07 · rev `a1b2c3d` · rounds `3 · 0` |',
   '| **Hub alignment** | self-reviewed 2026-09-07 · hub rev `a1b2c3d` |',
+  '| **Hub alignment** | reviewed 2026-09-16 · hub rev `c9d5bb1` · amended 2026-09-26 |',
+  '| **Hub alignment** | ✅ reviewed 2026-09-16 · hub rev 2026-09-16 · amended 2026-09-26 |',
+  '| **Hub review** | ✅ reviewed 2026-09-08 · rev `a1b2c3d` · findings 4 · needs-eyes 1 · amended 2026-09-26 |',
+  '| backend | — | [TRD-backend.md](./TRD-backend.md) | ✅ reviewed 2026-09-16 · hub rev `c9d5bb1` · amended 2026-09-26 | none |',
   '| **Hub review** | ✅ reviewed 2026-09-08 · rev `a1b2c3d` · findings 4 · needs-eyes 1 |',
   '| **Feature review** | reviewed 2026-09-24 · base `a1b2c3d` · findings 3 · needs-eyes 0 · approve |',
   '| **Fix review** | reviewed 2026-09-24 · B1, B2 · findings 1 · needs-eyes 0 · approve |',
@@ -922,6 +926,11 @@ const featureHistoryNotes = [
   ['a feature-stage update entry', '_**+ `run-terminal` backend Stage 1 · 2026-09-23** — the resume invariant changed._', '+ `run-terminal` backend Stage 1 · 2026-09-23'],
   ['a history note appended to an approval stamp', '_Approved: 2026-10-06 · `a1b2c3d` · `S1`\'s steps corrected and approved by the owner 2026-10-08_', 'corrected and approved by the owner 2026-10-08'],
   ['a history note appended to a checkpoint verdict', '- **Checkpoint verdict:** auto 2026-09-24 · **re-verified after the fix round, 2026-09-24**', 're-verified after the fix round, 2026-09-24'],
+  ['an amended note in prose', 'The cap is 5, amended 2026-09-26 to fix the overflow.', 'amended 2026-09-26'],
+  ['an amended note with prose after a stamp', '| **Hub alignment** | reviewed 2026-09-16 · hub rev `c9d5bb1` · amended 2026-09-26 to fix the cap |', 'amended 2026-09-26'],
+  ['an amended note that does not trail the stamp', '| **Hub alignment** | reviewed 2026-09-16 · hub rev `c9d5bb1` · the cap amended 2026-09-26 |', 'amended 2026-09-26'],
+  ['an amended note in the cell after a stamp', '| **Hub alignment** | reviewed 2026-09-16 · hub rev `c9d5bb1` | · amended 2026-09-26 |', 'amended 2026-09-26'],
+  ['an amended note trailing a stamp with no rev', '| **Hub alignment** | reviewed 2026-09-16 · amended 2026-09-26 |', 'amended 2026-09-26'],
   ['a stale-stamp edit note', '**Approved (plan gate):** commit `a1b2c3d` · approved 2026-09-23 ⚠️ **STALE — edited 2026-09-24 at `do-fixing`**', 'edited 2026-09-24'],
 ];
 const historyFeature = sdlcProject('history-feature', {

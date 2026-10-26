@@ -590,6 +590,39 @@ function issueDocument({ notes = [], outline = [] } = {}) {
 }
 
 {
+  const { projectRoot, featureDirectory } = featureProject('alignment-amended', {
+    'TRD.md': hubDocument(),
+  });
+  initRepository(projectRoot);
+  const hubRevision = commitAll(projectRoot, 'hub', '2026-10-01T10:00:00');
+  const spokePath = path.join(featureDirectory, 'TRD-backend.md');
+  write(spokePath, spokeDocument({ alignment: `✅ reviewed 2026-10-02 · hub rev \`${hubRevision.slice(0, 7)}\`` }));
+  commitAll(projectRoot, 'spoke', '2026-10-02T10:00:00');
+  const hubPath = path.join(featureDirectory, 'TRD.md');
+  write(hubPath, fs.readFileSync(hubPath, 'utf8').replace('Decisions for 5. API contracts.', 'Decisions for 5. API contracts, now paged.'));
+  const movedRevision = commitAll(projectRoot, 'hub moves', '2026-10-03T10:00:00');
+  const restamp = (alignment, date) => {
+    write(spokePath, spokeDocument({ alignment }));
+    commitAll(projectRoot, 'spoke restamped', date);
+  };
+  restamp(`✅ reviewed 2026-10-02 · hub rev \`${movedRevision.slice(0, 7)}\` · amended 2026-10-03`, '2026-10-03T11:00:00');
+  expectNext('a spoke restamped `· amended <date>` on the moved hub\'s commit is reviewed with the current hub',
+    nextStep(featureDirectory, ['backend', '--phase', 'grooming']), { exit: 0, step: /^reviewed with the current hub/ });
+  expectNext('planning takes a spoke restamped `· amended <date>` on the moved hub\'s commit',
+    nextStep(featureDirectory, ['backend', '--phase', 'planning']), { noStop: true, fact: /hub alignment .*amended 2026-10-03/ });
+  restamp('✅ reviewed 2026-10-02 · hub rev 2026-10-02', '2026-10-03T12:00:00');
+  expectNext('a date-rev stamp older than the hub\'s change still stops planning',
+    nextStep(featureDirectory, ['backend', '--phase', 'planning']), { exit: 1, stop: /older than the hub's last change/ });
+  restamp('✅ reviewed 2026-10-02 · hub rev 2026-10-02 · amended 2026-10-03', '2026-10-03T13:00:00');
+  expectNext('planning compares the `amended` date of a date-rev stamp, not its `reviewed` one',
+    nextStep(featureDirectory, ['backend', '--phase', 'planning']), { noStop: true, fact: /hub alignment .*amended 2026-10-03/ });
+  write(hubPath, fs.readFileSync(hubPath, 'utf8').replace('Decisions for 5. API contracts, now paged.', 'Decisions for 5. API contracts, now paged by cursor.'));
+  commitAll(projectRoot, 'hub moves again', '2026-10-05T10:00:00');
+  expectNext('a hub change after the `amended` date stops planning again',
+    nextStep(featureDirectory, ['backend', '--phase', 'planning']), { exit: 1, stop: /older than the hub's last change/ });
+}
+
+{
   const manifest = '\n## 7. Change manifest\n_Approved: 2026-10-01 · a1b2c3d_\n\n**Work slice summary**\n- [ ] [BE] list the orders\n- [ ] [Web] show the list\n';
   const hub = hubDocument().replace(/\n## 7\. Change manifest[\s\S]*$/, manifest);
   const { projectRoot, featureDirectory } = featureProject('tracker-write-back', { 'TRD.md': hub });

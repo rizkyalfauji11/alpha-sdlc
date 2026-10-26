@@ -1,7 +1,7 @@
 {
   "name": "alpha-sdlc",
   "displayName": "Alpha SDLC",
-  "version": "0.43.1",
+  "version": "0.43.2",
   "description": "SDLC pipeline: grooming (product, tech-debt, issue, greenfield) → planning → development (TDD) → testing → fixing. Draft + human-approve at every gate, reuse-first, design parity for UI. Jira optional.",
   "suggestedPrompts": [
     "Start technical grooming for my feature PRD",
