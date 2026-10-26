@@ -201,12 +201,14 @@ function compactContext(skillName, cwd) {
 function main() {
   const payload = readPayload();
   if (payload.source && payload.source !== 'compact') return;
-  const cwd = path.resolve(payload.cwd || process.cwd());
+  const cwd = path.resolve(payload.cwd || (Array.isArray(payload.workspacePaths) && payload.workspacePaths[0]) || process.cwd());
   if (!payload.transcript_path || !isSdlcContext(cwd)) return;
   const skillName = activeSkill(payload.transcript_path);
   if (!skillName) return;
+  const context = compactContext(skillName, cwd);
   process.stdout.write(JSON.stringify({
-    hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: compactContext(skillName, cwd) },
+    hookSpecificOutput: { hookEventName: 'SessionStart', additionalContext: context },
+    injectSteps: [{ systemMessage: { systemMessage: context } }],
   }));
 }
 

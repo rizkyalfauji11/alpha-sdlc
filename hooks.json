@@ -1,0 +1,66 @@
+{
+  "alpha-sdlc": {
+    "enabled": true,
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node \"hooks/inject-principles.js\""
+      },
+      {
+        "type": "command",
+        "command": "node \"hooks/inject-language-guide.js\""
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "write_file|edit_file|Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"hooks/validate-rung.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"hooks/validate-no-secrets.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"hooks/validate-comments.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"hooks/validate-doc-tables.js\""
+          },
+          {
+            "type": "command",
+            "command": "node \"hooks/validate-draft.js\""
+          }
+        ]
+      },
+      {
+        "matcher": "run_command|run_shell_command|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"hooks/validate-bash-doc-writes.js\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node \"hooks/continue-auto-run.js\""
+      },
+      {
+        "type": "command",
+        "command": "node \"hooks/stop-judge.js\"",
+        "timeout": 90
+      },
+      {
+        "type": "command",
+        "command": "node \"hooks/snapshot-stop.js\""
+      }
+    ]
+  }
+}

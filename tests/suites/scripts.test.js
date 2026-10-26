@@ -22,8 +22,14 @@ function coverageRun(name, spoke, plan, extraArguments, extraFiles) {
     ...(extraFiles || {}),
   });
   const extras = (extraArguments || []).map((argument) => argument.replace('{dir}', featureDirectory));
-  return runScript('check-coverage.js', [featureDirectory, 'web', ...extras]).exitCode;
+  return runScript('check-coverage.js', [featureDirectory, 'web', ...extras]);
 }
+
+const PREFIXED_SPOKE =
+  '# Spoke\n\n## 8. Acceptance criteria\n\n| ID | AC | Source |\n|---|---|---|\n' +
+  '| AC-PG-B1 | one | hub §2 |\n| AC-PG-B2 | two | hub §3 |\n| AC-PG-B3 | three | hub §5 |\n\n' +
+  '## 9. Work slices\n\n- [ ] `S-PG1` the write — AC: AC-PG-B1, AC-PG-B2\n- [ ] `S-PG2` the read — AC: AC-PG-B3\n';
+const PREFIXED_STAGES = '### Stage 1 — [data] `S-PG1a` — a\n- **Covers:** `AC-PG-B1` · `AC-PG-B2`\n\n### Stage 2 — [UI] `S-PG2` — b\n- **Covers:** `AC-PG-B3`';
 
 const coverageCases = [
   { name: 'every criterion claimed inside its own slice is clean', expected: 0,
@@ -72,6 +78,31 @@ const coverageCases = [
   { name: 'a done stage without its own checkpoint verdict is reported', expected: 1,
     spoke: spokeWith(TWO_SLICES),
     plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n- **Status:** done 2026-09-25\n- **Checkpoint verdict:** pending\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`') },
+  { name: 'prefixed AC ids and S-<prefix><n> slices claimed inside their own slice are clean', expected: 0,
+    spoke: PREFIXED_SPOKE, plan: planWith(PREFIXED_STAGES), stdout: /clean — 3 acceptance criteria \(0 retired\) · 2 work slices · 2 stages/ },
+  { name: 'a prefixed AC no stage claims is reported by its prefixed id', expected: 1,
+    spoke: PREFIXED_SPOKE, plan: planWith('### Stage 1 — [data] `S-PG1a` — a\n- **Covers:** `AC-PG-B1` · `AC-PG-B2`'),
+    stdout: /^  - AC-PG-B3 is claimed by no stage$/m },
+  { name: 'a prefixed AC claimed from another S-<prefix><n> slice without a Moved in record is reported', expected: 1,
+    spoke: PREFIXED_SPOKE, plan: planWith('### Stage 1 — [data] `S-PG1` — a\n- **Covers:** `AC-PG-B1` · `AC-PG-B2` · `AC-PG-B3`'),
+    stdout: /Stage 1 \(S-PG1\) claims AC-PG-B3, which §9 gives to S-PG2, with no "Moved in" record/ },
+  { name: 'the same prefixed cross-slice claim with a Moved in record is clean', expected: 0,
+    spoke: PREFIXED_SPOKE,
+    plan: planWith('### Stage 1 — [data] `S-PG1` — a\n- **Covers:** `AC-PG-B1` · `AC-PG-B2` · `AC-PG-B3`\n- **Moved in:** `AC-PG-B3` from `S-PG2` — provable only here') },
+  { name: 'each prefix is its own id space: AC-3 and AC-B3 are not AC-PG-B3', expected: 1,
+    spoke: PREFIXED_SPOKE, plan: planWith('### Stage 1 — [data] `S-PG1a` — a\n- **Covers:** `AC-PG-B1` · `AC-PG-B2`\n\n### Stage 2 — [UI] `S-PG2` — b\n- **Covers:** `AC-3` · `AC-B3`'),
+    stdout: /Stage 2 claims AC-3, which is not in §8[\s\S]*Stage 2 claims AC-B3, which is not in §8[\s\S]*AC-PG-B3 is claimed by no stage/ },
+  { name: 'a prefixed AC range in a slice is read in full', expected: 0,
+    spoke: PREFIXED_SPOKE.replace('AC: AC-PG-B1, AC-PG-B2\n- [ ] `S-PG2` the read — AC: AC-PG-B3', 'AC: `AC-PG-B1` … `AC-PG-B3`'),
+    plan: planWith('### Stage 1 — [data] `S-PG1` — all\n- **Covers:** `AC-PG-B1` · `AC-PG-B2` · `AC-PG-B3`') },
+  { name: 'the --table output names prefixed ids in order', expected: 0,
+    spoke: PREFIXED_SPOKE, plan: planWith(PREFIXED_STAGES), extraArguments: ['--table'],
+    stdout: /^AC-PG-B1\tStage 1\nAC-PG-B2\tStage 1\nAC-PG-B3\tStage 2\n/ },
+  { name: 'a new test titled with a prefixed criterion its stage does not cover is reported', expected: 1,
+    spoke: PREFIXED_SPOKE, plan: planWith(PREFIXED_STAGES),
+    extraArguments: ['--stage', '1', '--tests', '{dir}/a.test.ts'],
+    extraFiles: { 'a.test.ts': "it('AC-PG-B3 reads the document', () => {});\n" },
+    stdout: /names AC-PG-B3, which Stage 1 does not cover/ },
   { name: 'a new test titled with its own stage\'s criterion is clean', expected: 0,
     spoke: spokeWith(TWO_SLICES),
     plan: planWith('### Stage 1 — [data] `W1` — a\n- **Covers:** `AC-1` · `AC-2`\n\n### Stage 2 — [UI] `W2` — b\n- **Covers:** `AC-3`'),
@@ -80,10 +111,11 @@ const coverageCases = [
 ];
 
 for (const coverageCase of coverageCases) {
-  const exitCode = coverageRun(coverageCase.name.replace(/\W+/g, '-'), coverageCase.spoke, coverageCase.plan,
+  const run = coverageRun(coverageCase.name.replace(/\W+/g, '-'), coverageCase.spoke, coverageCase.plan,
     coverageCase.extraArguments, coverageCase.extraFiles);
-  report('check-coverage.js', coverageCase.name, exitCode === coverageCase.expected,
-    `expected exit ${coverageCase.expected}, got ${exitCode}`);
+  report('check-coverage.js', coverageCase.name,
+    run.exitCode === coverageCase.expected && (!coverageCase.stdout || coverageCase.stdout.test(run.stdout)),
+    [`expected exit ${coverageCase.expected}, got ${run.exitCode}`, run.stdout, run.stderr]);
 }
 
 const featureDoneCases = [

@@ -106,11 +106,11 @@ widget specs, slicing docs), a line you edit is blocked when it carries a dated 
 — a date beside *corrected*, *amended*, *withdrawn*, *retired*, *added*, *until* and the like, or an
 *+ <feature> stage · <date>* entry — and, in `docs/basics/`, when it strikes text through. The
 stamps and statuses the pipeline writes and reads pass: `_Approved: <date> · <commit>_`, `Status:
-done <date>`, `Checkpoint verdict`, `reviewed <date> · hub rev`, a `decided:` outcome, a triage
-cell, a retired AC's struck row. The tech-debt register deletes a paid row; its **Next ID** line
-keeps IDs from reuse. Edits elsewhere in a doc are never blocked by history they didn't write, and
-`/do-project-setup` refresh mode treats a doc whose head logs its history as stale, so one refresh
-cleans a whole profile written before 0.35.0.
+done <date>`, `Checkpoint verdict`, `reviewed <date> · hub rev <commit>` with its trailing
+`· amended <date>`, a `decided:` outcome, a triage cell, a retired AC's struck row. The tech-debt
+register deletes a paid row; its **Next ID** line keeps IDs from reuse. Edits elsewhere in a doc
+are never blocked by history they didn't write, and `/do-project-setup` refresh mode treats a doc
+whose head logs its history as stale, so one refresh cleans a whole profile written before 0.35.0.
 
 ## The pipeline
 
@@ -422,9 +422,23 @@ stays invisible forever; a test fails instead. No Node? Everything still install
 open and simply don't enforce. The plain-language judge also calls the `claude` CLI — set
 `ALPHA_JUDGE_CLAUDE_BIN` where it isn't on your `PATH`.
 
+### Claude Code
+
 ```
 /plugin marketplace add rizkyalfauji11/alpha-sdlc
 /plugin install alpha-sdlc@alpha
+```
+
+### Google Gemini CLI
+
+```bash
+gemini extensions install https://github.com/rizkyalfauji11/alpha-sdlc
+```
+
+### Google Antigravity (`agy`)
+
+```bash
+agy plugin install https://github.com/rizkyalfauji11/alpha-sdlc
 ```
 
 ### Recommended settings
@@ -635,6 +649,17 @@ screen's widget spec and checked by `scripts/check-draft.js` (no script, no outs
 1 MiB). It is committed, then shown at its own gate. Approve with edits or Regenerate redraws it and
 shows the gate again. On the adp platform that gate carries `draft`, and the web opens the drawing
 in a sandboxed tab. A terminal asks the same question with the question tool.
+
+From 0.43.2 the doc hook accepts the restamp a hub change after ✅ asks for — `reviewed <date> · hub
+rev <commit> · amended <date>` on a spoke's `Hub alignment` row or the hub's *Spokes & alignment*
+cell, and `· amended <date>` on the `Hub review` row. `amended <date>` anywhere else is still a
+history note. `next-step.js` compares a date-rev stamp's `amended` date with the hub's last change;
+a commit-rev stamp compares its commit, so restamp it with the hub's current commit.
+
+From 0.43.3 `scripts/check-coverage.js` reads prefixed ids in a plan check: `AC-<PREFIX>-<n>` and
+`AC-<PREFIX>-<letter><n>` criteria (`AC-PG-B50`) and `S-<PREFIX><n>` slices (`S-PG5`, with
+`S-PG5a` stage tokens). Each prefix is its own id space, so `AC-3`, `AC-B3` and `AC-PG-B3` are
+three criteria. A plan written with prefixed ids no longer needs a renumbered copy.
 
 ## Roadmap
 

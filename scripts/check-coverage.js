@@ -24,14 +24,22 @@ function readText(filePath) {
   try { return fs.readFileSync(filePath, 'utf8'); } catch { return inputError(`cannot read ${filePath}`); }
 }
 
-const AC_ID = /AC-(\d+)/g;
-const AC_RANGE = /AC-(\d+)`?\s*(?:…|\.\.\.?|–|—|to)\s*`?AC-(\d+)/g;
-function acIdsIn(text) {
-  const ids = [...String(text).matchAll(AC_ID)].map((match) => Number(match[1]));
+const AC_ID_SOURCE = '(?<![A-Za-z0-9])AC-(?:[A-Z][A-Z0-9]*-)?[A-Z]?\\d+(?!\\d)';
+const AC_ID = new RegExp(AC_ID_SOURCE, 'g');
+const AC_RANGE = /(?<![A-Za-z0-9])(AC-(?:[A-Z][A-Z0-9]*-)?[A-Z]?)(\d+)`?\s*(?:…|\.\.\.?|–|—|to)\s*`?\1(\d+)(?!\d)/g;
+const SLICE_ID_SOURCE = '(?:S-[A-Z]+|[A-Z]{1,3})\\d+';
+const byAcId = (a, b) => a.localeCompare(b, 'en', { numeric: true });
+
+function rangeIdsIn(text) {
+  const ids = [];
   for (const range of String(text).matchAll(AC_RANGE)) {
-    for (let id = Number(range[1]) + 1; id < Number(range[2]); id++) ids.push(id);
+    for (let number = Number(range[2]) + 1; number < Number(range[3]); number++) ids.push(`${range[1]}${number}`);
   }
   return ids;
+}
+
+function acIdsIn(text) {
+  return [...[...String(text).matchAll(AC_ID)].map((match) => match[0]), ...rangeIdsIn(text)];
 }
 
 function sectionOf(markdown, number) {
@@ -43,7 +51,7 @@ function sectionOf(markdown, number) {
   return end === -1 ? rest : rest.slice(0, end);
 }
 
-const REGISTER_ROW = /^\|\s*(~~)?\s*\**\s*AC-(\d+)\b/;
+const REGISTER_ROW = new RegExp(`^\\|\\s*(~~)?\\s*\\**\\s*(${AC_ID_SOURCE})(?![A-Za-z0-9])`);
 const SINGLE_DOCUMENT_TITLE = /^#\s+(?:issue|tech-?debt)\s+trd\b/i;
 
 function registerDocumentPath(featureDirectory, platform) {
@@ -70,7 +78,7 @@ function parseRegister(spoke) {
     if (/^\|/.test(line)) tableLines.push(line);
     const row = line.match(REGISTER_ROW);
     if (!row) continue;
-    const id = Number(row[2]);
+    const id = row[2];
     (row[1] || /^\|\s*~~/.test(line) ? retired : register).add(id);
     if (!rows.has(id)) rows.set(id, []);
     rows.get(id).push(line);
@@ -80,8 +88,11 @@ function parseRegister(spoke) {
   return { register, retired, rows, header };
 }
 
-const SLICE_ROW = /^\|\s*\**\s*`?([A-Z]{1,3}\d+)`?\s*\**\s*\|/;
-const SLICE_ITEM = /^\s*[-*]\s+(?:\[.\]\s+)?\**\s*`?([A-Z]{1,3}\d+)`?\s*\**/;
+const SLICE_ROW = new RegExp(`^\\|\\s*\\**\\s*\`?(${SLICE_ID_SOURCE})\`?\\s*\\**\\s*\\|`);
+const SLICE_ITEM = new RegExp(`^\\s*[-*]\\s+(?:\\[.\\]\\s+)?\\**\\s*\`?(${SLICE_ID_SOURCE})\`?\\s*\\**`);
+const STAGE_SLICE_TOKEN = new RegExp(`\`(${SLICE_ID_SOURCE}[a-z]*)\``, 'g');
+const AMENDED_MOVE = new RegExp(`(${AC_ID_SOURCE})[^.;]*?\\bmoves? to Stage (\\d+)`, 'g');
+const MOVE_ROW = new RegExp(`\`(${AC_ID_SOURCE})\`\\s*\`${SLICE_ID_SOURCE}[a-z]*\`\\s*→\\s*Stage\\s+(\\d+)`, 'g');
 function parseSlices(spoke) {
   const slices = new Map();
   const sliceLines = sectionOf(spoke, 9);
@@ -124,7 +135,7 @@ function parsePlan(plan, slices) {
   for (let index = 0; index < planLines.length; index++) {
     const heading = planLines[index].match(/^#{2,4}\s+Stage\s+(\d+)(?![\w'’])(.*)$/);
     if (!heading) continue;
-    const tokens = [...heading[2].matchAll(/`([A-Z]{1,3}\d+[a-z]*)`/g)].map((match) => match[1]);
+    const tokens = [...heading[2].matchAll(STAGE_SLICE_TOKEN)].map((match) => match[1]);
     const stageSlices = [...new Set(tokens.map(sliceOfToken).filter(Boolean))];
     const block = [];
     for (let next = index + 1; next < planLines.length && !/^#{2,4}\s/.test(planLines[next]); next++) {
@@ -144,13 +155,13 @@ function parsePlan(plan, slices) {
     stage.covers = new Set(acIdsIn(claimedPart.replace(/^.*?\*\*Covers:?\*\*/, '')));
     stage.paysDebt = /\bTD-(?:[A-Za-z][A-Za-z0-9]*-)?\d+\b/.test(bulletText(stage.block, 'Pays debt'));
     const amendment = amendmentParts.join(' ');
-    for (const match of amendment.matchAll(/AC-(\d+)[^.;]*?\bmoves? to Stage (\d+)/g)) {
-      recordMove(Number(match[1]), Number(match[2]));
+    for (const match of amendment.matchAll(AMENDED_MOVE)) {
+      recordMove(match[1], Number(match[2]));
     }
     for (const id of acIdsIn(bulletText(stage.block, 'Moved in'))) recordMove(id, stage.number);
   }
-  for (const match of plan.matchAll(/`AC-(\d+)`\s*`[A-Z]{1,3}\d+[a-z]*`\s*→\s*Stage\s+(\d+)/g)) {
-    recordMove(Number(match[1]), Number(match[2]));
+  for (const match of plan.matchAll(MOVE_ROW)) {
+    recordMove(match[1], Number(match[2]));
   }
   return { stages, movedInto };
 }
@@ -177,7 +188,7 @@ function planProblems({ spokePath, register, retired, slices, stages, movedInto 
       if (!claimedBy.has(id)) claimedBy.set(id, []);
       claimedBy.get(id).push(stage.number);
       if (!register.has(id) && !retired.has(id)) {
-        problems.push(`Stage ${stage.number} claims AC-${id}, which is not in §8 of ${path.basename(spokePath)}`);
+        problems.push(`Stage ${stage.number} claims ${id}, which is not in §8 of ${path.basename(spokePath)}`);
         continue;
       }
       if (!stage.slices.length) continue;
@@ -186,14 +197,14 @@ function planProblems({ spokePath, register, retired, slices, stages, movedInto 
       if (!inOwnSlice && !moved) {
         const owners = [...slices].filter(([, slice]) => slice.acs.has(id)).map(([name]) => name);
         problems.push(
-          `Stage ${stage.number} (${stage.slices.join(', ')}) claims AC-${id}, which §9 gives to ` +
+          `Stage ${stage.number} (${stage.slices.join(', ')}) claims ${id}, which §9 gives to ` +
             `${owners.join(', ') || 'no slice'}, with no "Moved in" record for this stage`,
         );
       }
     }
   }
-  for (const id of [...register].sort((a, b) => a - b)) {
-    if (!claimedBy.has(id)) problems.push(`AC-${id} is claimed by no stage`);
+  for (const id of [...register].sort(byAcId)) {
+    if (!claimedBy.has(id)) problems.push(`${id} is claimed by no stage`);
   }
 
   const builtWith = new Map();
@@ -234,7 +245,7 @@ function stageTestProblems(stage, testFiles, base) {
       for (const id of acIdsIn(match[2])) {
         if (!stage.covers.has(id)) {
           problems.push(
-            `${testFile}: the test titled "${match[2].slice(0, 80)}" names AC-${id}, ` +
+            `${testFile}: the test titled "${match[2].slice(0, 80)}" names ${id}, ` +
               `which Stage ${stage.number} does not cover`,
           );
         }
@@ -283,9 +294,7 @@ function generalRegisterOf(spoke) {
 function generalAcIdsIn(text, scheme) {
   if (scheme === 'A') return [...new Set([...String(text).matchAll(FOUNDATION_AC_ID)].map((match) => match[0]))];
   const ids = new Set([...String(text).matchAll(GENERAL_AC_ID)].map((match) => match[0]));
-  for (const range of String(text).matchAll(AC_RANGE)) {
-    for (let id = Number(range[1]) + 1; id < Number(range[2]); id++) ids.add(`AC-${id}`);
-  }
+  for (const id of rangeIdsIn(text)) ids.add(id);
   return [...ids];
 }
 
@@ -616,8 +625,8 @@ function main(argv) {
     }
     if (options.table) {
       const lines = [...claimedBy.entries()]
-        .sort(([a], [b]) => a - b)
-        .map(([id, numbers]) => `AC-${id}\tStage ${numbers.join(', ')}`);
+        .sort(([a], [b]) => byAcId(a, b))
+        .map(([id, numbers]) => `${id}\tStage ${numbers.join(', ')}`);
       process.stdout.write(lines.join('\n') + '\n\n');
     }
     const summary =

@@ -456,7 +456,8 @@ function stageUnit(options) {
   const register = coverage.generalRegisterOf(spoke);
   const claimText = `${coverage.bulletText(stage.block, 'Covers').split('⚠️')[0].replace(/^.*?\*\*Covers:?\*\*/, '')} ${coverage.bulletText(stage.block, 'Moved in')}`;
   const covered = [...new Set([
-    ...[...stage.covers, ...(movedInto.get(stage.number) || [])].map((id) => `AC-${id}`),
+    ...stage.covers,
+    ...(movedInto.get(stage.number) || []),
     ...coverage.generalAcIdsIn(claimText, register.scheme || 'AC'),
   ])];
   lines.push(`Acceptance criteria this stage covers — ${spokePath}, verbatim:`, '');
