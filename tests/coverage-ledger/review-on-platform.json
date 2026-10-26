@@ -1,0 +1,19 @@
+{
+  "baseline": "origin/main",
+  "entries": [
+    {
+      "clause": "**Pushes.** The hub's own run never pushes",
+      "file": "skills/do-grooming/grooming-run-schema.md",
+      "verdict": "changed",
+      "reason": "platform-grooming H70: a grooming review closed in the hub's run stamps every spoke's clone, so that run pushes the hub's clone and each spoke's, on the member's yes to the push question; every other hub run still never pushes",
+      "where": "skills/do-grooming/grooming-run-schema.md → *Pushes*: \"The hub's own run pushes only after a grooming review it closed\"; skills/do-grooming/grooming-run-review.md → *The close*"
+    },
+    {
+      "clause": "The grooming review of Step 5 runs in no platform run, because it writes every spoke's repository and a run writes only its own clone and the hub's feature folder.",
+      "file": "skills/do-grooming/grooming-run-schema.md",
+      "verdict": "changed",
+      "reason": "platform-grooming H70/H72: the bridge's featureFolders lets a run on the hub's TRD.md edit each spoke clone's feature folder, so the review and Add a platform's spoke re-walk run there once scripts/run-reach.js confirms the run reaches every spoke; without that reach they still run from a terminal, and a platform TRD's run never runs them",
+      "where": "skills/do-grooming/grooming-run-schema.md → *The review*; skills/do-grooming/grooming-run-review.md → *Whether this run reaches every spoke* and *The fallback*"
+    }
+  ]
+}

@@ -1,0 +1,263 @@
+{
+  "pluginVersion": "0.44.0",
+  "commitRead": "a41c9e0",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 8,
+    "total": 8
+  },
+  "documents": [
+    {
+      "key": "grooming-review@1",
+      "ordinal": 8,
+      "name": "Grooming review",
+      "description": "The hub and every spoke, reviewed once by fresh eyes",
+      "group": "TRD.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "grooming-review:hub-change",
+      "documentKey": "grooming-review@1",
+      "title": "Change the hub so the share service answers 410 for an expired link?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "Why",
+            "text": "Both spokes expect 410 for an expired link while hub §5 says 404; the review held it as one hub change."
+          }
+        ],
+        "needFromYou": "Pick one; the close writes your answer"
+      },
+      "options": [
+        {
+          "id": "change-hub",
+          "label": "Change the hub",
+          "why": "One statement for both spokes",
+          "trade": "Hub §5 and its contract delta change once",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "keep-hub",
+          "label": "Keep the hub",
+          "why": "The 404 is deliberate",
+          "trade": "Both spokes are fixed to 404 instead",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [
+        "On Change the hub, hub §5 and the delta change at the close, with no second review"
+      ],
+      "evidence": {
+        "caption": "The statements that disagree",
+        "groups": [
+          {
+            "heading": "Hub §5",
+            "rows": [
+              {
+                "label": "410 vs 404",
+                "count": null,
+                "lines": [
+                  "TRD.md:188 \"an expired link answers 404\"",
+                  "TRD-web.md:97 \"410 shows the expired state\""
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "grooming-review@1"
+      ],
+      "notes": [
+        {
+          "label": "Direction",
+          "text": "hub wrong — pending hub change H9",
+          "engineer": null
+        }
+      ],
+      "askedAt": "2026-10-26T04:10:00Z"
+    },
+    {
+      "id": "grooming-review:android-offline-copy",
+      "documentKey": "grooming-review@1",
+      "title": "Should the Android spoke show the cached recipe when the share link fails offline?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "Why",
+            "text": "Judgment: the hub says nothing about offline; the Android spoke shows a cached copy, the web an error."
+          }
+        ],
+        "needFromYou": "Pick one; the close writes your answer"
+      },
+      "options": [
+        {
+          "id": "error-both",
+          "label": "Show the error on both",
+          "why": "The hub decides no offline copy",
+          "trade": "Android drops its cache path",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "hub-decision",
+          "label": "Make it a hub decision",
+          "why": "Both platforms should agree",
+          "trade": "A new hub Open Decision",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [
+        "The close writes your answer into the spoke that changes"
+      ],
+      "evidence": {
+        "caption": "The two spokes",
+        "groups": [
+          {
+            "heading": "Spokes",
+            "rows": [
+              {
+                "label": "Offline",
+                "count": null,
+                "lines": [
+                  "TRD-android.md:142",
+                  "TRD-web.md:131"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "grooming-review@1"
+      ],
+      "notes": [],
+      "askedAt": "2026-10-26T04:10:00Z"
+    }
+  ],
+  "gate": {
+    "documentKey": "grooming-review@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "TRD.md · Grooming review",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What was checked",
+          "text": "Hub points 12–16 and alignment points 1–11 for the web and Android spokes; points 1, 8 and 12 settled by the contract checker and the AC ↔ slice lookup, the rest read."
+        },
+        {
+          "label": "Findings by direction",
+          "text": "5 findings: 3 spoke wrong (fixed), 1 hub wrong (held as one hub change), 1 judgment."
+        },
+        {
+          "label": "What was fixed",
+          "text": "TRD-web.md §8 adds the expired-link AC; TRD-android.md §9 claims AC-7; TRD-web.md §6 links the hub error table. Each closed on its proof."
+        },
+        {
+          "label": "Why it matters",
+          "text": "Nothing downstream plans against a spoke until this review stamps it."
+        }
+      ],
+      "needFromYou": "Answer the two questions on Grooming review, then approve to stamp the hub and both spokes"
+    },
+    "detail": {
+      "caption": "The verdict",
+      "panes": [
+        {
+          "label": "Proposed",
+          "note": "the fixes and stamps the close writes",
+          "body": "## Verdict\n\n- objective: 3, all fixed\n- needs-eyes: 1\n- judgment: 1\n\n## Stamps\n\n- TRD.md · Hub review ✅\n- TRD-web.md and TRD-android.md · reviewed",
+          "editable": true
+        },
+        {
+          "label": "Current",
+          "note": "pending in TRD.md",
+          "body": null,
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while reviewing",
+      "groups": [
+        {
+          "heading": "Packet and reports",
+          "rows": [
+            {
+              "label": "Packet",
+              "count": null,
+              "lines": [
+                ".alpha-sdlc/review/recipe-sharing-all-groom.md"
+              ]
+            },
+            {
+              "label": "Reports",
+              "count": "4",
+              "lines": [
+                ".alpha-sdlc/review/recipe-sharing-all-groom-a.md",
+                ".alpha-sdlc/review/recipe-sharing-all-groom-b.md",
+                ".alpha-sdlc/review/recipe-sharing-all-groom-c.md",
+                ".alpha-sdlc/review/recipe-sharing-all-groom-critic.md"
+              ]
+            },
+            {
+              "label": "review-gaps.js",
+              "count": null,
+              "lines": [
+                "exit 0 — no gap"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approve stamps the hub ✅ and every spoke reviewed, committing each clone by explicit path",
+      "Nothing is pushed until you say yes"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Grooming review",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "approve-with-edits",
+        "label": "Approve with edits",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": true
+      },
+      {
+        "id": "regenerate",
+        "label": "Regenerate with feedback",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      }
+    ]
+  },
+  "reviewRounds": [
+    {
+      "round": 1,
+      "findings": 5,
+      "trend": "first"
+    }
+  ]
+}

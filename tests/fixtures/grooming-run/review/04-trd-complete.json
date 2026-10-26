@@ -1,0 +1,27 @@
+{
+  "pluginVersion": "0.44.0",
+  "commitRead": "a41c9e0",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 8,
+    "total": 8
+  },
+  "documents": [],
+  "questions": [],
+  "gate": null,
+  "reviewRounds": [
+    {
+      "round": 1,
+      "findings": 5,
+      "trend": "first"
+    },
+    {
+      "round": 2,
+      "findings": 0,
+      "trend": "clean"
+    }
+  ],
+  "trdComplete": true,
+  "sessionEnded": true
+}

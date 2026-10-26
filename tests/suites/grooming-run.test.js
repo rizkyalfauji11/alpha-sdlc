@@ -225,7 +225,8 @@ function replay(files) {
   return problems;
 }
 
-const stories = ['hub', 'platform', 'draft'].map((story) => ({ story, files: storyFiles(story) }));
+const stories = ['hub', 'platform', 'draft', 'review', 'review-fallback', 'add-platform', 'add-platform-fallback']
+  .map((story) => ({ story, files: storyFiles(story) }));
 for (const { story, files } of stories) {
   const problems = replay(files);
   report('fixtures', `the ${story} story conforms to the grooming-run guide`, problems.length === 0, problems.join('\n'));
@@ -253,6 +254,21 @@ covers("a draft's gate naming its draft", (sent) => sent.gate && rowIdOf(sent.ga
 covers('a redrawn draft shown again under its next revision', (sent) => sent.onlyWhatChanged === false && sent.gate &&
   rowIdOf(sent.gate.documentKey).endsWith('/draft') && revisionOf(sent.gate.documentKey) > 1);
 covers('a row being fixed while its fix waits on an answer', (sent) => sent.documents.some((row) => row.state.label === 'being fixed') && sent.questions.length > 0);
+const reviewRow = (sent) => sent.documents.find((row) => rowIdOf(row.key) === 'grooming-review');
+const noted = (row, label) => Boolean(row) && (row.notes || []).some((note) => note.label === label);
+covers("the grooming review's row added to the hub's run once it reaches every spoke", (sent) => noted(reviewRow(sent), 'Reaches every spoke') &&
+  reviewRow(sent).state.label === 'being fixed');
+covers("the grooming review's verdict gate with its needs-eyes and hub-change questions", (sent) => sent.gate && sent.gate.documentKey.startsWith('grooming-review@') &&
+  sent.questions.some((question) => question.id === 'grooming-review:hub-change') && sent.questions.length > 1 &&
+  sent.questions.every((question) => question.blocks.includes(sent.gate.documentKey)));
+covers('the push of every clone the review wrote, asked on its row', (sent) => sent.questions.some((question) => question.id === 'push' &&
+  question.documentKey.startsWith('grooming-review@') && question.evidence.groups.length > 1));
+covers('a review that falls back to a terminal, nothing written and nothing open', (sent) => noted(reviewRow(sent), 'Runs from a terminal') &&
+  reviewRow(sent).state.label === 'pending' && sent.sessionEnded === true && !sent.gate && !sent.questions.length && sent.trdComplete !== true);
+covers("Add a platform re-walking the spokes in its run", (sent) => sent.documents.some((row) => noted(row, 'Spokes re-walked')));
+covers("Add a platform sending the spokes' re-walk to a terminal and pushing the hub alone", (sent) =>
+  sent.documents.some((row) => noted(row, 'Spokes re-walk from a terminal')) && sent.questions.some((question) => question.id === 'push' &&
+  question.evidence.groups.length === 1));
 
 {
   const files = storyFiles('hub');
@@ -289,6 +305,16 @@ covers('a row being fixed while its fix waits on an answer', (sent) => sent.docu
   report('checker', 'catches the design question worded with straight quotes',
     replay(changed('01-design-questions.json', (sent) => { sent.questions[0].title = 'Do you have a design for the screen "Reminder list"?'; return sent; }))
       .some((problem) => problem.includes('reads "Do you have a design')));
+  const reviewStory = storyFiles('review');
+  const reviewChanged = (name, change) => reviewStory.map((file) => file.name.endsWith(name) ? { ...file, report: change(JSON.parse(JSON.stringify(file.report))) } : file);
+  report('checker', 'catches trdComplete while the review\'s verdict questions are open',
+    replay(reviewChanged('02-verdict-gate.json', (sent) => ({ ...sent, trdComplete: true }))).some((problem) => problem.includes('trdComplete is never sent while a blocking question is open')));
+  report('checker', 'catches a verdict gate whose approve does not name the review',
+    replay(reviewChanged('02-verdict-gate.json', (sent) => { sent.gate.actions[0].label = 'Approve the verdict'; return sent; }))
+      .some((problem) => problem.includes('approve reads "Approve Grooming review"')));
+  report('checker', 'catches a fallback report that leaves a question open as the session ends',
+    replay(storyFiles('review-fallback').map((file) => ({ ...file, report: { ...file.report, questions: reviewStory[1].report.questions } })))
+      .some((problem) => problem.includes('a session ends with nothing open')));
   report('checker', 'catches a design question whose draft option is renamed',
     replay(changed('01-design-questions.json', (sent) => { sent.questions[0].options[0].id = 'claude'; return sent; }))
       .some((problem) => problem.includes('offers draft then figma')));
