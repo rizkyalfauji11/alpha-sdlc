@@ -5,15 +5,17 @@ tool) — at the start of every such session, before the first report, and again
 Everything in `SKILL.md` still applies; this file maps it onto the report and says where a run on
 the platform differs. The report is the setup-run report's shape, so
 `../do-project-setup/setup-run-schema.md` binds here too — *When to report*, *Every question*, *Only
-what changed* — except where this file says otherwise. Three optional fields go beyond setup's
-report: `planComplete` and `planCoverage` (*The end*) and `sessionEnded` (*The session*), the field
-`do-grooming`'s guide defines. Each is sent only when the consumer's schema declares it; without
-`sessionEnded`, a session carries on past every boundary instead of ending there.
+what changed* — except where this file says otherwise. Four optional fields go beyond setup's
+report: `planComplete` and `planCoverage` (*The end*), and `sessionEnded` and `halted` (*The
+session*), the fields `do-grooming`'s guide defines. Each is sent only when the consumer's schema
+declares it; without `sessionEnded`, a session carries on past every boundary instead of ending
+there.
 
 ## Contents
 
 - **Version** — the minimum the platform accepts
-- **The session** — the command, finding its place, the run ledger, refusals, boundaries, commits
+- **The session** — the command, finding its place, the run ledger, refusals, boundaries, halts,
+  commits
 - **Rows** — keys, names, groups, order, states
 - **The gate** — per step, and Re-split
 - **Questions**
@@ -25,6 +27,7 @@ report: `planComplete` and `planCoverage` (*The end*) and `sessionEnded` (*The s
 This guide ships in alpha-sdlc **0.41.0**, the minimum version the platform accepts for Start
 planning and Continue planning. `pluginVersion` is the `version` in the plugin root's
 `.claude-plugin/plugin.json` (two levels above this skill's base directory), read once per session.
+`halted` needs **0.45.0**: an older plugin ends a halted session with its row's note alone.
 
 ## The session
 
@@ -82,12 +85,12 @@ A session on a machine without the ledger starts every revision at 1 — a named
 grooming — the spoke's `Hub alignment` missing, `NOT REVIEWED`, only `self-reviewed` or older than
 the hub's last change; a per-screen artifact never stamped or changed after its stamp; a groomed
 screen with no `section-slicing/<screen>.md`; crops but no full frame — is no question, because
-nothing on the platform answers it. Say the reason in plain text, with the outstanding list it prints, then send a full
-snapshot: the rows as the files give them, a note `{ "label": "Stopped", "text": <the reason> }` on
-the Scope row (or the row the session was on), no gate, no question, `sessionEnded: true`. A missing
-profile (`docs/basics/`) is a question on the Scope row instead — *set the project up first*,
-recommended, or *plan without it* (requires a reason, recorded as the risk) — because the member
-may override it. A depended-on feature not built is a question too (*Questions*). Without
+nothing on the platform answers it. Say the reason in plain text, with the outstanding list it
+prints, then send a full snapshot: the rows as the files give them, a note `{ "label": "Stopped",
+"text": <the reason> }` on the Scope row (or the row the session was on), no gate, no question,
+`halted` (*A halt*), `sessionEnded: true`. A missing profile (`docs/basics/`) is a question on the
+Scope row instead — *set the project up first*, recommended, or *plan without it* (requires a
+reason, recorded as the risk) — because the member may override it. A depended-on feature not built is a question too (*Questions*). Without
 `sessionEnded` in the consumer's schema, a refusal and an answer that waits outside the run are
 reported the same way without the field, and every later platform line is answered in plain text
 until the consumer stops the process.
@@ -101,7 +104,18 @@ with `sessionEnded: true` and no gate. A question that blocks nothing is left ou
 asked again under its next `id` when its step's turn comes. The consumer stops the process and
 offers Continue. A platform line that still arrives is answered in plain text, never with a report.
 An answer that waits on something outside the run — *I'll add it from a terminal*, *stop until it
-is built* — is recorded, and the session ends there.
+is built* — is recorded, and the session ends there, on a halt.
+
+**A halt.** A session that ends with no gate and no question because its next step waits on work
+outside this run sends `halted` on its last report: one plain sentence naming what must happen and
+where, then `sessionEnded: true`. Planning's cases: a refusal; an answer that takes the TRDs back to
+grooming or waits outside the run — *I'll take it back to grooming*, *stop until it is built*, *I'll
+add it from a terminal*; a held-back slice's last report (*The end*). For the TRDs sent back to
+grooming it reads `Planning waits for grooming: run /alpha-sdlc:do-grooming <feature> to re-gate
+TRD.md and TRD-<name>.md, then Continue`, naming the files the refusal or the answer names. The
+row's `Stopped` or `Held back` note stays; `halted` is what the platform reads. A session whose run
+ledger holds `halted` checks it before *Resume*, and while the files it names are unchanged it sends
+the same report again at once, without reading the plan. Both by `../do-grooming/run-halt.md`.
 
 **Commits by explicit path.** Each approved step — the scope (the plan's header, with its *Design
 references*), the layout (with *Debt in the footprint*), the breakdown (with the *Screen stage
@@ -260,7 +274,7 @@ problem, its evidence the check's output and its row a `Coverage` note, and the 
 after. So is a feature-flow step or a flow binding no stage maps. A held-back slice's criteria are
 no such problem (below). A problem planning cannot fix — the TRD itself must change — is a
 question on the Stage breakdown row, which blocks it: *I'll take it back to grooming* (requires a
-reason, and ends the session).
+reason, and ends the session on a halt).
 
 **`planComplete: true`** — sent once, and only when all of these hold: every stage row is
 `approved` and committed; `check-coverage.js` prints `coverage: clean`, pasted into the plan, and no
@@ -277,6 +291,7 @@ acceptance criterion it counts is claimed by a stage; retired ones are not count
 the slice's criteria are unclaimed. Once the check's only problems are those criteria, write the
 sequencing summary with the output pasted and the slice named, and commit it; the charter and the
 next-file wait for a clean check. The last report has every row `approved`, a `Held back` note on
-the Stage breakdown row naming the slice and what it waits for, no gate, and `sessionEnded: true`.
+the Stage breakdown row naming the slice and what it waits for, no gate, `halted` naming the
+prerequisite to build and `16-feature-map.md`, and `sessionEnded: true`.
 The run stays open. A later Continue finds every stage stamped, runs the check again, and once the
 prerequisite is built (`16-feature-map.md`) plans the slice through the breakdown's next revision.

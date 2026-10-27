@@ -99,7 +99,24 @@ function shapeProblems(sent) {
   for (const flag of ['planComplete', 'sessionEnded', 'onlyWhatChanged']) {
     if (flag in sent) need(typeof sent[flag] === 'boolean', `${flag} is a boolean`);
   }
+  if ('halted' in sent) need(isString(sent.halted) && sent.halted.trim().length > 0, 'halted is a non-empty string');
   need(!('trdComplete' in sent) && !('reviewRounds' in sent), "a planning report sends none of grooming's fields");
+  return problems;
+}
+
+function haltProblems(sent, halt, sessionStarts, rows) {
+  if (!isString(sent.halted)) return [];
+  const problems = [];
+  const need = (ok, what) => { if (!ok) problems.push(what); };
+  need(sent.sessionEnded === true, 'halted comes with sessionEnded: true');
+  need(!sent.gate && !sent.questions.length, 'halted is never sent with a gate or a question open');
+  need(sent.planComplete !== true, 'halted never comes with planComplete');
+  need(!/[\n`*]/.test(sent.halted) && /\bthen Continue\.?$/.test(sent.halted), 'halted is one plain sentence that ends on "then Continue"');
+  need(isString(sent.commitRead), 'a halted report names the commit it read at');
+  if (halt && sessionStarts && sent.halted === halt.text) {
+    need(sent.onlyWhatChanged !== true && sent.commitRead === halt.commitRead && JSON.stringify(rows) === halt.rows,
+      'a halt sent again at the next session\'s start is the same report, whole, at the same commitRead');
+  }
   return problems;
 }
 
@@ -109,6 +126,7 @@ function replay(files) {
   let sessionStarts = true;
   let approvedBreakdown = null;
   let completed = false;
+  let halt = null;
   const approvedSteps = new Set();
   const answered = new Set();
   const askedAt = new Map();
@@ -212,6 +230,8 @@ function replay(files) {
     open = nowOpen;
 
     if (sent.sessionEnded && (sent.gate || sent.questions.length)) fail('a session ends with nothing open');
+    for (const problem of haltProblems(sent, halt, sessionStarts, rows)) fail(problem);
+    if (isString(sent.halted)) halt = { text: sent.halted, commitRead: sent.commitRead, rows: JSON.stringify(rows) };
     if ('planCoverage' in sent && sent.planComplete !== true) fail('planCoverage comes only with planComplete');
     if (sent.planComplete && completed) fail('planComplete is sent once');
     if (sent.planComplete) {
@@ -230,7 +250,7 @@ function replay(files) {
   return problems;
 }
 
-const stories = ['plan', 'held-back'].map((story) => ({ story, files: storyFiles(story) }));
+const stories = ['plan', 'held-back', 'halted'].map((story) => ({ story, files: storyFiles(story) }));
 for (const { story, files } of stories) {
   const problems = replay(files);
   report('fixtures', `the ${story} story conforms to the planning-run guide`, problems.length === 0, problems.join('\n'));
@@ -257,6 +277,9 @@ covers('a refusal ending the session with its reason', (sent) => sent.sessionEnd
 covers('a depended-on feature not built, asked on the scope', (sent) => sent.questions.some((question) => question.id.startsWith('scope:prerequisite')));
 covers('a coverage problem fixed by an approved stage\'s next revision', (sent) => gateStep(sent) && isStage(gateStep(sent)) &&
   revisionOf(sent.gate.documentKey) > 1 && isString(currentBody(sent)));
+covers('a halt naming what must happen, its row\'s Stopped note kept', (sent) => isString(sent.halted) && sent.sessionEnded === true &&
+  sent.documents.some((row) => (row.notes || []).some((note) => note.label === 'Stopped')));
+covers('a halt sent again, whole, at the next session\'s start', (sent) => isString(sent.halted) && sent.onlyWhatChanged === false);
 covers('a held-back slice ending the session without planComplete', (sent) => sent.sessionEnded === true && sent.planComplete !== true &&
   sent.documents.some((row) => (row.notes || []).some((note) => note.label === 'Held back')));
 
@@ -280,6 +303,18 @@ covers('a held-back slice ending the session without planComplete', (sent) => se
     ? { ...file, report: { ...file.report, planComplete: true, planCoverage: { acceptanceCriteria: 12, workSlices: 3, stages: 4 } } }
     : file);
   report('checker', 'catches planComplete from a plan that holds a slice back', replay(finished).some((problem) => problem.includes('holds a slice back')));
+  const halted = storyFiles('halted');
+  const swapHalt = (suffix, change) => halted.map((file) => file.name.endsWith(suffix) ? { ...file, report: change(file.report) } : file);
+  const haltOpen = swapHalt('02-sent-to-grooming.json', (sent) => ({ ...sent, questions: storyFiles('halted')[0].report.questions }));
+  report('checker', 'catches a halt sent with a question open', replay(haltOpen).some((problem) => problem.includes('never sent with a gate or a question')));
+  const haltRunsOn = swapHalt('02-sent-to-grooming.json', (sent) => { const { sessionEnded: _ended, ...rest } = sent; return rest; });
+  report('checker', 'catches a halt that does not end the session', replay(haltRunsOn).some((problem) => problem.includes('comes with sessionEnded')));
+  const haltMarkdown = swapHalt('02-sent-to-grooming.json', (sent) => ({ ...sent, halted: 'Planning waits for grooming: run `/alpha-sdlc:do-grooming platform-development`' }));
+  report('checker', 'catches a halt that is Markdown, or does not end on Continue', replay(haltMarkdown).some((problem) => problem.includes('one plain sentence')));
+  const haltMoved = swapHalt('03-halt-unchanged.json', (sent) => ({ ...sent, commitRead: '0000000' }));
+  report('checker', 'catches a halt sent again at another commitRead', replay(haltMoved).some((problem) => problem.includes('same report, whole')));
+  const haltCompletes = swapHalt('02-sent-to-grooming.json', (sent) => ({ ...sent, planComplete: true }));
+  report('checker', 'catches a halt sent with planComplete', replay(haltCompletes).some((problem) => problem.includes('never comes with planComplete')));
 }
 
 {
@@ -298,6 +333,10 @@ covers('a held-back slice ending the session without planComplete', (sent) => se
   report('version', 'the release notes publish the minimum', Boolean(minimum) && readme.includes(`From ${minimum} \`do-planning\``) && readme.includes('planning-run'));
   report('version', 'every fixture reports a version at or above the minimum',
     every.every(({ report: sent }) => minimum && atLeast(sent.pluginVersion, minimum)));
+  const haltMinimum = (/`halted` needs \*\*(\d+\.\d+\.\d+)\*\*/.exec(guide) || [])[1];
+  report('version', 'the guide names the version halted needs, and every halted fixture reports it',
+    Boolean(haltMinimum) && atLeast(version, haltMinimum) && every.filter(({ report: sent }) => 'halted' in sent).every(({ report: sent }) => atLeast(sent.pluginVersion, haltMinimum)));
+  report('skill', 'the guide points a halt at the shared halt file', guide.includes('../do-grooming/run-halt.md'));
   const skill = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-planning', 'SKILL.md'), 'utf8');
   report('skill', 'do-planning reads the guide under a planning-run schema', /planning-run schema \(`--json-schema`\), read\s+`planning-run-schema\.md` before the first report/.test(skill));
   const template = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-planning', 'plan-template.md'), 'utf8');
