@@ -89,6 +89,7 @@ function shapeProblems(report) {
   for (const flag of ['trdComplete', 'sessionEnded', 'onlyWhatChanged']) {
     if (flag in report) need(typeof report[flag] === 'boolean', `${flag} is a boolean`);
   }
+  if ('halted' in report) need(isString(report.halted) && report.halted.trim().length > 0, 'halted is a non-empty string');
   return problems;
 }
 
@@ -100,9 +101,26 @@ function expectedTrend(rounds, index) {
   return rounds[index].findings === before ? 'flat' : 'rising';
 }
 
+function haltProblems(report, halt, sessionStarts, rows) {
+  if (!isString(report.halted)) return [];
+  const problems = [];
+  const need = (ok, what) => { if (!ok) problems.push(what); };
+  need(report.sessionEnded === true, 'halted comes with sessionEnded: true');
+  need(!report.gate && !report.questions.length, 'halted is never sent with a gate or a question open');
+  need(report.trdComplete !== true, 'halted never comes with trdComplete');
+  need(!/[\n`*]/.test(report.halted) && /\bthen Continue\.?$/.test(report.halted), 'halted is one plain sentence that ends on "then Continue"');
+  need(isString(report.commitRead), 'a halted report names the commit it read at');
+  if (halt && sessionStarts && report.halted === halt.text) {
+    need(report.onlyWhatChanged !== true && report.commitRead === halt.commitRead && JSON.stringify(rows) === halt.rows,
+      'a halt sent again at the next session\'s start is the same report, whole, at the same commitRead');
+  }
+  return problems;
+}
+
 function replay(files) {
   const problems = [];
   let mirror = new Map();
+  let halt = null;
   let rounds = null;
   let sessionStarts = true;
   const answered = new Set();
@@ -211,6 +229,8 @@ function replay(files) {
     }
 
     if (report.sessionEnded && (report.gate || report.questions.length)) fail('a session ends with nothing open');
+    for (const problem of haltProblems(report, halt, sessionStarts, [...mirror.values()])) fail(problem);
+    if (isString(report.halted)) halt = { text: report.halted, commitRead: report.commitRead, rows: JSON.stringify([...mirror.values()]) };
     if (report.trdComplete && completed) fail('trdComplete is sent once');
     if (report.trdComplete) {
       completed = true;
@@ -225,7 +245,7 @@ function replay(files) {
   return problems;
 }
 
-const stories = ['hub', 'platform', 'draft', 'review', 'review-fallback', 'add-platform', 'add-platform-fallback']
+const stories = ['hub', 'platform', 'draft', 'review', 'review-fallback', 'halted', 'add-platform', 'add-platform-fallback']
   .map((story) => ({ story, files: storyFiles(story) }));
 for (const { story, files } of stories) {
   const problems = replay(files);
@@ -265,6 +285,10 @@ covers('the push of every clone the review wrote, asked on its row', (sent) => s
   question.documentKey.startsWith('grooming-review@') && question.evidence.groups.length > 1));
 covers('a review that falls back to a terminal, nothing written and nothing open', (sent) => noted(reviewRow(sent), 'Runs from a terminal') &&
   reviewRow(sent).state.label === 'pending' && sent.sessionEnded === true && !sent.gate && !sent.questions.length && sent.trdComplete !== true);
+covers('a review sent to a terminal halting the run, its note kept', (sent) => isString(sent.halted) && sent.sessionEnded === true &&
+  noted(reviewRow(sent), 'Runs from a terminal'));
+covers('a halt sent again, whole, at the next session\'s start', (sent) => isString(sent.halted) && sent.onlyWhatChanged === false &&
+  every.filter(({ report: other }) => other.halted === sent.halted).length > 1);
 covers("Add a platform re-walking the spokes in its run", (sent) => sent.documents.some((row) => noted(row, 'Spokes re-walked')));
 covers("Add a platform sending the spokes' re-walk to a terminal and pushing the hub alone", (sent) =>
   sent.documents.some((row) => noted(row, 'Spokes re-walk from a terminal')) && sent.questions.some((question) => question.id === 'push' &&
@@ -315,6 +339,16 @@ covers("Add a platform sending the spokes' re-walk to a terminal and pushing the
   report('checker', 'catches a fallback report that leaves a question open as the session ends',
     replay(storyFiles('review-fallback').map((file) => ({ ...file, report: { ...file.report, questions: reviewStory[1].report.questions } })))
       .some((problem) => problem.includes('a session ends with nothing open')));
+  const halted = storyFiles('halted');
+  const haltChanged = (name, change) => halted.map((file) => file.name.endsWith(name) ? { ...file, report: change(JSON.parse(JSON.stringify(file.report))) } : file);
+  report('checker', 'catches a halt sent with a gate open',
+    replay(haltChanged('01-review-runs-from-a-terminal.json', (sent) => ({ ...sent, sessionEnded: false, gate: reviewStory[1].report.gate })))
+      .some((problem) => problem.includes('never sent with a gate or a question')));
+  report('checker', 'catches a halt sent with trdComplete',
+    replay(haltChanged('01-review-runs-from-a-terminal.json', (sent) => ({ ...sent, trdComplete: true }))).some((problem) => problem.includes('never comes with trdComplete')));
+  report('checker', 'catches a halt sent again with its rows changed',
+    replay(haltChanged('02-halt-unchanged.json', (sent) => { sent.documents[0].notes = [{ label: 'Stopped', text: 'another' }]; return sent; }))
+      .some((problem) => problem.includes('same report, whole')));
   report('checker', 'catches a design question whose draft option is renamed',
     replay(changed('01-design-questions.json', (sent) => { sent.questions[0].options[0].id = 'claude'; return sent; }))
       .some((problem) => problem.includes('offers draft then figma')));
@@ -336,6 +370,12 @@ covers("Add a platform sending the spokes' re-walk to a terminal and pushing the
   report('version', 'the release notes publish the minimum', Boolean(minimum) && readme.includes(`From ${minimum}`) && readme.includes('grooming-run'));
   report('version', 'every fixture reports a version at or above the minimum',
     every.every(({ report: sent }) => minimum && atLeast(sent.pluginVersion, minimum)));
+  const haltMinimum = (/`halted` needs (\d+\.\d+\.\d+)/.exec(guide) || [])[1];
+  report('version', 'the guide names the version halted needs, and every halted fixture reports it',
+    Boolean(haltMinimum) && atLeast(version, haltMinimum) && every.filter(({ report: sent }) => 'halted' in sent).every(({ report: sent }) => atLeast(sent.pluginVersion, haltMinimum)));
+  const review = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-grooming', 'grooming-run-review.md'), 'utf8');
+  report('skill', 'the guide and the review fallback point a halt at the shared halt file', guide.includes('`run-halt.md`') && review.includes('`run-halt.md`') &&
+    /then `halted`, `sessionEnded: true`/.test(review.replace(/\s+/g, ' ')));
   const skill = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-grooming', 'SKILL.md'), 'utf8');
   report('skill', 'do-grooming reads the guide under a grooming-run schema', /grooming-run schema \(`--json-schema`\), read\s+`grooming-run-schema\.md` before the first report/.test(skill));
 }

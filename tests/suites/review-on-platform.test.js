@@ -276,8 +276,9 @@ function expect(name, outcome, { exit, has = [], hasNot = [] }) {
     /a ✅ stamp becomes `reviewed <its date> · hub rev <the hub commit> · amended <date>`/.test(inRun) &&
     /re-walked in this run when `run-reach\.js --for rewalk` says it reaches them, from a terminal when not/.test(guide));
   const version = JSON.parse(read('.claude-plugin/plugin.json')).version;
-  check('the release that carries it is named in the guide, the manifest and the release notes',
-    /need \*\*0\.44\.0\*\*/.test(guide) && version === '0.44.0' && read('README.md').includes('From 0.44.0'), version);
+  const [major, minor] = version.split('.').map(Number);
+  check('the release that carries it is named in the guide and the release notes, the manifest at or above it',
+    /need \*\*0\.44\.0\*\*/.test(guide) && (major > 0 || minor >= 44) && read('README.md').includes('From 0.44.0'), version);
 }
 
 finish();

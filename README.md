@@ -492,7 +492,8 @@ tells it once, and never holds a line from the platform. The run finishes on `tr
 once the TRD's self-review is clean and, for a session that pushes, the push you approved has
 succeeded. On the hub's `TRD.md` the run also holds the grooming review and an added platform's
 spoke re-walk, when `scripts/run-reach.js` finds every spoke's clone writable in it
-(`skills/do-grooming/grooming-run-review.md`); otherwise both run from a terminal.
+(`skills/do-grooming/grooming-run-review.md`); otherwise both run from a terminal, and the
+session halts.
 `tests/fixtures/grooming-run/` holds one report per case.
 
 A consumer that passes `/do-planning` a planning-run schema gets the same shape, mapped by
@@ -503,6 +504,12 @@ run never pushes. A refusal to plan, a stamped stage past `sessionBoundaryTokens
 end the session with `sessionEnded: true`. The run finishes on `planComplete: true` with
 `planCoverage`, the clean coverage check's counts, once every stage is approved and the review
 charter is written. `tests/fixtures/planning-run/` holds one report per case.
+
+A grooming or planning session that ends on work outside its run — TRDs sent back to grooming, a
+prerequisite not built, the grooming review sent to a terminal — halts: its last report carries
+`halted`, one plain sentence naming what to do and where, then `sessionEnded: true`
+(`skills/do-grooming/run-halt.md`). The run ledger keeps the halt, so a Continue before anything
+changed sends it again at once instead of re-reading the plan.
 
 ### The mobile driver loads only where there is a mobile app
 
@@ -675,6 +682,14 @@ machine, no reviewer rule — nothing is written and the run says to run the rev
 as before. A run on a platform TRD keeps no subagents and its 30 minutes, and a terminal session is
 unchanged. 0.44.0 is the minimum for the platform's grooming review.
 
+From 0.45.0 a grooming or planning session on the adp platform that stops on something you must do
+outside the run says so in `halted`: for example *Planning waits for grooming: run
+/alpha-sdlc:do-grooming platform-development to re-gate TRD.md and TRD-backend.md, then Continue*.
+It is sent with no gate and no question open, and never when you stopped the run yourself. A
+Continue while the files it names are unchanged sends the same halt again at once, without reading
+the plan. The platform shows it only once its run schema declares `halted`; until then the report
+is the same without it, and the row's note still says why.
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and
@@ -692,6 +707,10 @@ node scripts/build-rules.js --check   # rules/*.md and the compact digest match 
 node scripts/check-size-budgets.js    # size-budgets.json: skill bodies ≤ 19,000 chars, gates inside
 node scripts/rule-coverage.js         # every rule of origin/main kept, or signed off in the ledger
 ```
+
+`node tests/run-contract.js <adp-web clone>` validates every fixture that sends `halted` against the
+run schemas the adp web passes as `--json-schema`, and names each field the contract does not
+declare. It reads another repository's clone, so it runs only when you ask, never inside the suite.
 
 Edit `principles.md`, never `rules/`: `node scripts/build-rules.js` regenerates the bundles from it
 and `rules/applicability.json`. A clause rewritten, merged or moved on purpose is signed off in

@@ -1,0 +1,135 @@
+{
+  "pluginVersion": "0.45.0",
+  "commitRead": "5f88a8d",
+  "step": {
+    "ordinal": 2,
+    "total": 3
+  },
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The steps before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "documents": [
+    {
+      "key": "scope@1",
+      "ordinal": 1,
+      "name": "Scope",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "layout@1",
+      "ordinal": 2,
+      "name": "Architecture & package layout",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    },
+    {
+      "key": "breakdown@1",
+      "ordinal": 3,
+      "name": "Stage breakdown",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "layout:trds-changed",
+      "documentKey": "layout@1",
+      "title": "TRD.md and TRD-backend.md changed after the scope was confirmed: plan on them as they are?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "What",
+            "text": "Commits 5808203 and 2c9c61d changed the hub and the backend spoke after the scope's stamp"
+          }
+        ],
+        "needFromYou": "Plan on the changed TRDs, or take them back to grooming first?"
+      },
+      "options": [
+        {
+          "id": "plan-on",
+          "label": "Plan on them as they are",
+          "why": "The change is the H13 fix, already reviewed",
+          "trade": "The scope is re-read under its next revision",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "back-to-grooming",
+          "label": "Take the TRDs back to grooming first",
+          "why": "A re-gate settles the change before it is planned",
+          "trade": "Planning waits for grooming",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [],
+      "evidence": {
+        "caption": "Read while proposing",
+        "groups": [
+          {
+            "heading": "Read",
+            "rows": [
+              {
+                "label": "git log b3a2a20..HEAD -- docs/development/platform-development",
+                "lines": [
+                  "5808203 docs(platform-development): hub and backend spoke follow the reasked-run-prompt fix (H13)",
+                  "2c9c61d docs(platform-development): backend and web spokes aligned with hub rev 5808203"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "layout@1"
+      ],
+      "notes": [],
+      "askedAt": "2026-10-27T03:12:40Z"
+    }
+  ],
+  "gate": null,
+  "onlyWhatChanged": false
+}

@@ -5,15 +5,16 @@ tool) — at the start of every such session, before the first report, and again
 Everything in `SKILL.md` still applies; this file maps it onto the report and says where a run on
 the platform differs. The report is the setup-run report's shape, so
 `../do-project-setup/setup-run-schema.md` binds here too — *When to report*, *Every question*, *Only
-what changed* — except where this file says otherwise. Four optional fields go beyond setup's
-report: `reviewRounds` and `trdComplete` (*The review*), `sessionEnded` (*The session*) and the
-gate's `draft` (*The design draft*). Each is sent only when the consumer's schema declares it;
-without `sessionEnded`, a session carries on past every boundary instead of ending there.
+what changed* — except where this file says otherwise. Five optional fields go beyond setup's
+report: `reviewRounds` and `trdComplete` (*The review*), `sessionEnded` and `halted` (*The
+session*) and the gate's `draft` (*The design draft*). Each is sent only when the consumer's schema
+declares it; without `sessionEnded`, a session carries on past every boundary instead of ending
+there.
 
 ## Contents
 
 - **Version** — the minimum the platform accepts
-- **The session** — commands, finding its place, the run ledger, boundaries, commits, pushes
+- **The session** — commands, finding its place, the run ledger, boundaries, halts, commits, pushes
 - **Rows** — keys, the outline, groups, order, states
 - **The gate**
 - **Questions**
@@ -29,7 +30,7 @@ Start grooming, Continue and Add a platform. `pluginVersion` is the `version` in
 `.claude-plugin/plugin.json` (two levels above this skill's base directory), read once per session.
 The design draft needs 0.42.0: an older plugin never asks the design question, and none of its
 gates carries `draft`. The grooming review and the spokes' re-walk in the hub's run need **0.44.0**
-(`grooming-run-review.md`): an older plugin sends both to a terminal.
+(`grooming-run-review.md`): an older plugin sends both to a terminal. `halted` needs 0.45.0.
 
 ## The session
 
@@ -108,6 +109,12 @@ asked again under its next `id` when its row's turn comes. The consumer stops th
 Continue. A platform line that still arrives is answered in plain text, never with a report. An
 answer that waits on something outside the run — *I'll resolve it in a terminal*, *ask the team* —
 is recorded, and the session ends there; Continue re-reads the files and the remote.
+
+**A halt.** A session that ends with no gate and no question because its next unit waits on work
+outside this run — the grooming review sent to a terminal (`grooming-run-review.md` → *The
+fallback*), a re-gate or a hub change the member must make elsewhere — sends `halted` on its last
+report: one plain sentence naming what must happen and where, then `sessionEnded: true`. The row's
+note stays. A session whose ledger holds `halted` checks it first. Both by `run-halt.md`.
 
 **Commits by explicit path.** Each approved unit — the outline's skeleton, a section, a widget spec,
 a slicing section with its crop, a review's fixes, a stamp — is committed to `feat/<feature>` as soon

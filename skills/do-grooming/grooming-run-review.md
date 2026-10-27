@@ -41,10 +41,13 @@ the run's `--add-dir` directories, its `--disallowedTools` and `--settings` (the
 Nothing of the work is written in the run, so nothing is left half-written. **The review**: the
 run's last report holds the review's row `pending`, a note *Runs from a terminal* naming every
 `cannot:` line and the command — `/alpha-sdlc:do-grooming <feature>`, from a terminal session in
-the workspace parent, as `SKILL.md` says — then `sessionEnded: true`, no gate, no question and no
-`trdComplete`. **The re-walk**: the hub's own re-walk and restamp run as before; the change
-manifest's row takes a note *Spokes re-walk from a terminal* naming the reasons, and step 5 pushes
-the hub's clone only.
+the workspace parent, as `SKILL.md` says — then `halted`, `sessionEnded: true`, no gate, no
+question and no `trdComplete`. The halt reads `The grooming review runs from a terminal: run
+/alpha-sdlc:do-grooming <feature> in the workspace parent, then Continue`; it waits on the hub's
+`TRD.md` and on `reach` `review`, so a Continue after the bridge or the web changes runs
+`run-reach.js` again (`run-halt.md`). **The re-walk**: the hub's own re-walk and restamp run as
+before; the change manifest's row takes a note *Spokes re-walk from a terminal* naming the reasons,
+and step 5 pushes the hub's clone only.
 
 ## The review's row
 
