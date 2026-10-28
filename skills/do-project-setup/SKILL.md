@@ -59,7 +59,8 @@ Indonesia) — at every gate, in every phase. When the consumer passes a setup-r
      before anything is built on it (`principles.md` → *Ask, don't assume*). **Each subject has
      one key, and it does not change between sessions, callers or plugin versions:**
      `profile-tier` · `plain-language` · `tracker` · `auto-run-permitted` · `comment-allowlist` ·
-     `session-boundaries` · `doc-applicability` and its `doc-applicability-<nn>-<name>` members ·
+     `session-boundaries` · `development-commands` · `auto-run-commands` · `doc-applicability` and
+     its `doc-applicability-<nn>-<name>` members ·
      `repo-access` · and each document's own file stem (`01-overview`, `07-database`). Inventing a
      fresh key for a subject that already has one makes two askings indistinguishable to
      everything downstream — including to the person, who sees new wording and answers it as a new
@@ -99,7 +100,8 @@ Indonesia) — at every gate, in every phase. When the consumer passes a setup-r
      setting or applicability question (again after a compaction) — its setup instructions hold
      the tier, Org settings, mirror and applicability rules for every one of them. Gate the **Org
      settings** block — including the **profile tier** (lite/full) — writing each setting to the
-     mirror as it passes. Present the applicable doc list (minus lazy docs under lite) and get the
+     mirror as it passes, then the repository's development commands (the same instructions).
+     Present the applicable doc list (minus lazy docs under lite) and get the
      user to confirm before drafting.
 2. **Per doc, in order:** read its template → scan the relevant real sources (the record first) →
    draft the doc (mark `UNKNOWN` where undetermined; point to authoritative files for volatile

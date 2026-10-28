@@ -24,7 +24,8 @@ from the plan.
 
 Every gate you present: header `<development> · <phase> · <step> · ✅/⏸/⚠️`, then Bottom line →
 Why it matters → Options ★ → Context → Details (for engineers) → Next as the last paragraph (rules →
-*Present every step bottom line first*).
+*Present every step bottom line first*). Under a development-run schema (`--json-schema`), read
+`development-run-schema.md` before the first report.
 
 ## Gates
 

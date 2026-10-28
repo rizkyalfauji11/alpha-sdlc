@@ -1,0 +1,175 @@
+{
+  "pluginVersion": "0.47.0",
+  "commitRead": "a1b2c3d",
+  "step": {
+    "ordinal": 1,
+    "total": 3
+  },
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not built yet",
+      "unsticks": "The run reaching it"
+    },
+    {
+      "label": "building",
+      "settled": false,
+      "tone": "progress",
+      "description": "The plugin is building or reviewing it",
+      "unsticks": "Nothing; it is running"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its checkpoint or a question on it is open",
+      "unsticks": "Your decision or your answer"
+    },
+    {
+      "label": "stopped here",
+      "settled": false,
+      "tone": "blocked",
+      "description": "Stopped at its checkpoint; its work is kept uncommitted",
+      "unsticks": "Continue, which re-runs its tests and brings the checkpoint back"
+    },
+    {
+      "label": "done",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "documents": [
+    {
+      "key": "stage-1@2",
+      "ordinal": 1,
+      "name": "[data] the shares table and its store",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its checkpoint or a question on it is open",
+        "unsticks": "Your decision or your answer"
+      },
+      "notes": [
+        {
+          "label": "Safe to stop",
+          "text": "No stage is done yet; stopping keeps this stage's work uncommitted"
+        }
+      ]
+    },
+    {
+      "key": "stage-2@1",
+      "ordinal": 2,
+      "name": "[transport] POST /recipes/{id}/shares",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not built yet",
+        "unsticks": "The run reaching it"
+      }
+    },
+    {
+      "key": "feature-review@1",
+      "ordinal": 3,
+      "name": "The feature review",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not built yet",
+        "unsticks": "The run reaching it"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "stage-1@2",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-backend.md · Stage 1 of 2",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "Shared recipes are now saved, each with who shared it and with whom — engineer: the shares table and its store"
+        },
+        {
+          "label": "Why",
+          "text": "Sharing needs somewhere to keep each share before anyone can see it"
+        }
+      ],
+      "needFromYou": "Approve Stage 1, request changes, or stop here"
+    },
+    "detail": {
+      "caption": "What Stage 1 built",
+      "panes": [
+        {
+          "label": "Report",
+          "note": "what Stage 1 built · nothing is committed yet",
+          "editable": false,
+          "body": "## Plan summary\n\nStage 1 of plan-backend.md: [data] the shares table and its store. Covers AC-1 and AC-2.\n\n## Tests written first\n\n- `TestShare1RefusesAStranger` asserts AC-1: red for the right reason, then green.\n- `TestShare1KeepsTheOwner` asserts AC-2: green.\n\n## Changes\n\n- `internal/store/shares.go`: the store's insert and list.\n- `internal/store/shares.go`: a share to the same member twice is refused, as the reason asked.\n\n## Self-review\n\nChecked against `07-database.md` and `10-conventions.md`: items 1 to 3 settled by `review-packet.js --self`, exit 0. Zero comments added. Objective findings fixed: none.\n\n## Profile updates\n\nNone.\n\n## Verification\n\n`make test` exit 0 (212 passed) · `make build` exit 0."
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while building",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "plan-backend.md · Stage 1",
+              "lines": [
+                "Covers: AC-1, AC-2"
+              ]
+            },
+            {
+              "label": "internal/store/recipes.go",
+              "lines": [
+                "42: func (s *Store) Recipe(ctx context.Context, id string)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving commits Stage 1 to feat/recipe-sharing, and the run carries on at Stage 2",
+      "Nothing is pushed until the feature review closes"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Stage 1",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "request-changes",
+        "label": "Request changes",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      },
+      {
+        "id": "stop",
+        "label": "Stop here",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": false
+}

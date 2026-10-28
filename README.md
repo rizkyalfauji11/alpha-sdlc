@@ -697,6 +697,21 @@ maintains alpha-sdlc, naming what is missing, the feature, platform and run that
 to change, what the change must do and how to prove it. The platform shows a button that copies it.
 Every other option sends `null`.
 
+From 0.47.0 `do-development` runs on the adp platform (`skills/do-development/development-run-schema.md`,
+the development-run schema). Each stage's checkpoint is a gate carrying the stage's own report (its
+plan summary, the tests written first, the changes, the self-review, the profile updates and the
+verification), answered with Approve Stage n, Request changes or Stop here, and a note on whether
+the last done stage is safe to stop after. Each approved stage is committed by explicit path and
+ends the session; Continue starts the next one. The feature review's verdict is a gate whose
+needs-eyes findings are questions; its close sends `developmentComplete`, and the platform's finish
+card pushes. A run started in auto-run (`auto-run` after the TRD's name, declined where
+`autoRunPermitted` is not true) records each checkpoint as a report stamped `auto`, lists every
+decision taken for you in `autoDecisions`, and halts with `halted` only where nothing can be
+decided. In the same release `do-project-setup` records the commands a development session may run,
+`developmentCommands` and `autoRunCommands`, each with its decision date and each naming its
+subcommand or target, checked by `scripts/check-run-commands.js`. 0.47.0 is the minimum for Start
+development and Continue development.
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and

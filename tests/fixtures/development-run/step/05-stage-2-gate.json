@@ -1,0 +1,111 @@
+{
+  "pluginVersion": "0.47.0",
+  "commitRead": "b2c3d4e",
+  "step": {
+    "ordinal": 2,
+    "total": 3
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "stage-2@1",
+      "ordinal": 2,
+      "name": "[transport] POST /recipes/{id}/shares",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its checkpoint or a question on it is open",
+        "unsticks": "Your decision or your answer"
+      },
+      "notes": [
+        {
+          "label": "Safe to stop",
+          "text": "Stage 1, the last done stage, is safe to stop after: green, and nothing is served until Stage 2"
+        }
+      ]
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "stage-2@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-backend.md · Stage 2 of 2",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "A recipe can now be shared through the API — engineer: POST /recipes/{id}/shares"
+        },
+        {
+          "label": "Why",
+          "text": "Sharing needs somewhere to keep each share before anyone can see it"
+        }
+      ],
+      "needFromYou": "Approve Stage 2, request changes, or stop here"
+    },
+    "detail": {
+      "caption": "What Stage 2 built",
+      "panes": [
+        {
+          "label": "Report",
+          "note": "what Stage 2 built · nothing is committed yet",
+          "editable": false,
+          "body": "## Plan summary\n\nStage 2 of plan-backend.md: [transport] POST /recipes/{id}/shares. Covers AC-3 and AC-4.\n\n## Tests written first\n\n- `TestShare2RefusesAStranger` asserts AC-3: red for the right reason, then green.\n- `TestShare2KeepsTheOwner` asserts AC-4: green.\n\n## Changes\n\n- `internal/store/shares.go`: the store's insert and list.\n\n## Self-review\n\nChecked against `07-database.md` and `10-conventions.md`: items 1 to 3 settled by `review-packet.js --self`, exit 0. Zero comments added. Objective findings fixed: none.\n\n## Profile updates\n\nNone.\n\n## Verification\n\n`make test` exit 0 (212 passed) · `make build` exit 0."
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while building",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "plan-backend.md · Stage 2",
+              "lines": [
+                "Covers: AC-3, AC-4"
+              ]
+            },
+            {
+              "label": "internal/store/recipes.go",
+              "lines": [
+                "42: func (s *Store) Recipe(ctx context.Context, id string)"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving commits Stage 2 to feat/recipe-sharing, and the run carries on at the feature review",
+      "Nothing is pushed until the feature review closes"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve Stage 2",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "request-changes",
+        "label": "Request changes",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      },
+      {
+        "id": "stop",
+        "label": "Stop here",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": true
+}

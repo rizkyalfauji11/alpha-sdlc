@@ -21,7 +21,11 @@ headings against the existing docs — **missing docs/sections are migration can
 at a time** (gated, like any doc), then re-stamp the version. A lite-tier profile also lists its
 lazy GAPs here — generate any the team now wants. An Org settings row the current
 `templates/01-overview.md` has and the profile lacks (such as *Session boundaries*) is a candidate
-too: ask it at the Org settings gate with its default as ★, then add its key to the mirror.
+too: ask it at the Org settings gate with its default as ★, then add its key to the mirror. So is a
+mirror without `developmentCommands` (or, auto-run permitted, `autoRunCommands`): decide it at its
+own gate as `templates/01-overview.md` says. A recorded command the scan no longer finds — a
+Makefile target or script gone — or a new one the scan finds is offered as a reversal, both lists
+and both dates shown, and `check-run-commands.js <repo>` runs after every write.
 
 This is also the **end-of-feature reconcile** the pipeline calls after a feature's SDLC completes
 (`do-testing` green): run it whenever a feature ships so `docs/basics/` reflects what was built

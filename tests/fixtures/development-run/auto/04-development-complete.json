@@ -1,0 +1,166 @@
+{
+  "pluginVersion": "0.47.0",
+  "commitRead": "d4e5f6a",
+  "step": {
+    "ordinal": 3,
+    "total": 3
+  },
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not built yet",
+      "unsticks": "The run reaching it"
+    },
+    {
+      "label": "building",
+      "settled": false,
+      "tone": "progress",
+      "description": "The plugin is building or reviewing it",
+      "unsticks": "Nothing; it is running"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its checkpoint or a question on it is open",
+      "unsticks": "Your decision or your answer"
+    },
+    {
+      "label": "stopped here",
+      "settled": false,
+      "tone": "blocked",
+      "description": "Stopped at its checkpoint; its work is kept uncommitted",
+      "unsticks": "Continue, which re-runs its tests and brings the checkpoint back"
+    },
+    {
+      "label": "done",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "documents": [
+    {
+      "key": "stage-1@1",
+      "ordinal": 1,
+      "name": "[data] the shares table and its store",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-2@1",
+      "ordinal": 2,
+      "name": "[transport] POST /recipes/{id}/shares",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "feature-review@1",
+      "ordinal": 3,
+      "name": "The feature review",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      },
+      "notes": [
+        {
+          "label": "Review",
+          "text": "Full tier: three reviewers and the critic ran"
+        }
+      ]
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "feature-review@1",
+    "statusLabel": "auto",
+    "stampLine": "plan-backend.md · Feature review · auto",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "Fresh eyes read the whole feature: two problems fixed, one needs you"
+        },
+        {
+          "label": "Why",
+          "text": "One review of the whole feature sees seams a single stage cannot"
+        }
+      ],
+      "needFromYou": "Nothing; the feature review was closed in auto-run"
+    },
+    "detail": {
+      "caption": "The feature review's verdict",
+      "panes": [
+        {
+          "label": "Verdict",
+          "note": "the whole feature's diff · its fixes are not committed yet",
+          "editable": false,
+          "body": "## Tier\n\nfull — three dimensions and the critic.\n\n## Fixed\n\n- Finding 1 · the list query had no index on recipe_id: index added, `make test` green.\n- Finding 3 · a 500 on an unknown recipe: answers 404, test first.\n\n## Needs you\n\n- Finding 2 · a recipe may be shared with its own owner."
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while reviewing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": ".alpha-sdlc/review/recipe-sharing-backend-feature.md",
+              "lines": [
+                "the packet: 2 stages, the charter at 9c1e2f0"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [],
+    "actions": []
+  },
+  "onlyWhatChanged": false,
+  "autoDecisions": [
+    {
+      "askedIn": "[data] the shares table and its store",
+      "question": "Index the shares table on recipe_id or on member_id first?",
+      "taken": "recipe_id first, the list reads by recipe",
+      "recordedIn": "plan-backend.md · Stage 1 · Carry-forward"
+    },
+    {
+      "askedIn": "[transport] POST /recipes/{id}/shares",
+      "question": "How many members may one recipe be shared with?",
+      "taken": "No limit",
+      "recordedIn": "TRD-backend.md · Open Decisions · D4"
+    },
+    {
+      "askedIn": "The feature review",
+      "question": "Finding 2 · a recipe may be shared with its own owner",
+      "taken": "Refuse a share with the owner",
+      "recordedIn": "plan-backend.md · Feature review"
+    }
+  ],
+  "developmentComplete": true,
+  "sessionEnded": true
+}

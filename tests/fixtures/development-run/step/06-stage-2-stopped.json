@@ -1,0 +1,39 @@
+{
+  "pluginVersion": "0.47.0",
+  "commitRead": "b2c3d4e",
+  "step": {
+    "ordinal": 2,
+    "total": 3
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "stage-2@1",
+      "ordinal": 2,
+      "name": "[transport] POST /recipes/{id}/shares",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "stopped here",
+        "settled": false,
+        "tone": "blocked",
+        "description": "Stopped at its checkpoint; its work is kept uncommitted",
+        "unsticks": "Continue, which re-runs its tests and brings the checkpoint back"
+      },
+      "notes": [
+        {
+          "label": "Safe to stop",
+          "text": "Stage 1, the last done stage, is safe to stop after: green, and nothing is served until Stage 2"
+        },
+        {
+          "label": "Stopped here",
+          "text": "The route and its two tests are kept uncommitted in the clone"
+        }
+      ]
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "onlyWhatChanged": true,
+  "sessionEnded": true
+}
