@@ -29,6 +29,8 @@ const revisionOf = (key) => Number(key.slice(key.lastIndexOf('@') + 1));
 const isStage = (step) => step.startsWith('stage-');
 const stageNumber = (step) => Number(step.slice('stage-'.length));
 const isBlock = (block) => block && isString(block.label) && isString(block.text);
+const PLUGIN_PATH = /\b(?:skills|scripts|hooks|agents|rules)\/[\w./-]+/;
+const promptsOf = (sent) => sent.questions.flatMap((question) => question.options.filter((option) => isString(option.pluginPrompt)));
 
 function expectedOrdinal(step) {
   return isStage(step) ? 3 + stageNumber(step) : FIXED[step].ordinal;
@@ -84,6 +86,8 @@ function shapeProblems(sent) {
     need((question.options || []).every((option) => ['id', 'label', 'why', 'trade'].every((field) => isString(option[field])) &&
       typeof option.recommended === 'boolean' && typeof option.requiresReason === 'boolean'), `question ${question.id}'s options are whole`);
     need((question.options || []).filter((option) => option.recommended).length === 1, `question ${question.id} recommends one option`);
+    need((question.options || []).every((option) => !('pluginPrompt' in option) || option.pluginPrompt === null ||
+      (isString(option.pluginPrompt) && option.pluginPrompt.trim().length > 0)), `question ${question.id}'s pluginPrompt is a non-empty string or null`);
     need(evidenceIsWhole(question.evidence), `question ${question.id}'s evidence is {caption, groups[{rows[{label, lines}]}]}`);
     need((question.notes || []).every(isBlock), `question ${question.id}'s notes are {label, text}`);
   }
@@ -224,6 +228,13 @@ function replay(files) {
       if (question.askedAt !== null && !RFC3339.test(question.askedAt || '')) fail(`question ${question.id}'s askedAt is RFC 3339 or null`);
       if (askedAt.has(question.id) && askedAt.get(question.id) !== question.askedAt) fail(`question ${question.id} keeps its askedAt`);
       askedAt.set(question.id, question.askedAt);
+      const row = mirror.get(question.documentKey);
+      for (const option of question.options.filter((choice) => isString(choice.pluginPrompt))) {
+        if (!option.requiresReason) fail(`question ${question.id}'s option ${option.id} waits on the plugin, so it is a way out that requires a reason`);
+        if (row && !option.pluginPrompt.includes(row.group)) fail(`question ${question.id}'s pluginPrompt names the platform's plan file ${row.group}`);
+        if (!PLUGIN_PATH.test(option.pluginPrompt)) fail(`question ${question.id}'s pluginPrompt names the plugin file or guide to change`);
+        if (!/\bprove\b/i.test(option.pluginPrompt)) fail(`question ${question.id}'s pluginPrompt says how to prove the change`);
+      }
     }
     const nowOpen = sent.questions.map((question) => question.id);
     for (const id of open) if (!nowOpen.includes(id)) answered.add(id);
@@ -250,7 +261,7 @@ function replay(files) {
   return problems;
 }
 
-const stories = ['plan', 'held-back', 'halted'].map((story) => ({ story, files: storyFiles(story) }));
+const stories = ['plan', 'held-back', 'halted', 'plugin-prompt'].map((story) => ({ story, files: storyFiles(story) }));
 for (const { story, files } of stories) {
   const problems = replay(files);
   report('fixtures', `the ${story} story conforms to the planning-run guide`, problems.length === 0, problems.join('\n'));
@@ -280,6 +291,11 @@ covers('a coverage problem fixed by an approved stage\'s next revision', (sent) 
 covers('a halt naming what must happen, its row\'s Stopped note kept', (sent) => isString(sent.halted) && sent.sessionEnded === true &&
   sent.documents.some((row) => (row.notes || []).some((note) => note.label === 'Stopped')));
 covers('a halt sent again, whole, at the next session\'s start', (sent) => isString(sent.halted) && sent.onlyWhatChanged === false);
+covers('a spoke\'s prerequisite that is an unreleased plugin guide, pluginPrompt on the stop option and null on the others', (sent) => sent.questions.some((question) =>
+  question.id.startsWith('scope:prerequisite') && /^plan-(?!web)/.test((sent.documents.find((row) => row.key === question.documentKey) || {}).group || '') &&
+  question.options.filter((option) => isString(option.pluginPrompt)).map((option) => option.id).join() === 'stop' &&
+  question.options.filter((option) => option.id !== 'stop').every((option) => option.pluginPrompt === null)));
+covers('a halt that waits on the plugin release', (sent) => isString(sent.halted) && sent.halted.startsWith('Planning waits for the alpha-sdlc plugin:'));
 covers('a held-back slice ending the session without planComplete', (sent) => sent.sessionEnded === true && sent.planComplete !== true &&
   sent.documents.some((row) => (row.notes || []).some((note) => note.label === 'Held back')));
 
@@ -315,6 +331,18 @@ covers('a held-back slice ending the session without planComplete', (sent) => se
   report('checker', 'catches a halt sent again at another commitRead', replay(haltMoved).some((problem) => problem.includes('same report, whole')));
   const haltCompletes = swapHalt('02-sent-to-grooming.json', (sent) => ({ ...sent, planComplete: true }));
   report('checker', 'catches a halt sent with planComplete', replay(haltCompletes).some((problem) => problem.includes('never comes with planComplete')));
+  const waits = storyFiles('plugin-prompt');
+  const swapPrompt = (change) => waits.map((file) => file.name.endsWith('01-prerequisite-plugin-question.json')
+    ? { ...file, report: { ...file.report, questions: file.report.questions.map((question) => ({ ...question, options: question.options.map(change) })) } }
+    : file);
+  const onHoldBack = swapPrompt((option) => option.id === 'hold-back' ? { ...option, pluginPrompt: waits[0].report.questions[0].options[1].pluginPrompt } : option);
+  report('checker', 'catches a pluginPrompt on an option that does not wait on the plugin', replay(onHoldBack).some((problem) => problem.includes('option hold-back waits on the plugin')));
+  const empty = swapPrompt((option) => option.id === 'stop' ? { ...option, pluginPrompt: ' ' } : option);
+  report('checker', 'catches an empty pluginPrompt', replay(empty).some((problem) => problem.includes('non-empty string or null')));
+  const unproven = swapPrompt((option) => option.id === 'stop' ? { ...option, pluginPrompt: option.pluginPrompt.replace(/How to prove it:.*$/, '') } : option);
+  report('checker', 'catches a pluginPrompt that does not say how to prove the change', replay(unproven).some((problem) => problem.includes('how to prove')));
+  const nowhere = swapPrompt((option) => option.id === 'stop' ? { ...option, pluginPrompt: option.pluginPrompt.split('plan-backend.md').join('the plan') } : option);
+  report('checker', 'catches a pluginPrompt that does not name the platform\'s plan file', replay(nowhere).some((problem) => problem.includes('names the platform\'s plan file')));
 }
 
 {
@@ -336,6 +364,21 @@ covers('a held-back slice ending the session without planComplete', (sent) => se
   const haltMinimum = (/`halted` needs \*\*(\d+\.\d+\.\d+)\*\*/.exec(guide) || [])[1];
   report('version', 'the guide names the version halted needs, and every halted fixture reports it',
     Boolean(haltMinimum) && atLeast(version, haltMinimum) && every.filter(({ report: sent }) => 'halted' in sent).every(({ report: sent }) => atLeast(sent.pluginVersion, haltMinimum)));
+  const promptMinimum = (/`pluginPrompt` needs \*\*(\d+\.\d+\.\d+)\*\*/.exec(guide) || [])[1];
+  report('version', 'the guide names the version pluginPrompt needs, and every fixture that sends one reports it',
+    Boolean(promptMinimum) && atLeast(version, promptMinimum) && every.filter(({ report: sent }) => promptsOf(sent).length).length > 0 &&
+    every.filter(({ report: sent }) => promptsOf(sent).length).every(({ report: sent }) => atLeast(sent.pluginVersion, promptMinimum)));
+  const questionsSection = (text, heading) => (text.split(`\n## ${heading}\n`)[1] || '').split('\n## ')[0];
+  const guides = [
+    ['setup', path.join(pluginRoot, 'skills', 'do-project-setup', 'setup-run-schema.md'), 'Every question'],
+    ['grooming', path.join(pluginRoot, 'skills', 'do-grooming', 'grooming-run-schema.md'), 'Questions'],
+    ['planning', GUIDE, 'Questions'],
+  ];
+  for (const [run, file, heading] of guides) {
+    const section = questionsSection(fs.readFileSync(file, 'utf8'), heading);
+    report('guide', `the ${run}-run guide's ${heading} section sets pluginPrompt only on an option that waits on the plugin`,
+      section.includes('`pluginPrompt`') && /change to the plugin itself|waits on the plugin/.test(section) && /null/.test(section), section.slice(0, 200));
+  }
   report('skill', 'the guide points a halt at the shared halt file', guide.includes('../do-grooming/run-halt.md'));
   const skill = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-planning', 'SKILL.md'), 'utf8');
   report('skill', 'do-planning reads the guide under a planning-run schema', /planning-run schema \(`--json-schema`\), read\s+`planning-run-schema\.md` before the first report/.test(skill));

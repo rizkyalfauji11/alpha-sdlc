@@ -30,7 +30,8 @@ Start grooming, Continue and Add a platform. `pluginVersion` is the `version` in
 `.claude-plugin/plugin.json` (two levels above this skill's base directory), read once per session.
 The design draft needs 0.42.0: an older plugin never asks the design question, and none of its
 gates carries `draft`. The grooming review and the spokes' re-walk in the hub's run need **0.44.0**
-(`grooming-run-review.md`): an older plugin sends both to a terminal. `halted` needs 0.45.0.
+(`grooming-run-review.md`): an older plugin sends both to a terminal. `halted` needs 0.45.0,
+`pluginPrompt` 0.46.0.
 
 ## The session
 
@@ -231,6 +232,8 @@ refusal, `askedAt` set once, `notes`. Here:
 - Step 0's questions — the approach to take, which evolution paths are realistic, a change so small
   the TRD could be skipped — sit on the Outline row.
 - A finding the review needs the member for is a question on its row.
+- An option that waits on a change to the plugin itself sets `pluginPrompt`, the whole prompt for
+  its maintainer (setup's *Every question*); every other option sends `null` or omits it.
 - The consumer adds an `other` option to a question that has none: `optionId` `other` with its
   `reason` is the answer itself. "Ask me later" records nothing; the question stays open.
 

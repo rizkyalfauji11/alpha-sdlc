@@ -690,6 +690,13 @@ Continue while the files it names are unchanged sends the same halt again at onc
 the plan. The platform shows it only once its run schema declares `halted`; until then the report
 is the same without it, and the row's note still says why.
 
+From 0.46.0 a setup, grooming or planning question on the adp platform whose option waits for a
+change to the plugin itself — *stop until the plugin release exists*, or the way out of a stop the
+plugin has no path for — carries `pluginPrompt` on that option: a whole prompt for whoever
+maintains alpha-sdlc, naming what is missing, the feature, platform and run that need it, the file
+to change, what the change must do and how to prove it. The platform shows a button that copies it.
+Every other option sends `null`.
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and
