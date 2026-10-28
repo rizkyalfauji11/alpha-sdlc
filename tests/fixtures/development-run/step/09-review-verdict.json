@@ -1,0 +1,230 @@
+{
+  "pluginVersion": "0.47.0",
+  "commitRead": "c3d4e5f",
+  "step": {
+    "ordinal": 3,
+    "total": 3
+  },
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not built yet",
+      "unsticks": "The run reaching it"
+    },
+    {
+      "label": "building",
+      "settled": false,
+      "tone": "progress",
+      "description": "The plugin is building or reviewing it",
+      "unsticks": "Nothing; it is running"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its checkpoint or a question on it is open",
+      "unsticks": "Your decision or your answer"
+    },
+    {
+      "label": "stopped here",
+      "settled": false,
+      "tone": "blocked",
+      "description": "Stopped at its checkpoint; its work is kept uncommitted",
+      "unsticks": "Continue, which re-runs its tests and brings the checkpoint back"
+    },
+    {
+      "label": "done",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "documents": [
+    {
+      "key": "stage-1@2",
+      "ordinal": 1,
+      "name": "[data] the shares table and its store",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "stage-2@2",
+      "ordinal": 2,
+      "name": "[transport] POST /recipes/{id}/shares",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "feature-review@1",
+      "ordinal": 3,
+      "name": "The feature review",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its checkpoint or a question on it is open",
+        "unsticks": "Your decision or your answer"
+      },
+      "notes": [
+        {
+          "label": "Review",
+          "text": "Full tier: three reviewers and the critic ran"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "feature-review:finding-2",
+      "documentKey": "feature-review@1",
+      "title": "Finding 2 · a recipe may be shared with its own owner",
+      "summary": {
+        "blocks": [
+          {
+            "label": "What",
+            "text": "Nothing stops an owner sharing a recipe with themselves, which lists them twice"
+          }
+        ],
+        "needFromYou": "Finding 2 · a recipe may be shared with its own owner"
+      },
+      "options": [
+        {
+          "id": "refuse",
+          "label": "Refuse a share with the owner",
+          "why": "A share is for another member",
+          "trade": "One more check, with its test",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "keep",
+          "label": "Keep it as it is",
+          "why": "Harmless duplicate",
+          "trade": "The owner shows in their own share list",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [],
+      "evidence": {
+        "caption": "Found while building",
+        "groups": [
+          {
+            "heading": "Read",
+            "rows": [
+              {
+                "label": "TRD-backend.md",
+                "lines": [
+                  "§2 decision 3: a share names one other member"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "feature-review@1"
+      ],
+      "notes": [
+        {
+          "label": "Standing",
+          "text": "Asked once; the answer is recorded where the decision lives"
+        }
+      ],
+      "askedAt": "2026-10-28T09:40:00Z"
+    }
+  ],
+  "gate": {
+    "documentKey": "feature-review@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "plan-backend.md · Feature review",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "Fresh eyes read the whole feature: two problems fixed, one needs you"
+        },
+        {
+          "label": "Why",
+          "text": "One review of the whole feature sees seams a single stage cannot"
+        }
+      ],
+      "needFromYou": "Answer the finding, then close the feature review"
+    },
+    "detail": {
+      "caption": "The feature review's verdict",
+      "panes": [
+        {
+          "label": "Verdict",
+          "note": "the whole feature's diff · its fixes are not committed yet",
+          "editable": false,
+          "body": "## Tier\n\nfull — three dimensions and the critic.\n\n## Fixed\n\n- Finding 1 · the list query had no index on recipe_id: index added, `make test` green.\n- Finding 3 · a 500 on an unknown recipe: answers 404, test first.\n\n## Needs you\n\n- Finding 2 · a recipe may be shared with its own owner."
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while reviewing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": ".alpha-sdlc/review/recipe-sharing-backend-feature.md",
+              "lines": [
+                "the packet: 2 stages, the charter at 9c1e2f0"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Closing the review commits its fixes to feat/recipe-sharing and finishes the development of plan-backend.md",
+      "Nothing is pushed until the finish card"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Close the feature review",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "request-changes",
+        "label": "Request changes",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      },
+      {
+        "id": "stop",
+        "label": "Stop here",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": false
+      }
+    ]
+  },
+  "onlyWhatChanged": false
+}

@@ -1,0 +1,30 @@
+{
+  "pluginVersion": "0.47.0",
+  "commitRead": "d4e5f6a",
+  "step": {
+    "ordinal": 3,
+    "total": 3
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "feature-review@1",
+      "ordinal": 3,
+      "name": "The feature review",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "onlyWhatChanged": true,
+  "developmentComplete": true,
+  "sessionEnded": true
+}

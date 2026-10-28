@@ -1,0 +1,29 @@
+{
+  "pluginVersion": "0.47.0",
+  "commitRead": "b2c3d4e",
+  "step": {
+    "ordinal": 2,
+    "total": 3
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "stage-1@2",
+      "ordinal": 1,
+      "name": "[data] the shares table and its store",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "onlyWhatChanged": true,
+  "sessionEnded": true
+}

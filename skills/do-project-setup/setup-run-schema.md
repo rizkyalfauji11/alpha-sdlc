@@ -5,6 +5,14 @@ tool) — at the start of every such run, before the first report. Everything in
 applies; this file maps it onto the schema's fields. The schema itself never changes, and every
 existing field is filled exactly as before.
 
+## Contents
+
+- **When to report**
+- **Every question** — evidence, a way out, a reason, `askedAt`, `notes`, `pluginPrompt`, ids
+- **Development commands** — the two lists a development session may run
+- **Only what changed**
+- **Doc-12 candidates**
+
 ## When to report
 
 **A report ends your turn.** With a schema, the StructuredOutput call is the turn's final answer,
@@ -66,6 +74,17 @@ such as a correction to a document already approved or signed, is asked as a que
 `id` `<key>:correction`, `documentKey` the document, `options[]` *apply the correction* and *keep
 it as written*, `evidence` the lines it changes, and `blocks` that document. A second correction
 to the same document is `<key>:correction-2`.
+
+## Development commands
+
+`development-commands` and `auto-run-commands` (`templates/01-overview.md`) are questions with
+`blocks: []`: `options[]` *Record these*, recommended, its `trade` every command one per line, each
+passed by `check-run-commands.js --entry`, and *Record none* (requires a reason; for
+`development-commands` the `why` says the repository then cannot develop on the platform);
+`evidence` the scan's lines each command was read from, with `file:line`. An `other` answer is the
+list the member typed: each entry is checked the same way, and a refused one is asked again under
+`<key>:correction`, naming the refusal and its named form. The answer is written with its
+`<key>DecidedAt`.
 
 ## Only what changed
 
