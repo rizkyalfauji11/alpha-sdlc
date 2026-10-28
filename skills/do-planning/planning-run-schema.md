@@ -28,6 +28,7 @@ This guide ships in alpha-sdlc **0.41.0**, the minimum version the platform acce
 planning and Continue planning. `pluginVersion` is the `version` in the plugin root's
 `.claude-plugin/plugin.json` (two levels above this skill's base directory), read once per session.
 `halted` needs **0.45.0**: an older plugin ends a halted session with its row's note alone.
+`pluginPrompt` needs **0.46.0**: an older plugin never sends it, and its options copy nothing.
 
 ## The session
 
@@ -109,8 +110,8 @@ is built* — is recorded, and the session ends there, on a halt.
 **A halt.** A session that ends with no gate and no question because its next step waits on work
 outside this run sends `halted` on its last report: one plain sentence naming what must happen and
 where, then `sessionEnded: true`. Planning's cases: a refusal; an answer that takes the TRDs back to
-grooming or waits outside the run — *I'll take it back to grooming*, *stop until it is built*, *I'll
-add it from a terminal*; a held-back slice's last report (*The end*). For the TRDs sent back to
+grooming or waits outside the run — *I'll take it back to grooming*, *stop until it is built*,
+*stop until the plugin release exists*, *I'll add it from a terminal*; a held-back slice's last report (*The end*). For the TRDs sent back to
 grooming it reads `Planning waits for grooming: run /alpha-sdlc:do-grooming <feature> to re-gate
 TRD.md and TRD-<name>.md, then Continue`, naming the files the refusal or the answer names. The
 row's `Stopped` or `Held back` note stays; `halted` is what the platform reads. A session whose run
@@ -236,6 +237,15 @@ refusal, `askedAt` set once, `notes`. Here:
   the rest*, recommended, or *stop until it is built* (requires a reason, and ends the session). A
   held-back slice is named in the scope, in a note on the Stage breakdown row, and in the sequencing
   summary.
+- **An option that waits on the plugin** sets `pluginPrompt` (setup's *Every question*): *stop
+  until the plugin release exists* when a depended-on piece is a plugin guide, schema, script or
+  path not released yet, and the way out of a STOP the plugin cannot pass because it has no path
+  for it, such as a breakdown with zero stages. The prompt names what is missing, the feature, the
+  platform (`plan-<name>.md`) and the run (Start or Continue planning) that need it, the plugin file
+  or guide to change, what the change must do, and the test or fixture that proves it. *Hold
+  <slice> back* and every other option send `pluginPrompt: null`. Answered, it waits outside the
+  run (*A halt*): `Planning waits for the alpha-sdlc plugin: release <what is missing> and update
+  the plugin, then Continue`.
 - The consumer adds an `other` option to a question that has none: `optionId` `other` with its
   `reason` is the answer itself. "Ask me later" records nothing; the question stays open.
 

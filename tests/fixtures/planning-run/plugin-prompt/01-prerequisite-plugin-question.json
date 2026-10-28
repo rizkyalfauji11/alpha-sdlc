@@ -1,0 +1,152 @@
+{
+  "pluginVersion": "0.46.0",
+  "step": {
+    "ordinal": 1,
+    "total": 3
+  },
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The steps before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "documents": [
+    {
+      "key": "scope@1",
+      "ordinal": 1,
+      "name": "Scope",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your approval or your answer"
+      }
+    },
+    {
+      "key": "layout@1",
+      "ordinal": 2,
+      "name": "Architecture & package layout",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    },
+    {
+      "key": "breakdown@1",
+      "ordinal": 3,
+      "name": "Stage breakdown",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "scope:prerequisite-development-run-guide",
+      "documentKey": "scope@1",
+      "title": "The plugin has no development-run guide yet: hold S3 back?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "What",
+            "text": "S3 starts development from a plan row, and the alpha-sdlc plugin has not released the guide that runs development on the platform"
+          }
+        ],
+        "needFromYou": "The plugin has no development-run guide yet: hold S3 back?"
+      },
+      "options": [
+        {
+          "id": "hold-back",
+          "label": "Hold S3 back and plan the rest",
+          "why": "Never plan on a phantom",
+          "trade": "The plan finishes only once the plugin release exists",
+          "recommended": true,
+          "requiresReason": false,
+          "pluginPrompt": null
+        },
+        {
+          "id": "stop",
+          "label": "Stop until the plugin release exists",
+          "why": "One plan, all at once",
+          "trade": "Nothing is planned now; copy the prompt for the plugin to ask for the release",
+          "recommended": false,
+          "requiresReason": true,
+          "pluginPrompt": "The alpha-sdlc plugin has no guide for a development run on the platform, and planning cannot finish without one. Missing: skills/do-development/development-run-schema.md, the guide do-development reads when the platform passes a development-run schema (--json-schema), and the line in skills/do-development/SKILL.md that tells it to read that guide before the first report. Who needs it: feature platform-development, platform backend (plan-backend.md), the Start planning run. Slice S3 (Start development from a plan row) runs /alpha-sdlc:do-development under that schema, and TRD.md §2 Feature dependencies names the guide as its prerequisite. What the change must do: map do-development onto the development-run schema the way skills/do-planning/planning-run-schema.md maps do-planning — the command, the run ledger, one row per stage, the stage gate, questions, decisions on stdin, sessionEnded and halted — and name the minimum plugin version it ships in. Bump the version and add the README entry. How to prove it: a new suite tests/suites/development-run.test.js replays fixtures under tests/fixtures/development-run/ (a stage gate, a question, a boundary, the end) against the guide, with checker cases that catch a broken report; node tests/run-contract.js <adp-web clone> accepts every fixture; the full suite passes."
+        }
+      ],
+      "consequences": [],
+      "evidence": {
+        "caption": "Read while proposing",
+        "groups": [
+          {
+            "heading": "Read",
+            "rows": [
+              {
+                "label": "TRD.md",
+                "lines": [
+                  "§2 Feature dependencies: alpha-sdlc development-run guide, prerequisite of S3"
+                ]
+              },
+              {
+                "label": "TRD-backend.md",
+                "lines": [
+                  "S3 · Start development from a plan row · runs /alpha-sdlc:do-development under the development-run schema"
+                ]
+              },
+              {
+                "label": "alpha-sdlc 0.46.0",
+                "lines": [
+                  "skills/do-development/ holds no development-run-schema.md"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "scope@1"
+      ],
+      "notes": [
+        {
+          "label": "Standing",
+          "text": "Asked once; the answer is recorded in the plan"
+        }
+      ],
+      "askedAt": "2026-10-28T07:12:00Z"
+    }
+  ],
+  "gate": null,
+  "onlyWhatChanged": false
+}

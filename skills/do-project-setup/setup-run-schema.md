@@ -27,6 +27,15 @@ they land in these fields, and two more rules apply.
 - **A way out (rule 2)** is its own `options[]` or `actions[]` entry.
 - **A refusal's reason (rule 3).** An option or action that skips, declines or refuses carries
   `requiresReason: true`; every other one leaves it false.
+- **An option that waits on the plugin carries `pluginPrompt`.** When an option waits for a change
+  to the plugin itself — a guide, schema, script or path the plugin does not have yet, such as
+  *stop until the plugin release exists*, or the way out of a STOP the plugin cannot pass because it
+  has no path for it, such as a plan with zero stages — its `pluginPrompt` is a complete prompt for
+  the agent that maintains this plugin, written whole, ready to paste into a session on the plugin's
+  repository: what is missing; which feature, platform and run need it; the file or guide to
+  change; what the change must do; and how to prove it. Every other option sends
+  `pluginPrompt: null` or omits it. The consumer only shows a button that copies the text and never
+  reads it, so the option's `label`, `why` and `trade` still say everything the member needs.
 - **It says when it was asked — as an instant, never a phrase.** `askedAt` is an RFC 3339
   timestamp read from the clock (`date -u +%Y-%m-%dT%H:%M:%SZ`), never estimated and never
   *"2 days"*: a phrase is computed when the report is written and is wrong an hour later, while the
@@ -40,8 +49,8 @@ they land in these fields, and two more rules apply.
   carries; never fill it with filler. Sorting, colour, blocking and requiring a reason stay in their
   typed fields, because the app cannot act on a string it does not understand.
 
-`notes` and `askedAt` are optional in the setup-run schema: when the consumer's schema lacks them,
-they are simply not emitted. This adds to the report; every existing field is filled exactly as
+`notes`, `askedAt` and `pluginPrompt` (from 0.46.0) are optional in the setup-run schema: when the
+consumer's schema lacks them, they are simply not emitted. This adds to the report; every existing field is filled exactly as
 before.
 
 Each question carries its subject's one key from `SKILL.md` → Flow step 1 (`profile-tier`, a

@@ -1,0 +1,36 @@
+{
+  "pluginVersion": "0.46.0",
+  "commitRead": "9c41e07",
+  "step": {
+    "ordinal": 1,
+    "total": 3
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "scope@1",
+      "ordinal": 1,
+      "name": "Scope",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      },
+      "notes": [
+        {
+          "label": "Stopped",
+          "text": "You chose to stop until the alpha-sdlc plugin releases its development-run guide: S3 starts development from a plan row and needs it. Planning goes on once the plugin is updated."
+        }
+      ]
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "onlyWhatChanged": true,
+  "halted": "Planning waits for the alpha-sdlc plugin: release the development-run guide and update the plugin, then Continue",
+  "sessionEnded": true
+}
