@@ -31,7 +31,7 @@ Start grooming, Continue and Add a platform. `pluginVersion` is the `version` in
 The design draft needs 0.42.0: an older plugin never asks the design question, and none of its
 gates carries `draft`. The grooming review and the spokes' re-walk in the hub's run need **0.44.0**
 (`grooming-run-review.md`): an older plugin sends both to a terminal. `halted` needs 0.45.0,
-`pluginPrompt` 0.46.0.
+`pluginPrompt` 0.46.0, `halted` as an object and `--units` **0.48.0**.
 
 ## The session
 
@@ -40,7 +40,9 @@ gates carries `draft`. The grooming review and the spokes' re-walk in the hub's 
 - `/alpha-sdlc:do-grooming <feature> <platform> [--trd <TRD-name.md>]` — a platform TRD, `--trd`
   naming the row's TRD file when its platform repeats in the feature;
 - `/alpha-sdlc:do-grooming <feature> --add-platform <platform> <owner/repo> [<subtree>] [--trd
-  <TRD-name.md>]` — *Add a platform*, below.
+  <TRD-name.md>]` — *Add a platform*, below;
+- either of the first two with `--units <key>,<key>` — those rows re-gated, then the run ends
+  (`units.md`).
 
 A session is never revived with `--resume`: Continue starts a fresh one, which finds its place from
 the files.

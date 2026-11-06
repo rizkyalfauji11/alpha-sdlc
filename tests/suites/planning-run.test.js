@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { createSuite, pluginRoot } = require('../lib/harness');
+const { haltSentence, haltShapeProblems } = require('../lib/run-halt');
 
 const suite = createSuite('planning-run');
 const { report, finish } = suite;
@@ -103,23 +104,25 @@ function shapeProblems(sent) {
   for (const flag of ['planComplete', 'sessionEnded', 'onlyWhatChanged']) {
     if (flag in sent) need(typeof sent[flag] === 'boolean', `${flag} is a boolean`);
   }
-  if ('halted' in sent) need(isString(sent.halted) && sent.halted.trim().length > 0, 'halted is a non-empty string');
+  if ('halted' in sent) problems.push(...haltShapeProblems(sent.halted));
   need(!('trdComplete' in sent) && !('reviewRounds' in sent), "a planning report sends none of grooming's fields");
   return problems;
 }
 
 function haltProblems(sent, halt, sessionStarts, rows) {
-  if (!isString(sent.halted)) return [];
+  const sentence = haltSentence(sent.halted);
+  if (sentence === null) return [];
   const problems = [];
   const need = (ok, what) => { if (!ok) problems.push(what); };
   need(sent.sessionEnded === true, 'halted comes with sessionEnded: true');
   need(!sent.gate && !sent.questions.length, 'halted is never sent with a gate or a question open');
   need(sent.planComplete !== true, 'halted never comes with planComplete');
-  need(!/[\n`*]/.test(sent.halted) && /\bthen Continue\.?$/.test(sent.halted), 'halted is one plain sentence that ends on "then Continue"');
+  need(!/[\n`*]/.test(sentence) && /\bthen Continue\.?$/.test(sentence), 'halted is one plain sentence that ends on "then Continue"');
   need(isString(sent.commitRead), 'a halted report names the commit it read at');
-  if (halt && sessionStarts && sent.halted === halt.text) {
-    need(sent.onlyWhatChanged !== true && sent.commitRead === halt.commitRead && JSON.stringify(rows) === halt.rows,
-      'a halt sent again at the next session\'s start is the same report, whole, at the same commitRead');
+  if (halt && sessionStarts && sentence === halt.text) {
+    need(sent.onlyWhatChanged !== true && sent.commitRead === halt.commitRead && JSON.stringify(rows) === halt.rows &&
+      JSON.stringify(sent.halted) === halt.whole,
+    'a halt sent again at the next session\'s start is the same report, whole, at the same commitRead');
   }
   return problems;
 }
@@ -242,7 +245,7 @@ function replay(files) {
 
     if (sent.sessionEnded && (sent.gate || sent.questions.length)) fail('a session ends with nothing open');
     for (const problem of haltProblems(sent, halt, sessionStarts, rows)) fail(problem);
-    if (isString(sent.halted)) halt = { text: sent.halted, commitRead: sent.commitRead, rows: JSON.stringify(rows) };
+    if (haltSentence(sent.halted) !== null) halt = { text: haltSentence(sent.halted), whole: JSON.stringify(sent.halted), commitRead: sent.commitRead, rows: JSON.stringify(rows) };
     if ('planCoverage' in sent && sent.planComplete !== true) fail('planCoverage comes only with planComplete');
     if (sent.planComplete && completed) fail('planComplete is sent once');
     if (sent.planComplete) {
@@ -261,7 +264,7 @@ function replay(files) {
   return problems;
 }
 
-const stories = ['plan', 'held-back', 'halted', 'plugin-prompt'].map((story) => ({ story, files: storyFiles(story) }));
+const stories = ['plan', 'held-back', 'halted', 'halted-remedy', 'plugin-prompt'].map((story) => ({ story, files: storyFiles(story) }));
 for (const { story, files } of stories) {
   const problems = replay(files);
   report('fixtures', `the ${story} story conforms to the planning-run guide`, problems.length === 0, problems.join('\n'));
@@ -296,6 +299,9 @@ covers('a spoke\'s prerequisite that is an unreleased plugin guide, pluginPrompt
   question.options.filter((option) => isString(option.pluginPrompt)).map((option) => option.id).join() === 'stop' &&
   question.options.filter((option) => option.id !== 'stop').every((option) => option.pluginPrompt === null)));
 covers('a halt that waits on the plugin release', (sent) => isString(sent.halted) && sent.halted.startsWith('Planning waits for the alpha-sdlc plugin:'));
+covers('a halt whose remedy names one grooming run per TRD with its units, the hub first, the first typed with --units', (sent) =>
+  sent.halted && typeof sent.halted === 'object' && sent.halted.remedy.length > 1 && sent.halted.remedy[0].document === 'TRD.md' &&
+  sent.halted.sentence.includes(`--units ${sent.halted.remedy[0].units.join(',')}`));
 covers('a held-back slice ending the session without planComplete', (sent) => sent.sessionEnded === true && sent.planComplete !== true &&
   sent.documents.some((row) => (row.notes || []).some((note) => note.label === 'Held back')));
 
@@ -319,6 +325,17 @@ covers('a held-back slice ending the session without planComplete', (sent) => se
     ? { ...file, report: { ...file.report, planComplete: true, planCoverage: { acceptanceCriteria: 12, workSlices: 3, stages: 4 } } }
     : file);
   report('checker', 'catches planComplete from a plan that holds a slice back', replay(finished).some((problem) => problem.includes('holds a slice back')));
+  const remedied = storyFiles('halted-remedy');
+  const swapRemedy = (change) => remedied.map((file) => file.name.endsWith('02-sent-to-grooming.json') ? { ...file, report: change(JSON.parse(JSON.stringify(file.report))) } : file);
+  report('checker', 'catches a remedy sentence that types no --units',
+    replay(swapRemedy((sent) => { sent.halted.sentence = 'Planning waits for grooming: run /alpha-sdlc:do-grooming platform-development to re-gate TRD.md, then Continue'; return sent; }))
+      .some((problem) => problem.includes('types its first run')));
+  report('checker', 'catches a remedy on a document that is not a TRD',
+    replay(swapRemedy((sent) => { sent.halted.remedy[0].document = 'plan-backend.md'; return sent; })).some((problem) => problem.includes('remedy items')));
+  report('checker', 'catches a halt sent again with its remedy changed',
+    replay(remedied.map((file) => file.name.endsWith('03-halt-unchanged.json')
+      ? { ...file, report: { ...file.report, halted: { ...file.report.halted, remedy: [file.report.halted.remedy[0]] } } }
+      : file)).some((problem) => problem.includes('same report, whole')));
   const halted = storyFiles('halted');
   const swapHalt = (suffix, change) => halted.map((file) => file.name.endsWith(suffix) ? { ...file, report: change(file.report) } : file);
   const haltOpen = swapHalt('02-sent-to-grooming.json', (sent) => ({ ...sent, questions: storyFiles('halted')[0].report.questions }));
@@ -364,6 +381,10 @@ covers('a held-back slice ending the session without planComplete', (sent) => se
   const haltMinimum = (/`halted` needs \*\*(\d+\.\d+\.\d+)\*\*/.exec(guide) || [])[1];
   report('version', 'the guide names the version halted needs, and every halted fixture reports it',
     Boolean(haltMinimum) && atLeast(version, haltMinimum) && every.filter(({ report: sent }) => 'halted' in sent).every(({ report: sent }) => atLeast(sent.pluginVersion, haltMinimum)));
+  const objectMinimum = (/`halted` as an object, with its `remedy` started with `--units`, needs \*\*(\d+\.\d+\.\d+)\*\*/.exec(guide) || [])[1];
+  report('version', 'the guide names the version halted as an object needs, and every fixture that sends one reports it',
+    Boolean(objectMinimum) && atLeast(version, objectMinimum) && every.filter(({ report: sent }) => sent.halted && typeof sent.halted === 'object').length > 0 &&
+    every.filter(({ report: sent }) => sent.halted && typeof sent.halted === 'object').every(({ report: sent }) => atLeast(sent.pluginVersion, objectMinimum)));
   const promptMinimum = (/`pluginPrompt` needs \*\*(\d+\.\d+\.\d+)\*\*/.exec(guide) || [])[1];
   report('version', 'the guide names the version pluginPrompt needs, and every fixture that sends one reports it',
     Boolean(promptMinimum) && atLeast(version, promptMinimum) && every.filter(({ report: sent }) => promptsOf(sent).length).length > 0 &&

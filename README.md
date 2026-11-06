@@ -712,6 +712,17 @@ decided. In the same release `do-project-setup` records the commands a developme
 subcommand or target, checked by `scripts/check-run-commands.js`. 0.47.0 is the minimum for Start
 development and Continue development.
 
+From 0.48.0 a halt says what lifts it. Where the consumer's schema declares `halted` as an object
+(`RunHalt`), the grooming, planning and development run guides send `{sentence, waitsOn, remedy}`:
+the sentence as before; `waitsOn`, each awaited path grouped by the repository the feature README
+names, with that clone's commit; and `remedy`, the grooming runs that lift the halt, in order, each
+naming its repository, its TRD and the rows to re-gate (`skills/do-grooming/run-halt.md`). The
+grooming command takes those rows: `/alpha-sdlc:do-grooming <feature> [<platform>] [--trd
+<TRD-name.md>] --units <key>,<key>` re-gates exactly the named rows of a self-reviewed TRD, one
+gate each under its next revision, re-walks the review points they feed, pushes as the run does,
+and ends with `trdComplete` (`skills/do-grooming/units.md`). 0.48.0 is the minimum for starting a
+halt's remedy from the platform.
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and
@@ -730,9 +741,10 @@ node scripts/check-size-budgets.js    # size-budgets.json: skill bodies ≤ 19,0
 node scripts/rule-coverage.js         # every rule of origin/main kept, or signed off in the ledger
 ```
 
-`node tests/run-contract.js <adp-web clone>` validates every fixture that sends `halted` against the
-run schemas the adp web passes as `--json-schema`, and names each field the contract does not
-declare. It reads another repository's clone, so it runs only when you ask, never inside the suite.
+`node tests/run-contract.js <adp-web clone>` validates every fixture that sends `halted` in a shape
+the schema declares (a sentence, the `RunHalt` object, or either), and every report of the
+`--units` run, against the run schemas the adp web passes as `--json-schema`, and names each field
+the contract does not declare. It reads another repository's clone, so it runs only when you ask, never inside the suite.
 
 Edit `principles.md`, never `rules/`: `node scripts/build-rules.js` regenerates the bundles from it
 and `rules/applicability.json`. A clause rewritten, merged or moved on purpose is signed off in

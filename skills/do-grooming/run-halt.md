@@ -19,6 +19,24 @@ only stop at the same place again. Its last report carries:
 - **`commitRead`** — the session's clone's `HEAD`, from `git rev-parse --short HEAD`;
 - **`sessionEnded: true`**, no gate and no question.
 
+**`halted` is an object** when the consumer's schema declares one (`RunHalt`, alone or in a
+`oneOf` beside a string); otherwise it is the sentence alone. The object is `{ "sentence": <the
+sentence>, "waitsOn": [ … ], "remedy": [ … ] }`:
+- `waitsOn` — the ledger's `waitsOn` (below), each `clone` named by `repository`: the
+  `Repository` cell (`<provider>:<path>`) of the feature README's `## Platforms` row whose clone
+  holds it — `{ "repository", "commit", "paths" }`;
+- `remedy` — the grooming runs that lift the halt, in the order they must run: a change to the
+  hub's `TRD.md` before a platform TRD's re-gate. Each is `{ "repository", "document": "TRD.md" |
+  "TRD-<name>.md", "units": [ <row id>, … ] }`, the units as `units.md` → *The command* writes
+  them, never a revision. Empty when no grooming run lifts it: a prerequisite not built, a plugin
+  release, a review or command that runs from a terminal, a refusal of the command itself.
+
+With a remedy, the sentence names its first run as typed, units included: `Planning waits for
+grooming: run /alpha-sdlc:do-grooming platform-development web --units
+share-sheet/widget-spec,share-sheet/hdr to re-gate TRD-web.md, then Continue`. A remedy is named
+only when its units are known — the rows the refusal or the answer names; otherwise it is empty and
+the sentence names the documents. A development run sends the same object (its guide's *A halt*).
+
 `halted` is never sent:
 - with a gate or a question open, or with `trdComplete` or `planComplete`;
 - at a boundary or after an answer the run asks again on Continue — *Not now* to a push, *ask the
