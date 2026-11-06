@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { createSuite, pluginRoot } = require('../lib/harness');
+const { haltSentence, haltShapeProblems } = require('../lib/run-halt');
 
 const suite = createSuite('development-run');
 const { report, finish, sdlcProject, runScript } = suite;
@@ -72,7 +73,7 @@ function shapeProblems(sent) {
   for (const flag of ['developmentComplete', 'sessionEnded', 'onlyWhatChanged']) {
     if (flag in sent) need(typeof sent[flag] === 'boolean', `${flag} is a boolean`);
   }
-  if ('halted' in sent) need(isString(sent.halted) && sent.halted.trim().length > 0, 'halted is a non-empty string');
+  if ('halted' in sent) problems.push(...haltShapeProblems(sent.halted));
   if ('autoDecisions' in sent) {
     need(Array.isArray(sent.autoDecisions) && sent.autoDecisions.every((entry) => AUTO_DECISION_FIELDS.every((field) => isString(entry[field]) && entry[field].length > 0)),
       'autoDecisions is a list of {askedIn, question, taken, recordedIn}');
@@ -247,11 +248,12 @@ function replay(files) {
 
     const openGate = gate && !isAutoGate(gate);
     if (sent.sessionEnded && (openGate || sent.questions.length)) fail('a session ends with nothing open');
-    if (isString(sent.halted)) {
+    const sentence = haltSentence(sent.halted);
+    if (sentence !== null) {
       if (sent.sessionEnded !== true) fail('halted comes with sessionEnded: true');
       if (gate || sent.questions.length) fail('halted is never sent with a gate or a question');
       if (sent.developmentComplete === true) fail('halted never comes with developmentComplete');
-      if (/[\n`*]/.test(sent.halted) || !/\bthen Continue(?: in auto-run)?\.?$/.test(sent.halted)) fail('halted is one plain sentence that ends on "then Continue"');
+      if (/[\n`*]/.test(sentence) || !/\bthen Continue(?: in auto-run)?\.?$/.test(sentence)) fail('halted is one plain sentence that ends on "then Continue"');
       if (!isString(sent.commitRead)) fail('a halted report names the commit it read at');
       if (!rows.some((row) => (row.notes || []).some((note) => note.label === 'Stopped'))) fail('a halt keeps its reason in a Stopped note on its row');
     }
@@ -316,6 +318,11 @@ covers('an auto-run finished: the review closed stamped auto with developmentCom
     caught(swap(auto, '03-stage-2-auto.json', (sent) => ({ ...sent, questions: step[3].report.questions.map((question) => ({ ...question, documentKey: 'stage-2@1', blocks: ['stage-2@1'] })) })), 'never reports a question'));
   report('checker', 'catches a halt sent with a gate',
     caught(swap(auto, '02-halted.json', (sent) => ({ ...sent, gate: auto[0].report.gate })), 'never sent with a gate'));
+  const asObject = (sent) => ({ ...sent, pluginVersion: '0.48.0', halted: { sentence: sent.halted, waitsOn: [], remedy: [] } });
+  report('fixtures', 'the auto story conforms with its halt sent as {sentence, waitsOn, remedy}',
+    replay(swap(auto, '02-halted.json', asObject)).length === 0, replay(swap(auto, '02-halted.json', asObject)).join('\n'));
+  report('checker', 'catches a halt object with no sentence',
+    caught(swap(auto, '02-halted.json', (sent) => ({ ...asObject(sent), halted: { waitsOn: [], remedy: [] } })), "halted's sentence"));
   report('checker', 'catches a halt that does not end the session',
     caught(swap(auto, '02-halted.json', (sent) => { const { sessionEnded: _ended, ...rest } = sent; return rest; }), 'halted comes with sessionEnded'));
   report('checker', 'catches a step-by-step run sending autoDecisions',

@@ -204,7 +204,8 @@ session-only facts, its handoff, and offer the fresh session in the Next paragra
 mid-section, nor anywhere else `principles.md` → *The session is disposable* forbids.
 
 **The file being groomed IS the state** — its `_Pending_` and `_Approved:` headings, *Carry-forward
-answers*, Open Decisions and review rows, with the per-screen docs. To resume, first run:
+answers*, Open Decisions and review rows, with the per-screen docs. With `--units`, read `units.md`
+instead. To resume, first run:
 
 `node ../../scripts/next-step.js docs/development/<feature-name> [<platform>] --phase grooming`
 

@@ -81,7 +81,7 @@ function haltedFixtures(directory) {
   for (const story of fs.readdirSync(directory, { withFileTypes: true }).filter((entry) => entry.isDirectory())) {
     for (const name of fs.readdirSync(path.join(directory, story.name)).filter((each) => each.endsWith('.json')).sort()) {
       const report = JSON.parse(fs.readFileSync(path.join(directory, story.name, name), 'utf8'));
-      if ('halted' in report) found.push({ name: `${story.name}/${name}`, report });
+      if ('halted' in report || story.name === 'units') found.push({ name: `${story.name}/${name}`, report });
     }
   }
   return found;
@@ -101,15 +101,24 @@ for (const { run, fixtures, schema: relative } of RUNS) {
     process.exit(2);
   }
   const declared = schema.properties.halted;
+  const members = declared ? declared.oneOf || [declared] : [];
+  const takes = {
+    sentence: members.some((member) => [].concat(member.type || []).includes('string')),
+    object: members.some((member) => Boolean(member.$ref) || [].concat(member.type || []).includes('object')),
+  };
   process.stdout.write(`\n${run} run · ${relative}\n`);
-  process.stdout.write(`  halted: ${declared ? `declared, ${JSON.stringify(declared.type)}` : 'NOT declared'}\n`);
-  if (declared && ![].concat(declared.type).includes('string')) {
-    process.stdout.write('  halted is declared, but not as a string\n');
+  process.stdout.write(`  halted: ${declared ? `declared, takes ${Object.keys(takes).filter((kind) => takes[kind]).join(' and ') || 'neither shape'}` : 'NOT declared'}\n`);
+  if (declared && !takes.sentence && !takes.object) {
+    process.stdout.write('  halted is declared, but neither as a sentence nor as an object\n');
     failed++;
   }
-  const samples = haltedFixtures(path.join(pluginRoot, 'tests', 'fixtures', fixtures));
-  if (!samples.length) {
-    process.stdout.write(`  FAIL no ${fixtures} fixture sends halted\n`);
+  const kindOf = (report) => !('halted' in report) ? null : typeof report.halted === 'string' ? 'sentence' : 'object';
+  const all = haltedFixtures(path.join(pluginRoot, 'tests', 'fixtures', fixtures));
+  const samples = all.filter(({ report }) => kindOf(report) === null || takes[kindOf(report)]);
+  const skipped = all.length - samples.length;
+  if (skipped) process.stdout.write(`  ${skipped} fixture(s) send halted in a shape this schema does not declare, which the guide sends only to a consumer that declares it\n`);
+  if (!samples.some(({ report }) => kindOf(report) !== null)) {
+    process.stdout.write(`  FAIL no ${fixtures} fixture sends halted in a shape this schema declares\n`);
     failed++;
   }
   for (const { name, report } of samples) {

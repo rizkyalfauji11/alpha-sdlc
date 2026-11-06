@@ -1,0 +1,115 @@
+{
+  "pluginVersion": "0.48.0",
+  "commitRead": "e81b7a3",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 12,
+    "total": 12
+  },
+  "documents": [
+    {
+      "key": "share-sheet/hdr@2",
+      "ordinal": 11,
+      "name": "Header · Share sheet",
+      "description": "The sheet header and its cases",
+      "group": "section-slicing/share-sheet.md",
+      "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      },
+      "notes": [
+        {
+          "label": "Re-gated",
+          "text": "This run was started with --units acceptance-criteria,share-sheet/hdr: only these rows are proposed again."
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "push",
+      "documentKey": "share-sheet/body.recipients@1",
+      "title": "Push TRD-web.md and the hub side to feat/recipe-sharing?",
+      "summary": {
+        "blocks": [
+          {
+            "label": "Why",
+            "text": "The re-walk of the points the two re-gated rows feed is clean; both are committed but not pushed."
+          },
+          {
+            "label": "What goes",
+            "text": "TRD-web.md and its per-screen docs first, then the hub Spokes row, summary line and stamp in acme/recipes-api"
+          }
+        ],
+        "needFromYou": "Say whether to push now"
+      },
+      "options": [
+        {
+          "id": "push-now",
+          "label": "Push now",
+          "why": "The review is clean and the hub can link the spoke",
+          "trade": "Teammates see the spoke on the remote at once",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "not-now",
+          "label": "Not now",
+          "why": "Something has to happen before teammates see it",
+          "trade": "The session ends; Continue asks again",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [
+        "Pushes acme/recipes-web, then acme/recipes-api, both on feat/recipe-sharing"
+      ],
+      "evidence": {
+        "caption": "What would be pushed",
+        "groups": [
+          {
+            "heading": "acme/recipes-web",
+            "rows": [
+              {
+                "label": "Commits ahead of origin",
+                "count": "14",
+                "lines": [
+                  "git log origin/feat/recipe-sharing..HEAD"
+                ]
+              }
+            ]
+          },
+          {
+            "heading": "acme/recipes-api",
+            "rows": [
+              {
+                "label": "Commits ahead of origin",
+                "count": "2",
+                "lines": [
+                  "docs/development/recipe-sharing/TRD.md"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "share-sheet/body.recipients@1"
+      ],
+      "notes": [],
+      "askedAt": "2026-11-06T04:10:00Z"
+    }
+  ],
+  "reviewRounds": [
+    {
+      "round": 1,
+      "findings": 0,
+      "trend": "clean"
+    }
+  ]
+}

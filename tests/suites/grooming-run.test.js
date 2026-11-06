@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { createSuite, pluginRoot } = require('../lib/harness');
+const { haltSentence, haltShapeProblems } = require('../lib/run-halt');
 
 const suite = createSuite('grooming-run');
 const { report, finish } = suite;
@@ -89,7 +90,7 @@ function shapeProblems(report) {
   for (const flag of ['trdComplete', 'sessionEnded', 'onlyWhatChanged']) {
     if (flag in report) need(typeof report[flag] === 'boolean', `${flag} is a boolean`);
   }
-  if ('halted' in report) need(isString(report.halted) && report.halted.trim().length > 0, 'halted is a non-empty string');
+  if ('halted' in report) problems.push(...haltShapeProblems(report.halted));
   return problems;
 }
 
@@ -102,17 +103,19 @@ function expectedTrend(rounds, index) {
 }
 
 function haltProblems(report, halt, sessionStarts, rows) {
-  if (!isString(report.halted)) return [];
+  const sentence = haltSentence(report.halted);
+  if (sentence === null) return [];
   const problems = [];
   const need = (ok, what) => { if (!ok) problems.push(what); };
   need(report.sessionEnded === true, 'halted comes with sessionEnded: true');
   need(!report.gate && !report.questions.length, 'halted is never sent with a gate or a question open');
   need(report.trdComplete !== true, 'halted never comes with trdComplete');
-  need(!/[\n`*]/.test(report.halted) && /\bthen Continue\.?$/.test(report.halted), 'halted is one plain sentence that ends on "then Continue"');
+  need(!/[\n`*]/.test(sentence) && /\bthen Continue\.?$/.test(sentence), 'halted is one plain sentence that ends on "then Continue"');
   need(isString(report.commitRead), 'a halted report names the commit it read at');
-  if (halt && sessionStarts && report.halted === halt.text) {
-    need(report.onlyWhatChanged !== true && report.commitRead === halt.commitRead && JSON.stringify(rows) === halt.rows,
-      'a halt sent again at the next session\'s start is the same report, whole, at the same commitRead');
+  if (halt && sessionStarts && sentence === halt.text) {
+    need(report.onlyWhatChanged !== true && report.commitRead === halt.commitRead && JSON.stringify(rows) === halt.rows &&
+      JSON.stringify(report.halted) === halt.whole,
+    'a halt sent again at the next session\'s start is the same report, whole, at the same commitRead');
   }
   return problems;
 }
@@ -230,7 +233,9 @@ function replay(files) {
 
     if (report.sessionEnded && (report.gate || report.questions.length)) fail('a session ends with nothing open');
     for (const problem of haltProblems(report, halt, sessionStarts, [...mirror.values()])) fail(problem);
-    if (isString(report.halted)) halt = { text: report.halted, commitRead: report.commitRead, rows: JSON.stringify([...mirror.values()]) };
+    if (haltSentence(report.halted) !== null) {
+      halt = { text: haltSentence(report.halted), whole: JSON.stringify(report.halted), commitRead: report.commitRead, rows: JSON.stringify([...mirror.values()]) };
+    }
     if (report.trdComplete && completed) fail('trdComplete is sent once');
     if (report.trdComplete) {
       completed = true;
@@ -245,10 +250,29 @@ function replay(files) {
   return problems;
 }
 
-const stories = ['hub', 'platform', 'draft', 'review', 'review-fallback', 'halted', 'add-platform', 'add-platform-fallback']
+function unitsProblems(files) {
+  const problems = [];
+  const first = new Map(files[0].report.documents.map((row) => [rowIdOf(row.key), revisionOf(row.key)]));
+  const gated = new Set();
+  for (const { name, report: sent } of files) {
+    if (sent.gate) {
+      gated.add(rowIdOf(sent.gate.documentKey));
+      if (revisionOf(sent.gate.documentKey) < 2) problems.push(`${name}: a units run gates each named row under its next revision, never its first`);
+    }
+    for (const row of sent.documents) {
+      const id = rowIdOf(row.key);
+      if (!gated.has(id) && first.has(id) && first.get(id) !== revisionOf(row.key)) problems.push(`${name}: re-keys ${id}, a row the run never gated`);
+    }
+  }
+  const last = files[files.length - 1].report;
+  if (last.trdComplete !== true || last.sessionEnded !== true) problems.push('a units run ends with trdComplete and sessionEnded once its rows are approved');
+  return problems;
+}
+
+const stories = ['hub', 'platform', 'draft', 'review', 'review-fallback', 'halted', 'halted-object', 'add-platform', 'add-platform-fallback', 'units']
   .map((story) => ({ story, files: storyFiles(story) }));
 for (const { story, files } of stories) {
-  const problems = replay(files);
+  const problems = replay(files).concat(story === 'units' ? unitsProblems(files) : []);
   report('fixtures', `the ${story} story conforms to the grooming-run guide`, problems.length === 0, problems.join('\n'));
 }
 
@@ -289,6 +313,10 @@ covers('a review sent to a terminal halting the run, its note kept', (sent) => i
   noted(reviewRow(sent), 'Runs from a terminal'));
 covers('a halt sent again, whole, at the next session\'s start', (sent) => isString(sent.halted) && sent.onlyWhatChanged === false &&
   every.filter(({ report: other }) => other.halted === sent.halted).length > 1);
+covers('a halt sent as {sentence, waitsOn, remedy}, sent again whole', (sent) => sent.halted && typeof sent.halted === 'object' &&
+  Array.isArray(sent.halted.waitsOn) && sent.halted.waitsOn.length > 0 && every.filter(({ report: other }) => JSON.stringify(other.halted) === JSON.stringify(sent.halted)).length > 1);
+covers('a run started with --units re-gating a named row under its next revision', (sent) => sent.onlyWhatChanged === false && sent.gate &&
+  revisionOf(sent.gate.documentKey) > 1 && sent.documents.some((row) => noted(row, 'Re-gated')));
 covers("Add a platform re-walking the spokes in its run", (sent) => sent.documents.some((row) => noted(row, 'Spokes re-walked')));
 covers("Add a platform sending the spokes' re-walk to a terminal and pushing the hub alone", (sent) =>
   sent.documents.some((row) => noted(row, 'Spokes re-walk from a terminal')) && sent.questions.some((question) => question.id === 'push' &&
@@ -349,6 +377,27 @@ covers("Add a platform sending the spokes' re-walk to a terminal and pushing the
   report('checker', 'catches a halt sent again with its rows changed',
     replay(haltChanged('02-halt-unchanged.json', (sent) => { sent.documents[0].notes = [{ label: 'Stopped', text: 'another' }]; return sent; }))
       .some((problem) => problem.includes('same report, whole')));
+  const units = storyFiles('units');
+  const unitsChanged = (name, change) => units.map((file) => file.name.endsWith(name) ? { ...file, report: change(JSON.parse(JSON.stringify(file.report))) } : file);
+  report('checker', 'catches a units run that re-keys a row it never gated',
+    unitsProblems(unitsChanged('02-second-unit-gate.json', (sent) => { sent.documents[0].key = `${rowIdOf(sent.documents[0].key)}@2`; return sent; }))
+      .some((problem) => problem.includes('a row the run never gated')));
+  report('checker', 'catches a units run that ends without trdComplete',
+    unitsProblems(unitsChanged('04-trd-complete.json', (sent) => { delete sent.trdComplete; return sent; })).some((problem) => problem.includes('ends with trdComplete')));
+  const objectHalt = storyFiles('halted-object');
+  const objectChanged = (change) => objectHalt.map((file, index) => index === 0 ? { ...file, report: change(JSON.parse(JSON.stringify(file.report))) } : file);
+  const remedy = { repository: 'github:acme/recipes-web', document: 'TRD-web.md', units: ['share-sheet/hdr'] };
+  report('checker', 'catches a remedy whose first run the sentence does not type with --units',
+    replay(objectChanged((sent) => { sent.halted.remedy = [remedy]; return sent; })).some((problem) => problem.includes('types its first run')));
+  report('checker', 'catches a remedy with no units, or a unit with its revision',
+    replay(objectChanged((sent) => { sent.halted.remedy = [{ ...remedy, units: [] }]; return sent; })).some((problem) => problem.includes('remedy items')) &&
+    replay(objectChanged((sent) => { sent.halted.remedy = [{ ...remedy, units: ['share-sheet/hdr@2'] }]; return sent; })).some((problem) => problem.includes('remedy items')));
+  report('checker', 'catches a waitsOn item named by its clone, not its repository',
+    replay(objectChanged((sent) => { sent.halted.waitsOn = [{ clone: '/ws/recipes-web', commit: '9c0e5d2', paths: ['docs'] }]; return sent; }))
+      .some((problem) => problem.includes('waitsOn items')));
+  report('checker', 'catches a halt sent again with its waitsOn changed',
+    replay(objectHalt.map((file, index) => index === 1 ? { ...file, report: { ...file.report, halted: { ...file.report.halted, waitsOn: [] } } } : file))
+      .some((problem) => problem.includes('same report, whole')));
   report('checker', 'catches a design question whose draft option is renamed',
     replay(changed('01-design-questions.json', (sent) => { sent.questions[0].options[0].id = 'claude'; return sent; }))
       .some((problem) => problem.includes('offers draft then figma')));
@@ -373,6 +422,15 @@ covers("Add a platform sending the spokes' re-walk to a terminal and pushing the
   const haltMinimum = (/`halted` needs (\d+\.\d+\.\d+)/.exec(guide) || [])[1];
   report('version', 'the guide names the version halted needs, and every halted fixture reports it',
     Boolean(haltMinimum) && atLeast(version, haltMinimum) && every.filter(({ report: sent }) => 'halted' in sent).every(({ report: sent }) => atLeast(sent.pluginVersion, haltMinimum)));
+  const objectMinimum = (/`halted` as an object and `--units` \*\*(\d+\.\d+\.\d+)\*\*/.exec(guide) || [])[1];
+  report('version', 'the guide names the version halted as an object and --units need, and every such fixture reports it',
+    Boolean(objectMinimum) && atLeast(version, objectMinimum) && every.filter(({ name, report: sent }) => (sent.halted && typeof sent.halted === 'object') || name.startsWith('units/'))
+      .every(({ report: sent }) => atLeast(sent.pluginVersion, objectMinimum)));
+  report('skill', 'the guide names the --units command and points at units.md', /--units <key>,<key>/.test(guide) && guide.includes('`units.md`'));
+  report('skill', 'do-grooming reads units.md for a --units command', /With `--units`, read `units\.md`/.test(fs.readFileSync(path.join(pluginRoot, 'skills', 'do-grooming', 'SKILL.md'), 'utf8')));
+  const units = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-grooming', 'units.md'), 'utf8');
+  const halt = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-grooming', 'run-halt.md'), 'utf8');
+  report('skill', 'units.md and run-halt.md name the same command form', units.includes('--units <key>,<key>') && /"remedy"/.test(halt) && halt.includes('`units.md`'));
   const review = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-grooming', 'grooming-run-review.md'), 'utf8');
   report('skill', 'the guide and the review fallback point a halt at the shared halt file', guide.includes('`run-halt.md`') && review.includes('`run-halt.md`') &&
     /then `halted`, `sessionEnded: true`/.test(review.replace(/\s+/g, ' ')));
