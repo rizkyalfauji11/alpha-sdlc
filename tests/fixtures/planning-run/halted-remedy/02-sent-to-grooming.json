@@ -35,7 +35,7 @@
     "sentence": "Planning waits for grooming: run /alpha-sdlc:do-grooming platform-development --units api-contract to re-gate TRD.md, then re-gate data-persistence of TRD-backend.md, then Continue",
     "waitsOn": [
       {
-        "repository": "github:amarbank/adp-backend",
+        "repository": "github:rizkyalfauji11/adp-backend",
         "commit": "5f88a8d",
         "paths": [
           "docs/development/platform-development/TRD.md",
@@ -45,14 +45,14 @@
     ],
     "remedy": [
       {
-        "repository": "github:amarbank/adp-backend",
+        "repository": "github:rizkyalfauji11/adp-backend",
         "document": "TRD.md",
         "units": [
           "api-contract"
         ]
       },
       {
-        "repository": "github:amarbank/adp-backend",
+        "repository": "github:rizkyalfauji11/adp-backend",
         "document": "TRD-backend.md",
         "units": [
           "data-persistence"
