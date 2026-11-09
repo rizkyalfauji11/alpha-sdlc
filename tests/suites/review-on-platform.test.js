@@ -35,14 +35,14 @@ function clone(workspace, name, { origin, branch = `feat/${FEATURE}`, files = {}
 }
 
 const README = (rows) =>
-  '# Platform grooming\n\n| | |\n|---|---|\n| **Feature** | platform-grooming |\n| **Hub repository** | github:amarbank/adp-backend |\n' +
+  '# Platform grooming\n\n| | |\n|---|---|\n| **Feature** | platform-grooming |\n| **Hub repository** | github:rizkyalfauji11/adp-backend |\n' +
   '| **Epic** | — |\n\n## Platforms\n\n| Platform | Repository | Subtree | TRD | Hub |\n|---|---|---|---|---|\n' +
   rows.map((row) => `| ${row.join(' | ')} |`).join('\n') + '\n\n## Requirements\n\n| Source | File | Version |\n|---|---|---|\n| file | requirements/prd.md | — |\n';
 
 const PLATFORM_ROWS = [
-  ['backend', 'github:amarbank/adp-backend', '—', 'TRD-backend.md', 'yes'],
-  ['bridge', 'github:amarbank/adp-bridge', '—', 'TRD-bridge.md', '—'],
-  ['web', 'github:amarbank/adp-web', 'apps/web', 'TRD-web.md', '—'],
+  ['backend', 'github:rizkyalfauji11/adp-backend', '—', 'TRD-backend.md', 'yes'],
+  ['bridge', 'github:rizkyalfauji11/adp-bridge', '—', 'TRD-bridge.md', '—'],
+  ['web', 'github:rizkyalfauji11/adp-web', 'apps/web', 'TRD-web.md', '—'],
 ];
 
 let workspaceCount = 0;
@@ -50,25 +50,25 @@ function workspaceWith({ rows = PLATFORM_ROWS, bridge = {}, web = {}, skip = [] 
   const workspace = fs.realpathSync(fs.mkdtempSync(path.join(fixtureDirectory, `ws${++workspaceCount}-`)));
   const folder = `docs/development/${FEATURE}`;
   const hub = clone(workspace, 'adp-backend', {
-    origin: 'git@github.com:amarbank/adp-backend.git',
+    origin: 'git@github.com:rizkyalfauji11/adp-backend.git',
     files: { [`${folder}/README.md`]: README(rows), [`${folder}/TRD.md`]: '# TRD (Hub)\n', [`${folder}/TRD-backend.md`]: '# TRD (Backend)\n' },
   });
   const clones = { hub };
   if (!skip.includes('bridge')) {
     clones.bridge = clone(workspace, 'adp-bridge', {
-      origin: 'https://github.com/amarbank/adp-bridge.git',
+      origin: 'https://github.com/rizkyalfauji11/adp-bridge.git',
       ...bridge,
       files: bridge.files || { [`${folder}/README.md`]: '# x\n', [`${folder}/TRD-bridge.md`]: '# TRD (Bridge)\n', 'cmd/main.go': 'package main\n' },
     });
   }
   if (!skip.includes('web')) {
     clones.web = clone(workspace, 'adp-web', {
-      origin: 'ssh://git@github.com/amarbank/adp-web',
+      origin: 'ssh://git@github.com/rizkyalfauji11/adp-web',
       ...web,
       files: web.files || { [`apps/web/${folder}/README.md`]: '# x\n', [`apps/web/${folder}/TRD-web.md`]: '# TRD (Web)\n', 'apps/web/src/a.ts': 'x\n' },
     });
   }
-  clone(workspace, 'adp-other', { origin: 'git@github.com:amarbank/adp-other.git' });
+  clone(workspace, 'adp-other', { origin: 'git@github.com:rizkyalfauji11/adp-other.git' });
   const plugins = path.join(workspace, '.claude-home', 'plugins');
   fs.mkdirSync(plugins, { recursive: true });
   return { workspace, plugins, clones, hubFolder: path.join(hub, folder) };
@@ -211,7 +211,7 @@ function expect(name, outcome, { exit, has = [], hasNot = [] }) {
   const setup = workspaceWith({ skip: ['web'] });
   expect('a spoke with no clone in the run\'s directories falls back, naming its repository',
     underRun(newBridgeArguments(setup), setup, ['--for', 'review']),
-    { exit: 1, has: [/^cannot: spoke web — no clone of github:amarbank\/adp-web is in this run's directories$/m] });
+    { exit: 1, has: [/^cannot: spoke web — no clone of github:rizkyalfauji11\/adp-web is in this run's directories$/m] });
 }
 
 {

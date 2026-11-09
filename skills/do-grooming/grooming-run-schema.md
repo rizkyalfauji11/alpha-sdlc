@@ -52,7 +52,7 @@ the files.
   fixes (its §4.6): a level-one heading with the feature's name; a two-column table with the rows
   `Feature` (the slug), `Hub repository` and `Epic` (the key, or `—`); and, in the hub repository,
   `## Platforms` — columns `Platform`, `Repository` (`<provider>:<path>`, e.g.
-  `github:amarbank/adp-web`), `Subtree` (`—` for none), `TRD` (the file name) and `Hub` (`yes` on
+  `github:rizkyalfauji11/adp-web`), `Subtree` (`—` for none), `TRD` (the file name) and `Hub` (`yes` on
   exactly one row) — and `## Requirements` — columns `Source` (a Confluence page's URL, or `file`),
   `File` (its path under `requirements/`) and `Version` (the page's version, or `—`). Read and
   write it in exactly that layout; a `|` inside a cell is written `\|`.
