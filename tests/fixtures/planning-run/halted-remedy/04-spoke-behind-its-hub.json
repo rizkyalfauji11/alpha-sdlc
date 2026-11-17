@@ -35,7 +35,7 @@
     "sentence": "Planning waits for grooming: run /alpha-sdlc:do-grooming platform-development backend to re-gate TRD-backend.md against hub rev 4c9369b, then Continue",
     "waitsOn": [
       {
-        "repository": "github:amarbank/adp-backend",
+        "repository": "github:rizkyalfauji11/adp-backend",
         "commit": "3a69e96",
         "paths": [
           "docs/development/platform-development/TRD-backend.md",
@@ -45,7 +45,7 @@
     ],
     "remedy": [
       {
-        "repository": "github:amarbank/adp-backend",
+        "repository": "github:rizkyalfauji11/adp-backend",
         "document": "TRD-backend.md",
         "units": []
       }
