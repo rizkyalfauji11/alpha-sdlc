@@ -37,6 +37,16 @@ share-sheet/widget-spec,share-sheet/hdr to re-gate TRD-web.md, then Continue`. A
 only when its units are known — the rows the refusal or the answer names; otherwise it is empty and
 the sentence names the documents. A development run sends the same object (its guide's *A halt*).
 
+**A platform TRD behind its hub.** When what lifts the halt is a platform TRD's re-walk because its
+`Hub alignment` stamp is older than the hub's last change, its own grooming command with no
+`--units` lifts it: that run re-walks the points the moved hub sections feed and restamps the TRD,
+re-gating no row (`grooming-review.md` → *The hub moving*). Its remedy is `{ "repository",
+"document": "TRD-<name>.md", "units": [] }`, after any hub remedy, and the sentence names that
+command as typed: `Planning waits for grooming: run /alpha-sdlc:do-grooming platform-development
+backend to re-gate TRD-backend.md against hub rev 4c9369b, then Continue`. An empty `units` is sent
+only when the consumer's schema lets it be empty — its `units` declares no `minItems`, or 0; under
+`minItems: 1` that remedy is left out and the sentence alone names the command.
+
 `halted` is never sent:
 - with a gate or a question open, or with `trdComplete` or `planComplete`;
 - at a boundary or after an answer the run asks again on Continue — *Not now* to a push, *ask the

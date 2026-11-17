@@ -29,7 +29,8 @@ planning and Continue planning. `pluginVersion` is the `version` in the plugin r
 `.claude-plugin/plugin.json` (two levels above this skill's base directory), read once per session.
 `halted` needs **0.45.0**: an older plugin ends a halted session with its row's note alone.
 `pluginPrompt` needs **0.46.0**: an older plugin never sends it, and its options copy nothing.
-`halted` as an object, with its `remedy` started with `--units`, needs **0.48.0**.
+`halted` as an object, with its `remedy` started with `--units`, needs **0.48.0**; a remedy with
+empty `units` for a spoke behind its hub, **0.49.0**.
 
 ## The session
 
@@ -117,7 +118,9 @@ grooming it reads `Planning waits for grooming: run /alpha-sdlc:do-grooming <fea
 TRD.md and TRD-<name>.md, then Continue`, naming the files the refusal or the answer names. When it
 names the rows to re-gate — a section, a widget spec, a slicing section, each as its grooming row id
 — the object's `remedy` carries one grooming run per TRD with those `units`, the hub's first, and
-the sentence types the first with `--units`. The row's `Stopped` or `Held back` note stays; `halted` is what the platform reads. A session whose run
+the sentence types the first with `--units`. A spoke refused because its `Hub alignment` is older
+than the hub's last change carries its own grooming run with `units: []`, as `run-halt.md` → *A
+platform TRD behind its hub* says. The row's `Stopped` or `Held back` note stays; `halted` is what the platform reads. A session whose run
 ledger holds `halted` checks it before *Resume*, and while the files it names are unchanged it sends
 the same report again at once, without reading the plan. Both by `../do-grooming/run-halt.md`.
 
