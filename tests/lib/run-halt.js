@@ -25,13 +25,17 @@ function haltShapeProblems(halted) {
     REPOSITORY.test(each.repository || '') && COMMIT.test(each.commit || '') && Array.isArray(each.paths) && each.paths.length > 0 && each.paths.every(nonEmpty)),
   "halted's waitsOn items are {repository <provider>:<path>, commit, paths[]}");
   need(Array.isArray(halted.remedy) && halted.remedy.every((each) => isObject(each) && onlyKeys(each, ['repository', 'document', 'units']) &&
-    REPOSITORY.test(each.repository || '') && TRD_FILE.test(each.document || '') && Array.isArray(each.units) && each.units.length > 0 &&
+    REPOSITORY.test(each.repository || '') && TRD_FILE.test(each.document || '') && Array.isArray(each.units) &&
     each.units.every((unit) => ROW_ID.test(unit)) && new Set(each.units).size === each.units.length),
-  "halted's remedy items are {repository, document TRD.md | TRD-<name>.md, units[] of row ids without a revision}");
+  "halted's remedy items are {repository, document TRD.md | TRD-<name>.md, units[] of row ids without a revision, empty for the document's own grooming}");
   const first = Array.isArray(halted.remedy) && halted.remedy[0];
-  if (first && Array.isArray(first.units) && nonEmpty(halted.sentence)) {
+  if (first && Array.isArray(first.units) && first.units.length > 0 && nonEmpty(halted.sentence)) {
     need(halted.sentence.includes(`--units ${first.units.join(',')}`) && halted.sentence.includes(first.document),
       "a halt with a remedy types its first run in the sentence, --units and document included");
+  }
+  if (first && Array.isArray(first.units) && first.units.length === 0 && nonEmpty(halted.sentence)) {
+    need(!halted.sentence.includes('--units') && halted.sentence.includes(first.document),
+      "a remedy with no units types its document's own grooming command in the sentence, with no --units");
   }
   return problems;
 }

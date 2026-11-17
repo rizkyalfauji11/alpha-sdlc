@@ -389,8 +389,8 @@ covers("Add a platform sending the spokes' re-walk to a terminal and pushing the
   const remedy = { repository: 'github:acme/recipes-web', document: 'TRD-web.md', units: ['share-sheet/hdr'] };
   report('checker', 'catches a remedy whose first run the sentence does not type with --units',
     replay(objectChanged((sent) => { sent.halted.remedy = [remedy]; return sent; })).some((problem) => problem.includes('types its first run')));
-  report('checker', 'catches a remedy with no units, or a unit with its revision',
-    replay(objectChanged((sent) => { sent.halted.remedy = [{ ...remedy, units: [] }]; return sent; })).some((problem) => problem.includes('remedy items')) &&
+  report('checker', 'catches a remedy with no units list, or a unit with its revision',
+    replay(objectChanged((sent) => { const { units, ...noList } = remedy; sent.halted.remedy = [noList]; return sent; })).some((problem) => problem.includes('remedy items')) &&
     replay(objectChanged((sent) => { sent.halted.remedy = [{ ...remedy, units: ['share-sheet/hdr@2'] }]; return sent; })).some((problem) => problem.includes('remedy items')));
   report('checker', 'catches a waitsOn item named by its clone, not its repository',
     replay(objectChanged((sent) => { sent.halted.waitsOn = [{ clone: '/ws/recipes-web', commit: '9c0e5d2', paths: ['docs'] }]; return sent; }))

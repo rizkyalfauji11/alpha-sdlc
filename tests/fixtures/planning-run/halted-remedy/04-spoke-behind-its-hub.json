@@ -2,10 +2,32 @@
   "pluginVersion": "0.49.0",
   "commitRead": "3a69e96",
   "step": {
-    "ordinal": 1,
+    "ordinal": 2,
     "total": 3
   },
-  "states": [],
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The steps before it being approved"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your approval or your answer"
+    },
+    {
+      "label": "approved",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
   "documents": [
     {
       "key": "scope@1",
@@ -14,11 +36,25 @@
       "description": "plan-backend.md",
       "group": "plan-backend.md",
       "state": {
+        "label": "approved",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "layout@1",
+      "ordinal": 2,
+      "name": "Architecture & package layout",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
         "label": "pending",
         "settled": false,
         "tone": "neutral",
         "description": "Not reached yet",
-        "unsticks": "TRD-backend.md re-walked against the hub"
+        "unsticks": "The steps before it being approved"
       },
       "notes": [
         {
@@ -26,11 +62,25 @@
           "text": "TRD-backend.md's Hub alignment is older than the hub's last change: the hub changed since rev 3875ddc. Planning goes on once its author re-walks the points the moved hub sections feed."
         }
       ]
+    },
+    {
+      "key": "breakdown@1",
+      "ordinal": 3,
+      "name": "Stage breakdown",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The steps before it being approved"
+      }
     }
   ],
   "questions": [],
   "gate": null,
-  "onlyWhatChanged": true,
+  "onlyWhatChanged": false,
   "halted": {
     "sentence": "Planning waits for grooming: run /alpha-sdlc:do-grooming platform-development backend to re-gate TRD-backend.md against hub rev 4c9369b, then Continue",
     "waitsOn": [
