@@ -723,6 +723,13 @@ gate each under its next revision, re-walks the review points they feed, pushes 
 and ends with `trdComplete` (`skills/do-grooming/units.md`). 0.48.0 is the minimum for starting a
 halt's remedy from the platform.
 
+From 0.49.0 a planning halt on a platform TRD behind its hub names its remedy. When the spoke's
+`Hub alignment` is older than the hub's last change, the remedy is that spoke's own grooming run
+with `units: []`, and the sentence types its command with no `--units`: that run re-walks the points
+the moved hub sections feed and restamps the spoke, re-gating no row
+(`skills/do-grooming/run-halt.md` → *A platform TRD behind its hub*). It is sent only where the
+consumer's schema lets `units` be empty; under `minItems: 1` the remedy is left out as before.
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and

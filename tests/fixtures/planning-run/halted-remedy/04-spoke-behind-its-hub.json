@@ -1,0 +1,55 @@
+{
+  "pluginVersion": "0.49.0",
+  "commitRead": "3a69e96",
+  "step": {
+    "ordinal": 1,
+    "total": 3
+  },
+  "states": [],
+  "documents": [
+    {
+      "key": "scope@1",
+      "ordinal": 1,
+      "name": "Scope",
+      "description": "plan-backend.md",
+      "group": "plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "TRD-backend.md re-walked against the hub"
+      },
+      "notes": [
+        {
+          "label": "Stopped",
+          "text": "TRD-backend.md's Hub alignment is older than the hub's last change: the hub changed since rev 3875ddc. Planning goes on once its author re-walks the points the moved hub sections feed."
+        }
+      ]
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "onlyWhatChanged": true,
+  "halted": {
+    "sentence": "Planning waits for grooming: run /alpha-sdlc:do-grooming platform-development backend to re-gate TRD-backend.md against hub rev 4c9369b, then Continue",
+    "waitsOn": [
+      {
+        "repository": "github:amarbank/adp-backend",
+        "commit": "3a69e96",
+        "paths": [
+          "docs/development/platform-development/TRD-backend.md",
+          "docs/development/platform-development/TRD.md"
+        ]
+      }
+    ],
+    "remedy": [
+      {
+        "repository": "github:amarbank/adp-backend",
+        "document": "TRD-backend.md",
+        "units": []
+      }
+    ]
+  },
+  "sessionEnded": true
+}
