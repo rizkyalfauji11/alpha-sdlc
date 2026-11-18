@@ -587,6 +587,21 @@ function issueDocument({ notes = [], outline = [] } = {}) {
   write(hubPath, fs.readFileSync(hubPath, 'utf8').replace('| **Status** | Approved |', '| **Status** | Done |'));
   expectNext('a bookkeeping-only hub edit (its Status row) leaves the alignment fresh', nextStep(featureDirectory, ['backend', '--phase', 'planning']),
     { noStop: true, fact: /hub alignment/ });
+  write(hubPath, `${fs.readFileSync(hubPath, 'utf8')}\n| H9 | the page size | a spoke would pick one | ★ 50 / 100 | open |\n`);
+  commitAll(projectRoot, 'a hub decision opens', '2026-10-05T10:00:00');
+  expectNext('an Open Decisions row added to the hub leaves the alignment fresh', nextStep(featureDirectory, ['backend', '--phase', 'planning']),
+    { noStop: true, fact: /hub alignment/ });
+  const withTheOpenRow = gitIn(projectRoot, ['rev-parse', 'HEAD']);
+  write(path.join(featureDirectory, 'TRD-backend.md'), spokeDocument({ alignment: `✅ reviewed 2026-10-05 · hub rev \`${withTheOpenRow.slice(0, 7)}\`` }));
+  commitAll(projectRoot, 'spoke restamped over the open decision', '2026-10-05T12:00:00');
+  write(hubPath, fs.readFileSync(hubPath, 'utf8').replace('| ★ 50 / 100 | open |', '| ★ 50 / 100 | pending hub change: backend · the page size |'));
+  commitAll(projectRoot, 'the decision waits on the hub', '2026-10-06T10:00:00');
+  expectNext('an Open Decisions row moved from open to pending hub change leaves the alignment fresh', nextStep(featureDirectory, ['backend', '--phase', 'planning']),
+    { noStop: true, fact: /hub alignment/ });
+  write(hubPath, fs.readFileSync(hubPath, 'utf8').replace('Decisions for 5. API contracts, now paged.', 'Decisions for 5. API contracts, paged by 50.'));
+  commitAll(projectRoot, 'the decision is applied to the hub', '2026-10-07T10:00:00');
+  expectNext('the hub section a decided row changes still moves the stamp', nextStep(featureDirectory, ['backend', '--phase', 'planning']),
+    { exit: 1, stop: /older than the hub's last change/ });
 }
 
 {

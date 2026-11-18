@@ -730,6 +730,12 @@ the moved hub sections feed and restamps the spoke, re-gating no row
 (`skills/do-grooming/run-halt.md` → *A platform TRD behind its hub*). It is sent only where the
 consumer's schema lets `units` be empty; under `minItems: 1` the remedy is left out as before.
 
+From 0.49.1 a row of the hub's *Open Decisions* moves no spoke's `Hub alignment` stamp: opening
+one, rewording it, or setting it to `pending hub change` or `decided` no longer reads as the hub
+moving, so a spoke's grooming that records a hub-wrong finding no longer halts every other
+platform's planning. The hub sections a decision's Edits change still move the stamps
+(`skills/do-grooming/grooming-review.md` → *The hub moving*).
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and

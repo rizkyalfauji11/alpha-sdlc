@@ -504,6 +504,7 @@ const HUB_BOOKKEEPING = [
   /^\|.*\]\([^)]*TRD-[\w.-]+\.md\)/,
   /^\|.*`[^`]*TRD-[\w.-]+\.md`/,
   /^\|.*\|\s*pending hub change\b[^|]*\|\s*$/i,
+  /^\|\s*\**\s*H\d+\s*\**\s*\|/,
 ];
 
 const WORK_ITEM_CHECKBOX = /^(\s*[-*+]\s+)\[[ xX]\]\s+/;
