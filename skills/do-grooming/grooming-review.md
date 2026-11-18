@@ -181,7 +181,8 @@ grooming review alike:
   spoke or a plan groomed alongside), and from the grooming review — as rows of the hub's *Open
   Decisions* with the status `pending hub change`, so they outlive the session, and **leave the
   hub's sections as they are until the grooming review's closing gate**: there they go to the user
-  as **one** hub change, and the hub is fixed once. A `pending hub change` row moves no stamp; a
+  as **one** hub change, and the hub is fixed once. A `pending hub change` row moves no stamp, as no
+  *Open Decisions* row does (*The hub moving*); a
   spoke that needs it cites the row and follows its ★ meanwhile. A hub fixed after each finding
   moves the spokes already checked, so the work multiplies — spokes × hub edits. Never patch a spoke
   to match a hub you know is wrong. After the review has closed, a hub-wrong finding is gathered the
@@ -231,7 +232,9 @@ hub fix breaks.
 ### The hub moving
 
 **The review runs once per feature, and nothing the hub moves is reviewed twice.** A `pending hub
-change` row moves no stamp — `next-step.js` skips it.
+change` row moves no stamp — `next-step.js` skips it. No other row of the hub's *Open Decisions*
+moves one either, opened, reworded or `decided`: what a decision changes moves the stamps through
+the hub sections its Edits change.
 - **Before the grooming review**, any other hub edit moves every stamp: each spoke re-walks the
   points the changed sections feed, and its `self-reviewed` stamp is rewritten.
 - **While it closes** (`review ran`), its held hub change and its fixes move nothing back
