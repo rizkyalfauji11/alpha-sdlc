@@ -116,7 +116,9 @@ Checked against the **hub, its contract delta, and the profile docs it reference
 14. **One statement per fact** — §2 freshness, §3 flow steps, §4 design, §5 contract and every table
     agree with each other and with their prose.
 15. **Every flow step is served** — each system action in §3 maps to a contract endpoint or a stated
-    client-only behavior.
+    client-only behavior. When §3 carries an *Access inventory*, re-run its recorded search: a
+    route, link or write the search hits with no row is an objective violation, measured — the
+    same as a table missing from §2 — because development otherwise finds it one stage at a time.
 16. **No spoke has to decide a hub matter** — anything a spoke would need decided to make the hub
     true is decided here or listed as a hub Open Decision.
 

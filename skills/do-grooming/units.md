@@ -32,10 +32,14 @@ Continue` — with `remedy` and `waitsOn` empty.
 
 ## The re-gates
 
-- **Only the named units, each once, in the TRD's row order** — never the order typed. A unit not
-  named is never proposed, edited or re-stamped in this run, even when the re-gate shows it is
-  wrong: that is named in a note on the re-gated row, labelled `Also moves`, and recorded as an Open
-  Decision in the TRD; it is re-gated by a run that names it.
+- **The named units, each once, in the TRD's row order** — never the order typed. A unit not named
+  is never edited silently. When a re-gate shows one is now wrong, ask once, at that gate: ★
+  **re-gate it in this run** — appended to the run's keys (and the ledger's `units.keys`) in row
+  order and gated like a named unit, on the platform a row like any other — or **leave it out**,
+  which names it in a note on the re-gated row, labelled `Also moves`, and records it as an Open
+  Decision in the TRD for a run that names it. Taking it in is the ★ because every run's close
+  re-walks the hub and each spoke: a unit left for a later run costs a whole round, and its own
+  re-gate can show a third unit wrong.
 - **Each unit is its next revision, under its own gate.** Read what it is drawn from now — the hub,
   the approved sections, the code, the change the halt or the member names — and propose it whole.
   On the platform the gate's *Current* pane holds the approved text (`grooming-run-schema.md` →
