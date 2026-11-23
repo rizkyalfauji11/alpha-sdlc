@@ -11,6 +11,7 @@ tickets, if you use Jira) instead.
 ## Contents
 
 - **Evolution and possibilities** — Step 0.5, recorded in §1's *Gate-0 notes*
+- **Access inventory** — built before §1's gate, decided at §3
 - **Identify feature dependencies** — Step 0.4 and §2
 - **Resolve every entity against the domain model** — §2
 - **The API contract must be machine-checkable** — §5
@@ -34,6 +35,18 @@ always present both to the user, even when the BRD mentions neither:
 The notes go into §1's **Gate-0 notes** when the skeleton is written, with the user's answers:
 every spoke cites them instead of regenerating them, and adds only the evolution specific to its
 platform.
+
+## Access inventory
+
+**A feature that shows, hides or refuses anything by role** — a menu, a page, an action — builds
+§3's **Access inventory** before §1's gate, read from the code, not the PRD: every surface the
+change gates, each with four layers — its route; the frame its refusal renders in (inside the
+shell, or the whole page); every link or navigation in other pages that reaches it; every write on
+it, with the backend rule that admits it — against every role. The search that found them (the
+routes, the links, the write calls) is recorded beside the table, so the grooming review recounts
+it. §3's gate decides the inventory whole, every row at once; spokes cite its rows and add one
+only through a hub change. A menu matrix alone leaves the lower three layers to development, which
+then finds them one stage at a time — each a round back to grooming.
 
 ## Identify feature dependencies
 

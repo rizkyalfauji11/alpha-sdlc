@@ -736,6 +736,17 @@ moving, so a spoke's grooming that records a hub-wrong finding no longer halts e
 platform's planning. The hub sections a decision's Edits change still move the stamps
 (`skills/do-grooming/grooming-review.md` → *The hub moving*).
 
+From 0.50.0 a feature returns to grooming once per kind of gap, not once per stage. A feature that
+shows, hides or refuses anything by role builds the hub's §3 *Access inventory* from the code
+before §1's gate — every gated surface's route, refusal frame, incoming links and writes with
+their backend rule, against every role, with the search that found them — and the grooming
+review's point 15 re-runs that search (`skills/do-grooming/hub.md` → *Access inventory*). A
+`--units` re-gate that shows an unnamed unit wrong asks to take it into the same run, ★ yes,
+instead of leaving it as an Open Decision for another round (`skills/do-grooming/units.md`). In
+development, an instance a decided rule already answers is built per that rule and recorded, and
+a real gap is swept across the rest of the plan and handed back with its whole class in one Open
+Decision (`skills/do-development/gaps.md`).
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and

@@ -141,6 +141,19 @@ actually hit.>
 path · 3 invalid QR". `do-testing` drives exactly these in its **Boot & Smoke** gate, so name them
 here rather than leaving them to be invented at test time.>
 
+**Access inventory** _(only when the feature shows, hides or refuses anything by role — `hub.md` →
+*Access inventory*)_:
+
+| Surface | Layer | Code | Backend rule | <role 1> | <role 2> |
+|---------|-------|------|--------------|----------|----------|
+| <`/settings/providers`> | <route> | <`routes.tsx:88`> | <—> | <shown> | <refused> |
+| <`/settings/providers`> | <refusal frame> | <`AppShell.tsx:40`> | <—> | <—> | <inside the shell> |
+| <`/settings/providers`> | <link from `/settings`> | <`SettingsPage.tsx:51`> | <—> | <shown> | <hidden> |
+| <`/settings/providers`> | <write: create form> | <`ProvidersPage.tsx:70`> | <`POST /providers`: super_admin> | <hidden> | <hidden> |
+
+**Search:** <the commands that found every row — e.g. `rg "path:" src/routes` · `rg "<Link|navigate\(" src` ·
+`rg "useMutation|method: 'POST'" src/pages/settings` — with each one's hit count.>
+
 <Each row is a natural acceptance criterion — the spoke's Work slices carry the assertable version.>
 
 ## 4. System design

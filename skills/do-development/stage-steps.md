@@ -26,10 +26,10 @@ R1–R5 on the mechanics of `client-ui.md` §5.
 - **Plan drift → surface it, don't wing it.** If implementing reveals the plan is wrong, incomplete,
   or fights the real code, stop and tell the user; update the plan (or send it back to
   `do-planning`) before coding around it.
-- **Build only decided scope — undecided gap → Open Decision → back to grooming.** Implement exactly
-  the design/AC, never more. If a stage hits something the design doesn't cover (a gap you'd have to
-  guess), **stop the stage, add it to the spoke's `Open Decisions`, and hand back to `do-grooming`**
-  for the user to decide. Never invent behavior/UI/scope to fill it (that's the over-delivery bug).
+- **Build only decided scope — undecided gap → Open Decision → back to grooming, once per class.**
+  Implement exactly the design/AC. A stage that hits something the design doesn't cover (a gap
+  you'd have to guess) **stops, reads `gaps.md`, and hands back to `do-grooming`** every gap of
+  that class at once. Never invent behavior/UI/scope to fill one (the over-delivery bug).
 - **Follow the codebase, not your taste.** Match existing conventions, naming, and the package
   layout the plan fixed. The ladder governs build-vs-reuse.
 - **Platforms can run in parallel sessions.** Once the plans are approved, backend, web and any
