@@ -198,6 +198,16 @@ fragment into the project spec and regenerates — no re-translation.>
 |--------|------|-----------------|------------------|--------|-------|
 | | | | | | |
 
+**Reader inventory** _(only when a row above TIGHTENS, OPENS, REMOVES or reshapes an endpoint
+clients already call — `hub.md` → *Reader inventory*)_:
+
+| Endpoint | Repository | Call site | Used by | Decided |
+|----------|------------|-----------|---------|---------|
+| <`GET /cms/staff/users`> | <web> | <`useStaffUsers` · `customers.ts:40`> | <`SalaryProfilesPage.tsx:57`> | <moves to `GET /staff/roster`> |
+
+**Search:** <the commands that found every row, per repository — e.g. `rg "/cms/staff/users" src` ·
+`rg "useStaffUsers\(" src` — with each one's hit count.>
+
 ## 6. Cross-cutting concerns
 _Approved: <YYYY-MM-DD> · <commit>_
 

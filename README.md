@@ -747,6 +747,13 @@ development, an instance a decided rule already answers is built per that rule a
 a real gap is swept across the rest of the plan and handed back with its whole class in one Open
 Decision (`skills/do-development/gaps.md`).
 
+From 0.51.0 a contract change carries its readers. Every endpoint the hub's §5 delta tightens,
+opens, removes or reshapes gets a *Reader inventory* before §5's gate: each call site in every
+spoke repository, the pages that use it, and what the feature decides for it, with the search
+that found them. The grooming review's point 15 re-runs that search, so a page that still reads
+the old endpoint is found at grooming, not when planning reaches its stage
+(`skills/do-grooming/hub.md` → *Reader inventory*).
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and

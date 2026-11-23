@@ -119,6 +119,8 @@ Checked against the **hub, its contract delta, and the profile docs it reference
     client-only behavior. When §3 carries an *Access inventory*, re-run its recorded search: a
     route, link or write the search hits with no row is an objective violation, measured — the
     same as a table missing from §2 — because development otherwise finds it one stage at a time.
+    When §5 carries a *Reader inventory*, re-run its recorded search in every spoke repository the
+    same way: a call site the search hits with no row is an objective violation, measured.
 16. **No spoke has to decide a hub matter** — anything a spoke would need decided to make the hub
     true is decided here or listed as a hub Open Decision.
 
