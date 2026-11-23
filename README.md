@@ -759,6 +759,11 @@ document row as the files stand. A platform restarted mid-setup could lose a rep
 it carried stayed unsettled on the platform while the repository was finished, so the run could
 never close (`skills/do-project-setup/setup-run-schema.md` → *Only what changed*).
 
+From 0.52.0 a development run that halts on a command no list holds names it in the halt's
+`commands`, when the platform's schema declares that key. The member approves those commands on the
+platform for that run, and Continue starts the next session with them allowed, instead of leaving
+the run for a project setup refresh (`skills/do-grooming/run-halt.md`).
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and

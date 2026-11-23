@@ -37,6 +37,16 @@ share-sheet/widget-spec,share-sheet/hdr to re-gate TRD-web.md, then Continue`. A
 only when its units are known — the rows the refusal or the answer names; otherwise it is empty and
 the sentence names the documents. A development run sends the same object (its guide's *A halt*).
 
+**`commands`** is a fourth key, sent only by a development run, only for its case *a command no list
+holds*, and only when the consumer's `RunHalt` declares it: the commands the next stage needs and
+the platform does not allow, each written as the mirror would write it, naming its subcommand or
+target (`scripts/check-run-commands.js --entry` passes it). The remedy is then empty, and the
+sentence names each command: `Development waits for its commands: approve docker exec on the
+platform, or run /alpha-sdlc:do-project-setup refresh to record it, then Continue`. The member
+approves them on the platform for this run, and Continue starts the next session with them allowed;
+a command still refused halts again with the same object. Without `commands` in the schema the
+object goes without it and the sentence alone names them.
+
 **A platform TRD behind its hub.** When what lifts the halt is a platform TRD's re-walk because its
 `Hub alignment` stamp is older than the hub's last change, its own grooming command with no
 `--units` lifts it: that run re-walks the points the moved hub sections feed and restamps the TRD,

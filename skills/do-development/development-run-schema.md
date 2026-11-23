@@ -29,7 +29,7 @@ development and Continue development. `pluginVersion` is the `version` in the pl
 `.claude-plugin/plugin.json` (two levels above this skill's base directory), read once per session.
 The same release has `do-project-setup` record the repository's `developmentCommands` and
 `autoRunCommands` (`../do-project-setup/templates/01-overview.md`). `halted` as an object needs
-**0.48.0**.
+**0.48.0**, and its `commands` **0.52.0**.
 
 ## The session
 
@@ -67,7 +67,9 @@ Bash held to the same list. A session lasts at most two hours. So:
   mirror writes them; `cd` is refused, and git in another clone is `git -C <clone> …`, to read only;
 - a command the platform refuses is never worked around. A command the stage needs and no list
   holds — the stack's boot in a step-by-step run included — ends the session on a halt (*A halt*)
-  naming the command; the remedy is a `do-project-setup` refresh that records it;
+  naming the command; the remedy is the member's approval on the platform for this run, or a
+  `do-project-setup` refresh that records it for every run. Commands approved for this run are
+  allowed as prefixes beside the recorded lists;
 - the feature review's reviewers return their reports as text; the run writes each to
   `<packet stem>-<id>.md`. A launch the platform refuses is said in a note on the review's row, and
   the review walks the checklist inline, as `SKILL.md` says;
@@ -108,11 +110,12 @@ the row the session was on, no gate, no question, `halted`, `sessionEnded: true`
 **A halt.** A session that ends with no gate and no question because its next stage waits on work
 outside this run sends `halted` on its last report: one plain sentence naming what must happen and
 where, then Continue — `Development waits for planning: run /alpha-sdlc:do-planning <feature> <name>
-to re-approve Stage 3, then Continue`, `Development waits for its commands: run
-/alpha-sdlc:do-project-setup refresh to record make e2e, then Continue` — with `commitRead`, the
-clone's `git rev-parse --short HEAD`, and `sessionEnded: true`. Where the schema declares `halted`
-as an object it is `../do-grooming/run-halt.md`'s, its `remedy` filled only for *I'll take it back
-to grooming* with the rows named. The cases: a refusal; a command no
+to re-approve Stage 3, then Continue`, `Development waits for its commands: approve make e2e on the
+platform, or run /alpha-sdlc:do-project-setup refresh to record it, then Continue` — with
+`commitRead`, the clone's `git rev-parse --short HEAD`, and `sessionEnded: true`. Where the schema
+declares `halted` as an object it is `../do-grooming/run-halt.md`'s, its `remedy` filled only for
+*I'll take it back to grooming* with the rows named, and its `commands` only for a command no list
+holds, when the schema declares `commands`. The cases: a refusal; a command no
 list holds; an answer that waits outside the run — *I'll take it back to grooming*, *I'll fix the
 tooling on this machine*; and auto-run's halts (*Auto-run*). The row's note stays, labelled
 `Stopped`. `halted` is never sent with a gate or a question, with `developmentComplete`, at a

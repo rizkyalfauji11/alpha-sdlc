@@ -323,6 +323,16 @@ covers('an auto-run finished: the review closed stamped auto with developmentCom
     replay(swap(auto, '02-halted.json', asObject)).length === 0, replay(swap(auto, '02-halted.json', asObject)).join('\n'));
   report('checker', 'catches a halt object with no sentence',
     caught(swap(auto, '02-halted.json', (sent) => ({ ...asObject(sent), halted: { waitsOn: [], remedy: [] } })), "halted's sentence"));
+  const SENTENCE = 'Development waits for its commands: approve docker exec on the platform, or run /alpha-sdlc:do-project-setup refresh to record it, then Continue';
+  const waitingOn = (commands) => (sent) => ({ ...sent, pluginVersion: '0.52.0', halted: { sentence: SENTENCE, waitsOn: [], remedy: [], commands } });
+  report('fixtures', 'the auto story conforms with a halt that names the commands it waits on',
+    replay(swap(auto, '02-halted.json', waitingOn(['docker exec']))).length === 0, replay(swap(auto, '02-halted.json', waitingOn(['docker exec']))).join('\n'));
+  report('checker', 'catches a halt that waits on a bare tool',
+    caught(swap(auto, '02-halted.json', waitingOn(['docker'])), "halted's commands"));
+  report('checker', 'catches a halt that waits on a command its sentence does not name',
+    caught(swap(auto, '02-halted.json', waitingOn(['docker exec', 'make e2e'])), 'names each one in its sentence'));
+  report('checker', 'catches a halt that waits on commands and a grooming run at once',
+    caught(swap(auto, '02-halted.json', (sent) => ({ ...waitingOn(['docker exec'])(sent), halted: { ...waitingOn(['docker exec'])(sent).halted, remedy: [{ repository: 'github:acme/recipes-web', document: 'TRD-web.md', units: [] }] } })), 'empty remedy'));
   report('checker', 'catches a halt that does not end the session',
     caught(swap(auto, '02-halted.json', (sent) => { const { sessionEnded: _ended, ...rest } = sent; return rest; }), 'halted comes with sessionEnded'));
   report('checker', 'catches a step-by-step run sending autoDecisions',
