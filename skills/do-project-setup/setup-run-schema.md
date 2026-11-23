@@ -92,8 +92,10 @@ When the consumer's schema has `onlyWhatChanged`, the first report of a session 
 later report in that session sets `onlyWhatChanged: true`, sends `states: []`, and lists in
 `documents` only the rows whose state, notes or description changed since the report before it.
 `questions` and `gate` stay whole, because they are what is open now. A consumer's reconnect line is
-answered the same way when something is open, and `documents` is empty when nothing changed. When
-nothing is open, it is not answered with a report: carry on (*When to report*). The consumer keeps
+answered with one whole report — `onlyWhatChanged: false`, every state, every document row as the
+files stand — open or not, finished or not: a reconnect means the consumer may have lost reports
+while it was down, and a row it never received stays unsettled, so the run can never finish (a
+measured run sat finished in the repository and `running` on the platform). The consumer keeps
 every row the report does not name. Re-sending every row to change one spent most of a measured
 run's output on rows nothing had touched. When the schema lacks the field, every report stays whole.
 
