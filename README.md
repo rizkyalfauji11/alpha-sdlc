@@ -754,6 +754,11 @@ that found them. The grooming review's point 15 re-runs that search, so a page t
 the old endpoint is found at grooming, not when planning reaches its stage
 (`skills/do-grooming/hub.md` → *Reader inventory*).
 
+From 0.51.1 a project setup session answers every reconnect line with one whole report, every
+document row as the files stand. A platform restarted mid-setup could lose a report, and the row
+it carried stayed unsettled on the platform while the repository was finished, so the run could
+never close (`skills/do-project-setup/setup-run-schema.md` → *Only what changed*).
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and
