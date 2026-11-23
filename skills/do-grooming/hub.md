@@ -15,6 +15,7 @@ tickets, if you use Jira) instead.
 - **Identify feature dependencies** — Step 0.4 and §2
 - **Resolve every entity against the domain model** — §2
 - **The API contract must be machine-checkable** — §5
+- **Reader inventory** — built before §5's gate, decided with the contract
 
 ## Evolution and possibilities
 
@@ -114,3 +115,11 @@ carry a different kind from the properties beside it: adding an optional field b
 then **merges the approved fragment into the project's spec** and regenerates — it never
 re-translates the table. Record the spec's location in the hub's *API contracts* section and in
 `docs/basics/15-api-reference.md`.
+
+## Reader inventory
+
+**Each endpoint the delta tightens, opens, removes or reshapes** gets §5's **Reader inventory**
+before §5's gate, read from every spoke repository's code: each call site that reads or writes it
+— the hook or client function and every page using it — with what this feature decides for it: unchanged, moves to another endpoint, or handles the new refusal. The search that
+found them is recorded beside the table, so the grooming review recounts it. A reader left out
+costs a round back to grooming once planning reaches it.
