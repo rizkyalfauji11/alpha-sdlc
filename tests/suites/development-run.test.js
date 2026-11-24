@@ -340,6 +340,12 @@ covers('an auto-run finished: the review closed stamped auto with developmentCom
 }
 
 {
+  const guide = fs.readFileSync(GUIDE, 'utf8').replace(/\s+/g, ' ');
+  report('auto-run', 'a platform session sets a marker found without scope unit to scope unit and until the feature review, keeping its decisions',
+    /a marker it finds without `"scope": "unit"`[^.]*sets to `"scope": "unit"` and `"until"` `the feature review`[^.]*keeping its `decisions`/.test(guide), 'development-run-schema.md → The marker');
+}
+
+{
   const guide = fs.readFileSync(GUIDE, 'utf8');
   const minimum = (/ships in alpha-sdlc \*\*(\d+\.\d+\.\d+)\*\*/.exec(guide) || [])[1];
   const version = JSON.parse(fs.readFileSync(path.join(pluginRoot, '.claude-plugin', 'plugin.json'), 'utf8')).version;
