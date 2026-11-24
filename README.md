@@ -784,6 +784,13 @@ From 0.53.2 a platform development session that finds an auto-run marker without
 platform gets a report at every stage instead of none until the whole chain ends
 (`skills/do-development/development-run-schema.md` → *The marker*).
 
+From 0.54.0 a development halt never hands the member a chore a command does. A halt a command on
+this machine lifts — a command no list holds, a runtime version, a driver, a service that is down, a
+database to migrate or seed — names those commands in `halted.commands`; the member confirms them on
+the platform, and the next session runs them first, then the stage. Only what no command supplies —
+a credential, a design, an account elsewhere, a device — is asked by hand
+(`skills/do-grooming/run-halt.md` → `commands`).
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and

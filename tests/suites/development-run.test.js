@@ -341,6 +341,18 @@ covers('an auto-run finished: the review closed stamped auto with developmentCom
 
 {
   const guide = fs.readFileSync(GUIDE, 'utf8').replace(/\s+/g, ' ');
+  const halt = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-grooming', 'run-halt.md'), 'utf8').replace(/\s+/g, ' ');
+  report('halt', 'a halt a command on this machine lifts names the commands for the member to confirm, and the next session runs them first',
+    /Never hand the member a chore a command does/.test(guide) && /runs them first/.test(guide) &&
+    /never handed a chore a command does/.test(halt) && /runs the approved fix commands first/.test(halt),
+    'development-run-schema.md → A halt · run-halt.md → commands');
+  const fixes = ['make -C ../amara-pos-backend dev-seed', 'go -C ../amara-pos-backend run ./cmd/seeddata']
+    .map((entry) => runScript('check-run-commands.js', ['--entry', entry]));
+  report('halt', 'a fix command reaching another clone through its directory flag passes the command check', fixes.every((run) => run.exitCode === 0), fixes.map((run) => run.stdout).join(''));
+}
+
+{
+  const guide = fs.readFileSync(GUIDE, 'utf8').replace(/\s+/g, ' ');
   report('auto-run', 'a platform session sets a marker found without scope unit to scope unit and until the feature review, keeping its decisions',
     /a marker it finds without `"scope": "unit"`[^.]*sets to `"scope": "unit"` and `"until"` `the feature review`[^.]*keeping its `decisions`/.test(guide), 'development-run-schema.md → The marker');
 }

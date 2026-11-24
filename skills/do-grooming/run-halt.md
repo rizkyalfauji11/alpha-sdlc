@@ -37,12 +37,17 @@ share-sheet/widget-spec,share-sheet/hdr to re-gate TRD-web.md, then Continue`. A
 only when its units are known — the rows the refusal or the answer names; otherwise it is empty and
 the sentence names the documents. A development run sends the same object (its guide's *A halt*).
 
-**`commands`** is a fourth key, sent only by a development run, only for its case *a command no list
-holds*, and only when the consumer's `RunHalt` declares it: the commands the next stage needs and
-the platform does not allow, each written as the mirror would write it, naming its subcommand or
-target (`scripts/check-run-commands.js --entry` passes it). The remedy is then empty, and the
-sentence names each command: `Development waits for its commands: approve docker exec on the
-platform, or run /alpha-sdlc:do-project-setup refresh to record it, then Continue`. The member
+**`commands`** is a fourth key, sent only by a development run, only when the consumer's `RunHalt`
+declares it, for every halt a command on this machine lifts: the commands the next stage needs and
+the platform does not allow, and the commands that supply what the machine lacks — a runtime
+version, a driver, a service that is down, a database to migrate or seed — each written as the
+session would run it, naming its subcommand or target (`scripts/check-run-commands.js --entry`
+passes it). The member is never handed a chore a command does. The remedy is then empty, and the
+sentence names each command and what it does: `Development waits for its commands: approve docker
+exec on the platform, or run /alpha-sdlc:do-project-setup refresh to record it, then Continue`,
+`Development waits for this machine: approve make -C ../<repo> dev-seed to seed the test
+accounts, then Continue`. The next session runs the approved fix commands first, before the halted
+stage. The member
 approves them on the platform for this run, and Continue starts the next session with them allowed;
 a command still refused halts again with the same object. Without `commands` in the schema the
 object goes without it and the sentence alone names them.
