@@ -103,7 +103,9 @@ invent scope to fill them. No template placeholder (`<…>`) survives into a TRD
 Structured, feeds `do-planning`/`do-slicing`: repos/modules touched, **regression-safety plan** (the
 reproduce-first / characterization tests to add for the class, so a fix that misses a site fails a
 test), fix ordering, blast-radius coordination (features that must not break), dependencies/risks,
-and work slices **claiming their AC by ID from §4** — never restating the criterion's prose.
+and work slices **claiming their AC by ID from §4** — never restating the criterion's prose — and
+the **debt in its footprint**, decided at this gate in the template's *Debt in the footprint* table: a *pay here* that changes behavior adds its AC and slice
+now, so planning never sends the TRD back for it.
 
 ### Self-reviews, spokes, the grooming review, then the hand-off
 

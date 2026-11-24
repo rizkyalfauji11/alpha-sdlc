@@ -100,7 +100,9 @@ template placeholder (`<…>`) survives into a TRD; the hook blocks `<YYYY-MM-DD
 
 Structured, feeds `do-slicing`: modules touched, **regression-safety plan** (characterization tests
 to add first), measurable success + how it's checked, rollback, dependencies/risks, and work slices
-**claiming their AC by ID from §6** — never restating the criterion's prose.
+**claiming their AC by ID from §6** — never restating the criterion's prose — and the **debt in its
+footprint**, decided at this gate in the template's *Debt in the footprint* table: a *pay here* that changes behavior adds its AC and slice now, so planning
+never sends the TRD back for it.
 
 ### Self-reviews, spokes, the grooming review, then the phase end
 

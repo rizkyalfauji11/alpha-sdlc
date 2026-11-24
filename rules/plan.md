@@ -352,8 +352,8 @@ missing acceptance criterion: a defect, not a detail.
   first, its row deleted in the same diff. The ★ keeps it only when paying changes behavior or a
   contract (→ `do-grooming`) or edits a file beyond the footprint: the register then says
   `accepted — <why + revisit trigger>`, or `accepted — auto ★ <date>` in auto-run, ratified after.
-  Planning asks each row; a review pays what it finds — never *beyond hub scope* — and asks only
-  that exception.
+  Grooming asks each row at its last gate; planning only new ones. A review pays what it
+  finds — never *beyond hub scope* — and asks only that exception.
   `scripts/debt-balance.js` measures it at planning and in every review; the done gate
   refuses a feature planned with a *Debt in the footprint* table that leaves a footprint row `open`.
 - **Integrated real-data gate — never call a feature "done" on mock/assumed data alone.** The
