@@ -17,6 +17,7 @@ const LISTS = [
   { key: 'autoRunCommands', required: false },
 ];
 const SHELL_OPERATORS = /[;&|<>`$(){}\n\r\\]/;
+const A_REPOSITORY_SCRIPT = /^\.\/(?!.*(?:^|\/)\.\.(?:\/|$))(?!.*node_modules)[A-Za-z0-9._\/-]+$/;
 const EVAL_FLAGS = new Set(['-c', '-e', '--eval', '-p', '--print', '-r', '--command']);
 const RUNNER_VERBS = {
   npm: ['run', 'run-script', 'exec', 'x'],
@@ -45,6 +46,7 @@ function refusalOf(command) {
   if (SHELL_OPERATORS.test(command)) return 'holds a shell operator; a command is one program and its arguments';
   const words = command.split(/\s+/);
   const [tool, ...rest] = words;
+  if (!rest.length && A_REPOSITORY_SCRIPT.test(tool)) return null;
   if (!rest.length) return `a bare interpreter or build tool; name its subcommand or target, e.g. "${tool} test"`;
   if (rest.every((word) => word.startsWith('-'))) return 'names only flags; name its subcommand or target';
   if (EVAL_FLAGS.has(rest[0])) return `runs whatever follows ${rest[0]}; name a script or a target instead`;

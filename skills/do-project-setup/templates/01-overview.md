@@ -40,7 +40,9 @@ applicability question (again after a compaction), and when drafting or refreshi
   `autoRunCommandsDecidedAt`. **Each entry names its subcommand or target** (`make test`, `go
   test`, `npm run build`), **never a bare interpreter or build tool** (`node`, `make`, `npm run`),
   a flag that runs whatever follows (`bash -c`, `node -e`) or a shell operator: the platform allows
-  each entry as a prefix, so a bare tool would allow everything. Check each candidate with `node
+  each entry as a prefix, so a bare tool would allow everything. The repository's own script may
+  stand alone (`./run-fe.sh`): a `./` path inside the repository, never climbing out with `..` nor
+  through `node_modules`, runs only what the repository wrote. Check each candidate with `node
   ../../scripts/check-run-commands.js --entry "<command>"` before offering it, and the written
   mirror with `node ../../scripts/check-run-commands.js <repo>`; a refused entry is never written —
   offer its named form instead. A repository with no `developmentCommands` cannot develop on the

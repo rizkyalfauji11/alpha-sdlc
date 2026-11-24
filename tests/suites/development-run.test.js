@@ -377,6 +377,10 @@ covers('an auto-run finished: the review closed stamped auto with developmentCom
     ok.exitCode === 0 && /ok: developmentCommands — 3 command\(s\) · decided 2026-10-28/.test(ok.stdout) && /ok: autoRunCommands — 2 command\(s\)/.test(ok.stdout), ok.stdout + ok.stderr);
   const bare = runScript('check-run-commands.js', [mirror({ developmentCommands: ['make test', 'node'], developmentCommandsDecidedAt: '2026-10-28' })]);
   report('setup', 'a bare interpreter entry is refused', bare.exitCode === 1 && /refused: developmentCommands\[1\] "node" — a bare interpreter or build tool/.test(bare.stdout), bare.stdout);
+  const script = runScript('check-run-commands.js', ['--entry', './run-fe.sh']);
+  report('setup', "a repository's own script, named alone, is a command", script.exitCode === 0 && /ok: "\.\/run-fe\.sh"/.test(script.stdout), script.stdout);
+  const outside = ['../run.sh', './node_modules/.bin/tsx', './a/../b.sh'].map((entry) => runScript('check-run-commands.js', ['--entry', entry]));
+  report('setup', 'a script outside the repository, through node_modules or climbing a folder, named alone, is refused', outside.every((run) => run.exitCode === 1), outside.map((run) => run.stdout).join(''));
   const evaluated = runScript('check-run-commands.js', ['--entry', 'bash -c']);
   const runner = runScript('check-run-commands.js', ['--entry', 'npm run']);
   const chained = runScript('check-run-commands.js', ['--entry', 'make test && rm -rf build']);
