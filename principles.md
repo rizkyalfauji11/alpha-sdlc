@@ -215,7 +215,9 @@ missing acceptance criterion: a defect, not a detail.
   tooling** (installing drivers, booting emulators/simulators, standing up the stack, seeding);
   **git pushes and external writes (Jira, deploys) still ask**. **Grooming (all variants: product,
   tech-debt, issue, foundation), planning, and project setup are NEVER auto** — those are decision
-  phases; a request to run them in auto mode is **declined in one line** ("this phase decides —
+  phases (the one exception: the hub amendment an auto-run chain grooms in place, below — a
+  hand-back from development, never a grooming run); a request to run them in auto mode is
+  **declined in one line** ("this phase decides —
   gates apply; auto-run starts at `do-development`") and every gate blocks as normal. **Questions
   answer themselves with the ★ recommendation — the chain keeps moving.** Any would-be stop that
   carries options (an Open Decision / design gap · plan drift → the recommended plan amendment · a
@@ -227,19 +229,35 @@ missing acceptance criterion: a defect, not a detail.
   ★<option> · <date>` in the Open Decisions row / the artifact), appended as it happens to the
   marker's `decisions` array (below), **and collected in a "Decisions taken for you" section at the
   top of the chain report**, built from that array — ratify-after replaces approve-before, and
-  reversing one is a named follow-up, never archaeology. **Only five things still halt the
+  reversing one is a named follow-up, never archaeology. **Only four things still halt the
   chain, because nothing can be decided:** **a mandatory check whose tooling fails** (render/boot
   — verification is never faked), **an input that physically doesn't exist** (a design/crop/test
-  account/seed access never provided), **external writes (git push, Jira, deploys)**, **a fix that
-  has failed re-verification three times** (the design is wrong, not the patch — `do-fixing` stops
-  and asks), and **a change the hub would need** — a new or changed endpoint or contract field, or
-  code in another platform's repository — auto-run never edits the hub, because a hub edit
-  re-stales every spoke and belongs to grooming's gather-then-fix-once rule. **Interpretive rule
+  account/seed access never provided), **external writes (git push, Jira, deploys)**, and **a fix
+  that has failed re-verification three times** (the design is wrong, not the patch — `do-fixing`
+  stops and asks). **A change the hub would need is groomed in the chain, not halted on** (the
+  owner's choice, 2026-11-24): a new or changed endpoint or contract field, or code in another
+  platform's repository, goes back to grooming automatically, inside the same run. The chain
+  gathers the whole class first (`do-development/gaps.md`), writes it as **one** hub Open Decision,
+  takes its ★ and records it `decided: auto ★<option> · <date>`, edits the hub sections and the
+  contract delta the ★ moves, and appends `· amended <date>` to the `Hub review` row. This
+  platform's spoke then re-walks the points the moved sections feed (`grooming-review.md` → *The
+  hub moving*), restamps its `Hub alignment` `reviewed <date> · hub rev <commit> · amended <date>`
+  (the `auto` lives on the Open Decisions row, never in a stamp), and its plan takes the
+  ★ amendment; the chain continues on the amended design. Every other spoke is left behind the hub
+  on purpose: `next-step.js` stops its planning or development until its author re-walks what
+  moved, and the chain report lists each one with the change it owes. Code in another platform's
+  repository is never written by this chain; that platform builds it from its own spoke and plan.
+  The hub amendment is one of the *Decisions taken for you*, ratified or reversed at the chain
+  report like the rest; a reversal re-gates the moved hub sections in `do-grooming`. Want the old
+  behavior? Say "auto-run, stop on hub changes" — then a hub change halts the chain and asks.
+  Outside auto-run nothing changes: a hub change stops the stage and hands back to `do-grooming`,
+  with the held Open Decision and its ★ named so the platform can open grooming on it.
+  **Interpretive rule
   for the chain skills:** during auto-run, every "ask the user first" / "stop and ask" / "⏸ STOP —
   wait for approval" instruction inside `do-development`/`do-testing`/`do-fixing` resolves to *take
   the ★ recommendation, record it, continue* — **including "stop the stage / hand back to grooming
   / surface and wait" instructions**: the gap decides ★ in place and the chain keeps moving (the
-  five halting cases excepted) — the skills' absolute wording governs gated mode and needs no
+  four halting cases excepted; a hub change is groomed in the chain as above) — the skills' absolute wording governs gated mode and needs no
   per-line rewriting. An auto-decided Open Decision is folded into section prose at ratification
   (or it re-gates if you reverse it). Prefer the old behavior? Say "auto-run, ask on decisions" —
   then questions stop the chain as before. At the end: one consolidated chain report + the
@@ -260,7 +278,7 @@ missing acceptance criterion: a defect, not a detail.
   and neither is waiting for a reviewer:** emit the report and keep going in the same turn, and run
   the reviewer in the foreground so its answer arrives inside the turn. A judgment finding — in a
   phase review too — auto-decides ★ and is recorded; it never waits for the user. The chain stops only
-  through the file: **before** presenting one of the five halting cases, set `"status": "halted"`
+  through the file: **before** presenting one of the four halting cases, set `"status": "halted"`
   and a `"reason"`; when `until` is reached, set `"status": "done"` — which the hook refuses while
   `scripts/check-feature-done.js` finds Boot & Smoke not passed, an AC not covered and passing, a
   bug not closed, or debt left `open` in the footprint, because a verification gate is never
@@ -366,7 +384,7 @@ missing acceptance criterion: a defect, not a detail.
   instruction in any skill as a hard STOP, not a passing note. **The one carve-out is Auto-run
   mode** (above): there, questions that carry options are never asked in the first place — they
   auto-decide the ★ recommendation and are recorded for ratification — so this rule governs
-  questions actually ASKED (including auto-run's five halting cases), and those still block
+  questions actually ASKED (including auto-run's four halting cases), and those still block
   absolutely.
 - **Keep the project profile current (`docs/basics/`).** When your work changes something a profile
   doc records, **update that doc in the same change and re-stamp its commit** (rewrite its one

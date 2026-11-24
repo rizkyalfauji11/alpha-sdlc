@@ -45,7 +45,7 @@ runs it first).
 - **4** — ⏸ STOP: present the bug report and let the user triage; fix nothing here. The session
   boundary comes only after the triage is recorded — never between tests.
 - **Done** — only when `check-feature-done.js` exits 0; then the profile reconcile.
-- **Auto-run** — each ⏸ is a report stamped `auto <date>`; only the five halting cases stop.
+- **Auto-run** — each ⏸ is a report stamped `auto <date>`; only the four halting cases stop.
 
 ## Flow
 

@@ -214,8 +214,10 @@ blockStop(
   'A stage report or a checkpoint is not a stop, and neither is waiting for a reviewer — continue now ' +
   'with the next step of the chain: the next stage, then testing, fixing, re-test' +
   (marker.until ? ', up to ' + marker.until : '') + '. ' +
-  'Stop only for one of the five halting cases (failed verification tooling, an input that does not exist, ' +
-  'an external write, a fix that failed three times, a change the hub would need) — and before stopping, ' +
+  'Stop only for one of the four halting cases (failed verification tooling, an input that does not exist, ' +
+  'an external write, a fix that failed three times) — a change the hub would need is no halt: groom it in ' +
+  'the chain as one hub Open Decision decided auto ★, amend the hub, re-walk this spoke, and continue. ' +
+  'Before stopping, ' +
   'set "status": "halted" and a "reason" in .alpha-sdlc/auto-run.json. When the chain ends, set ' +
   '"status": "done".' +
   (marker.scope === 'unit'

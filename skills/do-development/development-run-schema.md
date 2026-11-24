@@ -288,7 +288,9 @@ order, each `{ "askedIn", "question", "taken", "recordedIn" }`. A step-by-step r
 
 **Auto-run halts** only where nothing can be decided (`principles.md` → *Auto-run mode*): a
 mandatory check whose tooling fails — a command no list holds among them, named in the sentence —
-an input that does not exist, a fix that fails three times, and a change the hub would need. Before
+an input that does not exist, and a fix that fails three times. A change the hub would need is
+groomed in the run (`SKILL.md` → *Hub change in auto-run*): its hub Open Decision, the hub
+amendment, the spoke's re-walk and the plan amendment are four entries in `decisions`. Before
 that report, set the marker's `status` to `halted` with its `reason`; the report is *A halt*'s.
 Continue in auto-run starts the halted stage again.
 
