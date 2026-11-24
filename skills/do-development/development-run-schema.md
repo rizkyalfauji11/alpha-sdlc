@@ -269,7 +269,11 @@ profile's Org settings say `Auto-run permitted: no`. Without `auto-run` every ch
 **The marker.** The first auto-run session writes `.alpha-sdlc/auto-run.json` in the clone, as
 `principles.md` → *The opt-in is written down* says, with `"scope": "unit"`, `"platform"` `<name>`
 and `"until"` `the feature review`; it is never committed, so the run's decisions outlive each
-session. Every later session reads it and sets `"status": "running"`. Each decision taken for the
+session. Every later session reads it and sets `"status": "running"`, and a marker it finds
+without `"scope": "unit"` or with another `until` — written by a terminal run, or by an older
+plugin — it sets to `"scope": "unit"` and `"until"` `the feature review` in the same write, keeping
+its `decisions`: a platform session that ran the whole chain in one turn would send no report until
+the chain ended, and the platform would show no stage at all. Each decision taken for the
 member is appended to its `decisions` array as it happens, as `{ "askedIn", "question", "taken",
 "recordedIn", "at" }`: the row's name, the question, the ★ option in the plugin's words, where it
 was recorded (`plan-backend.md · Stage 3 · Carry-forward`, `TRD-backend.md · Open Decisions ·

@@ -779,6 +779,11 @@ From 0.53.1 the repository's own script may stand alone in `developmentCommands`
 `node_modules` runs only what the repository wrote, so `check-run-commands.js` no longer refuses it
 as a bare program.
 
+From 0.53.2 a platform development session that finds an auto-run marker without `"scope":
+"unit"` — one a terminal run or an older plugin wrote — sets it to one session per stage, so the
+platform gets a report at every stage instead of none until the whole chain ends
+(`skills/do-development/development-run-schema.md` → *The marker*).
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and
