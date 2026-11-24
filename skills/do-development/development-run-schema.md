@@ -114,10 +114,21 @@ to re-approve Stage 3, then Continue`, `Development waits for its commands: appr
 platform, or run /alpha-sdlc:do-project-setup refresh to record it, then Continue` — with
 `commitRead`, the clone's `git rev-parse --short HEAD`, and `sessionEnded: true`. Where the schema
 declares `halted` as an object it is `../do-grooming/run-halt.md`'s, its `remedy` filled only for
-*I'll take it back to grooming* with the rows named, and its `commands` only for a command no list
-holds, when the schema declares `commands`. The cases: a refusal; a command no
-list holds; an answer that waits outside the run — *I'll take it back to grooming*, *I'll fix the
-tooling on this machine*; and auto-run's halts (*Auto-run*). The row's note stays, labelled
+*I'll take it back to grooming* with the rows named, and its `commands` — when the schema declares
+`commands` — for every halt a command on this machine lifts: a command no list holds, and anything
+the machine lacks that a command supplies — a runtime version, a driver, a service that is down, a
+database to migrate or seed. **Never hand the member a chore a command does:** name the commands
+that would do it, exactly as this session would run them from this clone, each passing
+`scripts/check-run-commands.js --entry` (no shell operator; another clone through the tool's own
+directory flag, `make -C ../<repo> <target>`, `go -C ../<repo> run ./cmd/<name>`), and the sentence
+says what they do: `Development waits for this machine: approve make -C ../<repo>
+dev-seed to seed the test accounts, then Continue`. The member confirms them on the platform; the
+next session starts with them allowed and **runs them first**, before the halted stage, and checks
+the cause is gone. Only what no command can supply — a credential, a design, an account on
+another system, a physical device — is asked of the member in plain words, with `commands`
+empty. The cases: a refusal; a command no list holds; a machine a command fixes; an answer that
+waits outside the run — *I'll take it back to grooming*, *I'll fix the tooling on this machine*;
+and auto-run's halts (*Auto-run*). The row's note stays, labelled
 `Stopped`. `halted` is never sent with a gate or a question, with `developmentComplete`, at a
 boundary, or for Stop here and Pause the run. The halted stage's row reads `pending`. Unlike grooming and planning, a development halt is
 not sent again unread: much of what it waits on — tooling, a device, a seed — is on the machine,

@@ -112,6 +112,20 @@
       "verdict": "changed",
       "reason": "AUTO-HUB-1 (the owner's choice, 2026-11-24): in auto-run a change the hub would need is groomed in the chain — one hub Open Decision decided auto ★, the hub amended, this spoke re-walked and its plan amended — instead of halting; 'auto-run, stop on hub changes' keeps the old halt, and gated mode still stops and hands back with the held decision as the halt's remedy",
       "where": "skills/do-development/gaps.md → last paragraph; skills/do-development/SKILL.md → ### Hub change in auto-run"
+    },
+    {
+      "clause": "Where the schema declares `halted` as an object it is `../do-grooming/run-halt.md`'s, its `remedy` filled only for *I'll take it back to grooming* with the rows named, and its `commands` only for a command no list holds, when the schema declares `commands`.",
+      "file": "skills/do-development/development-run-schema.md",
+      "verdict": "changed",
+      "reason": "HALT-FIX-1 (the owner's choice, 2026-11-24): a halt a command on this machine lifts — a command no list holds, and a runtime, driver, service, migration or seed the machine lacks — names the fix commands in halted.commands for the member to confirm on the platform; the next session runs them first. Only what no command supplies is asked of the member by hand",
+      "where": "skills/do-development/development-run-schema.md → A halt"
+    },
+    {
+      "clause": "**`commands`** is a fourth key, sent only by a development run, only for its case *a command no list holds*, and only when the consumer's `RunHalt` declares it: the commands the next stage needs and the platform does not allow, each written as the mirror would write it, naming its subcommand or target (`scripts/check-run-commands.js --entry` passes it).",
+      "file": "skills/do-grooming/run-halt.md",
+      "verdict": "changed",
+      "reason": "HALT-FIX-1 (the owner's choice, 2026-11-24): a halt a command on this machine lifts — a command no list holds, and a runtime, driver, service, migration or seed the machine lacks — names the fix commands in halted.commands for the member to confirm on the platform; the next session runs them first. Only what no command supplies is asked of the member by hand",
+      "where": "skills/do-grooming/run-halt.md → commands"
     }
   ]
 }
