@@ -6,7 +6,7 @@
       "file": "skills/do-development/SKILL.md",
       "verdict": "merged",
       "reason": "DEV-12: the eight auto-run restatements collapse into one Auto-run section; the guard 'Never run past a checkpoint unattended — unless the user explicitly opted into auto-run mode' stays in the role paragraph, and the stamp is named as the stage's Checkpoint verdict `auto <date>` (*Auto-run mode*'s `Approved: auto <date>`)",
-      "where": "skills/do-development/SKILL.md → role paragraph + ## Auto-run (first sentence: report, stamp, commit, onward into do-testing, ★ answers, the five halting cases)"
+      "where": "skills/do-development/SKILL.md → role paragraph + ## Auto-run (first sentence: report, stamp, commit, onward into do-testing, ★ answers, the four halting cases)"
     },
     {
       "clause": "the `SessionStart` hook injects only the INDEX of these rules, never their text",
@@ -98,6 +98,20 @@
       "verdict": "moved",
       "reason": "DEV-12/build-build-14: the .gitignore requirement and the never-commit rule moved from SKILL.md into client-ui-rules.md R1, so client-ui.md §2 now points there",
       "where": "skills/do-development/client-ui-rules.md → R1 ('Save every iteration … ensure docs/development/<feature-name>/design/compared-ui/ is in the project's .gitignore … never commit them'); skills/do-development/client-ui.md → §2"
+    },
+    {
+      "clause": "no mid-chain hand-back to grooming — unless answering it would change the hub: auto-run never edits the hub, so that gap halts the chain and asks.",
+      "file": "skills/do-development/SKILL.md",
+      "verdict": "changed",
+      "reason": "AUTO-HUB-1 (the owner's choice, 2026-11-24): in auto-run a change the hub would need is groomed in the chain — one hub Open Decision decided auto ★, the hub amended, this spoke re-walked and its plan amended — instead of halting; 'auto-run, stop on hub changes' keeps the old halt, and gated mode still stops and hands back with the held decision as the halt's remedy",
+      "where": "skills/do-development/SKILL.md → ## Auto-run + ### Hub change in auto-run; principles.md → *Auto-run mode*"
+    },
+    {
+      "clause": "**Auto-run** decides the class's ★ once, recorded on that one Open Decision, and builds every hit per it — unless answering would change the hub, which halts the chain as `SKILL.md` → *Auto-run* says, with the whole class in the halt.",
+      "file": "skills/do-development/gaps.md",
+      "verdict": "changed",
+      "reason": "AUTO-HUB-1 (the owner's choice, 2026-11-24): in auto-run a change the hub would need is groomed in the chain — one hub Open Decision decided auto ★, the hub amended, this spoke re-walked and its plan amended — instead of halting; 'auto-run, stop on hub changes' keeps the old halt, and gated mode still stops and hands back with the held decision as the halt's remedy",
+      "where": "skills/do-development/gaps.md → last paragraph; skills/do-development/SKILL.md → ### Hub change in auto-run"
     }
   ]
 }

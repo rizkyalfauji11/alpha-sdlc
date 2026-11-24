@@ -303,7 +303,7 @@ missing acceptance criterion: a defect, not a detail.
   instruction in any skill as a hard STOP, not a passing note. **The one carve-out is Auto-run
   mode** (above): there, questions that carry options are never asked in the first place — they
   auto-decide the ★ recommendation and are recorded for ratification — so this rule governs
-  questions actually ASKED (including auto-run's five halting cases), and those still block
+  questions actually ASKED (including auto-run's four halting cases), and those still block
   absolutely.
 - **Keep the project profile current (`docs/basics/`).** When your work changes something a profile
   doc records, **update that doc in the same change and re-stamp its commit** (rewrite its one

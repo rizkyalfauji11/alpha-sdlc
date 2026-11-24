@@ -46,7 +46,7 @@ Why it matters → Options ★ → Context → Details (for engineers) → Next 
 - Feature review, after the last stage: never skipped (no subagent → the checklist inline, said so);
   its verdict ⏸ STOP — needs-eyes and judgment findings are the user's; `do-testing` only after it.
 - Auto-run (marker `running`): each ⏸ is a report, verdict `auto <date>`, commit, next stage; every
-  other stop takes ★, recorded — except the five halting cases.
+  other stop takes ★, recorded — except the four halting cases.
 
 ## Flow
 
@@ -201,8 +201,9 @@ Only on the user's explicit opt-in (`principles.md` → *Auto-run mode*): each c
 full packet as a **report**, stamps `Checkpoint verdict: auto <date>`, commits, and continues —
 through every stage and the feature review, and **onward into `do-testing`** when it closes — while questions
 auto-answer with the ★ recommendation (recorded) and the chain halts only where nothing can be
-decided: failed mandatory tooling, physically missing inputs, external writes, a fix that has
-failed three times, and a change the hub would need. **On opt-in, write
+decided: failed mandatory tooling, physically missing inputs, external writes, and a fix that has
+failed three times. A change the hub would need is groomed in the chain (*Hub change in auto-run*
+below), not halted on. **On opt-in, write
 `.alpha-sdlc/auto-run.json`** (`principles.md` → *The opt-in is written down*): a `Stop` hook then
 keeps the turn going through every checkpoint, and the chain stops only by setting that file's
 `status` to `halted` (with the reason) or `done`. Append each decision taken for you to its
@@ -210,12 +211,29 @@ keeps the turn going through every checkpoint, and the chain stops only by setti
 Presenting a report is not the end of the turn: the next tool call follows it. Plan drift: adopt the
 ★-recommended plan amendment, record it in the plan + report, continue. A design gap auto-decides
 its ★ recommendation on the spot — record `decided: auto ★<option>` in the spoke's Open Decisions
-and keep building per it; no mid-chain hand-back to grooming — unless answering it would change the
-hub: auto-run never edits the hub, so that gap halts the chain and asks. A judgment/scope finding
+and keep building per it; no mid-chain hand-back to grooming. A judgment/scope finding
 auto-decides its ★ resolution — recorded — and the stage continues. The default scope is the whole
 chain in one session, with no session boundary; with `"scope": "unit"`, once a stage closes set
 `status` to `handoff`, write the next-file and end the turn; the next session resumes the chain with
 'lanjut' and sets `running` again.
+
+### Hub change in auto-run
+
+A gap whose answer changes the hub — a new or changed endpoint or contract field, or code in
+another platform's repository — goes back to grooming inside the run (`principles.md` → *Auto-run
+mode*), unless the opt-in said "stop on hub changes":
+1. Sweep the class (`gaps.md`) and write it as **one** hub Open Decision with 2–3 options and a ★.
+2. Take the ★: the row becomes `decided: auto ★<option> · <date>`; edit the hub sections and the
+   contract delta it moves (`do-grooming`'s rules for those sections, its hooks included); append
+   `· amended <date>` to the `Hub review` row; commit the hub on its own.
+3. Re-walk this spoke's self-review points the moved sections feed (`grooming-review.md` → *The hub
+   moving*), fix what they find, and restamp its `Hub alignment` row and the hub's *Spokes* cell
+   for it `reviewed <date> · hub rev <commit> · amended <date>` (`auto` stays on the Open
+   Decisions row, never in a stamp).
+4. Amend the plan with the ★ (the stages the change touches), record all three in the marker's
+   `decisions`, and continue the stage.
+Every other spoke stays behind the hub until its author re-walks; the chain report lists each, with
+the hub change it owes. Never write code in another platform's repository.
 
 ## Rules
 

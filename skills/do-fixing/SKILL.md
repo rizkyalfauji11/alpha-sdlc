@@ -38,7 +38,7 @@ Why it matters → Options ★ → Context → Details (for engineers) → Next 
 - **After the last bug** — the fix review, once, over every fix of the batch: its verdict ⏸ STOP,
   its needs-eyes and judgment findings the user's; only then hand back to `do-testing` for the
   re-test.
-- **Auto-run** — each ⏸ is a report stamped `auto`; only the five halting cases stop it.
+- **Auto-run** — each ⏸ is a report stamped `auto`; only the four halting cases stop it.
 
 ## Flow — per bug
 
@@ -169,8 +169,9 @@ The *Bugs found* table in `test-plan-<platform>.md` is the state — each bug's 
   continuing — then **hand back to `do-testing` automatically** after the last bug and its fix
   review, looping the
   chain until re-test is green — questions along the way auto-decide their ★ recommendation
-  (recorded); only failed mandatory tooling, physically missing inputs, an external write, a fix
-  that has failed three times, or a change the hub would need halt it. The chain ends with one
+  (recorded); only failed mandatory tooling, physically missing inputs, an external write, or a
+  fix that has failed three times halt it. A change the hub would need is groomed in the chain
+  (`do-development` → *Hub change in auto-run*). The chain ends with one
   consolidated report + the profile-reconcile recommendation.
 - **Reproduce first (regression test).** Before fixing, write/confirm a **failing test that
   reproduces the bug** (red) — derived from the AC it violates. Then fix until green. That test
@@ -189,7 +190,7 @@ The *Bugs found* table in `test-plan-<platform>.md` is the state — each bug's 
   or contract field, or code in another platform's repository, is a design gap by definition** —
   the hub and that platform's spoke are where it gets decided, and a route built from inside a fix
   has no spoke, no plan and no stage review behind it. Stop and route it to grooming; in auto-run it
-  is the *change the hub would need* halting case. **A bug from `do-testing` is fixed HERE, by
+  is groomed in the chain as `do-development` → *Hub change in auto-run* says, then fixed. **A bug from `do-testing` is fixed HERE, by
   default — escalation to `do-issue-grooming` is the evidenced exception, and it never blocks the
   fix.** The routing test, in order:
   1. **Same-feature siblings** → fixed here at the shared source (the root-cause rule — always was).

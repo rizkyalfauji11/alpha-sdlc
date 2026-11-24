@@ -36,5 +36,6 @@ stages build from that answer instead of each stopping on its own instance. The 
 the search, so the checkpoint sees it covered the plan, not one stage.
 
 **Auto-run** decides the class's ★ once, recorded on that one Open Decision, and builds every hit
-per it — unless answering would change the hub, which halts the chain as `SKILL.md` → *Auto-run*
-says, with the whole class in the halt.
+per it. When answering would change the hub, the whole class is the one hub Open Decision the
+chain grooms in place (`SKILL.md` → *Hub change in auto-run*). Outside auto-run the stage stops on
+it, and the halt names that Open Decision and its ★, so grooming opens on it.

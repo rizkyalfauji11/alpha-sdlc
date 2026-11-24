@@ -217,12 +217,15 @@ a `/clear` is pushed on. Want a fresh session per stage instead of one long one?
 closed stage or bug then hands off, and *lanjut* in the new session picks the chain up again — see
 [Working in fresh sessions](#working-in-fresh-sessions).
 
-Only five things halt the chain, because nothing can be decided: **verification tooling that fails**
+Only four things halt the chain, because nothing can be decided: **verification tooling that fails**
 (a browser/emulator that won't boot is reported with its fix, never skipped), **an input that
 doesn't exist** (a design, test account, or seed access never provided), **external writes** (git
-push, Jira — those always ask), **a fix that has failed three times** (the design is wrong, not the
-patch — it stops and asks), and **a change the hub would need** (a hub edit re-stales every
-platform's spoke, so it goes back to grooming instead). Every verifier runs at full strength either
+push, Jira — those always ask), and **a fix that has failed three times** (the design is wrong, not
+the patch — it stops and asks). **A change the hub would need goes back to grooming automatically**:
+the chain decides the hub change's ★, amends the hub, re-walks its own spoke and plan, and keeps
+going; every other platform's spoke waits for its author's re-walk, listed in the chain report. Say
+"auto-run, stop on hub changes" for the old halt. Outside auto-run a hub change still stops the
+stage, naming the held decision and its ★ so the platform can open grooming on it. Every verifier runs at full strength either
 way — what you trade is review-per-diff, not checks.
 
 Auto-run never applies to project setup, grooming, or planning — those phases *decide*, so their
@@ -763,6 +766,13 @@ From 0.52.0 a development run that halts on a command no list holds names it in 
 `commands`, when the platform's schema declares that key. The member approves those commands on the
 platform for that run, and Continue starts the next session with them allowed, instead of leaving
 the run for a project setup refresh (`skills/do-grooming/run-halt.md`).
+
+From 0.53.0 auto-run no longer halts on a change the hub would need: the chain grooms it in place —
+one hub Open Decision decided auto ★, the hub amended, its own spoke re-walked and its plan amended
+— and keeps going, while every other spoke waits for its author's re-walk, listed in the chain
+report. "auto-run, stop on hub changes" keeps the old halt. Outside auto-run a hub change still stops
+the stage, and the halt names the held decision as its grooming remedy (`principles.md` → *Auto-run
+mode*, `skills/do-development/SKILL.md` → *Hub change in auto-run*).
 
 ## Roadmap
 
