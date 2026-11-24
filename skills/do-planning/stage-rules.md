@@ -126,7 +126,8 @@ draft (Step 4) follow these rules; `plan-template.md` is the block each stage fi
   question, ★ *pay it in this feature* — unless paying changes behaviour or a contract (→
   `do-grooming`) or edits a file beyond the footprint, where ★ keeps it. A kept row's status is
   written in the register at this gate — `accepted — <why + revisit trigger>` — or the stage's
-  self-review measures it again. A row grooming already decided is not asked again: its answer is recorded. A
+  self-review measures it again. A row grooming already decided — the TRD's *Debt in the footprint*
+  table, or a register status set at its gate — is not asked again: its answer is recorded. A
   `decided` row whose revisit trigger this plan meets is asked again. A row found only because a
   directory the layout names holds its file, which no stage will edit, is recorded *not edited*.
 - **No register** (a `lite` profile) → offer the single-doc setup of `20-tech-debt-register`;

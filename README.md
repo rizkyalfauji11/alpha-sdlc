@@ -791,6 +791,11 @@ the platform, and the next session runs them first, then the stage. Only what no
 a credential, a design, an account elsewhere, a device — is asked by hand
 (`skills/do-grooming/run-halt.md` → `commands`).
 
+From 0.55.0 the debt in a change's footprint is decided in grooming, at the last section's gate, in a
+*Debt in the footprint* table: a *pay here* that changes behavior gets its acceptance criterion and
+slice then, so planning records the answers instead of sending the feature back to grooming; it asks
+only a row grooming never saw. The auto-run hub-change steps moved to `skills/do-development/gaps.md`.
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and

@@ -202,8 +202,8 @@ full packet as a **report**, stamps `Checkpoint verdict: auto <date>`, commits, 
 through every stage and the feature review, and **onward into `do-testing`** when it closes — while questions
 auto-answer with the ★ recommendation (recorded) and the chain halts only where nothing can be
 decided: failed mandatory tooling, physically missing inputs, external writes, and a fix that has
-failed three times. A change the hub would need is groomed in the chain (*Hub change in auto-run*
-below), not halted on. **On opt-in, write
+failed three times. A change the hub would need is groomed in the chain (*Hub change in auto-run*,
+in `gaps.md`), not halted on. **On opt-in, write
 `.alpha-sdlc/auto-run.json`** (`principles.md` → *The opt-in is written down*): a `Stop` hook then
 keeps the turn going through every checkpoint, and the chain stops only by setting that file's
 `status` to `halted` (with the reason) or `done`. Append each decision taken for you to its
@@ -219,21 +219,7 @@ chain in one session, with no session boundary; with `"scope": "unit"`, once a s
 
 ### Hub change in auto-run
 
-A gap whose answer changes the hub — a new or changed endpoint or contract field, or code in
-another platform's repository — goes back to grooming inside the run (`principles.md` → *Auto-run
-mode*), unless the opt-in said "stop on hub changes":
-1. Sweep the class (`gaps.md`) and write it as **one** hub Open Decision with 2–3 options and a ★.
-2. Take the ★: the row becomes `decided: auto ★<option> · <date>`; edit the hub sections and the
-   contract delta it moves (`do-grooming`'s rules for those sections, its hooks included); append
-   `· amended <date>` to the `Hub review` row; commit the hub on its own.
-3. Re-walk this spoke's self-review points the moved sections feed (`grooming-review.md` → *The hub
-   moving*), fix what they find, and restamp its `Hub alignment` row and the hub's *Spokes* cell
-   for it `reviewed <date> · hub rev <commit> · amended <date>` (`auto` stays on the Open
-   Decisions row, never in a stamp).
-4. Amend the plan with the ★ (the stages the change touches), record all three in the marker's
-   `decisions`, and continue the stage.
-Every other spoke stays behind the hub until its author re-walks; the chain report lists each, with
-the hub change it owes. Never write code in another platform's repository.
+See `gaps.md` → *Hub change in auto-run*.
 
 ## Rules
 

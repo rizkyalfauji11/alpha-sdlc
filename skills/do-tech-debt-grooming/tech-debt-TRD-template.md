@@ -128,6 +128,16 @@ _Approved: <YYYY-MM-DD> · <commit>_
 **Dependencies & risks**
 - <item>
 
+**Debt in the footprint** — decided here, at this section's gate, so planning never sends the
+feature back for it: `node ../../scripts/debt-balance.js <repo> --files <every file this section
+names>` lists the open register rows in those files, each its own question: ★ *pay here* unless
+paying changes behavior outside this change or edits a file beyond it. *Pay here* that changes behavior or a contract adds its AC and slice to this
+TRD at this gate; *keep* writes `accepted — <why + revisit trigger>` in the register.
+
+| Row | Decision | Where it lands |
+|-----|----------|----------------|
+| <TD-n> | <pay here · keep> | <AC-n and slice · `accepted — <why + revisit trigger>`> |
+
 **Implied work slices** (candidate tickets) — **reference AC by ID from §6, never restate the
 criterion's prose here** (one source of truth; a restated AC forks and drifts). Every AC in §6 is
 claimed by ≥ 1 slice and every slice claims ≥ 1 AC — an unclaimed AC is unproven work, an AC-less

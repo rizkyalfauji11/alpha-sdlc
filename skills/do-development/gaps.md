@@ -39,3 +39,21 @@ the search, so the checkpoint sees it covered the plan, not one stage.
 per it. When answering would change the hub, the whole class is the one hub Open Decision the
 chain grooms in place (`SKILL.md` → *Hub change in auto-run*). Outside auto-run the stage stops on
 it, and the halt names that Open Decision and its ★, so grooming opens on it.
+
+## Hub change in auto-run
+
+A gap whose answer changes the hub — a new or changed endpoint or contract field, or code in
+another platform's repository — goes back to grooming inside the run (`principles.md` → *Auto-run
+mode*), unless the opt-in said "stop on hub changes":
+1. Sweep the class (`gaps.md`) and write it as **one** hub Open Decision with 2–3 options and a ★.
+2. Take the ★: the row becomes `decided: auto ★<option> · <date>`; edit the hub sections and the
+   contract delta it moves (`do-grooming`'s rules for those sections, its hooks included); append
+   `· amended <date>` to the `Hub review` row; commit the hub on its own.
+3. Re-walk this spoke's self-review points the moved sections feed (`grooming-review.md` → *The hub
+   moving*), fix what they find, and restamp its `Hub alignment` row and the hub's *Spokes* cell
+   for it `reviewed <date> · hub rev <commit> · amended <date>` (`auto` stays on the Open
+   Decisions row, never in a stamp).
+4. Amend the plan with the ★ (the stages the change touches), record all three in the marker's
+   `decisions`, and continue the stage.
+Every other spoke stays behind the hub until its author re-walks; the chain report lists each, with
+the hub change it owes. Never write code in another platform's repository.

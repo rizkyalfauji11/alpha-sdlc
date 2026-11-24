@@ -126,6 +126,55 @@
       "verdict": "changed",
       "reason": "HALT-FIX-1 (the owner's choice, 2026-11-24): a halt a command on this machine lifts — a command no list holds, and a runtime, driver, service, migration or seed the machine lacks — names the fix commands in halted.commands for the member to confirm on the platform; the next session runs them first. Only what no command supplies is asked of the member by hand",
       "where": "skills/do-grooming/run-halt.md → commands"
+    },
+    {
+      "clause": "**Grooming (all variants: product, tech-debt, issue, foundation), planning, and project setup are NEVER auto** — those are decision phases (the one exception: the hub amendment an auto-run chain grooms in place, below — a hand-back from development, never a grooming run)",
+      "file": "principles.md",
+      "verdict": "moved",
+      "reason": "AUTO-HUB-2: the hub-change-in-auto-run rule is unchanged in substance; its steps moved out of principles.md to keep the rules bundles inside their size budgets",
+      "where": "skills/do-development/gaps.md → Hub change in auto-run; principles.md → Auto-run mode (one-line pointer)"
+    },
+    {
+      "clause": "**A change the hub would need is groomed in the chain, not halted on** (the owner's choice, 2026-11-24): a new or changed endpoint or contract field, or code in another platform's repository, goes back to grooming automatically, inside the same run.",
+      "file": "principles.md",
+      "verdict": "moved",
+      "reason": "AUTO-HUB-2: the hub-change-in-auto-run rule is unchanged in substance; its steps moved out of principles.md to keep the rules bundles inside their size budgets",
+      "where": "skills/do-development/gaps.md → Hub change in auto-run; principles.md → Auto-run mode (one-line pointer)"
+    },
+    {
+      "clause": "The chain gathers the whole class first (`do-development/gaps.md`), writes it as **one** hub Open Decision, takes its ★ and records it `decided: auto ★<option> · <date>`, edits the hub sections and the contract delta the ★ moves, and appends `· amended <date>` to the `Hub review` row.",
+      "file": "principles.md",
+      "verdict": "moved",
+      "reason": "AUTO-HUB-2: the hub-change-in-auto-run rule is unchanged in substance; its steps moved out of principles.md to keep the rules bundles inside their size budgets",
+      "where": "skills/do-development/gaps.md → Hub change in auto-run; principles.md → Auto-run mode (one-line pointer)"
+    },
+    {
+      "clause": "This platform's spoke then re-walks the points the moved sections feed (`grooming-review.md` → *The hub moving*), restamps its `Hub alignment` `reviewed <date> · hub rev <commit> · amended <date>` (the `auto` lives on the Open Decisions row, never in a stamp), and its plan takes the ★ amendment",
+      "file": "principles.md",
+      "verdict": "moved",
+      "reason": "AUTO-HUB-2: the hub-change-in-auto-run rule is unchanged in substance; its steps moved out of principles.md to keep the rules bundles inside their size budgets",
+      "where": "skills/do-development/gaps.md → Hub change in auto-run; principles.md → Auto-run mode (one-line pointer)"
+    },
+    {
+      "clause": "Outside auto-run nothing changes: a hub change stops the stage and hands back to `do-grooming`, with the held Open Decision and its ★ named so the platform can open grooming on it.",
+      "file": "principles.md",
+      "verdict": "moved",
+      "reason": "AUTO-HUB-2: the hub-change-in-auto-run rule is unchanged in substance; its steps moved out of principles.md to keep the rules bundles inside their size budgets",
+      "where": "skills/do-development/gaps.md → Hub change in auto-run; principles.md → Auto-run mode (one-line pointer)"
+    },
+    {
+      "clause": "**Then list the debt in that footprint** (`stage-rules.md` → *Footprint debt*): `debt-balance.js --files` over the layout's paths, each open row its own question with ★ *pay it in this feature*",
+      "file": "skills/do-planning/SKILL.md",
+      "verdict": "changed",
+      "reason": "DEBT-GROOM-1 (the owner's choice, 2026-11-24): footprint debt is decided at grooming's last gate (Debt in the footprint table), so planning records the TRD's answers and asks only a row grooming never saw",
+      "where": "skills/do-planning/SKILL.md Step 2; skills/do-planning/stage-rules.md → Footprint debt; principles.md → A change adds no debt"
+    },
+    {
+      "clause": "Structured, feeds `do-slicing`: modules touched, **regression-safety plan** (characterization tests to add first), measurable success + how it's checked, rollback, dependencies/risks, and work slices **claiming their AC by ID from §6** — never restating the criterion's prose.",
+      "file": "skills/do-tech-debt-grooming/SKILL.md",
+      "verdict": "changed",
+      "reason": "DEBT-GROOM-1 (the owner's choice, 2026-11-24): the change manifest also decides the debt in its footprint at its gate",
+      "where": "skills/do-tech-debt-grooming/SKILL.md → Final section; tech-debt-TRD-template.md → Debt in the footprint"
     }
   ]
 }

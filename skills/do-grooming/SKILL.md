@@ -138,6 +138,7 @@ The last section is **structured** (it feeds downstream ticket-slicing and monit
 - **Spoke** → two structured finals: **§8 Acceptance criteria**, the canonical numbered registry
   built to the template's §8 note, then **§9 Work slices**, each claiming its AC by ID (never
   restating the prose). Mirror the summary line up into the hub's manifest.
+- Either decides its footprint debt.
 
 When grooming a spoke, also update the hub's **Spokes** field to link the new spoke — and when it
 lives in a sibling repository, its `Repo` cell names that repo (same repo is the default: a dash).

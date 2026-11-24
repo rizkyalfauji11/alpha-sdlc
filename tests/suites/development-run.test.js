@@ -340,6 +340,16 @@ covers('an auto-run finished: the review closed stamped auto with developmentCom
 }
 
 {
+  const read = (...parts) => fs.readFileSync(path.join(pluginRoot, 'skills', ...parts), 'utf8').replace(/\s+/g, ' ');
+  const templates = [['do-grooming', 'TRD-spoke-template.md'], ['do-tech-debt-grooming', 'tech-debt-TRD-template.md'], ['do-issue-grooming', 'issue-TRD-template.md']];
+  report('debt', "every grooming variant's last section decides its footprint debt in a Debt in the footprint table, a behavior-changing pay adding its AC there",
+    templates.every((parts) => /\*\*Debt in the footprint\*\* — decided here/.test(read(...parts)) && /adds its AC and slice to this TRD at this gate/.test(read(...parts))),
+    templates.map((parts) => parts.join('/')).join(', '));
+  report('debt', "planning records the TRD's footprint-debt answers and asks only a row grooming never saw",
+    /A row grooming already decided — the TRD's \*Debt in the footprint\* table/.test(read('do-planning', 'stage-rules.md')), 'do-planning/stage-rules.md → Footprint debt');
+}
+
+{
   const guide = fs.readFileSync(GUIDE, 'utf8').replace(/\s+/g, ' ');
   const halt = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-grooming', 'run-halt.md'), 'utf8').replace(/\s+/g, ' ');
   report('halt', 'a halt a command on this machine lifts names the commands for the member to confirm, and the next session runs them first',
