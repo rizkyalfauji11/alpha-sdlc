@@ -774,6 +774,11 @@ report. "auto-run, stop on hub changes" keeps the old halt. Outside auto-run a h
 the stage, and the halt names the held decision as its grooming remedy (`principles.md` → *Auto-run
 mode*, `skills/do-development/SKILL.md` → *Hub change in auto-run*).
 
+From 0.53.1 the repository's own script may stand alone in `developmentCommands` or
+`autoRunCommands` (`./run-fe.sh`): a `./` path that neither climbs out with `..` nor runs from
+`node_modules` runs only what the repository wrote, so `check-run-commands.js` no longer refuses it
+as a bare program.
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and
