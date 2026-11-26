@@ -1,0 +1,241 @@
+{
+  "pluginVersion": "0.56.0",
+  "commitRead": "c3d4e5f",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 7,
+    "total": 7
+  },
+  "documents": [
+    {
+      "key": "test-review@1",
+      "ordinal": 6,
+      "name": "The test review",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved, run or closed, and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "report@1",
+      "ordinal": 7,
+      "name": "The coverage and bug report",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your decision or your answer"
+      }
+    }
+  ],
+  "questions": [
+    {
+      "id": "report:triage-b1",
+      "documentKey": "report@1",
+      "title": "B1 · a share to a non-member returns 500, not 422",
+      "summary": {
+        "blocks": [
+          {
+            "label": "What",
+            "text": "Sharing a recipe with someone who is not a member crashes instead of refusing (major · API · AC-3)"
+          }
+        ],
+        "needFromYou": "Fix B1, defer it, or leave it?"
+      },
+      "options": [
+        {
+          "id": "fix",
+          "label": "Fix it in do-fixing",
+          "why": "A major bug breaks AC-3",
+          "trade": "Fixing runs before the feature is done",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "defer",
+          "label": "Defer it",
+          "why": "It can wait for a later release",
+          "trade": "AC-3 stays broken until then",
+          "recommended": false,
+          "requiresReason": true
+        },
+        {
+          "id": "no",
+          "label": "Won't fix",
+          "why": "The behavior is acceptable as it is",
+          "trade": "AC-3 is not met as written",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [
+        "Your answer is written to B1's Fix? (user) cell"
+      ],
+      "evidence": {
+        "caption": "From the failing run",
+        "groups": [
+          {
+            "heading": "Read",
+            "rows": [
+              {
+                "label": "TC1",
+                "lines": [
+                  "POST /recipes/7/shares → 500 internal error",
+                  "expected 422"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "report@1"
+      ],
+      "notes": [
+        {
+          "label": "Standing",
+          "text": "One question per bug; the report closes once each is answered"
+        }
+      ],
+      "askedAt": "2026-11-26T09:40:00Z"
+    },
+    {
+      "id": "report:finding-1",
+      "documentKey": "report@1",
+      "title": "Finding 1 · TC2 seeds its member through the store, not the API",
+      "summary": {
+        "blocks": [
+          {
+            "label": "What",
+            "text": "The integration test creates its member straight in the database"
+          }
+        ],
+        "needFromYou": "Keep it, or seed through the API?"
+      },
+      "options": [
+        {
+          "id": "api",
+          "label": "Seed through the API",
+          "why": "The journey then crosses the real seam",
+          "trade": "TC2 runs slower",
+          "recommended": true,
+          "requiresReason": false
+        },
+        {
+          "id": "keep",
+          "label": "Keep it as written",
+          "why": "The seam is Boot & Smoke's",
+          "trade": "TC2 trusts the store",
+          "recommended": false,
+          "requiresReason": true
+        }
+      ],
+      "consequences": [],
+      "evidence": {
+        "caption": "From the test review",
+        "groups": [
+          {
+            "heading": "Read",
+            "rows": [
+              {
+                "label": "tests/api/shares_test.go",
+                "lines": [
+                  "tests/api/shares_test.go:41 store.CreateMember(…)"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "actions": [],
+      "blocks": [
+        "report@1"
+      ],
+      "notes": [],
+      "askedAt": "2026-11-26T09:40:00Z"
+    }
+  ],
+  "gate": {
+    "documentKey": "report@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "test-plan-backend.md · Coverage and bugs",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "The coverage and bug report"
+        },
+        {
+          "label": "Why",
+          "text": "Each unit of testing is decided before it runs"
+        }
+      ],
+      "needFromYou": "Decide: Close testing"
+    },
+    "detail": {
+      "caption": "The coverage and bug report",
+      "panes": [
+        {
+          "label": "Report",
+          "note": "coverage, Boot & Smoke and every bug · fix nothing here",
+          "body": "## Coverage\n\n2 of 2 AC covered · API 1 · Integration 1\n\n## Boot & Smoke\n\npass — full\n\n## Bugs found\n\n| # | Bug | Severity |\n|---|---|---|\n| B1 | a share to a non-member returns 500, not 422 | major |",
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while reporting",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "check-feature-done.js",
+              "lines": [
+                "feature: NOT done — 1 reason(s)",
+                "  - bug still open: B1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Closing records the triage, commits it to feat/recipe-sharing and hands the bugs to fix to do-fixing",
+      "Nothing is pushed until the finish card"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Close testing",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "request-changes",
+        "label": "Request changes",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      },
+      {
+        "id": "stop",
+        "label": "Stop here",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": false
+      }
+    ]
+  }
+}

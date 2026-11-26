@@ -1,0 +1,35 @@
+{
+  "pluginVersion": "0.56.0",
+  "commitRead": "c3d4e5f",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 3,
+    "total": 7
+  },
+  "documents": [
+    {
+      "key": "TC1@1",
+      "ordinal": 3,
+      "name": "[API] a share to a non-member is refused",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "stopped here",
+        "settled": false,
+        "tone": "blocked",
+        "description": "Stopped at its gate; its work is kept uncommitted",
+        "unsticks": "Continue, which brings the gate back"
+      },
+      "notes": [
+        {
+          "label": "Stopped here",
+          "text": "tests/api/shares_test.go and the TC1 procedure are kept uncommitted"
+        }
+      ]
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "sessionEnded": true
+}

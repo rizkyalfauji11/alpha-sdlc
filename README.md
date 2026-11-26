@@ -796,6 +796,23 @@ From 0.55.0 the debt in a change's footprint is decided in grooming, at the last
 slice then, so planning records the answers instead of sending the feature back to grooming; it asks
 only a row grooming never saw. The auto-run hub-change steps moved to `skills/do-development/gaps.md`.
 
+From 0.56.0 `do-testing` and `do-fixing` run on the adp platform, as development does
+(`skills/do-testing/testing-run-schema.md`, `skills/do-fixing/fixing-run-schema.md`). A testing run
+has one row per unit with a gate — the test plan, the environment, each test keyed by its test ID
+(`TC1`), Boot & Smoke, the test review, and the coverage and bug report — each answered with
+approve, Request changes or Stop here. The report asks the triage one question per bug, and each
+answer writes that bug's `Fix? (user)` cell; its close sends `testingComplete` once the triage is
+recorded, or, with no bug to fix, once `check-feature-done.js` exits 0. After a fixing run, the same
+command re-tests: every recorded test and Boot & Smoke run again, and the report comes back. A
+fixing run has one row per triaged bug (`B1`) and one for the fix review; a fix that fails
+re-verification three times halts on its Open Decision instead of a fourth attempt, and the fix
+review's close sends `fixingComplete`. Both name what a platform session may run — git's local
+subcommands, the plugin's scripts, the doc checks, and the repository's `developmentCommands` and
+`autoRunCommands` — and boot Boot & Smoke's stack within the session that drives it, ending it with
+its stop commands before the session's last report (`testing-run-schema.md` → *The stack*). Their
+halts are `RunHalt`s, `commands` included, and auto-run records each checkpoint stamped `auto` with
+`autoDecisions`, as development's. 0.56.0 is the minimum for Start testing and Start fixing.
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and
@@ -817,7 +834,9 @@ node scripts/rule-coverage.js         # every rule of origin/main kept, or signe
 `node tests/run-contract.js <adp-web clone>` validates every fixture that sends `halted` in a shape
 the schema declares (a sentence, the `RunHalt` object, or either), and every report of the
 `--units` run, against the run schemas the adp web passes as `--json-schema`, and names each field
-the contract does not declare. It reads another repository's clone, so it runs only when you ask, never inside the suite.
+the contract does not declare. It dry-runs every testing-run and fixing-run report too: against the
+web's own testing or fixing schema once it has one, until then against its development-run schema,
+the shape both guides share, naming the completion flag that schema does not declare yet. It reads another repository's clone, so it runs only when you ask, never inside the suite.
 
 Edit `principles.md`, never `rules/`: `node scripts/build-rules.js` regenerates the bundles from it
 and `rules/applicability.json`. A clause rewritten, merged or moved on purpose is signed off in

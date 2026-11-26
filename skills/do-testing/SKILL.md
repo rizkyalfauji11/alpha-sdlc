@@ -17,10 +17,10 @@ edge / auth / offline cases, not just the happy path); ground in real code; reus
 existing test framework and fixtures (ladder rung 2 — reuse: don't introduce a new test stack);
 calibrate (don't test framework code or trivial getters — that's redundant with unit tests).
 
-Every gate you present (plan, per-test approval, test review, coverage + bug report): header
-`<development> · <phase> · <step> · ✅/⏸/⚠️`, then Bottom line → Why it matters → Options ★ →
-Context → Details (for engineers) → Next as the last paragraph (rules → *Present every step bottom
-line first*).
+Every gate you present: header `<development> · <phase> · <step> · ✅/⏸/⚠️`, then Bottom line →
+Why it matters → Options ★ → Context → Details (for engineers) → Next as the last paragraph (rules →
+*Present every step bottom line first*). Under a testing-run schema (`--json-schema`), read
+`testing-run-schema.md` before the first report.
 
 **Auto-run** (`principles.md` → *Auto-run mode* binds every line here): the plan, each test's
 approval, the test review's verdict and the bug report become reports, and the environment and
@@ -228,8 +228,8 @@ the fix is to fill it in `do-project-setup` — that's the blocker to resolve, n
 - **Platforms can be tested in parallel sessions** — each owns its `test-plan-<platform>.md`; only
   one session boots the full stack at a time, and Boot & Smoke drives the running stack rather than
   starting a second one (per `principles.md` → *Parallel work*).
-- **Inputs:** the implemented feature, the TRD (hub API contract + spoke AC — the primary source),
-  the plan, and the tasks / Jira keys if the Jira phases were run — all on disk.
+- **Inputs:** the implemented feature, the TRD (hub contract + spoke AC, the primary source), the
+  plan and the tasks, all on disk.
 - **Test code is code — zero comments, names carry the case.** The same rules bind here as anywhere
   (`principles.md`): no comments in test files (hook-blocked), and the **test name states the case
   it proves** — `showsEmptyStateWhenListIsEmpty`, `hidesPrimaryActionWhenOffline`, ideally naming

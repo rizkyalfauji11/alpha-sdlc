@@ -1,0 +1,30 @@
+{
+  "pluginVersion": "0.56.0",
+  "commitRead": "c3d4e5f",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 7,
+    "total": 7
+  },
+  "documents": [
+    {
+      "key": "report@2",
+      "ordinal": 7,
+      "name": "The coverage and bug report",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved, run or closed, and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": null,
+  "testingComplete": true,
+  "sessionEnded": true
+}

@@ -134,5 +134,60 @@ for (const { run, fixtures, schema: relative } of RUNS) {
   }
 }
 
-process.stdout.write(failed ? `\n${failed} problem(s): the contract the web passes does not take these reports as they are\n` : '\nevery halted fixture conforms to the contract\n');
+const PHASE_RUNS = [
+  { run: 'testing', fixtures: 'testing-run', file: 'testingRunSchema.generated.ts', flag: 'testingComplete' },
+  { run: 'fixing', fixtures: 'fixing-run', file: 'fixingRunSchema.generated.ts', flag: 'fixingComplete' },
+];
+const STAND_IN = 'src/features/platform-development/developmentRunSchema.generated.ts';
+
+function findSchema(directory, file) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const full = path.join(directory, entry.name);
+    if (entry.isDirectory() && entry.name !== 'node_modules') {
+      const found = findSchema(full, file);
+      if (found) return found;
+    } else if (entry.name === file) return full;
+  }
+  return null;
+}
+
+function everyFixture(directory) {
+  const found = [];
+  for (const story of fs.readdirSync(directory, { withFileTypes: true }).filter((entry) => entry.isDirectory())) {
+    for (const name of fs.readdirSync(path.join(directory, story.name)).filter((each) => each.endsWith('.json')).sort()) {
+      found.push({ name: `${story.name}/${name}`, report: JSON.parse(fs.readFileSync(path.join(directory, story.name, name), 'utf8')) });
+    }
+  }
+  return found;
+}
+
+for (const { run, fixtures, file, flag } of PHASE_RUNS) {
+  const own = findSchema(path.join(web, 'src'), file);
+  const relative = own ? path.relative(web, own) : STAND_IN;
+  let schema;
+  try {
+    schema = readSchema(path.join(web, relative));
+  } catch (error) {
+    process.stderr.write(`cannot read the ${run}-run schema at ${path.join(web, relative)}: ${error.message}\n`);
+    process.exit(2);
+  }
+  const awaits = !schema.properties[flag];
+  process.stdout.write(`\n${run} run · ${relative}${own ? '' : ` — the web has no ${file} yet; its development-run schema stands in, the shape the guide shares`}\n`);
+  if (awaits) process.stdout.write(`  ${flag}: NOT declared — the guide sends it only to a consumer that declares it, so it is left out below\n`);
+  for (const { name, report } of everyFixture(path.join(pluginRoot, 'tests', 'fixtures', fixtures))) {
+    const sent = { ...report };
+    if (awaits) delete sent[flag];
+    const { pluginVersion: _version, ...unnamed } = sent;
+    if (!problemsOf(schema, unnamed).some((problem) => problem.includes('lacks required pluginVersion'))) {
+      process.stderr.write(`the validator passed ${name} without its pluginVersion: it checks nothing\n`);
+      process.exit(2);
+    }
+    const problems = problemsOf(schema, sent);
+    process.stdout.write(`  ${problems.length ? 'FAIL' : 'ok  '} ${fixtures}/${name}\n`);
+    for (const problem of problems) process.stdout.write(`       ${problem}\n`);
+    if (problems.length) failed++;
+  }
+}
+
+process.stdout.write(failed ? `\n${failed} problem(s): the contract the web passes does not take these reports as they are\n` : '\nevery halted fixture and every testing and fixing report conforms to the contract\n');
 process.exit(failed ? 1 : 0);
