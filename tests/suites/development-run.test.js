@@ -359,6 +359,20 @@ covers('an auto-run finished: the review closed stamped auto with developmentCom
   const fixes = ['make -C ../amara-pos-backend dev-seed', 'go -C ../amara-pos-backend run ./cmd/seeddata']
     .map((entry) => runScript('check-run-commands.js', ['--entry', entry]));
   report('halt', 'a fix command reaching another clone through its directory flag passes the command check', fixes.every((run) => run.exitCode === 0), fixes.map((run) => run.stdout).join(''));
+  report('halt', "a server the stage needs is started by the feature clone's own script through commands, never a chore, even when this session's tools refuse it",
+    /`\.\.\/<repo>\/<script> <subcommand>`/.test(guide) && /a command this session's tools refuse is no reason to: that refusal is what `commands` lifts/.test(guide) &&
+    /stops whatever holds its port/.test(guide) && /even one this session's tools refuse: that refusal is what `commands` lifts/.test(halt),
+    'development-run-schema.md → A halt · run-halt.md → commands');
+  const sibling = runScript('check-run-commands.js', ['--entry', '../amara-pos-backend/run-be.sh restart']);
+  report('halt', "another clone's own script with its subcommand passes the command check", sibling.exitCode === 0, sibling.stdout);
+}
+
+{
+  const guides = [['do-grooming', 'grooming-run-schema.md'], ['do-planning', 'planning-run-schema.md'], ['do-development', 'development-run-schema.md']];
+  const keeps = guides.filter(([skill, file]) => /With a gate or question open, \*asked nothing\* read an older report: send that report again, never a halt\./
+    .test(fs.readFileSync(path.join(pluginRoot, 'skills', skill, file), 'utf8').replace(/\s+/g, ' ')));
+  report('halt', "a platform line that finds nothing open while a gate or question is open is answered with the same report, never a halt that drops them",
+    keeps.length === guides.length, guides.map((parts) => parts.join('/')).join(', '));
 }
 
 {

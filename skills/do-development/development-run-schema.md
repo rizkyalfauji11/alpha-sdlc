@@ -116,13 +116,19 @@ platform, or run /alpha-sdlc:do-project-setup refresh to record it, then Continu
 declares `halted` as an object it is `../do-grooming/run-halt.md`'s, its `remedy` filled only for
 *I'll take it back to grooming* with the rows named, and its `commands` — when the schema declares
 `commands` — for every halt a command on this machine lifts: a command no list holds, and anything
-the machine lacks that a command supplies — a runtime version, a driver, a service that is down, a
-database to migrate or seed. **Never hand the member a chore a command does:** name the commands
-that would do it, exactly as this session would run them from this clone, each passing
-`scripts/check-run-commands.js --entry` (no shell operator; another clone through the tool's own
-directory flag, `make -C ../<repo> <target>`, `go -C ../<repo> run ./cmd/<name>`), and the sentence
-says what they do: `Development waits for this machine: approve make -C ../<repo>
-dev-seed to seed the test accounts, then Continue`. The member confirms them on the platform; the
+the machine lacks that a command supplies — a runtime version, a driver, a service that is down or
+runs the wrong code, a database to migrate or seed. **Never hand the member a chore a command does,**
+and a command this session's tools refuse is no reason to: that refusal is what `commands` lifts.
+Name the commands that would do it, exactly as this session would run them from this clone, each
+passing `scripts/check-run-commands.js --entry` (no shell operator; another clone of the feature
+through the tool's own directory flag, `make -C ../<repo> <target>`, `go -C ../<repo> run
+./cmd/<name>`, or by the path of that clone's own script, `../<repo>/<script> <subcommand>`). A
+server the stage needs from the feature's clone is started by that clone's own run script, which
+stops whatever holds its port. The sentence says what each command does, what it stops and what it
+changes beyond the clone: `Development waits for this machine: approve make -C ../<repo> dev-seed to
+seed the test accounts, then Continue`, `Development waits for the feature's backend: approve
+../<repo>/<script> restart, which stops the server on :8080 from the main checkout and starts the
+feature's, then Continue`. The member confirms them on the platform; the
 next session starts with them allowed and **runs them first**, before the halted stage, and checks
 the cause is gone. Only what no command can supply — a credential, a design, an account on
 another system, a physical device — is asked of the member in plain words, with `commands`
@@ -266,8 +272,8 @@ example `{"target":"document","key":"stage-3@1","actionId":"approve","optionId":
   question's own actions. Each answer is recorded where the decision lives, as in a terminal.
 - A line for a key or `id` that is not open now is stale, unless the ledger takes it: say so in
   plain text and act on nothing. The `plan` target is never used.
-- The platform's own lines — *your last report asked nothing…* — are not decisions. They say
-  "setup" on every run, and apply to development as written.
+- The platform's own lines — *your last report asked nothing…* — are not decisions. With a gate or
+  question open, *asked nothing* read an older report: send that report again, never a halt.
 
 ## Auto-run
 
