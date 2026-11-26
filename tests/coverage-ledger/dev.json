@@ -175,6 +175,13 @@
       "verdict": "changed",
       "reason": "DEBT-GROOM-1 (the owner's choice, 2026-11-24): the change manifest also decides the debt in its footprint at its gate",
       "where": "skills/do-tech-debt-grooming/SKILL.md → Final section; tech-debt-TRD-template.md → Debt in the footprint"
+    },
+    {
+      "clause": "The member is never handed a chore a command does.",
+      "file": "skills/do-grooming/run-halt.md",
+      "verdict": "reworded",
+      "reason": "The sentence keeps its rule and gains its case: a command this session's tools refuse is still no chore for the member, because that refusal is what `commands` lifts.",
+      "where": "skills/do-grooming/run-halt.md → commands paragraph"
     }
   ]
 }

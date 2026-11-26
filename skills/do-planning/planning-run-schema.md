@@ -271,7 +271,8 @@ example `{"target":"document","key":"stage-3@1","actionId":"approve","optionId":
 - A line for a key or `id` that is not open now is stale, unless the ledger takes it (*The run
   ledger*): say so in plain text and act on nothing. The `plan` target is never used.
 - The platform's own lines — *your last report asked nothing…*, *your last turn ended on an API
-  error…* — are not decisions. They say "setup" on every run, and apply to planning as written.
+  error…* — are not decisions. With a gate or question open, *asked nothing* read an older report:
+  send that report again, never a halt.
 
 ## The end
 
