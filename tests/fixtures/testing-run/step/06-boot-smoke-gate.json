@@ -1,0 +1,119 @@
+{
+  "pluginVersion": "0.56.0",
+  "commitRead": "c3d4e5f",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 5,
+    "total": 7
+  },
+  "documents": [
+    {
+      "key": "TC2@2",
+      "ordinal": 4,
+      "name": "[Integration] a shared recipe appears in the member's list",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved, run or closed, and committed",
+        "unsticks": "Nothing; it is done"
+      },
+      "notes": [
+        {
+          "label": "Result",
+          "text": "pass"
+        }
+      ]
+    },
+    {
+      "key": "boot-smoke@1",
+      "ordinal": 5,
+      "name": "Boot & Smoke",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your decision or your answer"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "boot-smoke@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "test-plan-backend.md · Boot & Smoke",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "Boot & Smoke"
+        },
+        {
+          "label": "Why",
+          "text": "Each unit of testing is decided before it runs"
+        }
+      ],
+      "needFromYou": "Decide: Approve and run Boot & Smoke"
+    },
+    "detail": {
+      "caption": "Boot & Smoke",
+      "panes": [
+        {
+          "label": "Journeys",
+          "note": "the stack and every critical journey · not run yet",
+          "body": "## Stack\n\n`make up`, ready on :8080/health, ended by `make down`\n\n## Journeys\n\n1. share a recipe with a member, open it as that member",
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while writing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "TRD-backend.md",
+              "lines": [
+                "§8 AC-3: sharing with a non-member is refused with 422"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving boots the stack, drives every critical journey, records the result and ends the stack in this session",
+      "Boot & Smoke is never marked manual: a stack that cannot boot halts the run"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve and run Boot & Smoke",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "request-changes",
+        "label": "Request changes",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      },
+      {
+        "id": "stop",
+        "label": "Stop here",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": false
+      }
+    ]
+  }
+}

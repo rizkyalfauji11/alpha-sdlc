@@ -1,0 +1,226 @@
+{
+  "pluginVersion": "0.56.0",
+  "commitRead": "c3d4e5f",
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The run reaching it"
+    },
+    {
+      "label": "running",
+      "settled": false,
+      "tone": "progress",
+      "description": "The plugin is writing, running or reviewing it",
+      "unsticks": "Nothing; it is running"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your decision or your answer"
+    },
+    {
+      "label": "stopped here",
+      "settled": false,
+      "tone": "blocked",
+      "description": "Stopped at its gate; its work is kept uncommitted",
+      "unsticks": "Continue, which brings the gate back"
+    },
+    {
+      "label": "marked manual",
+      "settled": true,
+      "tone": "skipped",
+      "description": "Its level cannot run in this environment; the plan says why",
+      "unsticks": "Nothing; the report flags it"
+    },
+    {
+      "label": "done",
+      "settled": true,
+      "tone": "done",
+      "description": "Approved, run or closed, and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "onlyWhatChanged": false,
+  "step": {
+    "ordinal": 3,
+    "total": 7
+  },
+  "documents": [
+    {
+      "key": "plan@1",
+      "ordinal": 1,
+      "name": "The test plan",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved, run or closed, and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "environment@1",
+      "ordinal": 2,
+      "name": "The environment",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved, run or closed, and committed",
+        "unsticks": "Nothing; it is done"
+      }
+    },
+    {
+      "key": "TC1@2",
+      "ordinal": 3,
+      "name": "[API] a share to a non-member is refused",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your decision or your answer"
+      }
+    },
+    {
+      "key": "TC2@1",
+      "ordinal": 4,
+      "name": "[Integration] a shared recipe appears in the member's list",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The run reaching it"
+      }
+    },
+    {
+      "key": "boot-smoke@1",
+      "ordinal": 5,
+      "name": "Boot & Smoke",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The run reaching it"
+      }
+    },
+    {
+      "key": "test-review@1",
+      "ordinal": 6,
+      "name": "The test review",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The run reaching it"
+      }
+    },
+    {
+      "key": "report@1",
+      "ordinal": 7,
+      "name": "The coverage and bug report",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The run reaching it"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "TC1@2",
+    "statusLabel": "waiting on you",
+    "stampLine": "test-plan-backend.md · TC1 · test 1 of 2",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "Test TC1 before it runs"
+        },
+        {
+          "label": "Why",
+          "text": "Each unit of testing is decided before it runs"
+        }
+      ],
+      "needFromYou": "Decide: Approve and run TC1"
+    },
+    "detail": {
+      "caption": "Test TC1 before it runs",
+      "panes": [
+        {
+          "label": "Test",
+          "note": "its procedure and its code · not run yet",
+          "body": "## TC1\n\n- **AC:** AC-3\n- **Preconditions:** two members, one recipe\n- **Steps:**\n  1. POST /recipes/{id}/shares naming a non-member\n- **Expected:** 422, no share row\n\nBrought back after Stop here.",
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while writing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "TRD-backend.md",
+              "lines": [
+                "§8 AC-3: sharing with a non-member is refused with 422"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving stamps Approved on TC1, runs it and records its result",
+      "A failure is logged as a bug for the report; testing fixes nothing"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve and run TC1",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "request-changes",
+        "label": "Request changes",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      },
+      {
+        "id": "stop",
+        "label": "Stop here",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": false
+      }
+    ]
+  }
+}

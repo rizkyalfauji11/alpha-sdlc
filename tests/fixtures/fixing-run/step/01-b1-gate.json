@@ -1,0 +1,170 @@
+{
+  "pluginVersion": "0.56.0",
+  "commitRead": "c3d4e5f",
+  "states": [
+    {
+      "label": "pending",
+      "settled": false,
+      "tone": "neutral",
+      "description": "Not reached yet",
+      "unsticks": "The run reaching it"
+    },
+    {
+      "label": "fixing",
+      "settled": false,
+      "tone": "progress",
+      "description": "The plugin is reproducing, fixing, re-verifying or reviewing it",
+      "unsticks": "Nothing; it is running"
+    },
+    {
+      "label": "waiting on you",
+      "settled": false,
+      "tone": "attention",
+      "description": "Its gate or a question on it is open",
+      "unsticks": "Your decision or your answer"
+    },
+    {
+      "label": "stopped here",
+      "settled": false,
+      "tone": "blocked",
+      "description": "Stopped at its gate; its work is kept uncommitted",
+      "unsticks": "Continue, which re-runs its tests and brings the gate back"
+    },
+    {
+      "label": "not fixing",
+      "settled": true,
+      "tone": "skipped",
+      "description": "Triaged defer or won't fix in this run",
+      "unsticks": "Nothing; the test plan records why"
+    },
+    {
+      "label": "done",
+      "settled": true,
+      "tone": "done",
+      "description": "Fixed, approved and committed",
+      "unsticks": "Nothing; it is done"
+    }
+  ],
+  "onlyWhatChanged": false,
+  "step": {
+    "ordinal": 1,
+    "total": 3
+  },
+  "documents": [
+    {
+      "key": "B1@1",
+      "ordinal": 1,
+      "name": "[major] a share to a non-member returns 500, not 422",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your decision or your answer"
+      }
+    },
+    {
+      "key": "B2@1",
+      "ordinal": 2,
+      "name": "[minor] the shares list repeats a member shared twice",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The run reaching it"
+      }
+    },
+    {
+      "key": "fix-review@1",
+      "ordinal": 3,
+      "name": "The fix review",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "pending",
+        "settled": false,
+        "tone": "neutral",
+        "description": "Not reached yet",
+        "unsticks": "The run reaching it"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "B1@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "test-plan-backend.md · B1 · bug 1 of 2",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "What the fix to B1 changed"
+        },
+        {
+          "label": "Why",
+          "text": "Each unit of testing is decided before it runs"
+        }
+      ],
+      "needFromYou": "Decide: Approve the fix to B1"
+    },
+    "detail": {
+      "caption": "What the fix to B1 changed",
+      "panes": [
+        {
+          "label": "Fix",
+          "note": "B1's fix · nothing is committed yet",
+          "body": "## Root cause\n\n…\n\n## Regression test\n\n…\n\n## Fix\n\n…\n\n## Re-verification\n\n…\n\n## Profile updates\n\nNone\n\n## Self-review\n\n…",
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while fixing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": "test-plan-backend.md",
+              "lines": [
+                "Bugs found · B1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Approving marks B1 fixed and commits its fix to feat/recipe-sharing, and the run carries on at B2",
+      "Nothing is pushed until the fix review closes"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Approve the fix to B1",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "request-changes",
+        "label": "Request changes",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      },
+      {
+        "id": "stop",
+        "label": "Stop here",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": false
+      }
+    ]
+  }
+}

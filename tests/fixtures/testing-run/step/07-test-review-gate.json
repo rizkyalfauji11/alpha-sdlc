@@ -1,0 +1,119 @@
+{
+  "pluginVersion": "0.56.0",
+  "commitRead": "c3d4e5f",
+  "states": [],
+  "onlyWhatChanged": true,
+  "step": {
+    "ordinal": 6,
+    "total": 7
+  },
+  "documents": [
+    {
+      "key": "boot-smoke@1",
+      "ordinal": 5,
+      "name": "Boot & Smoke",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "done",
+        "settled": true,
+        "tone": "done",
+        "description": "Approved, run or closed, and committed",
+        "unsticks": "Nothing; it is done"
+      },
+      "notes": [
+        {
+          "label": "Result",
+          "text": "pass · full"
+        }
+      ]
+    },
+    {
+      "key": "test-review@1",
+      "ordinal": 6,
+      "name": "The test review",
+      "description": "test-plan-backend.md",
+      "group": "test-plan-backend.md",
+      "state": {
+        "label": "waiting on you",
+        "settled": false,
+        "tone": "attention",
+        "description": "Its gate or a question on it is open",
+        "unsticks": "Your decision or your answer"
+      }
+    }
+  ],
+  "questions": [],
+  "gate": {
+    "documentKey": "test-review@1",
+    "statusLabel": "waiting on you",
+    "stampLine": "test-plan-backend.md · Test review",
+    "summary": {
+      "blocks": [
+        {
+          "label": "What",
+          "text": "The test review's verdict"
+        },
+        {
+          "label": "Why",
+          "text": "Each unit of testing is decided before it runs"
+        }
+      ],
+      "needFromYou": "Decide: Close the test review"
+    },
+    "detail": {
+      "caption": "The test review's verdict",
+      "panes": [
+        {
+          "label": "Verdict",
+          "note": "the suite's diff · its fixes are not committed yet",
+          "body": "## Verdict\n\nTier: two dimensions. (a) clean. (b) one objective finding fixed: TC2 asserted only the status; it now asserts the list holds the recipe.",
+          "editable": false
+        }
+      ]
+    },
+    "evidence": {
+      "caption": "Read while reviewing",
+      "groups": [
+        {
+          "heading": "Read",
+          "rows": [
+            {
+              "label": ".alpha-sdlc/review/recipe-sharing-backend-tests.md",
+              "lines": [
+                "check-coverage.js --test-plan: exit 0"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "consequences": [
+      "Closing the review records the Test review row and commits it to feat/recipe-sharing",
+      "Its needs-eyes findings are asked at the coverage and bug report"
+    ],
+    "actions": [
+      {
+        "id": "approve",
+        "label": "Close the test review",
+        "role": "primary",
+        "requiresReason": false,
+        "requiresBody": false
+      },
+      {
+        "id": "request-changes",
+        "label": "Request changes",
+        "role": "secondary",
+        "requiresReason": true,
+        "requiresBody": false
+      },
+      {
+        "id": "stop",
+        "label": "Stop here",
+        "role": "secondary",
+        "requiresReason": false,
+        "requiresBody": false
+      }
+    ]
+  }
+}
