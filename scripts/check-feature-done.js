@@ -40,6 +40,41 @@ function openBugs(lines) {
   return open;
 }
 
+const triageOf = (cell) => {
+  const value = cell.replace(/\*/g, '').trim().toLowerCase();
+  if (/^(yes|y|fix|auto)\b/.test(value) || /\byes\b/.test(value)) return 'yes';
+  if (/^(no|n|won'?t|wont|skip)\b/.test(value)) return 'no';
+  if (/^defer/.test(value)) return 'defer';
+  return null;
+};
+
+function bugCounts(lines) {
+  const counts = { toFix: 0, fixed: 0, wontFix: 0, deferred: 0 };
+  const start = lines.findIndex((line) => /^##\s+Bugs found/i.test(line));
+  if (start === -1) return counts;
+  let fixColumn = -1;
+  for (const line of lines.slice(start + 1)) {
+    if (/^##\s/.test(line)) break;
+    if (!/^\|/.test(line) || /^\|\s*:?-{3}/.test(line)) continue;
+    const cells = line.split('|').slice(1, -1).map((cell) => cell.trim());
+    if (/^\|\s*#\s*\|/.test(line)) {
+      fixColumn = cells.findIndex((cell) => /^fix\?/i.test(cell.replace(/\*/g, '')));
+      continue;
+    }
+    if (!cells.length || /^none\b/i.test(cells.join(' ')) || /^</.test(cells[1] || '')) continue;
+    const lead = leadClause(withoutStrikethrough(cells[cells.length - 1]));
+    const open = !CLOSED_BUG.test(lead) || STILL_OPEN.test(lead);
+    const triage = fixColumn === -1 ? null : triageOf(withoutStrikethrough(cells[fixColumn] || ''));
+    if (!open && /\bfixed\b/i.test(lead)) counts.fixed++;
+    else if (!open && /won'?t fix/i.test(lead)) counts.wontFix++;
+    else if (!open && /\bdeferred\b/i.test(lead)) counts.deferred++;
+    else if (open && triage === 'yes') counts.toFix++;
+    else if (open && triage === 'no') counts.wontFix++;
+    else if (open && triage === 'defer') counts.deferred++;
+  }
+  return counts;
+}
+
 function featureStatus(featureDirectory, platform) {
   const testPlanPath = path.join(featureDirectory, `test-plan-${platform}.md`);
   let text;
@@ -72,7 +107,7 @@ function featureStatus(featureDirectory, platform) {
   const debtSummary = debt
     ? reportLines(debt.balance).pop() + (debt.gated ? '' : ' — not gated: the plan has no *Debt in the footprint* section (planned before the debt rule)')
     : null;
-  return { done: reasons.length === 0, readable: true, reasons, debtSummary, debtGated: Boolean(debt && debt.gated) };
+  return { done: reasons.length === 0, readable: true, reasons, debtSummary, debtGated: Boolean(debt && debt.gated), bugs: bugCounts(lines) };
 }
 
 function profileRootOf(featureDirectory) {
@@ -95,18 +130,24 @@ function featureDebt(featureDirectory, platform) {
   return { balance, gated: /^##\s+Debt in the footprint\b/m.test(plan) };
 }
 
-module.exports = { featureStatus };
+module.exports = { featureStatus, bugCounts };
 
 if (require.main === module) {
-  const [featureDirectory, platform] = process.argv.slice(2);
+  const args = process.argv.slice(2);
+  const asResult = args.includes('--result');
+  const [featureDirectory, platform] = args.filter((arg) => arg !== '--result');
   if (!featureDirectory || !platform) {
-    process.stderr.write('usage: check-feature-done.js <feature-dir> <platform>\n');
+    process.stderr.write('usage: check-feature-done.js <feature-dir> <platform> [--result]\n');
     process.exit(2);
   }
   const status = featureStatus(featureDirectory, platform);
   if (!status.readable) {
     process.stdout.write(`feature: unreadable — ${status.reasons[0]}\n`);
     process.exit(2);
+  }
+  if (asResult) {
+    process.stdout.write(JSON.stringify({ done: status.done, bugs: status.bugs }) + '\n');
+    process.exit(status.done ? 0 : 1);
   }
   const debtLine = status.debtSummary ? `  ${status.debtSummary}\n` : '';
   if (status.done) {

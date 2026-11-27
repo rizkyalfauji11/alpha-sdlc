@@ -5,7 +5,19 @@ const { haltSentence, haltShapeProblems } = require('./run-halt');
 const RFC3339 = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/;
 const TONES = ['neutral', 'progress', 'attention', 'blocked', 'done', 'skipped'];
 const AUTO_DECISION_FIELDS = ['askedIn', 'question', 'taken', 'recordedIn'];
-const RUN_FLAGS = ['trdComplete', 'reviewRounds', 'planComplete', 'planCoverage', 'developmentComplete', 'testingComplete', 'fixingComplete'];
+const RUN_FLAGS = ['trdComplete', 'reviewRounds', 'planComplete', 'planCoverage', 'developmentComplete', 'testingComplete', 'testingResult', 'fixingComplete'];
+const RESULT_OF = { testingComplete: 'testingResult' };
+const BUG_COUNTS = ['toFix', 'fixed', 'wontFix', 'deferred'];
+
+function resultProblems(result) {
+  const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+  if (!isObject(result) || Object.keys(result).sort().join('|') !== 'bugs|done' || typeof result.done !== 'boolean') return ['testingResult is {done: boolean, bugs}'];
+  const bugs = result.bugs;
+  if (!isObject(bugs) || Object.keys(bugs).sort().join('|') !== [...BUG_COUNTS].sort().join('|') ||
+    !BUG_COUNTS.every((name) => Number.isInteger(bugs[name]) && bugs[name] >= 0)) return ["testingResult's bugs are {toFix, fixed, wontFix, deferred}, each an integer of 0 or more"];
+  if (result.done && bugs.toFix > 0) return ['testingResult cannot be done with a bug still to fix'];
+  return [];
+}
 
 const isString = (value) => typeof value === 'string';
 const isInteger = (value) => Number.isInteger(value);
@@ -65,7 +77,13 @@ function shapeProblems(sent, completeFlag) {
     need(Array.isArray(sent.autoDecisions) && sent.autoDecisions.every((entry) => AUTO_DECISION_FIELDS.every((field) => isString(entry[field]) && entry[field].length > 0)),
       'autoDecisions is a list of {askedIn, question, taken, recordedIn}');
   }
-  const foreign = RUN_FLAGS.filter((field) => field !== completeFlag && field in sent);
+  const resultField = RESULT_OF[completeFlag];
+  if (resultField && resultField in sent) {
+    need(sent[completeFlag] === true, `${resultField} is sent only on the report that sends ${completeFlag}`);
+    problems.push(...resultProblems(sent[resultField]));
+  }
+  if (resultField && sent[completeFlag] === true) need(resultField in sent, `the report that sends ${completeFlag} carries ${resultField}`);
+  const foreign = RUN_FLAGS.filter((field) => field !== completeFlag && field !== resultField && field in sent);
   need(!foreign.length, `a report of this run sends no other run's fields (${foreign.join(', ')})`);
   return problems;
 }
