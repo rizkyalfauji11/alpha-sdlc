@@ -1,5 +1,5 @@
 {
-  "pluginVersion": "0.56.0",
+  "pluginVersion": "0.57.0",
   "commitRead": "c3d4e5f",
   "states": [],
   "onlyWhatChanged": true,
@@ -26,5 +26,14 @@
   "questions": [],
   "gate": null,
   "testingComplete": true,
+  "testingResult": {
+    "done": true,
+    "bugs": {
+      "toFix": 0,
+      "fixed": 1,
+      "wontFix": 0,
+      "deferred": 0
+    }
+  },
   "sessionEnded": true
 }

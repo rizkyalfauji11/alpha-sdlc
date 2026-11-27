@@ -813,6 +813,14 @@ its stop commands before the session's last report (`testing-run-schema.md` → 
 halts are `RunHalt`s, `commands` included, and auto-run records each checkpoint stamped `auto` with
 `autoDecisions`, as development's. 0.56.0 is the minimum for Start testing and Start fixing.
 
+From 0.57.0 a testing run's last report says what testing found. The report that sends
+`testingComplete` carries `testingResult` — `done`, whether `check-feature-done.js` exits 0, and the
+bug counts from the test plan's *Bugs found* table: `toFix`, `fixed`, `wontFix`, `deferred` — so the
+platform tells a run that hands bugs to `do-fixing` from one that finishes testing, and shows the
+finish card's counts without reading labels. The session copies the line `check-feature-done.js
+<feature dir> <platform> --result` prints, never counts by hand
+(`skills/do-testing/testing-run-schema.md` → *The end*).
+
 ## Roadmap
 
 A stand-alone regression/QA track that black-box tests the built app, then deployment and
@@ -836,7 +844,7 @@ the schema declares (a sentence, the `RunHalt` object, or either), and every rep
 `--units` run, against the run schemas the adp web passes as `--json-schema`, and names each field
 the contract does not declare. It dry-runs every testing-run and fixing-run report too: against the
 web's own testing or fixing schema once it has one, until then against its development-run schema,
-the shape both guides share, naming the completion flag that schema does not declare yet. It reads another repository's clone, so it runs only when you ask, never inside the suite.
+the shape both guides share, naming each field that schema does not declare yet. It reads another repository's clone, so it runs only when you ask, never inside the suite.
 
 Edit `principles.md`, never `rules/`: `node scripts/build-rules.js` regenerates the bundles from it
 and `rules/applicability.json`. A clause rewritten, merged or moved on purpose is signed off in

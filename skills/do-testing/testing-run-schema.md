@@ -6,9 +6,9 @@ Everything in `SKILL.md`, `boot-smoke.md` and `ui-levels.md` still applies; this
 the report and says where a run on the platform differs. The report is the development run's shape,
 so `../do-development/development-run-schema.md` binds here too — its ledger rules, *Decisions on
 stdin*, *A halt* and *The marker* — and through it `../do-project-setup/setup-run-schema.md`, except
-where this file says otherwise. Five optional fields go beyond setup's report: `testingComplete`
-and `autoDecisions` (*The end*, *Auto-run*), and `sessionEnded`, `halted` and `commitRead` (*The
-session*). Each is sent only when the consumer's schema declares it.
+where this file says otherwise. Six optional fields go beyond setup's report: `testingComplete`,
+`testingResult` and `autoDecisions` (*The end*, *Auto-run*), and `sessionEnded`, `halted` and
+`commitRead` (*The session*). Each is sent only when the consumer's schema declares it.
 
 ## Contents
 
@@ -21,13 +21,14 @@ session*). Each is sent only when the consumer's schema declares it.
 - **Questions** — the triage, one per bug
 - **Decisions on stdin**
 - **Auto-run**
-- **The end** — `testingComplete`, and the re-test
+- **The end** — `testingComplete` and `testingResult`, and the re-test
 
 ## Version
 
 This guide ships in alpha-sdlc **0.56.0**, the minimum version the platform accepts for Start
-testing and Continue testing, `halted` as an object and its `commands` included. `pluginVersion` is
-the `version` in the plugin root's `.claude-plugin/plugin.json` (two levels above this skill's base
+testing and Continue testing, `halted` as an object and its `commands` included. `testingResult`
+needs **0.57.0**: an older plugin sends `testingComplete` without it. `pluginVersion` is the
+`version` in the plugin root's `.claude-plugin/plugin.json` (two levels above this skill's base
 directory), read once per session.
 
 ## The session
@@ -278,7 +279,7 @@ and in order. Each bug's triage is `yes`, written `auto <date>`, one entry in `d
 auto-run fixes every bug in severity order. **Auto-run halts** only where nothing can be decided: a
 mandatory check whose tooling fails — the stack's boot and the render among them — and an input that
 does not exist, such as a test account never provided. The report's close is a report stamped
-`auto`, sent with `testingComplete`; the marker is removed before it, its `decisions` already read
+`auto`, sent with `testingComplete` and `testingResult`; the marker is removed before it, its `decisions` already read
 into it. The platform starts fixing in auto-run next when a bug is to fix.
 
 ## The end
@@ -294,10 +295,20 @@ report's row, and the session halts naming what lifts each — a journey not pas
 covered. That report is the session's last, so it carries `sessionEnded: true`; it never comes with
 `halted`.
 
+**`testingResult`** — sent on the report that sends `testingComplete`, and on no other, under
+auto-run too: `{ "done": <boolean>, "bugs": { "toFix", "fixed", "wontFix", "deferred" } }`, each
+count an integer of 0 or more. It is the line `node <plugin root>/scripts/check-feature-done.js
+<feature dir> <name> --result` prints, copied as it is, never counted by hand: `done` is whether the
+script exits 0; the counts are read from the test plan's *Bugs found* table after the triage is
+written — `toFix` triaged `yes` and not `fixed`, `fixed` its Status `fixed` (re-verified),
+`wontFix` and `deferred` its Status or its triage. It tells the platform a completion that hands
+bugs to `do-fixing` (`toFix` above 0, `done` false) from one that finishes testing (`done` true),
+and gives the finish card its counts.
+
 **The re-test.** After a fixing run completes, the platform starts testing again with the same
 command. The session finds every row recorded and a bug `fixed` that the ledger's `reported` holds
 open — on a machine without the ledger, any bug `fixed` — and re-runs on purpose: every recorded
 test (its approval stands, no gate), then Boot & Smoke on a fresh boot, each row `running` then
 `done` with its new `Result`. A new failure is the next bug ID, and its triage a new question. The
-report comes back under its next revision, and its close sends `testingComplete` again for this
-run.
+report comes back under its next revision, and its close sends `testingComplete` and
+`testingResult` again for this run.

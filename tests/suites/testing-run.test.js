@@ -6,7 +6,7 @@ const { createSuite, pluginRoot } = require('../lib/harness');
 const { replayer, storyFiles, rowOf, revisionOf, isAutoGate, hasNote, isString } = require('../lib/phase-run');
 
 const suite = createSuite('testing-run');
-const { report, finish, runScript } = suite;
+const { report, finish, runScript, projectFixture } = suite;
 
 const FIXTURES = path.join(pluginRoot, 'tests', 'fixtures', 'testing-run');
 const GUIDE = path.join(pluginRoot, 'skills', 'do-testing', 'testing-run-schema.md');
@@ -184,6 +184,56 @@ covers('the re-test: the report back under its next revision, no test re-gated',
   report('skill', 'do-testing reads the guide under a testing-run schema', /testing-run schema \(`--json-schema`\), read\s+`testing-run-schema\.md` before the first report/.test(skill));
   const halt = fs.readFileSync(path.join(pluginRoot, 'skills', 'do-grooming', 'run-halt.md'), 'utf8').replace(/\s+/g, ' ');
   report('halt', 'run-halt.md lets a testing or fixing run send commands', /sent only by a development, testing or fixing run/.test(halt));
+}
+
+{
+  const plan = (rows, smoke) => '# Test plan\n\n## Bugs found\n\n| # | Bug | Severity | Level | AC | Repro steps | Fix? (user) | Attempts | Status |\n' +
+    '|---|---|---|---|---|---|---|---|---|\n' + rows.map((row) => `| ${row.join(' | ')} |`).join('\n') + '\n\n' +
+    '## Coverage summary\n\n- **AC covered:** **2 of 2** covered and passing\n' + `- **Boot & Smoke (integrated):** ${smoke}\n`;
+  const resultOf = (name, text) => {
+    const run = runScript('check-feature-done.js', [projectFixture(`result-${name}`, { 'test-plan-backend.md': text }), 'backend', '--result']);
+    let result = null;
+    try { result = JSON.parse(run.stdout); } catch {}
+    return { ...run, result };
+  };
+  const toFix = resultOf('to-fix', plan([
+    ['B1', 'a share to a non-member returns 500', 'major', 'API', 'AC-3', '1. POST a share', 'yes 2026-11-26', '0', 'open → (do-fixing)'],
+  ], '**pass** — the one journey'));
+  report('result', 'a test plan with one bug triaged yes yields toFix 1 and done false',
+    toFix.exitCode === 1 && toFix.result && toFix.result.done === false && JSON.stringify(toFix.result.bugs) === JSON.stringify({ toFix: 1, fixed: 0, wontFix: 0, deferred: 0 }), toFix.stdout + toFix.stderr);
+  const finished = resultOf('done', plan([
+    ['B1', 'a share to a non-member returns 500', 'major', 'API', 'AC-3', '1. POST a share', 'yes 2026-11-26', '1', '**fixed** 2026-11-27'],
+    ['B2', 'the list repeats a member', 'minor', 'Integration', 'AC-1', '1. share twice', 'defer 2026-11-26', '0', 'deferred — next release'],
+    ['B3', 'a tooltip is cut off', 'trivial', 'UI', 'AC-2', '1. hover', 'no 2026-11-26', '0', "won't fix — accepted as is"],
+  ], '**pass** — the one journey'));
+  report('result', 'a test plan with every bug fixed, deferred or won\'t fix and check-feature-done.js exiting 0 yields toFix 0 and done true',
+    finished.exitCode === 0 && finished.result && finished.result.done === true && JSON.stringify(finished.result.bugs) === JSON.stringify({ toFix: 0, fixed: 1, wontFix: 1, deferred: 1 }), finished.stdout + finished.stderr);
+  const blocked = resultOf('blocked', plan([], '**blocked** — the stack would not boot'));
+  report('result', 'done follows the script: Boot & Smoke blocked with no bug is done false', blocked.exitCode === 1 && blocked.result && blocked.result.done === false, blocked.stdout);
+  const plain = runScript('check-feature-done.js', [projectFixture('result-plain', { 'test-plan-backend.md': plan([], '**pass** — the one journey') }), 'backend']);
+  report('result', 'without --result the script prints its usual verdict', plain.exitCode === 0 && /^feature: done/.test(plain.stdout), plain.stdout);
+
+  const step = storyFiles(FIXTURES, 'step');
+  const swap = (files, suffix, change) => files.map((file) => file.name.endsWith(suffix) ? { ...file, report: change(file.report) } : file);
+  const caught = (files, phrase) => replay(files).some((problem) => problem.includes(phrase));
+  report('checker', 'catches testingComplete sent without testingResult',
+    caught(swap(step, '09-testing-complete.json', (sent) => { const { testingResult: _result, ...rest } = sent; return rest; }), 'carries testingResult'));
+  report('checker', 'catches testingResult on a report that does not send testingComplete',
+    caught(swap(step, '08-report-gate.json', (sent) => ({ ...sent, testingResult: { done: false, bugs: { toFix: 1, fixed: 0, wontFix: 0, deferred: 0 } } })), 'only on the report that sends testingComplete'));
+  report('checker', 'catches a testingResult count that is not a whole number',
+    caught(swap(step, '09-testing-complete.json', (sent) => ({ ...sent, testingResult: { ...sent.testingResult, bugs: { ...sent.testingResult.bugs, toFix: -1 } } })), 'integer of 0 or more'));
+  report('checker', 'catches a testingResult done with a bug still to fix',
+    caught(swap(step, '09-testing-complete.json', (sent) => ({ ...sent, testingResult: { ...sent.testingResult, done: true } })), 'cannot be done'));
+  const fixtureResults = every.filter(({ report: sent }) => sent.testingComplete === true).map(({ report: sent }) => sent.testingResult);
+  report('fixtures', 'every testingComplete fixture carries testingResult — one handing bugs to do-fixing, one done',
+    fixtureResults.every(Boolean) && fixtureResults.some((result) => result.bugs.toFix > 0 && !result.done) && fixtureResults.some((result) => result.done && result.bugs.toFix === 0));
+  const guide = fs.readFileSync(GUIDE, 'utf8').replace(/\s+/g, ' ');
+  report('guide', 'the guide lists testingResult among its optional fields and sends it with testingComplete only, from check-feature-done.js --result',
+    /Six optional fields go beyond setup's report: `testingComplete`, `testingResult` and `autoDecisions`/.test(guide) &&
+    /\*\*`testingResult`\*\* — sent on the report that sends `testingComplete`, and on no other, under auto-run too/.test(guide) &&
+    /check-feature-done\.js <feature dir> <name> --result`/.test(guide) && /`testingResult` needs \*\*0\.57\.0\*\*/.test(guide));
+  const readme = fs.readFileSync(path.join(pluginRoot, 'README.md'), 'utf8');
+  report('version', 'the release notes publish testingResult\'s minimum', readme.includes('From 0.57.0 a testing run'));
 }
 
 finish();
